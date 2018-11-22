@@ -23,7 +23,7 @@ class Order:
         self.account_type = account_type
         self.balance = balance.get_balance(account_num, account_type)
 
-    def process(self, code, account_num, account_type, price, is_buy):
+    def process(self, code, account_num, account_type, price, is_buy, expected = 0):
         if is_buy:
             quantity = self.get_available_buy_quantity(price)
         else:
@@ -33,7 +33,7 @@ class Order:
             print("Failed")
         else:
             Store.RecordOrder(code, account_num,
-                    account_type, price, quantity, is_buy)
+                    account_type, price, quantity, is_buy, expected)
 
             self.obj = td0311.Td0311('CpTrade.CpTd0311')
             order_type = '1' if is_buy else '2'
@@ -57,8 +57,9 @@ class Order:
                 'price': self.obj.GetHeaderValue(5),
                 'order_num': self.obj.GetHeaderValue(8),
                 'account_name': self.obj.GetHeaderValue(9),
-                'name': self.obj.GetHeaderValue(10)
-                'order_type': self.obj.GetHeaderValue(12)
+                'name': self.obj.GetHeaderValue(10),
+                'order_type': self.obj.GetHeaderValue(12),
+                'expected': expected
             })
 
 
@@ -89,7 +90,7 @@ class Order:
         for item in sorted_by_expected:
             if item[1][1] == 0:
                 continue
-            self.process(item[0], self.account_num, self.account_type, item[1][1], True)
+            self.process(item[0], self.account_num, self.account_type, item[1][1], True, item[1][0])
 
     def process_sell_order(self, sell_dict):
         keys = list(sell_dict)

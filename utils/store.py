@@ -49,7 +49,7 @@ class Store:
                 Store.DB[Store.LONG_MANIFEST].insert_one(long_item)
 
     
-    def RecordOrder(code, account_num, account_type, price, quantity, is_buy):
+    def RecordOrder(code, account_num, account_type, price, quantity, is_buy, expected):
         print(tm.TimeManager.now(), code, price, quantity, 'buy:', is_buy)
         if Store.DB is not None:
             Store.DB[Store.ORDER].insert_one({
@@ -59,6 +59,7 @@ class Store:
                 'account_type': account_type,
                 'price': price,
                 'quantity': quantity,
+                'expected': expected,
                 'position': 'BUY' if is_buy else 'SELL'
             })
 
