@@ -26,6 +26,7 @@ else:
     from dbapi import long_manifest_6033 as lm
     from dbapi import stock_current
     from dbapi.time_manager import TimeManager
+    from dbapi import order_0311 as order
 
 
 class Trader:
