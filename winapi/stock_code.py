@@ -29,7 +29,7 @@ def get_kospi200_list():
     kospi_200 = []
     code_list = get_kospi_code_list()
     for code in code_list:
-        if is_kospi_200(code) > 0:
+        if is_kospi_200(code) > 0 and not is_there_warning(code):
             kospi_200.append(code)
     return kospi_200
 

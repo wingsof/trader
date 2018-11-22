@@ -1,6 +1,13 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import string
 import random
-
+from dbapi import config
+from dbapi import balance_5331a as balance
+from dbapi.long_manifest_6033 import LongManifest
+from dbapi import stock_code
 
 class Td0311:
     def __init__(self, obj_id):
@@ -13,11 +20,33 @@ class Td0311:
         self.price = 0
 
     def SetInputValue(index, value):
-        pass
+        if index == 0:
+            self.order_type = value
+        elif index == 1:
+            self.account_num = value
+        elif index == 2:
+            self.account_type = value
+        elif index == 3:
+            self.code = code
+        elif index == 4:
+            self.quantity = value
+        elif index == 5:
+            self.price = value
 
 
     def BlockRequest(self):
-        pass
+        db = MongoClient(config.MONGO_SERVER).trader
+        if self.order_type == '1': # buy
+            LongManifest.add_to_long(
+                    self.account_num, self.code,
+                    stock_code.code_to_name(self.code),
+                    self.quantity, self.price, db)
+        else: # sell
+            b = balance.get_balance(self.account_num, account_type)
+            b += self.quantity * self.price
+            balance.update_balance(b)
+            LongManifest.drop_from_long(self.account_num, self.code, db) 
+
 
     def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
         return ''.join(random.choice(chars) for _ in range(size))

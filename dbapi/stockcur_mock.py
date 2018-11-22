@@ -17,7 +17,7 @@ class StockCur:
         self.current_data = None
         self.event_object = None
         self.timer = QTimer()
-        self.last_subscribe_time = time_manager.TimeManager.now
+        self.last_subscribe_time = time_manager.TimeManager.now()
         self.timer.timeout.connect(self.push_data)
         self.db = MongoClient(config.MONGO_SERVER).stock
 
@@ -38,7 +38,7 @@ class StockCur:
         return self.current_data[str(index)]
 
     def push_data(self):
-        n = time_manager.TimeManager.now
+        n = time_manager.TimeManager.now()
         cursor = self.db[self.code].find({'date': 
             {'$gte': self.last_subscribe_time, '$lt': n}})
         self.last_subscribe_time = n

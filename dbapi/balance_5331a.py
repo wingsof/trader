@@ -33,6 +33,9 @@ def get_balance(account_num, account_type):
     b = list(cursor)[0]
     return b[_COLLECTION]
 
+def update_balance(account_num, balance):
+    db = MongoClient(config.MONGO_SERVER).trader
+    db[_COLLECTION].update_one({'account_num': account_num}, {'$set': {'balance': balance}}, upsert=False)
 
 if __name__ == '__main__':
     db = MongoClient(config.MONGO_SERVER).trader

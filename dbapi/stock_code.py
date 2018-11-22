@@ -13,6 +13,14 @@ def get_kospi200_list():
 
     return list(map(lambda x: x['code'], codes))
 
+def code_to_name(code):
+    client = MongoClient(config.MONGO_SERVER)
+    cursor = client.stock.kospi200_code.find({'code':code})
+    if cursor.count() == 0:
+        return 'Unknown'
+    else:
+        return list(cursor)[0]['name']
+
 def is_there_warning(code):
     return False
 

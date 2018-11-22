@@ -2,6 +2,8 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+from pymongo import MongoClient
+
 from dbapi import balance_5331a as balance
 from dbapi import td0311_mock as td0311
 from dbapi import config
@@ -19,7 +21,7 @@ class Order:
         self.long_list = long_list
         self.account_num = account_num
         self.account_type = account_type
-        self.balance = balance.get_balance()
+        self.balance = balance.get_balance(account_num, account_type)
 
     def process(self, code, account_num, account_type, price, is_buy):
         if is_buy:
@@ -30,6 +32,9 @@ class Order:
         if quantity is 0:
             print("Failed")
         else:
+            Store.RecordOrder(code, account_num,
+                    account_type, price, quantity, is_buy)
+
             self.obj = td0311.Td0311('CpTrade.CpTd0311')
             order_type = '1' if is_buy else '2'
             self.obj.SetInputValue(0, order_type)
@@ -55,6 +60,7 @@ class Order:
                 'name': self.obj.GetHeaderValue(10)
                 'order_type': self.obj.GetHeaderValue(12)
             })
+
 
     def get_available_buy_quantity(self, price):
         available_quantity = 0

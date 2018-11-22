@@ -1,6 +1,9 @@
 from datetime import datetime
 
 class TimeManager:
+    def now():
+        return datetime.now()
+
     def __init__(self):
         pass
 

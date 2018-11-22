@@ -92,11 +92,11 @@ class StockCurrent:
 
     def add_to_buy_cart(self, code, expected):
         if expected > 105.:
-            print('BUY CART(%d)' % len(buy_dict), code, expected)
+            print('BUY CART(%d)' % len(self.buy_dict), code, expected)
             self.buy_dict[code] = [expected, 0]
 
     def add_to_sell_cart(self, code):
-        print('SELL CART(%d)' % len(sell_dict), code)
+        print('SELL CART(%d)' % len(self.sell_dict), code)
         self.sell_dict[code] = [0, 0]
 
     def set_sell_price(self, code, price):

@@ -1,14 +1,31 @@
 from pymongo import MongoClient
 
-
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from dbapi import config
+from utils.store import Store
 
 _COLLECTION = 'long_list'
 
 class LongManifest:
+    @staticmethod
+    def drop_from_long(account_num, code, db):
+        db[_COLLECTION].delete_one({'account_num': account_num, 'code': code})
+
+    @staticmethod
+    def add_to_long(account_num, code, name, quantity, price, db):
+        db[_COLLECTION].insert_one({
+            'code': code,
+            'account_num': account_num,
+            'name': name,
+            'quantity': quantity,
+            'sell_available': quantity,
+            'price': price
+        })
+
+
+
     def __init__(self, account_num):
         self.db = MongoClient(config.MONGO_SERVER).trader
         self.account_num = account_num
@@ -31,6 +48,7 @@ class LongManifest:
                  'sell_available': sell_available, 'price': price,
                  'all_price': all_price}
             long_list.append(d)
+            Store.RecordLongManifest(d.copy())
         return long_list
 
     def get_long_codes(self):

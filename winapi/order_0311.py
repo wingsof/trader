@@ -1,7 +1,11 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import win32com.client
 
 from winapi import balance_5331a as balance
-
+from utils.store import Store
 
 class _OrderRealtime:
     def set_params(self, obj, order_obj):
@@ -16,7 +20,7 @@ class _OrderRealtime:
         code = self.obj.GetHeaderValue(9)        # code
         order_type = self.obj.GetHeaderValue(12) # buy/sell
         total_quantity = self.client.GetHeaderValue(23)    # count of stock left
-        self.order_obj.set_result({
+        result = {
             'flag': flag,
             'code': code,
             'order_num': order_num,
@@ -24,7 +28,8 @@ class _OrderRealtime:
             'price': price,
             'order_type': order_type,
             'total_quantity': total_quantity
-        })
+        }
+        self.order_obj.set_result(result.copy())
 
 
 class Order:
@@ -58,6 +63,9 @@ class Order:
         if quantity is 0:
             print("Failed")
         else:
+            Store.RecordOrder(code, account_num,
+                    account_type, price, quantity, is_buy)
+
             self.obj = win32com.client.Dispatch('CpTrade.CpTd0311')
             order_type = '1' if is_buy else '2'
             self.obj.SetInputValue(0, order_type)
@@ -84,6 +92,7 @@ class Order:
                 'order_type': self.obj.GetHeaderValue(12)
             }
             self.order_result_list.append(result)
+            Store.RecordOrderResult(result.copy())
 
     def get_available_buy_quantity(self, price):
         available_quantity = 0
