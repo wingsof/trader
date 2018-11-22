@@ -1,9 +1,13 @@
-from pymongo import MongoClient
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-_MONGO_SERVER = 'mongodb://nnnlife.iptime.org:27017'
+from pymongo import MongoClient
+from dbapi import config
+
 
 def get_kospi200_list():
-    client = MongoClient(_MONGO_SERVER)
+    client = MongoClient(config.MONGO_SERVER)
     collection = client.stock.kospi200_code
     codes = list(collection.find({}))
 

@@ -6,11 +6,11 @@ from utils import time_converter
 from datetime import datetime, timedelta
 from pymongo import MongoClient
 
+from dbapi import config
 
-_MONGO_SERVER = 'mongodb://nnnlife.iptime.org:27017'
 
 def get_day_period_data(code, startdate, enddate):
-    db = MongoClient(_MONGO_SERVER)['stock']
+    db = MongoClient(config.MONGO_SERVER)['stock']
     start = time_converter.datetime_to_intdate(startdate)
     end = time_converter.datetime_to_intdate(enddate)
 

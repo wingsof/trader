@@ -12,7 +12,7 @@ class TimeManager:
 
     def is_runnable(self, t=datetime.now()):
         t = TimeManager.now
-        if t.hour >= 6 and t.hour <= 15:
+        if t.weekday() < 5 and t.hour >= 6 and t.hour <= 15:
             return True
         return False
 

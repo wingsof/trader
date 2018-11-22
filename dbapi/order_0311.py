@@ -1,5 +1,10 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from dbapi import balance_5331a as balance
 from dbapi import td0311_mock as td0311
+from dbapi import config
 
 class Order:
     ORDER_PRICE_RANGE = (1000000, 2000000)
@@ -86,3 +91,9 @@ class Order:
             if sell_dict[k][1] == 0:
                 continue
             self.process(k, self.account_num, self.account_type, sell_dict[k][1], False)
+
+    def set_result(self, result):
+        pass
+
+    def stop(self):
+        pass

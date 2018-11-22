@@ -1,11 +1,16 @@
 from pymongo import MongoClient
 
-_MONGO_SERVER = 'mongodb://nnnlife.iptime.org:27017'
+
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from dbapi import config
+
 _COLLECTION = 'long_list'
 
 class LongManifest:
     def __init__(self, account_num):
-        self.db = MongoClient(_MONGO_SERVER).trader
+        self.db = MongoClient(config.MONGO_SERVER).trader
         self.account_num = account_num
 
     def get_count(self):
@@ -62,7 +67,7 @@ class LongManifest:
 
 if __name__ == '__main__':
     lm = LongManifest('test')
-    db = MongoClient(_MONGO_SERVER).trader
+    db = MongoClient(config.MONGO_SERVER).trader
     db[_COLLECTION].delete_many({'account_num': 'test'})
 
     lm._insert_long('A005930', 'LGE', 10, 48000)

@@ -1,6 +1,10 @@
-from pymongo import MongoClient
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-_MONGO_SERVER = 'mongodb://nnnlife.iptime.org:27017'
+from pymongo import MongoClient
+from dbapi import config
+
 _COLLECTION = 'balance'
 
 def _create_balance(account_num, account_type, db):
@@ -9,7 +13,7 @@ def _create_balance(account_num, account_type, db):
 
 
 def get_balance(account_num, account_type):
-    db = MongoClient(_MONGO_SERVER).trader
+    db = MongoClient(config.MONGO_SERVER).trader
 
     default_balance = 10000000
     if 'balance' not in db.collection_names():
@@ -31,7 +35,7 @@ def get_balance(account_num, account_type):
 
 
 if __name__ == '__main__':
-    db = MongoClient(_MONGO_SERVER).trader
+    db = MongoClient(config.MONGO_SERVER).trader
     b = get_balance('test', 'test')
     db[_COLLECTION].update_one({'account_num': 'test', 'account_type': 'test'}, {'$set': {'balance': b-1}}, upsert=False)
     assert get_balance('test', 'test') == b-1

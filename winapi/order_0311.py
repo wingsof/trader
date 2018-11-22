@@ -2,6 +2,31 @@ import win32com.client
 
 from winapi import balance_5331a as balance
 
+
+class _OrderRealtime:
+    def set_params(self, obj, order_obj):
+        self.obj = obj
+        self.order_obj = order_obj
+
+    def OnReceived(self):
+        flag = self.obj.GetHeaderValue(14)    # flag '1': done, '2': ok, '3': denied, '4':queued'
+        order_num = self.obj.GetHeaderValue(5)    # order number
+        quantity = self.obj.GetHeaderValue(3)      # quantity
+        price = self.obj.GetHeaderValue(4)       # price 
+        code = self.obj.GetHeaderValue(9)        # code
+        order_type = self.obj.GetHeaderValue(12) # buy/sell
+        total_quantity = self.client.GetHeaderValue(23)    # count of stock left
+        self.order_obj.set_result({
+            'flag': flag,
+            'code': code,
+            'order_num': order_num,
+            'quantity': quantity,
+            'price': price,
+            'order_type': order_type,
+            'total_quantity': total_quantity
+        })
+
+
 class Order:
     ORDER_PRICE_RANGE = (1000000, 2000000)
     """
@@ -16,32 +41,13 @@ class Order:
         self.account_num = account_num
         self.account_type = account_type
         self.balance = balance.get_balance()
-        """
-        Use Dscbo1.CpConclusion
-                elif self.name == "conclution" :
-            # 주문 체결 실시간 업데이트
-            conflag = self.client.GetHeaderValue(14)    # 체결 플래그
-            ordernum = self.client.GetHeaderValue(5)    # 주문번호
-            amount = self.client.GetHeaderValue(3)      # 체결 수량
-            price = self.client.GetHeaderValue(4)       # 가격
-            code = self.client.GetHeaderValue(9)        # 종목코드
-            bs = self.client.GetHeaderValue(12)         # 매수/매도 구분
-            balace = self.client.GetHeaderValue(23)  # 체결 후 잔고 수량
- 
-            conflags = ""
-            if conflag in self.concdic :
-                conflags = self.concdic.get(conflag)
-                print(conflags)
- 
-            bss = ""
-            if (bs in self.buyselldic):
-                bss = self.buyselldic.get(bs)
- 
-            print(conflags, bss, code, "주문번호:", ordernum)
-            # call back 함수 호출해서 orderMain 에서 후속 처리 하게 한다.
-            self.parent.monitorOrderStatus(code, ordernum, conflags, price, amount, balace)
-            return
-        """
+        self.realtime_order = win32com.client.Dispatch('Dscbo1.CpConclusion')
+        handler = win32com.client.WithEvents(self.realtime_order, _OrderRealtime)
+        handler.set_params(self.realtime_order, self)
+        self.realtime_order.Subscribe()
+  
+    def stop(self):
+        self.realtime_order.Unsubscribe()
 
     def process(self, code, account_num, account_type, price, is_buy):
         if is_buy:
@@ -114,3 +120,7 @@ class Order:
             if sell_dict[k][1] == 0:
                 continue
             self.process(k, self.account_num, self.account_type, sell_dict[k][1], False)
+
+
+    def set_result(self, result):
+        pass

@@ -11,6 +11,7 @@ from utils import speculation
 
 from sys import platform as _platform
 if _platform == 'win32' or _platform == 'win64':
+    from winapi import config
     from winapi import connection, stock_chart, stock_code
     from winapi import balance_5331a as balance
     from winapi import trade_util as tu
@@ -19,6 +20,7 @@ if _platform == 'win32' or _platform == 'win64':
     from winapi.time_manager import TimeManager
     from winapi import order_0311 as order
 else:
+    from dbapi import config
     from dbapi import connection, stock_chart, stock_code
     from dbapi import balance_5331a as balance
     from dbapi import trade_util as tu
@@ -96,7 +98,7 @@ class Trader:
 
     def get_db_connection(self):
         try:
-            client = MongoClient('mongodb://nnnlife.iptime.org:27017')
+            client = MongoClient(config.MONGO_SERVER)
             self.db = client.trader
         except pymongo.errors.ConnectionFailure as e:
             print('Could not connect to server:', e)
@@ -141,6 +143,7 @@ class Trader:
         elif self.status == Trader.ORDER_WAITING:
             if self.time_manager.is_order_wait_done_time():
                 print(datetime.now(), 'ORDER_WAITING -> WAITING')
+                self.order.stop()
                 self.unsubscribe()
                 self.status = Trader.WAITING
 

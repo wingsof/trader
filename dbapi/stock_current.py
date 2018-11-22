@@ -1,4 +1,8 @@
 from PyQt5 import QtCore
+
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from dbapi import stockcur_mock
 
 class _CpEvent:
@@ -87,7 +91,7 @@ class StockCurrent:
             r.subscribe()
 
     def add_to_buy_cart(self, code, expected):
-        if expected > 100.:
+        if expected > 105.:
             print('BUY CART(%d)' % len(buy_dict), code, expected)
             self.buy_dict[code] = [expected, 0]
 

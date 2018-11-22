@@ -1,9 +1,13 @@
 from PyQt5.QtCore import QTimer
-from dbapi import time_manager
 from pymongo import MongoClient
 
-_MONGO_SERVER = 'mongodb://nnnlife.iptime.org:27017'
-_COLLECTION = ''
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from dbapi import time_manager
+from dbapi import config
+
 
 class StockCur:
     def __init__(self, obj_id):
@@ -15,7 +19,7 @@ class StockCur:
         self.timer = QTimer()
         self.last_subscribe_time = time_manager.TimeManager.now
         self.timer.timeout.connect(self.push_data)
-        self.db = MongoClient(_MONGO_SERVER).stock
+        self.db = MongoClient(config.MONGO_SERVER).stock
 
     def SetInputValue(self, index, code):
         self.index = index
