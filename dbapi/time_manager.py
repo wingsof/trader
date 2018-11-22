@@ -9,6 +9,8 @@ class TimeManager:
         time_passed = (n - TimeManager.current_dt).total_seconds()
         TimeManager.current_dt = n
         TimeManager.fake_dt += timedelta(seconds=time_passed*10)
+        if TimeManager.fake_dt.hour > 17:
+            TimeManager.fake_dt += timedelta(hours=12) # leap to next morning
         return TimeManager.fake_dt
 
     def __init__(self):
