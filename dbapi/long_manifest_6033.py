@@ -1,0 +1,77 @@
+from pymongo import MongoClient
+
+_MONGO_SERVER = 'mongodb://nnnlife.iptime.org:27017'
+_COLLECTION = 'long_list'
+
+class LongManifest:
+    def __init__(self, account_num):
+        self.db = MongoClient(_MONGO_SERVER).trader
+        self.account_num = account_num
+
+    def get_count(self):
+        cursor = self.db[_COLLECTION].find({'account_num':self.account_num})
+        return cursor.count()
+
+    def get_long_list(self):
+        long_list = []
+        cursor = self.db[_COLLECTION].find({'account_num':self.account_num})
+        for c in cursor:
+            code = c['code']
+            name = c['name']
+            quantity = c['quantity']
+            sell_available = c['sell_available']
+            price = c['price']
+            all_price = price * quantity
+            d = {'code': code, 'name': name, 'quantity': quantity,
+                 'sell_available': sell_available, 'price': price,
+                 'all_price': all_price}
+            long_list.append(d)
+        return long_list
+
+    def get_long_codes(self):
+        long_codes = []
+        cursor = self.db[_COLLECTION].find({'account_num':self.account_num})
+        for i in cursor:
+            long_codes.append(i['code'])    
+        return long_codes
+
+    def insert_long(self, code, name, account_num, sell_available, price):
+        self.db[_COLLECTION].insert_one({
+            'code': code,
+            'account_num': account_num,
+            'name': name,
+            'quantity': sell_available,
+            'sell_available': sell_available,
+            'price': price
+        })
+
+    def sold(self, code):
+        self.db[_COLLECTION].delete_one({'code': code})
+
+
+    def _insert_long(self, code, name, sell_available, price):
+        self.db[_COLLECTION].insert_one({
+            'code': code,
+            'account_num': 'test',
+            'name': name,
+            'quantity': sell_available,
+            'sell_available': sell_available,
+            'price': price
+        })
+
+
+if __name__ == '__main__':
+    lm = LongManifest('test')
+    db = MongoClient(_MONGO_SERVER).trader
+    db[_COLLECTION].delete_many({'account_num': 'test'})
+
+    lm._insert_long('A005930', 'LGE', 10, 48000)
+    lm._insert_long('A005920', 'HI', 2, 49000)
+
+    l = lm.get_long_list()
+    assert l[0]['name'] == 'LGE'
+    assert l[1]['name'] == 'HI'
+    lm.sold('A005930')
+    lc = lm.get_long_codes()
+    assert lc[0] == 'A005920'
+    db[_COLLECTION].delete_many({'account_num': 'test'})
