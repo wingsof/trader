@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
     # API only provide 5 + alpha days data as max because 1999 is a max count of result
     # 1 day minutes data is 381, therefore if you want whole day data then it should be 5 days (381*5=1905)
 def get_period_data_raw(code, start_date, end_date = 0, period_type='m'):
-    print("Get Period data ", start_date, end_date, time_converter.datetime_to_intdate(start_date), time_converter.datetime_to_intdate(end_date))
+    #print("Get Period data ", start_date, end_date, time_converter.datetime_to_intdate(start_date), time_converter.datetime_to_intdate(end_date))
     data = []
     chart_obj= win32com.client.Dispatch("CpSysDib.StockChart")
     chart_obj.SetInputValue(0, code)

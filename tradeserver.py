@@ -98,6 +98,7 @@ class Trader:
 
     def unsubscribe(self):
         self.subscriber.stop()
+        self.order.stop()
 
     def get_db_connection(self):
         try:
@@ -149,7 +150,6 @@ class Trader:
         elif self.status == Trader.ORDER_WAITING:
             if self.time_manager.is_order_wait_done_time():
                 Store.RecordStateTransit('ORDER_WAITING', 'WAITING')
-                self.order.stop()
                 self.unsubscribe()
                 self.status = Trader.WAITING
 

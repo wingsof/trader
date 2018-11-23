@@ -13,7 +13,7 @@ class LongManifest:
         self.stock_obj = win32com.client.Dispatch('CpTrade.CpTd6033')
         self.stock_obj.SetInputValue(0, self.account_num)
         self.stock_obj.SetInputValue(1, '1')
-        self.stock_obj.SetInputValue(1, 50)
+        self.stock_obj.SetInputValue(2, 50)
         self.stock_obj.BlockRequest()
         return self.stock_obj.GetHeaderValue(7)
 
@@ -21,7 +21,7 @@ class LongManifest:
         self.stock_obj = win32com.client.Dispatch('CpTrade.CpTd6033')
         self.stock_obj.SetInputValue(0, self.account_num)
         self.stock_obj.SetInputValue(1, '1')
-        self.stock_obj.SetInputValue(1, 50)
+        self.stock_obj.SetInputValue(2, 50)
         self.stock_obj.BlockRequest()
 
         long_list = []
@@ -44,7 +44,7 @@ class LongManifest:
         self.stock_obj = win32com.client.Dispatch('CpTrade.CpTd6033')
         self.stock_obj.SetInputValue(0, self.account_num)
         self.stock_obj.SetInputValue(1, '1')
-        self.stock_obj.SetInputValue(1, 50)
+        self.stock_obj.SetInputValue(2, 50)
         self.stock_obj.BlockRequest()
 
         long_codes = []

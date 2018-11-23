@@ -133,4 +133,4 @@ class Order:
 
 
     def set_result(self, result):
-        pass
+        Store.RecordRealtimeResult(result)
