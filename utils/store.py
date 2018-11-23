@@ -46,11 +46,13 @@ class Store:
             })
 
             if cursor.count() is 0:
+                print('(LONG_LIST)\t', 'CODE:', long_item['code'], 
+                        'NAME:', long_item['name'], 'QUANTITY:', long_item['quantity'])
                 Store.DB[Store.LONG_MANIFEST].insert_one(long_item)
 
     
     def RecordOrder(code, account_num, account_type, price, quantity, is_buy, expected):
-        print(tm.TimeManager.now(), code, price, quantity, 'buy:', is_buy)
+        print('(ORDER)\t', tm.TimeManager.now(), code, price, quantity, 'buy:', is_buy)
         if Store.DB is not None:
             Store.DB[Store.ORDER].insert_one({
                 'date': tm.TimeManager.now(),
@@ -67,8 +69,14 @@ class Store:
         if Store.DB is not None:
             r['date'] = tm.TimeManager.now()
             Store.DB[Store.ORDER_RESULT].insert_one(r)
+            print('(ORDER RESULT)\t', 'ORDER_ID:', r['order_num'], 'TYPE_CODE:', r['type_code'],
+                    'CODE:', r['code'], 'QUANTITY:', r['quantity'],
+                    'PRICE:', r['price'], 'ORDER TYPE:', r['order_type'])
 
     def RecordRealtimeResult(r):
         if Store.DB is not None:
             r['date'] = tm.TimeManager.now()
             Store.DB[Store.ORDER_REALTIME].insert_one(r)
+            print('(ORDER NOTIFY)\t', 'ORDER_ID:', r['order_num'], 'FLAG:', r['flag'],
+                    'CODE:', r['code'], 'QUANTITY:', r['quantity'], 'PRICE:', r['price'],
+                    'TOTAL_QUANTITY:', r['total_quantity'])
