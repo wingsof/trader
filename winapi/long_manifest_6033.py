@@ -50,6 +50,6 @@ class LongManifest:
         long_codes = []
         for i in range(self.stock_obj.GetHeaderValue(7)):
             code = self.stock_obj.GetDataValue(12, i)
-            long_codes.append(long_codes)
+            long_codes.append(code)
 
         return long_codes

@@ -7,7 +7,7 @@ def get_avg_profit_by_day_data(df, buy_t, sell_t):
     money = initial_deposit
     trade_count = 0
 
-    for index, row in df.iterrows():
+    for _, row in df.iterrows():
         buy_threshold = prev_close * buy_t
         sell_threshold = prev_close * sell_t
 

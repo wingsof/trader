@@ -29,7 +29,10 @@ if __name__ == '__main__':
     print(conn.is_connected())
 
     if conn.is_connected():
-        import stock_chart
+        import os
+        import sys
+        sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+        from winapi import stock_chart
         #chart = stock_chart.StockChart('A005930')
         #for data in chart.get_by_date(20181018):
         #    print(data)

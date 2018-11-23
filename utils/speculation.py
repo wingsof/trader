@@ -16,7 +16,7 @@ _COLLECTION = 'speculation'
 
 class Speculation:
     def __init__(self):
-        self.db = MongoClient(_MONGO_SERVER).speculation
+        self.db = MongoClient(_MONGO_SERVER).trader
 
 
     def get_speculation(self, today, code_list):
@@ -32,7 +32,7 @@ class Speculation:
                 sp = sp.append(c[0], ignore_index=True)
             else:
                 yesterday =  today - timedelta(days=1)
-                l, data = stock_chart.get_day_period_data(code, yesterday - timedelta(days=30), yesterday)
+                _, data = stock_chart.get_day_period_data(code, yesterday - timedelta(days=30), yesterday)
                 price_list = list(map(lambda x: {'high': x['3'], 'low': x['4'], 'close': x['5']}, data))
                 df = pd.DataFrame(price_list)
                 buy_rate, sell_rate, profit_expected = profit_calc.get_best_rate(df)

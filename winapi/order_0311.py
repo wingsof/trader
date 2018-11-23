@@ -19,7 +19,7 @@ class _OrderRealtime:
         price = self.obj.GetHeaderValue(4)       # price 
         code = self.obj.GetHeaderValue(9)        # code
         order_type = self.obj.GetHeaderValue(12) # buy/sell
-        total_quantity = self.client.GetHeaderValue(23)    # count of stock left
+        total_quantity = self.obj.GetHeaderValue(23)    # count of stock left
         result = {
             'flag': flag,
             'code': code,
@@ -45,7 +45,7 @@ class Order:
         self.long_list = long_list
         self.account_num = account_num
         self.account_type = account_type
-        self.balance = balance.get_balance()
+        self.balance = balance.get_balance(account_num, account_type)
         self.realtime_order = win32com.client.Dispatch('Dscbo1.CpConclusion')
         handler = win32com.client.WithEvents(self.realtime_order, _OrderRealtime)
         handler.set_params(self.realtime_order, self)

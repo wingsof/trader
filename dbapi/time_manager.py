@@ -6,12 +6,13 @@ class TimeManager:
 
     fake_state = 0
 
+    @staticmethod
     def now():
         n = datetime.now()
         time_passed = (n - TimeManager.current_dt).total_seconds()
         TimeManager.current_dt = n
         TimeManager.fake_dt += timedelta(seconds=time_passed*20)
-        if TimeManager.fake_dt.hour > 18:
+        if TimeManager.fake_dt.hour > 18 or TimeManager.fake_dt.weekday > 4:
             TimeManager.fake_dt += timedelta(hours=12) # leap to next morning
 
         return TimeManager.fake_dt
