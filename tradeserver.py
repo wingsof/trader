@@ -43,6 +43,8 @@ class Trader:
         self.speculation = speculation.Speculation()
         self.heart_beat = QTimer()
         self.heart_beat.timeout.connect(self.time_check)
+
+        self.last_loop_time = [0, 0]
         self._reset()
 
     def _reset(self):
@@ -110,9 +112,16 @@ class Trader:
     def start(self):
         self.heart_beat.start(self.time_manager.get_heart_beat())
 
-    def time_check(self):
-        if _platform != 'win32' and _platform != 'win64':
+    def _loop_print(self):
+        t = TimeManager.now()
+        if self.last_loop_time[0] != t.hour or self.last_loop_time[1] != t.min:
             print('Main Loop', TimeManager.now())
+            self.last_loop_time[0] = t.hour
+            self.last_loop_time[1] = t.min
+
+    def time_check(self):
+        self._loop_print()
+
         if self.status == Trader.NOT_RUNNING: # ready is done when first running
             if self.time_manager.is_runnable():
                 Store.RecordStateTransit('NOT_RUNNING', 'RUNNING')
