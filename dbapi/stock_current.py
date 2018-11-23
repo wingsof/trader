@@ -35,7 +35,7 @@ class _CpEvent:
                 else:
                     if price >= self.buy_price:
                         self.status = _CpEvent.BUY
-                        print('BUY TARGET:', self.buy_price, 'CURRENT:', price)
+                        print('BUY TARGET:', self.buy_price, 'CURRENT:', price, 'SELL:', self.sell_price)
                         self.current_obj.add_to_buy_cart(self.code, self.profit_expected)
 
         elif self.status is not _CpEvent.NONE and self.obj.GetHeaderValue(20) == ord('5'): # 15:20-15:30

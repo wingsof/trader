@@ -69,7 +69,7 @@ class Order:
         while True:
             all_price += price
 
-            if all_price > Order.ORDER_PRICE_RANGE[1] or all_price > balance:
+            if all_price > Order.ORDER_PRICE_RANGE[1] or all_price > self.balance:
                 break
             available_quantity += 1
 

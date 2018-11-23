@@ -110,6 +110,8 @@ class Trader:
         self.heart_beat.start(self.time_manager.get_heart_beat())
 
     def time_check(self):
+        if _platform != 'win32' and _platform != 'win64':
+            print('Main Loop', TimeManager.now())
         if self.status == Trader.NOT_RUNNING: # ready is done when first running
             if self.time_manager.is_runnable():
                 Store.RecordStateTransit('NOT_RUNNING', 'RUNNING')
@@ -135,7 +137,8 @@ class Trader:
             if self.time_manager.is_order_start_time():
                 Store.RecordStateTransit('ORDER_COLLECT', 'ORDER_START')
                 self.status = Trader.ORDER_START
-                self.order = order.Order(self.long_manifest.get_long_list())
+                self.order = order.Order(self.long_manifest.get_long_list(), 
+                        self.account_num, self.account_type)
 
         elif self.status == Trader.ORDER_START:
             Store.RecordStateTransit('ORDER_START', 'ORDER_WAITING')

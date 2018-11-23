@@ -54,7 +54,7 @@ class _StockRealtime:
     def subscribe(self):
         handler = win32com.client.WithEvents(self.obj, _CpEvent)
         self.obj.SetInputValue(0, self.code)
-        handler.set_params(self.code, self.is_long, 
+        handler.set_params(self.obj, self.code, self.is_long, 
                 self.info['prev_close'] + self.info['prev_close'] * self.info['buy_rate'],
                 self.info['prev_close'] - self.info['prev_close'] * self.info['sell_rate'],
                 self.info['profit_expected'], self.current_obj)
@@ -85,7 +85,7 @@ class StockCurrent:
             r.subscribe()
 
     def add_to_buy_cart(self, code, expected):
-        if expected: > 105.
+        if expected > 105.:
             print('BUY CART(%d)' % len(self.buy_dict), code, expected)
             self.buy_dict[code] = [expected, 0]
 

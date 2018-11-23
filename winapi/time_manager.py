@@ -1,6 +1,7 @@
 from datetime import datetime
 
 class TimeManager:
+    @staticmethod
     def now():
         return datetime.now()
 
