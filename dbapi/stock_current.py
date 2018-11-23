@@ -37,6 +37,8 @@ class _CpEvent:
                         self.status = _CpEvent.BUY
                         print('BUY TARGET:', self.buy_price, 'CURRENT:', price, 'SELL:', self.sell_price)
                         self.current_obj.add_to_buy_cart(self.code, self.profit_expected)
+                    elif self.status == _CpEvent.BUY and price <= self.sell_price:
+                        self.current_obj.cancel_to_buy_cart(self.code)
 
         elif self.status is not _CpEvent.NONE and self.obj.GetHeaderValue(20) == ord('5'): # 15:20-15:30
             if self.status is _CpEvent.BUY and self.obj.GetHeaderValue(14) == ord('1'):
@@ -103,6 +105,9 @@ class StockCurrent:
         if code in self.sell_dict:
             self.sell_dict[code][1] = price
     
+    def cancel_to_buy_cart(self, code):
+        self.buy_dict.pop(code, None)
+
     def set_buy_price(self, code, price):
         if code in self.buy_dict:
             self.buy_dict[code][1] = price
