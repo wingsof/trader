@@ -12,11 +12,13 @@ def get_avg_profit_by_day_data(df, buy_t, sell_t):
         sell_threshold = prev_close * sell_t
 
         if bought['quantity'] is not 0 and row['low'] <= prev_close - sell_threshold:
-            money = (prev_close - sell_threshold) * bought['quantity']
+            #money = (prev_close - sell_threshold) * bought['quantity']
+            money = row['close'] * bought['quantity']
             money -= money * 0.003
             bought['quantity'] = 0
         elif bought['quantity'] is 0 and prev_close != 0 and row['high'] >= prev_close + buy_threshold:
-            bought['quantity'] = money / (prev_close + buy_threshold)
+            bought['quantity'] = money / row['close']
+            #bought['quantity'] = money / (prev_close + buy_threshold)
             money = 0
             trade_count += 1
 

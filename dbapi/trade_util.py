@@ -4,8 +4,8 @@ class TradeUtil:
         pass
  
     def get_account_number(self):
-        return '780202034'
+        return 'test-account'
 
     def get_account_type(self):
-        return '10'
+        return 'test-type'
 

@@ -2,9 +2,7 @@ from datetime import datetime, timedelta
 
 class TimeManager:
     current_dt = datetime.now()
-    fake_dt = datetime(2018, 11, 1, 8, 0, 0)
-
-    fake_hour = 0
+    fake_dt = datetime(2018, 10, 22, 8, 0, 0)
 
     fake_state = 0
 
@@ -16,9 +14,6 @@ class TimeManager:
         if TimeManager.fake_dt.hour > 18:
             TimeManager.fake_dt += timedelta(hours=12) # leap to next morning
 
-        if TimeManager.fake_hour != TimeManager.fake_dt.hour:
-            print(TimeManager.fake_dt)
-            TimeManager.fake_hour = TimeManager.fake_dt.hour
         return TimeManager.fake_dt
 
     def __init__(self):

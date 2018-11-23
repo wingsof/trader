@@ -2,6 +2,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+from pymongo import MongoClient
 import string
 import random
 from dbapi import config
@@ -19,7 +20,7 @@ class Td0311:
         self.quantity = 0
         self.price = 0
 
-    def SetInputValue(index, value):
+    def SetInputValue(self, index, value):
         if index == 0:
             self.order_type = value
         elif index == 1:
@@ -27,7 +28,7 @@ class Td0311:
         elif index == 2:
             self.account_type = value
         elif index == 3:
-            self.code = code
+            self.code = value
         elif index == 4:
             self.quantity = value
         elif index == 5:
@@ -48,7 +49,7 @@ class Td0311:
             LongManifest.drop_from_long(self.account_num, self.code, db) 
 
 
-    def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    def id_generator(self, size=6, chars=string.ascii_uppercase + string.digits):
         return ''.join(random.choice(chars) for _ in range(size))
 
     def GetHeaderValue(self, index):
