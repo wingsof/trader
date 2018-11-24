@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import sys
 
 class TimeManager:
     current_dt = datetime.now()
@@ -9,10 +10,14 @@ class TimeManager:
     @staticmethod
     def now():
         n = datetime.now()
+        if TimeManager.fake_dt > n:
+            print('TIME OVER')
+            sys.exit(0)
+
         time_passed = (n - TimeManager.current_dt).total_seconds()
         TimeManager.current_dt = n
         TimeManager.fake_dt += timedelta(seconds=time_passed*20)
-        if TimeManager.fake_dt.hour > 18 or TimeManager.fake_dt.weekday > 4:
+        if TimeManager.fake_dt.hour > 18 or TimeManager.fake_dt.weekday() > 4:
             TimeManager.fake_dt += timedelta(hours=12) # leap to next morning
 
         return TimeManager.fake_dt

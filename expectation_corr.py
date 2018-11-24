@@ -18,7 +18,7 @@ df = pd.DataFrame(sp_list)
 
 n = datetime.now()
 df['real_profit'] = np.zeros(len(df))
-df['code']
+
 for code in code_list:
     _, data = stock_chart.get_day_period_data(code, start_date+timedelta(days=1), datetime.now())
     price_list = list(map(lambda x: {'high': x['3'], 'low': x['4'], 'close': x['5']}, data))

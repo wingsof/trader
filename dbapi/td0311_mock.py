@@ -38,14 +38,17 @@ class Td0311:
     def BlockRequest(self):
         db = MongoClient(config.MONGO_SERVER).trader
         if self.order_type == '1': # buy
+            b = balance.get_balance(self.account_num, self.account_type)
+            b -= self.quantity * self.price
+            balance.update_balance(self.account_num, b)
             LongManifest.add_to_long(
                     self.account_num, self.code,
                     stock_code.code_to_name(self.code),
                     self.quantity, self.price, db)
         else: # sell
-            b = balance.get_balance(self.account_num, account_type)
+            b = balance.get_balance(self.account_num, self.account_type)
             b += self.quantity * self.price
-            balance.update_balance(b)
+            balance.update_balance(self.account_num, b)
             LongManifest.drop_from_long(self.account_num, self.code, db) 
 
 
