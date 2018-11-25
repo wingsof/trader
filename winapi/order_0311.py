@@ -33,7 +33,7 @@ class _OrderRealtime:
 
 
 class Order:
-    ORDER_PRICE_RANGE = (1000000, 2000000)
+    ORDER_PRICE_RANGE = (100000, 200000)
     """
     LONG DICT TYPE
         [{'code': code, 'name': name, 'quantity': quantity,
@@ -63,8 +63,13 @@ class Order:
         if quantity is 0:
             print("Failed")
         else:
-            Store.RecordOrder(code, account_num,
-                    account_type, price, quantity, is_buy)
+            if is_buy:
+                Store.RecordOrder(code, account_num,
+                        account_type, price, quantity, is_buy, expected)
+            else:
+                p = price / self.get_bought_price(code) * 100.
+                Store.RecordOrder(code, account_num,
+                        account_type, price, quantity, is_buy, p)
 
             self.obj = win32com.client.Dispatch('CpTrade.CpTd0311')
             order_type = '1' if is_buy else '2'
@@ -115,6 +120,12 @@ class Order:
             if l['code'] == code:
                 return l['quantity']
         return 0
+
+    def get_bought_price(self, code):
+        for l in self.long_list:
+            if l['code'] == code:
+                return l['price']
+        return 0    
 
     def process_buy_order(self, buy_dict):
         # [expected, price]

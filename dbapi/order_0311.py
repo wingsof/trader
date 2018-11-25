@@ -33,8 +33,13 @@ class Order:
         if quantity is 0:
             print("Failed")
         else:
-            Store.RecordOrder(code, account_num,
-                    account_type, price, quantity, is_buy, expected)
+            if is_buy:
+                Store.RecordOrder(code, account_num,
+                        account_type, price, quantity, is_buy, expected)
+            else:
+                p = price / self.get_bought_price(code) * 100.
+                Store.RecordOrder(code, account_num,
+                        account_type, price, quantity, is_buy, p)
 
             self.obj = td0311.Td0311('CpTrade.CpTd0311')
             order_type = '1' if is_buy else '2'
@@ -85,6 +90,12 @@ class Order:
                 return l['quantity']
         return 0
 
+    def get_bought_price(self, code):
+        for l in self.long_list:
+            if l['code'] == code:
+                return l['price']
+        return 0       
+
     def process_buy_order(self, buy_dict):
         # [expected, price]
         sorted_by_expected = sorted(buy_dict.items(), key=lambda kv: kv[1][0], reverse=True)
@@ -105,3 +116,9 @@ class Order:
 
     def stop(self):
         pass
+
+
+if __name__ == '__main__':
+    order = Order(['A005930'], 'test-account', 'test-type')
+    print('balance:', order.balance)
+    print(order.get_available_buy_quantity(10000))

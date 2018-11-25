@@ -39,16 +39,24 @@ class Td0311:
         db = MongoClient(config.MONGO_SERVER).trader
         if self.order_type == '1': # buy
             b = balance.get_balance(self.account_num, self.account_type)
+            print('<<<< BUY ', 'BALANCE:', b, 'PRICE*QUANTITY:', self.quantity * self.price)
+
             b -= self.quantity * self.price
             balance.update_balance(self.account_num, b)
+            print('BUY >>>>', 'FINAL:', b)
+
             LongManifest.add_to_long(
                     self.account_num, self.code,
                     stock_code.code_to_name(self.code),
                     self.quantity, self.price, db)
         else: # sell
             b = balance.get_balance(self.account_num, self.account_type)
+            print('<<<< SELL ', 'BALANCE:', b, 'PRICE*QUANTITY:', self.quantity * self.price)
+
             b += self.quantity * self.price
             balance.update_balance(self.account_num, b)
+            print('SELL >>>>', 'FINAL:', b)
+
             LongManifest.drop_from_long(self.account_num, self.code, db) 
 
 

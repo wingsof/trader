@@ -7,47 +7,59 @@ import pandas as pd
 from datetime import datetime, timedelta
 import numpy as np
 
-code_list = stock_code.get_kospi200_list()
-
-start_date = datetime(2017, 1, 1)
-end_date = start_date + timedelta(days=30)
-n = datetime.now()
-
-result_df = pd.DataFrame(columns=['date', 'mean'])
-
-no_past_codes = []
-for code in code_list:
-    l, d = stock_chart.get_day_period_data(code, start_date - timedelta(days=30), start_date)
-    if l is 0:
-        no_past_codes.append(code)
-
-for code in no_past_codes:
-    code_list.remove(code)
 
 
-while n > end_date:
-    start_date += timedelta(days=1)
-    end_date = start_date + timedelta(days=30)
+def get_window_profit(code, start_date, end_date, use_close_price):
+    initial_deposit = 10000000
+    money = initial_deposit
+    prev_close = 0
+    bought = {'quantity': 0, 'price': 0}
+    trade_count = 0
 
-    s = speculation.Speculation()
-    # exception: current kospi 200 code does have past data
-    sp_list = s.get_speculation(start_date, code_list)
-    df = pd.DataFrame(sp_list)
+    while end_date > start_date:
+        start_date += timedelta(days=1)
 
-    for code in code_list:
-        _, data = stock_chart.get_day_period_data(code, start_date, end_date)
-        price_list = list(map(lambda x: {'high': x['3'], 'low': x['4'], 'close': x['5']}, data))
+        s = speculation.Speculation()
 
+        sp_list = s.get_speculation(start_date, [code])
+        df = pd.DataFrame(sp_list)
+
+        l, data = stock_chart.get_day_period_data(code, start_date, start_date + timedelta(days=1))
+        if l == 0: continue
+
+        high, low, close = data[0]['3'], data[0]['4'], data[0]['5']    
         buy_rate = df[df['code'] == code].iloc[0]['buy_rate']
         sell_rate = df[df['code'] == code].iloc[0]['sell_rate']
+        print(df[df['code'] == code].iloc[0]['date'], buy_rate, sell_rate, df[df['code'] == code].iloc[0]['profit_expected'])
+        buy_threshold = prev_close * buy_rate
+        sell_threshold = prev_close * sell_rate
 
-        profit, _ = profit_calc.get_avg_profit_by_day_data(pd.DataFrame(price_list), buy_rate, sell_rate)
-        df.loc[df['code'] == code, 'real_profit'] = profit
+        if bought['quantity'] is not 0 and low <= prev_close - sell_threshold:
+            if use_close_price:
+                money = close * bought['quantity']
+            else:
+                money = (prev_close - sell_threshold) * bought['quantity']
+            money -= money * 0.003
+            bought['quantity'] = 0
+        elif bought['quantity'] is 0 and prev_close != 0 and high >= prev_close + buy_threshold:
+            if use_close_price:
+                bought['quantity'] = money / close
+            else:
+                bought['quantity'] = money / (prev_close + buy_threshold)
 
-    mean_v = df[df['profit_expected'] > 105]['real_profit'].mean()
-    result_df.append({'date':start_date, 'mean': mean_v}, ignore_index=True)
+            money = 0
+            trade_count += 1
 
-result_df = result_df.set_index('date')
-writer = pd.ExcelWriter('long.xlsx')
-result_df.to_excel(writer,'Sheet1')
-writer.save()
+
+        prev_close = close
+
+    left = money if money is not 0 else bought['quantity'] * prev_close
+    return (left / initial_deposit * 100, trade_count)
+
+
+code_list = stock_code.get_kospi200_list()
+start_date = datetime(2018, 11, 25)
+end_date = datetime(2018, 11, 26)
+
+for code in code_list:
+    print(get_window_profit(code, start_date, end_date, True))

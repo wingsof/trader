@@ -78,7 +78,7 @@ def get_avg_short_profit_by_day_data(df, buy_t, sell_t):
             money -= money * 0.003
             bought['quantity'] = 0
             trade_count += 1
-        elif bought['quantity'] is 0 and row['low'] <= prev_close - sell_threshold:
+        elif bought['quantity'] is 0 and prev_close != 0 and row['low'] <= prev_close - sell_threshold:
             bought['quantity'] = money / row['close']
             bought['price'] = row['close']
             bought['balance'] = money

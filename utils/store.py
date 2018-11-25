@@ -5,8 +5,11 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from sys import platform as _platform
 if _platform == 'win32' or _platform == 'win64':
     from winapi import time_manager as tm
+    from winapi import stock_code
 else:
     from dbapi import time_manager as tm
+    from dbapi import stock_code
+
 
 from datetime import datetime
 
@@ -59,6 +62,7 @@ class Store:
             Store.DB[Store.ORDER].insert_one({
                 'date': tm.TimeManager.now(),
                 'code': code,
+                'name': stock_code.code_to_name(code),
                 'account_num': account_num,
                 'account_type': account_type,
                 'price': price,

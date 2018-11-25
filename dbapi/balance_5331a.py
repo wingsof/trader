@@ -25,7 +25,6 @@ def get_balance(account_num, account_type):
         'account_type': account_type
     })
 
-    print(cursor.count())
     if cursor.count() is 0:
         _create_balance(account_num, account_type, db)
         return default_balance

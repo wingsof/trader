@@ -30,12 +30,12 @@ class _CpEvent:
                 if self.is_long:
                     if price <= self.sell_price:
                         self.status = _CpEvent.SELL
-                        print('SELL TARGET:', self.sell_price, 'CURRENT:', price)
+                        #print('SELL TARGET:', self.sell_price, 'CURRENT:', price)
                         self.current_obj.add_to_sell_cart(self.code)
                 else:
                     if price >= self.buy_price:
                         self.status = _CpEvent.BUY
-                        print('BUY TARGET:', self.buy_price, 'CURRENT:', price, 'SELL:', self.sell_price)
+                        #print('BUY TARGET:', self.buy_price, 'CURRENT:', price, 'SELL:', self.sell_price)
                         self.current_obj.add_to_buy_cart(self.code, self.profit_expected)
                     elif self.status == _CpEvent.BUY and price <= self.sell_price:
                         self.current_obj.cancel_to_buy_cart(self.code)
