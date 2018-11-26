@@ -99,10 +99,12 @@ class StockCurrent:
         self.buy_dict.pop(code, None)
 
     def set_sell_price(self, code, price):
-        self.sell_dict[code][1] = price
+        if code in self.sell_dict:
+            self.sell_dict[code][1] = price
     
     def set_buy_price(self, code, price):
-        self.buy_dict[code][1] = price
+        if code in self.buy_dict:
+            self.buy_dict[code][1] = price
 
     def get_buy_dict(self):
         return self.buy_dict

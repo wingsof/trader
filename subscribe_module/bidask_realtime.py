@@ -2,6 +2,7 @@ import win32com.client
 from pymongo import MongoClient
 import datetime
 import sys
+import time
 from PyQt5.QtCore import QCoreApplication, QTimer
 
 import connection
@@ -14,14 +15,14 @@ class CpEvent:
         self.code = code
         self.client = client
         self.db = db_conn.stock
-        self.db[self.code + '_bid']
+        self.db[self.code + '_BA']
 
     def OnReceived(self):
         d = {}
         for i in range(69):
             d[str(i)] = self.client.GetHeaderValue(i)
         d['date'] = datetime.datetime.now()
-        self.db[self.code].insert_one(d)
+        self.db[self.code + '_BA'].insert_one(d)
 
 
 class StockRealtime:
@@ -79,9 +80,11 @@ if __name__ == '__main__':
     print("Run")
     conn = connection.Connection()
 
-    if conn.is_connected():
-        app = QCoreApplication(sys.argv)
-        m = Main()
-        app.exec()
-    else:
-        print("Not Connected")
+    while not conn.is_connected():
+        time.sleep(5)
+
+    print("BID ASK Run")
+
+    app = QCoreApplication(sys.argv)
+    m = Main()
+    app.exec()

@@ -11,16 +11,17 @@ from utils import profit_calc, time_converter
 from sys import platform as _platform
 if _platform == 'win32' or _platform == 'win64':
     from winapi import stock_chart
+    from winapi import config
 else:
     from dbapi import stock_chart
+    from dbapi import config
 
-_MONGO_SERVER = 'mongodb://nnnlife.iptime.org:27017'
 _COLLECTION = 'speculation'
 
 
 class Speculation:
     def __init__(self, use_cache=True):
-        self.db = MongoClient(_MONGO_SERVER).trader
+        self.db = MongoClient(config.MONGO_SERVER).trader
         self.use_cache = use_cache
 
     def get_far_point(self, code, yesterday):

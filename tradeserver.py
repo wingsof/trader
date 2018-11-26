@@ -5,6 +5,7 @@ from pymongo import MongoClient
 from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
+import time
 
 from utils import profit_calc
 from utils import speculation
@@ -164,9 +165,6 @@ class Trader:
 
 
 if __name__ == '__main__':
-    import signal
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
-
     app = QCoreApplication(sys.argv)
     trader = Trader()
     if not trader.ready():

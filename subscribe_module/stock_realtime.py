@@ -6,7 +6,7 @@ from PyQt5.QtCore import QCoreApplication, QTimer
 
 import connection
 import stock_code
-
+import time
 
 
 class CpEvent:
@@ -77,7 +77,6 @@ class CpKospi:
         self.db.kospi
 
     def OnReceived(self):
-        print("kospi200 received")
         d = {}
         for i in range(8):
             d[str(i)] = self.client.GetHeaderValue(i)
@@ -88,17 +87,23 @@ class CpKospi:
 class KospiRealtime:
     def __init__(self, db_connection):
         self.db_connection = db_connection
-        self.code = '00800'
 
     def subscribe(self):
-        self.obj = win32com.client.Dispatch("DsCbo1.FutureIndexI")
+        self.obj = win32com.client.Dispatch("DsCbo1.StockIndexIS")
         handler = win32com.client.WithEvents(self.obj, CpKospi)
-        self.obj.SetInputValue(0, self.code)
+        self.obj.SetInputValue(0, 'U001')
         handler.set_params(self.obj, self.db_connection)
         self.obj.Subscribe()
 
+        self.kosdaq = win32com.client.Dispatch("DsCbo1.StockIndexIS")
+        handler2 = win32com.client.WithEvents(self.obj, CpKospi)
+        self.kosdaq.SetInputValue(0, 'U201')
+        handler2.set_params(self.obj, self.db_connection)
+        self.kosdaq.Subscribe()
+
     def unsubscribe(self):
         self.obj.Unsubscribe()
+        self.kosdaq.Unsubscribe()
 
 
 class Main:
@@ -154,12 +159,13 @@ class Main:
 
 
 if __name__ == '__main__':
-    print("Run")
     conn = connection.Connection()
+    while not conn.is_connected():
+        time.sleep(5)
+    
+    print("Realtime Run")
 
-    if conn.is_connected():
-        app = QCoreApplication(sys.argv)
-        m = Main()
-        app.exec()
-    else:
-        print("Not Connected")
+    app = QCoreApplication(sys.argv)
+    m = Main()
+    app.exec()
+    

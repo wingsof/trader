@@ -44,15 +44,15 @@ def get_window_profit(code, start_date, end_date, buy_rate, sell_rate):
 
 
 
-code = 'A005930'
+code = 'A005380'
 
-start_date = datetime(2018, 1, 1)
-end_date = datetime(2018, 11, 20)
+start_date = datetime(2016, 1, 1)
+end_date = datetime(2017, 1, 1)
 
-#buy_t_list = list(np.arange(0.01, 0.065, 0.005))
-#sell_t_list = list(np.arange(0.01, 0.065, 0.005))
-buy_t_list = [0.036]
-sell_t_list = [0.013]
+buy_t_list = list(np.arange(0.01, 0.065, 0.005))
+sell_t_list = list(np.arange(0.01, 0.065, 0.005))
+#buy_t_list = [0.036]
+#sell_t_list = [0.013]
 for buy_rate in buy_t_list:
     for sell_rate in sell_t_list:
         print('{0:0.3f}'.format(buy_rate), 
