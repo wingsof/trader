@@ -1,12 +1,15 @@
 import win32com.client
 from PyQt5 import QtCore
+from datetime import datetime
+from winapi import config
+from pymongo import MongoClient
 
 class _CpEvent:
     NONE = 0
     BUY = 1
     SELL = 2
 
-    def set_params(self, obj, code, position, buy_price, sell_price, profit_e, current_obj):
+    def set_params(self, obj, code, position, buy_price, sell_price, profit_e, current_obj, db):
         self.obj = obj
         self.status = _CpEvent.NONE
         self.code = code
@@ -17,8 +20,16 @@ class _CpEvent:
         self.profit_expected = profit_e
         self.highest_buy_after_hour = 0
         self.lowest_sell_after_hour = 10000000
+        self.db = db
 
     def OnReceived(self):
+        d = {}
+        for i in range(29):
+            d[str(i)] = self.obj.GetHeaderValue(i)
+        d['date'] = datetime.datetime.now()
+        
+        self.db[self.code].insert_one(d)
+
         price = self.obj.GetHeaderValue(13)
 
         if self.obj.GetHeaderValue(20) == ord('2') and self.obj.GetHeaderValue(3) <= 1520: # 09:00, 15:30
@@ -46,12 +57,13 @@ class _CpEvent:
 
 
 class _StockRealtime:
-    def __init__(self, code, is_long, info, current_obj):
+    def __init__(self, code, is_long, info, current_obj, db):
         self.obj = win32com.client.Dispatch('DsCbo1.StockCur')
         self.code = code
         self.is_long = is_long
         self.info = info 
         self.current_obj = current_obj
+        self.db = db
 
     def subscribe(self):
         handler = win32com.client.WithEvents(self.obj, _CpEvent)
@@ -59,7 +71,7 @@ class _StockRealtime:
         handler.set_params(self.obj, self.code, self.is_long, 
                 self.info['prev_close'] + self.info['prev_close'] * self.info['buy_rate'],
                 self.info['prev_close'] - self.info['prev_close'] * self.info['sell_rate'],
-                self.info['profit_expected'], self.current_obj)
+                self.info['profit_expected'], self.current_obj, self.db)
         self.obj.Subscribe()
 
     def unsubscribe(self):
@@ -73,10 +85,12 @@ class StockCurrent:
         self.realtime_bucket = []
         self.buy_dict = {}
         self.sell_dict = {}
+        self.client = MongoClient(config.MONGO_SERVER)
+
 
         for code in self.code_list:
             row = speculation[speculation['code'] == code].iloc[0]
-            self.realtime_bucket.append(_StockRealtime(code, code in self.long_codes, row, self))
+            self.realtime_bucket.append(_StockRealtime(code, code in self.long_codes, row, self, self.client.stock))
 
     def stop(self):
         for r in self.realtime_bucket:

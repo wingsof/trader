@@ -41,24 +41,14 @@ class StockRealtime:
         self.obj.Unsubscribe()
 
 
-class Main:
+class BidAsk:
     def __init__(self):
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.time_check)
         self.client = MongoClient('mongodb://192.168.0.22:27017')
         self.is_running = False
-        self.timer.start(1000)
 
-    def time_check(self):
-        n = datetime.datetime.now()
-        if n.hour > 7 and n.hour < 17 and not self.is_running and n.weekday() < 5:
-            self.start()
-        else:
-            if self.is_running and n.hour >= 17:
-                self.stop()
 
     def start(self):
-        print('Start Subscribe')
+        print('Start BidAsk Subscribe')
         self.is_running = True
         code_list = stock_code.StockCode.get_kospi200_list()
         self.kospi_stocks_realtime = []
@@ -70,21 +60,9 @@ class Main:
 
 
     def stop(self):
-        print('Stop Subscribe')
+        print('Stop BidAsk Subscribe')
         self.is_running = False
         for s in self.kospi_stocks_realtime:
             s.unsubscribe()
 
 
-if __name__ == '__main__':
-    print("Run")
-    conn = connection.Connection()
-
-    while not conn.is_connected():
-        time.sleep(5)
-
-    print("BID ASK Run")
-
-    app = QCoreApplication(sys.argv)
-    m = Main()
-    app.exec()

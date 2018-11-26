@@ -7,37 +7,8 @@ from PyQt5.QtCore import QCoreApplication, QTimer
 import connection
 import stock_code
 import time
-
-
-class CpEvent:
-    def set_params(self, code, client, db_conn):
-        self.code = code
-        self.client = client
-        self.db = db_conn.stock
-        self.db[self.code]
-
-    def OnReceived(self):
-        d = {}
-        for i in range(29):
-            d[str(i)] = self.client.GetHeaderValue(i)
-        d['date'] = datetime.datetime.now()
-        self.db[self.code].insert_one(d)
-
-
-class StockRealtime:
-    def __init__(self, code, db_connection):
-        self.db_connection = db_connection
-        self.code = code
-
-    def subscribe(self):
-        self.obj = win32com.client.Dispatch("DsCbo1.StockCur")
-        handler = win32com.client.WithEvents(self.obj, CpEvent)
-        self.obj.SetInputValue(0, self.code)
-        handler.set_params(self.code, self.obj, self.db_connection)
-        self.obj.Subscribe()
-
-    def unsubscribe(self):
-        self.obj.Unsubscribe()
+import bidask_realtime
+import stock_daily_insert
 
 
 class CpWorldCur:
@@ -71,17 +42,17 @@ class StockWorldRealtime:
 
 
 class CpKospi:
-    def set_params(self, client, db_conn):
+    def set_params(self, code, client, db_conn):
         self.client = client
         self.db = db_conn.stock
-        self.db.kospi
+        self.code = code
 
     def OnReceived(self):
         d = {}
         for i in range(8):
             d[str(i)] = self.client.GetHeaderValue(i)
         d['date'] = datetime.datetime.now()
-        self.db.kospi.insert_one(d)
+        self.db[self.code].insert_one(d)
 
 
 class KospiRealtime:
@@ -89,57 +60,47 @@ class KospiRealtime:
         self.db_connection = db_connection
 
     def subscribe(self):
-        self.obj = win32com.client.Dispatch("DsCbo1.StockIndexIS")
-        handler = win32com.client.WithEvents(self.obj, CpKospi)
-        self.obj.SetInputValue(0, 'U001')
-        handler.set_params(self.obj, self.db_connection)
-        self.obj.Subscribe()
+        self.kospi = win32com.client.Dispatch("DsCbo1.StockIndexIS")
+        handler = win32com.client.WithEvents(self.kospi, CpKospi)
+        self.kospi.SetInputValue(0, 'U001')
+        handler.set_params('U001', self.kospi, self.db_connection)
+        self.kospi.Subscribe()
 
         self.kosdaq = win32com.client.Dispatch("DsCbo1.StockIndexIS")
-        handler2 = win32com.client.WithEvents(self.obj, CpKospi)
+        handler2 = win32com.client.WithEvents(self.kosdaq, CpKospi)
         self.kosdaq.SetInputValue(0, 'U201')
-        handler2.set_params(self.obj, self.db_connection)
+        handler2.set_params('U201', self.kosdaq, self.db_connection)
         self.kosdaq.Subscribe()
 
+        self.kospi200 = win32com.client.Dispatch("DsCbo1.StockIndexIS")
+        handler3 = win32com.client.WithEvents(self.kospi200, CpKospi)
+        self.kospi200.SetInputValue(0, 'U180')
+        handler3.set_params('U180', self.kospi200, self.db_connection)
+        self.kospi200.Subscribe()
+
     def unsubscribe(self):
-        self.obj.Unsubscribe()
+        self.kospi.Unsubscribe()
         self.kosdaq.Unsubscribe()
+        self.kospi200.Unsubscribe()
 
 
-class Main:
+class WorldSubscribe:
     def __init__(self):
         self.world_list = ['JP#NI225', '.DJI', '399102', '95079',
                             'CZ#399106', 'COMP', 'HK#HS', 'HSCE',
                             'GR#DAX', 'JP#NI225', 'SHANG', 'SPX', 'EDNH', 'SOX', 'ENXH']
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.time_check)
+
         self.client = MongoClient('mongodb://192.168.0.22:27017')
         self.is_running = False
-        self.timer.start(1000)
-
-    def time_check(self):
-        n = datetime.datetime.now()
-        if n.hour > 7 and n.hour < 17 and not self.is_running and n.weekday() < 5:
-            self.start()
-        else:
-            if self.is_running and n.hour >= 17:
-                self.stop()
 
     def start(self):
-        print('Start Subscribe')
+        print('Start World Subscribe')
         self.is_running = True
-        code_list = stock_code.StockCode.get_kospi200_list()
-        self.kospi_stocks_realtime = []
-        for c in code_list:
-            self.kospi_stocks_realtime.append(StockRealtime(c, self.client))
-
+ 
         self.kospi_realtime =  KospiRealtime(self.client)
         self.world_realtime = []
         for c in self.world_list:
             self.world_realtime.append(StockWorldRealtime(c, self.client))
-
-        for s in self.kospi_stocks_realtime:
-            s.subscribe()
 
         self.kospi_realtime.subscribe()
 
@@ -147,10 +108,8 @@ class Main:
             w.subscribe()
 
     def stop(self):
-        print('Stop Subscribe')
+        print('Stop World Subscribe')
         self.is_running = False
-        for s in self.kospi_stocks_realtime:
-            s.unsubscribe()
 
         self.kospi_realtime.unsubscribe()
 
@@ -158,12 +117,34 @@ class Main:
             w.unsubscribe()
 
 
+class Main:
+    def __init__(self):
+        self.is_running = False
+        self.world = WorldSubscribe()
+        self.bidask = bidask_realtime.BidAsk()
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.time_check)
+        self.timer.start(1000)
+
+
+    def time_check(self):
+        n = datetime.datetime.now()
+        if n.hour > 7 and n.hour < 18 and not self.is_running and n.weekday() < 5:
+            self.world.start()
+            self.bidask.start()
+        else:
+            if self.is_running and n.hour >= 18:
+                self.world.stop()
+                self.bidask.stop()
+                stock_daily_insert.daily_insert_data()
+
+
 if __name__ == '__main__':
     conn = connection.Connection()
     while not conn.is_connected():
         time.sleep(5)
     
-    print("Realtime Run")
+    print("World Realtime Run")
 
     app = QCoreApplication(sys.argv)
     m = Main()

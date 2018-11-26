@@ -165,6 +165,12 @@ class Trader:
 
 
 if __name__ == '__main__':
+    if _platform == 'win32' or _platform == 'win64':
+        conn = connection.Connection()
+        while not conn.is_connected():
+            time.sleep(5)
+
+
     app = QCoreApplication(sys.argv)
     trader = Trader()
     if not trader.ready():

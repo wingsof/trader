@@ -2,30 +2,37 @@ import win32com.client
 
 
 class StockCode:
+    @staticmethod
     def get_kospi_code_list():
         obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
         return obj.GetStockListByMarket(1)
 
+    @staticmethod
     def get_kosdaq_code_list():
         obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
         return obj.GetStockListByMarket(2)
 
+    @staticmethod
     def is_kospi_200(code):
         obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
         return obj.GetStockKospi200Kind(code)
 
+    @staticmethod
     def is_company_stock(code):
         obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
         return obj.GetStockSectionKind(code) == 1
 
+    @staticmethod
     def get_country_code():
         obj = win32com.client.Dispatch('CpUtil.CpUsCode')
         return obj.GetUsCodeList(2)
 
+    @staticmethod
     def get_us_name(code):
         obj = win32com.client.Dispatch('CpUtil.CpUsCode')
         return obj.GetNameByUsCode(code)
 
+    @staticmethod
     def get_kospi200_list():
         kospi_200 = []
         code_list = StockCode.get_kospi_code_list()
@@ -34,18 +41,22 @@ class StockCode:
                 kospi_200.append(code)
         return kospi_200
 
+    @staticmethod
     def code_to_name(code):
         obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
         return obj.CodeToName(code)
 
+    @staticmethod
     def is_there_warning(code):
         obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
         return obj.GetStockControlKind (code) > 0 or obj.GetStockStatusKind(code) > 0 or obj.GetStockSupervisionKind(code) > 0
 
+    @staticmethod
     def get_industry_name(code):
         obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
         return obj.GetIndustryName(obj.GetStockIndustryCode(code))
 
+    @staticmethod
     def get_us_code():
         obj = win32com.client.Dispatch("CpUtil.CpUsCode")
         return obj.GetUsCodeList(1)

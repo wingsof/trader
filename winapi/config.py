@@ -1,3 +1,3 @@
 
 
-MONGO_SERVER = 'mongodb://nnnlife.iptime.org:27017'
+MONGO_SERVER = 'mongodb://192.168.0.22:27017'
