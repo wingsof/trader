@@ -95,13 +95,17 @@ class Trader:
 
 
     def subscribe(self):
+        print('TraderServer Subscribe START')
         self.subscriber = stock_current.StockCurrent(
                 self.code_list, self.long_codes, self.speculation.get_speculation(self.time_manager.get_today(), self.code_list))
         self.subscriber.start()
+        print('TraderServer Subscribe DONE')
 
     def unsubscribe(self):
+        print('TraderServer Unsubscribe START')
         self.subscriber.stop()
         self.order.stop()
+        print('TraderServer Unsubscribe DONE')
 
     def get_db_connection(self):
         try:
@@ -115,10 +119,10 @@ class Trader:
 
     def _loop_print(self):
         t = TimeManager.now()
-        if self.last_loop_time[0] != t.hour or self.last_loop_time[1] != t.min:
+        if self.last_loop_time[0] != t.hour or self.last_loop_time[1] != t.minute:
             print('Main Loop', TimeManager.now())
             self.last_loop_time[0] = t.hour
-            self.last_loop_time[1] = t.min
+            self.last_loop_time[1] = t.minute
 
     def time_check(self):
         self._loop_print()

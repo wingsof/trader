@@ -132,8 +132,10 @@ class Main:
         if n.hour > 7 and n.hour < 18 and not self.is_running and n.weekday() < 5:
             self.world.start()
             self.bidask.start()
+            self.is_running = True
         else:
             if self.is_running and n.hour >= 18:
+                self.is_running = False
                 self.world.stop()
                 self.bidask.stop()
                 stock_daily_insert.daily_insert_data()

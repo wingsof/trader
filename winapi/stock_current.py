@@ -26,8 +26,8 @@ class _CpEvent:
         d = {}
         for i in range(29):
             d[str(i)] = self.obj.GetHeaderValue(i)
-        d['date'] = datetime.datetime.now()
-        
+        d['date'] = datetime.now()
+
         self.db[self.code].insert_one(d)
 
         price = self.obj.GetHeaderValue(13)

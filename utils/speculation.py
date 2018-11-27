@@ -37,6 +37,7 @@ class Speculation:
     def get_speculation(self, today, code_list, reverse=False):
         #print('Start Speculation')
         collection_name = _COLLECTION
+        today = datetime(today.year, today.month, today.day)
 
         if reverse:
             collection_name += '_short'

@@ -5,6 +5,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import win32com.client
 from utils import time_converter
 from datetime import datetime, timedelta
+from winapi import connection
+import time
 
     # stock chart fields
     # 6: D - day, W - week, M - month, m - minute, T - tick
@@ -19,6 +21,11 @@ from datetime import datetime, timedelta
 def get_period_data_raw(code, start_date, end_date = 0, period_type='m'):
     #print("Get Period data ", start_date, end_date, time_converter.datetime_to_intdate(start_date), time_converter.datetime_to_intdate(end_date))
     data = []
+    conn = connection.Connection()
+    while conn.request_left_count() <= 0:
+        print('Request Limit is reached')
+        time.sleep(1)
+
     chart_obj= win32com.client.Dispatch("CpSysDib.StockChart")
     chart_obj.SetInputValue(0, code)
     chart_obj.SetInputValue(1, ord('1'))
