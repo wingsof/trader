@@ -52,7 +52,7 @@ class Speculation:
             trend_start_date = self.get_far_point(code, yesterday)
 
             cursor = self.db[collection_name].find({'code': code, 'date': yesterday, 'start_date': trend_start_date})
-            if self.use_cache and cursor.count() is 1:
+            if self.use_cache and cursor.count() == 1:
                 c = list(cursor)
                 sp = sp.append(c[0], ignore_index=True)
             else:

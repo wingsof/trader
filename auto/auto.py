@@ -24,18 +24,18 @@ if __name__ == '__main__':
     while True:
         time.sleep(1)
 
-        if state is 0 and win.keyboard_security_found():
+        if state == 0 and win.keyboard_security_found():
             time.sleep(5)
             winkey.send_key(winkey.VK_CODE['enter'])
             state = 1
             print('Keyboard good')
-        elif state is 1:
+        elif state == 1:
             if win.starter_found():
                 state = 2
                 time.sleep(5)
                 send_word('dyddn007')              
                 send_word('gkdtkd6^tkfwk')
                 winkey.send_key(winkey.VK_CODE['enter'])
-        elif state is 2:
+        elif state == 2:
             time.sleep(10)
             sys.exit(0)

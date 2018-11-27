@@ -63,12 +63,12 @@ class Trader:
 
         conn = connection.Connection()
         if not conn.is_connected():
-            print('Network not connected')
+            print('Network not connected', flush=True)
             return False
 
         self.get_db_connection()
         if Store.DB == None:
-            print('DB Connection failed')
+            print('DB Connection failed', flush=True)
             return False
 
         self.trade_util = tu.TradeUtil()
@@ -95,17 +95,17 @@ class Trader:
 
 
     def subscribe(self):
-        print('TraderServer Subscribe START')
+        print('TraderServer Subscribe START', flush=True)
         self.subscriber = stock_current.StockCurrent(
                 self.code_list, self.long_codes, self.speculation.get_speculation(self.time_manager.get_today(), self.code_list))
         self.subscriber.start()
-        print('TraderServer Subscribe DONE')
+        print('TraderServer Subscribe DONE', flush=True)
 
     def unsubscribe(self):
-        print('TraderServer Unsubscribe START')
+        print('TraderServer Unsubscribe START', flush=True)
         self.subscriber.stop()
         self.order.stop()
-        print('TraderServer Unsubscribe DONE')
+        print('TraderServer Unsubscribe DONE', flush=True)
 
     def get_db_connection(self):
         try:
@@ -120,7 +120,7 @@ class Trader:
     def _loop_print(self):
         t = TimeManager.now()
         if self.last_loop_time[0] != t.hour or self.last_loop_time[1] != t.minute:
-            print('Main Loop', TimeManager.now())
+            print('Main Loop', TimeManager.now(), flush=True)
             self.last_loop_time[0] = t.hour
             self.last_loop_time[1] = t.minute
 
@@ -178,7 +178,7 @@ if __name__ == '__main__':
     app = QCoreApplication(sys.argv)
     trader = Trader()
     if not trader.ready():
-        print('Not satisfied conditions')
+        print('Not satisfied conditions', flush=True)
         sys.exit(1)
 
     trader.start()

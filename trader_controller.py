@@ -39,24 +39,24 @@ class VBoxControl:
                             datetime(now.year, now.month, now.day, 17, 0, 0))
 
         if now.weekday() < 5:
-            if self.subscriber is None and now >= subscriber_cycle[0] and now <= subscriber_cycle[1]:
+            if self.subscriber == None and now >= subscriber_cycle[0] and now <= subscriber_cycle[1]:
                 self.subscriber = Machine(self.vbox, 'win64')
                 print(now, 'Running Subscriber')
-            elif self.subscriber is not None and (now < subscriber_cycle[0] or now > subscriber_cycle[1]):
+            elif self.subscriber != None and (now < subscriber_cycle[0] or now > subscriber_cycle[1]):
                 self.subscriber.stop()
                 self.subscriber = None
                 print(now, 'Stop Subscriber')
 
-            if self.trader is None and now >= trader_cycle[0] and now <= trader_cycle[1]:
+            if self.trader == None and now >= trader_cycle[0] and now <= trader_cycle[1]:
                 self.trader = Machine(self.vbox, 'win64-trader')
                 print(now, 'Running Trader')
-            elif self.trader is not None and (now < trader_cycle[0] or now > trader_cycle[1]):
+            elif self.trader != None and (now < trader_cycle[0] or now > trader_cycle[1]):
                 self.trader.stop()
                 self.trader = None
                 print(now, 'Stop Trader')
 
         if now.hour >= 4 and (self.last_speculation_date.year != now.year or self.last_speculation_date.month != now.month or self.last_speculation_date.day != now.day):
-            if self.subscriber is None and self.trader is None:
+            if self.subscriber == None and self.trader == None:
                 self.last_speculation_date = now
                 print('Start Speculation Processing')
                 speculation.Speculation().get_speculation(now, stock_code.get_kospi200_list())

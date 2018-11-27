@@ -34,27 +34,27 @@ class TimeManager:
 
     def is_order_collect_time(self, t=datetime.now()):
         t = TimeManager.now()
-        if TimeManager.fake_state is 1 and t.hour >= 15 and t.minute > 20:
+        if TimeManager.fake_state == 1 and t.hour >= 15 and t.minute > 20:
             TimeManager.fake_state = 2
             return True
-        elif t.hour is 15 and t.minute > 20 and t.minute <= 27:
+        elif t.hour == 15 and t.minute > 20 and t.minute <= 27:
             TimeManager.fake_state = 2
             return True
         return False
 
     def is_order_start_time(self, t=datetime.now()):
         t = TimeManager.now()
-        if TimeManager.fake_state is 2 and t.hour >= 15 and t.minute > 27:
+        if TimeManager.fake_state == 2 and t.hour >= 15 and t.minute > 27:
             TimeManager.fake_state = 0
             return True
-        if TimeManager.fake_state is 2 or (t.hour is 15 and t.minute > 27 and t.minute < 30):
+        if TimeManager.fake_state == 2 or (t.hour == 15 and t.minute > 27 and t.minute < 30):
             TimeManager.fake_state = 0
             return True
         return False
     
     def is_order_wait_done_time(self, t=datetime.now()):
         t = TimeManager.now()
-        if t.hour is 16 and t.minute > 30:
+        if t.hour == 16 and t.minute > 30:
             return True
         return False
 

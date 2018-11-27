@@ -11,20 +11,20 @@ def get_avg_profit_by_day_data(df, buy_t, sell_t):
         buy_threshold = prev_close * buy_t
         sell_threshold = prev_close * sell_t
 
-        if bought['quantity'] is not 0 and row['low'] <= prev_close - sell_threshold:
+        if bought['quantity'] != 0 and row['low'] <= prev_close - sell_threshold:
             #money = (prev_close - sell_threshold) * bought['quantity']
             money = row['close'] * bought['quantity']
             money -= money * 0.003
             bought['quantity'] = 0
             trade_count += 1
-        elif bought['quantity'] is 0 and prev_close != 0 and row['high'] >= prev_close + buy_threshold:
+        elif bought['quantity'] == 0 and prev_close != 0 and row['high'] >= prev_close + buy_threshold:
             bought['quantity'] = money / row['close']
             #bought['quantity'] = money / (prev_close + buy_threshold)
             money = 0
 
         prev_close = row['close']
 
-    left = money if money is not 0 else bought['quantity'] * prev_close
+    left = money if money != 0 else bought['quantity'] * prev_close
     return left / initial_deposit * 100, trade_count
 
 
@@ -40,7 +40,7 @@ def get_best_rate(df, reverse=False):
             else:
                 profit, trade_count = get_avg_short_profit_by_day_data(df, buy_t, sell_t)
 
-            if trade_count is 0: continue
+            if trade_count == 0: continue
             if buy_t in buy_range:
                 buy_range[buy_t].extend([profit])
             else:
@@ -73,12 +73,12 @@ def get_avg_short_profit_by_day_data(df, buy_t, sell_t):
         buy_threshold = prev_close * buy_t
         sell_threshold = prev_close * sell_t
 
-        if bought['quantity'] is not 0 and row['high'] >= prev_close + buy_threshold:
+        if bought['quantity'] != 0 and row['high'] >= prev_close + buy_threshold:
             money = (bought['price'] - row['close']) * bought['quantity'] + bought['balance']
             money -= money * 0.003
             bought['quantity'] = 0
             trade_count += 1
-        elif bought['quantity'] is 0 and prev_close != 0 and row['low'] <= prev_close - sell_threshold:
+        elif bought['quantity'] == 0 and prev_close != 0 and row['low'] <= prev_close - sell_threshold:
             bought['quantity'] = money / row['close']
             bought['price'] = row['close']
             bought['balance'] = money
@@ -86,5 +86,5 @@ def get_avg_short_profit_by_day_data(df, buy_t, sell_t):
 
         prev_close = row['close']
 
-    left = money if money is not 0 else (bought['price'] - prev_close) * bought['quantity'] + bought['balance']
+    left = money if money != 0 else (bought['price'] - prev_close) * bought['quantity'] + bought['balance']
     return left / initial_deposit * 100, trade_count

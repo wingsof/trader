@@ -60,7 +60,7 @@ class Order:
         else:
             quantity = self.get_available_sell_quantity(code)
 
-        if quantity is 0:
+        if quantity == 0:
             print("Failed")
         else:
             if is_buy:

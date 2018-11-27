@@ -23,9 +23,9 @@ class Store:
 
     @staticmethod
     def RecordStateTransit(old_state, new_state, msg=''):
-        print(tm.TimeManager.now(), old_state, new_state, msg)
+        print(tm.TimeManager.now(), old_state, new_state, msg, flush=True)
 
-        if Store.DB is not None:
+        if Store.DB != None:
             Store.DB[Store.STATE_COLLECTION].insert_one({
                 'date': datetime.now(),
                 'OLD': old_state,
@@ -41,7 +41,7 @@ class Store:
              'sell_available': sell_available, 'price': price,
              'all_price': all_price}
         """
-        if Store.DB is not None:
+        if Store.DB != None:
             t = tm.TimeManager.now()
             long_item['date'] = datetime(t.year, t.month, t.day)
             # prevent duplications while testing
@@ -50,15 +50,15 @@ class Store:
                 'code': long_item['code']
             })
 
-            if cursor.count() is 0:
+            if cursor.count() == 0:
                 print('(LONG_LIST)\t', 'CODE:', long_item['code'], 
-                        'NAME:', long_item['name'], 'QUANTITY:', long_item['quantity'])
+                        'NAME:', long_item['name'], 'QUANTITY:', long_item['quantity'], flush=True)
                 Store.DB[Store.LONG_MANIFEST].insert_one(long_item)
 
     @staticmethod
     def RecordOrder(code, account_num, account_type, price, quantity, is_buy, expected):
-        print('(ORDER)\t', tm.TimeManager.now(), code, price, quantity, 'buy:', is_buy)
-        if Store.DB is not None:
+        print('(ORDER)\t', tm.TimeManager.now(), code, price, quantity, 'buy:', is_buy, flush=True)
+        if Store.DB != None:
             Store.DB[Store.ORDER].insert_one({
                 'date': tm.TimeManager.now(),
                 'code': code,
@@ -73,18 +73,18 @@ class Store:
 
     @staticmethod
     def RecordOrderResult(r):
-        if Store.DB is not None:
+        if Store.DB != None:
             r['date'] = tm.TimeManager.now()
             Store.DB[Store.ORDER_RESULT].insert_one(r)
             print('(ORDER RESULT)\t', 'ORDER_ID:', r['order_num'], 'TYPE_CODE:', r['type_code'],
                     'CODE:', r['code'], 'QUANTITY:', r['quantity'],
-                    'PRICE:', r['price'], 'ORDER TYPE:', r['order_type'])
+                    'PRICE:', r['price'], 'ORDER TYPE:', r['order_type'], flush=True)
 
     @staticmethod
     def RecordRealtimeResult(r):
-        if Store.DB is not None:
+        if Store.DB != None:
             r['date'] = tm.TimeManager.now()
             Store.DB[Store.ORDER_REALTIME].insert_one(r)
             print('(ORDER NOTIFY)\t', 'ORDER_ID:', r['order_num'], 'FLAG:', r['flag'],
                     'CODE:', r['code'], 'QUANTITY:', r['quantity'], 'PRICE:', r['price'],
-                    'TOTAL_QUANTITY:', r['total_quantity'])
+                    'TOTAL_QUANTITY:', r['total_quantity'], flush=True)
