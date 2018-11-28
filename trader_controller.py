@@ -32,7 +32,7 @@ class VBoxControl:
 
     def time_check(self):
         now = datetime.now()
-        print(now, 'TIME CHECK')
+        print(now, 'TIME CHECK', flush=True)
         subscriber_cycle = (datetime(now.year, now.month, now.day, 7, 0, 0),
                             datetime(now.year, now.month, now.day, 18, 30, 0))
         trader_cycle = (datetime(now.year, now.month, now.day, 7, 30, 0),
