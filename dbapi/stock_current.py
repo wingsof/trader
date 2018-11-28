@@ -26,7 +26,7 @@ class _CpEvent:
         price = self.obj.GetHeaderValue(13)
 
         if self.obj.GetHeaderValue(20) == ord('2') and self.obj.GetHeaderValue(3) <= 1520: # 09:00, 15:30
-            if self.status is _CpEvent.NONE:
+            if self.status == _CpEvent.NONE:
                 if self.is_long:
                     if price <= self.sell_price:
                         self.status = _CpEvent.SELL
@@ -37,15 +37,15 @@ class _CpEvent:
                         self.status = _CpEvent.BUY
                         #print('BUY TARGET:', self.buy_price, 'CURRENT:', price, 'SELL:', self.sell_price)
                         self.current_obj.add_to_buy_cart(self.code, self.profit_expected)
-                    elif self.status == _CpEvent.BUY and price <= self.sell_price:
-                        self.current_obj.cancel_to_buy_cart(self.code)
+            elif self.status == _CpEvent.BUY and price <= self.sell_price:
+                self.current_obj.cancel_to_buy_cart(self.code)
 
-        elif self.status is not _CpEvent.NONE and self.obj.GetHeaderValue(20) == ord('5'): # 15:20-15:30
-            if self.status is _CpEvent.BUY and self.obj.GetHeaderValue(14) == ord('1'):
+        elif self.status != _CpEvent.NONE and self.obj.GetHeaderValue(20) == ord('5'): # 15:20-15:30
+            if self.status == _CpEvent.BUY and self.obj.GetHeaderValue(14) == ord('1'):
                 if price > self.highest_buy_after_hour:
                     self.highest_buy_after_hour = price
                     self.current_obj.set_buy_price(self.code, price)
-            elif self.status is _CpEvent.SELL and self.obj.GetHeaderValue(14) == ord('2'):
+            elif self.status == _CpEvent.SELL and self.obj.GetHeaderValue(14) == ord('2'):
                 if price < self.lowest_sell_after_hour:
                     self.lowest_sell_after_hour = price
                     self.current_obj.set_sell_price(self.code, price)
@@ -94,20 +94,20 @@ class StockCurrent:
 
     def add_to_buy_cart(self, code, expected):
         if expected > 105.:
-            print('BUY CART(%d)' % len(self.buy_dict), code, expected)
+            print('BUY CART(%d)' % len(self.buy_dict), code, expected, flush=True)
             self.buy_dict[code] = [expected, 0]
 
     def add_to_sell_cart(self, code):
-        print('SELL CART(%d)' % len(self.sell_dict), code)
+        print('SELL CART(%d)' % len(self.sell_dict), code, flush=True)
         self.sell_dict[code] = [0, 0]
+
+    def cancel_to_buy_cart(self, code):
+        self.buy_dict.pop(code, None)
 
     def set_sell_price(self, code, price):
         if code in self.sell_dict:
             self.sell_dict[code][1] = price
     
-    def cancel_to_buy_cart(self, code):
-        self.buy_dict.pop(code, None)
-
     def set_buy_price(self, code, price):
         if code in self.buy_dict:
             self.buy_dict[code][1] = price

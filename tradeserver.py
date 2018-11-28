@@ -123,6 +123,13 @@ class Trader:
             print('Main Loop', TimeManager.now(), flush=True)
             self.last_loop_time[0] = t.hour
             self.last_loop_time[1] = t.minute
+            self.network_check()
+
+    def network_check(self):
+        conn = connection.Connection()
+        if not conn.is_connected():
+            print('ALERT: Network not connected', flush=True)
+            # do something to alert me
 
     def time_check(self):
         self._loop_print()
@@ -149,7 +156,9 @@ class Trader:
                 self.status = Trader.ORDER_COLLECT
 
         elif self.status == Trader.ORDER_COLLECT:
+            print('ORDER COLLECT STATUS', TimeManager.now(), flush=True)
             if self.time_manager.is_order_start_time():
+                print('ORDER COLLECT TO START', TimeManager.now(), flush=True)
                 Store.RecordStateTransit('ORDER_COLLECT', 'ORDER_START')
                 self.status = Trader.ORDER_START
                 self.order = order.Order(self.long_manifest.get_long_list(), 

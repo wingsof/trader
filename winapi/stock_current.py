@@ -1,3 +1,7 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import win32com.client
 from PyQt5 import QtCore
 from datetime import datetime
@@ -42,8 +46,8 @@ class _CpEvent:
                     if price >= self.buy_price:
                         self.status = _CpEvent.BUY
                         self.current_obj.add_to_buy_cart(self.code, self.profit_expected)
-                    elif self.status == _CpEvent.BUY and price <= self.sell_price:
-                        self.current_obj.cancel_to_buy_cart(self.code)
+            elif self.status == _CpEvent.BUY and price <= self.sell_price:
+                self.current_obj.cancel_to_buy_cart(self.code)
 
         elif self.status != _CpEvent.NONE and self.obj.GetHeaderValue(20) == ord('5'): # 15:20-15:30
             if self.status == _CpEvent.BUY and self.obj.GetHeaderValue(14) == ord('1'):
