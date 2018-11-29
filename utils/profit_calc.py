@@ -11,10 +11,10 @@ def right_profit(bought, low, high, close, prev_close, buy_threshold, sell_thres
         money = close * bought['quantity']
         money -= money * 0.003
         bought['quantity'] = 0
-        trade_count += 1
     elif bought['quantity'] == 0 and prev_close != 0 and high >= prev_close + buy_threshold:
         bought['quantity'] = money / close
         money = 0
+        trade_count += 1
 
     return money, trade_count
 
@@ -36,12 +36,12 @@ def short_profit(bought, low, high, close, prev_close, buy_threshold, sell_thres
         money = (bought['price'] - close) * bought['quantity'] + bought['balance']
         money -= money * 0.003
         bought['quantity'] = 0
-        trade_count += 1
     elif bought['quantity'] == 0 and prev_close != 0 and low <= prev_close - sell_threshold:
         bought['quantity'] = money / close
         bought['price'] = close
         bought['balance'] = money
         money = 0
+        trade_count += 1
 
     return money, trade_count
 
@@ -50,11 +50,11 @@ def right_sell_profit(bought, low, high, close, prev_close, buy_threshold, sell_
         money = close * bought['quantity']
         money -= money * 0.003
         bought['quantity'] = 0
-        trade_count += 1
     elif bought['quantity'] == 0 and prev_close != 0 and high >= prev_close + buy_threshold:
         bought['quantity'] = money / close
         bought['price'] = close
         money = 0
+        trade_count += 1
 
     return money, trade_count
 
@@ -77,8 +77,9 @@ def get_avg_profit_by_day_data(df, buy_t, sell_t, method):
         buy_threshold = prev_close * buy_t
         sell_threshold = prev_close * sell_t
 
-        money, trade_count = method_apply[method](bought, row['low'], row['high'],
+        money, tc = method_apply[method](bought, row['low'], row['high'],
                 row['close'], prev_close, buy_threshold, sell_threshold, money, trade_count)
+        trade_count += tc
         prev_close = row['close']
 
     left = money if money != 0 else bought['quantity'] * prev_close
@@ -117,4 +118,61 @@ def get_best_rate(df, method=NORMAL):
     return sorted_by_buy[0][0], sorted_by_sell[0][0], (b_avg + s_avg) / 2
 
 
+if __name__ == '__main__':
+    bought = {'quantity': 0, 'price': 0, 'balance': 0}
 
+    #(bought, low, high, close, prev_close, buy_threshold, sell_threshold, money, trade_count)
+    money, trade_count = right_profit(bought, 100, 300, 200, 200, 100, 90, 1000, 0)
+    assert money == 0
+    assert trade_count == 1
+    assert bought['quantity'] == 1000 / 200
+    money, trade_count = right_profit(bought, 100, 300, 200, 200, 50, 100, 0, 0)
+    assert trade_count == 0 # not counting trade_count when sell
+    m = 1000 / 200 * 200
+    assert money == m - (m*0.003)
+    assert bought['quantity'] == 0
+    money, trade_count = right_profit(bought, 100, 300, 200, 200, 101, 101, 1000, 0)
+    # for instsance, high should be greater than close(200) + buy_threshold(101) to buy
+    assert trade_count == 0
+    assert money == 1000
+    assert bought['quantity'] == 0
+
+
+    bought = {'quantity': 0, 'price': 0, 'balance': 0}
+    money, trade_count = left_profit(bought, 100, 300, 200, 200, 100, 101, 1000, 0)
+    assert money == 1000
+    assert trade_count == 0
+    assert bought['quantity'] == 0
+    money, trade_count = left_profit(bought, 100, 300, 200, 200, 100, 50, 1000, 0)
+    assert money == 0
+    assert trade_count == 1
+    assert bought['quantity'] == 1000 / 200
+    money, trade_count = left_profit(bought, 100, 300, 200, 200, 101, 50, 0, 0)
+    assert money == 0
+    assert trade_count == 0
+    assert bought['quantity'] == 1000 / 200
+    money, trade_count = left_profit(bought, 100, 300, 200, 200, 100, 50, 0, 0)
+    assert trade_count == 0
+    assert bought['quantity'] == 0
+    m = 1000 / 200 * 200
+    assert money == m - (m*0.003)
+
+
+    money, trade_count = right_sell_profit(bought, 100, 300, 200, 200, 100, 90, 1000, 0)
+    assert money == 0
+    assert trade_count == 1
+    assert bought['quantity'] == 1000 / 200
+    money, trade_count = right_sell_profit(bought, 100, 220, 230, 200, 200, 100, 0, 0)
+    assert trade_count == 0 # not counting trade_count when sell
+    m = 1000 / 200 * 230
+    assert money == m - (m*0.003)
+    assert bought['quantity'] == 0
+
+    money, trade_count = short_profit(bought, 100, 300, 200, 200, 100, 90, 1000, 0)
+    assert money == 0
+    assert trade_count == 1
+    assert bought['quantity'] == 1000 / 200
+    money, trade_count = short_profit(bought, 100, 300, 180, 200, 100, 100, 0, 0)
+    m = 200 * 5 - 180 * 5 + 1000
+    assert money == m - (m * 0.003)
+    assert bought['quantity'] == 0

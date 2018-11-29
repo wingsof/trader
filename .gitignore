@@ -4,3 +4,4 @@ __pycache__
 *.xlsx
 .idea
 running_log
+output
