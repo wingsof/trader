@@ -43,15 +43,15 @@ def get_window_profit(code, start_date, end_date, method):
         elif len(price_list) > 1:
             print('Something wrong', today)
 
-        print(len(price_list))
         low = price_list[0]['low']
         high = price_list[0]['high']
         close = price_list[0]['close']
         buy_threshold = prev_close * buy_rate
         sell_threshold = prev_close * sell_rate
         
-        money, trade_count = method_apply[method](bought, low, high, close,
+        money, t = method_apply[method](bought, low, high, close,
                 prev_close, buy_threshold, sell_threshold, money, trade_count)
+        trade_count += t
 
         prev_close = close
         today += timedelta(days=1)
@@ -60,9 +60,16 @@ def get_window_profit(code, start_date, end_date, method):
     return left / initial_deposit * 100, trade_count
 
 code_list = stock_code.get_kospi200_list()
-start_date = datetime(2017, 11, 1)
-end_date = datetime(2017, 12, 1)
+start_date = datetime(2015, 11, 1)
+end_date = datetime(2018, 11, 29)
 
 method = [profit_calc.NORMAL, profit_calc.SHORT, profit_calc.MEET_DESIRED_PROFIT, profit_calc.BUY_WHEN_BEARISH]
 
-print(get_window_profit('A005930', start_date, end_date, profit_calc.SHORT))
+
+#print(get_window_profit('A005930', start_date, end_date, profit_calc.SHORT))
+
+for code in code_list:
+    print(get_window_profit(code, start_date, end_date, profit_calc.NORMAL))
+    print(get_window_profit(code, start_date, end_date, profit_calc.SHORT))
+    print(get_window_profit(code, start_date, end_date, profit_calc.MEET_DESIRED_PROFIT))
+    print(get_window_profit(code, start_date, end_date, profit_calc.BUY_WHEN_BEARISH))
