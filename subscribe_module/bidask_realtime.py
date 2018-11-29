@@ -48,7 +48,7 @@ class BidAsk:
 
 
     def start(self):
-        print('Start BidAsk Subscribe')
+        print('Start BidAsk Subscribe', flush=True)
         self.is_running = True
         code_list = stock_code.StockCode.get_kospi200_list()
         self.kospi_stocks_realtime = []
@@ -60,7 +60,7 @@ class BidAsk:
 
 
     def stop(self):
-        print('Stop BidAsk Subscribe')
+        print('Stop BidAsk Subscribe', flush=True)
         self.is_running = False
         for s in self.kospi_stocks_realtime:
             s.unsubscribe()
