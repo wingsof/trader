@@ -56,7 +56,7 @@ class Order:
         else:
             self.balance = all_asset / Order.BALANCE_DIVIDER
 
-        self.realtime_order = win32com.client.Dispatch('Dscbo1.CpConclusion')
+        self.realtime_order = win32com.client.Dispatch('DsCbo1.CpConclusion')
         handler = win32com.client.WithEvents(self.realtime_order, _OrderRealtime)
         handler.set_params(self.realtime_order, self)
         self.realtime_order.Subscribe()
@@ -88,8 +88,10 @@ class Order:
             self.obj.SetInputValue(3, code)
             self.obj.SetInputValue(4, quantity)
             self.obj.SetInputValue(5, price)
-            self.obj.BlockRequest()
 
+            self.obj.BlockRequest()
+            print('ORDER Status', self.obj.GetDibStatus(), self.obj.GetDibMsg1())
+            """ check result with CpConclusion 
             result = {
                 'type_code': self.obj.GetHeaderValue(0),
                 'account_num': self.obj.GetHeaderValue(1),
@@ -105,6 +107,7 @@ class Order:
             }
             self.order_result_list.append(result)
             Store.RecordOrderResult(result.copy())
+            """
 
     def get_available_sell_quantity(self, code):
         for l in self.long_list:
@@ -177,3 +180,17 @@ class Order:
 
     def set_result(self, result):
         Store.RecordRealtimeResult(result)
+
+
+if __name__ == '__main__':
+    from winapi import trade_util
+    from PyQt5.QtCore import QCoreApplication
+    import sys
+
+    app = QCoreApplication(sys.argv)
+    trade = trade_util.TradeUtil()
+    order = Order([], trade.get_account_number(), trade.get_account_type())
+    print('BALANCE:', balance.get_balance(trade.get_account_number(), trade.get_account_type()))
+
+    order.process('A005930', 1, trade.get_account_number(), trade.get_account_type(), 43150, True, 105.0)
+    app.exec()

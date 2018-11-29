@@ -125,10 +125,19 @@ class Main:
         self.timer = QTimer()
         self.timer.timeout.connect(self.time_check)
         self.timer.start(1000)
+        self.last_loop_time = [0, 0]
 
+    def _loop_print(self):
+        t = datetime.datetime.now()
+        if self.last_loop_time[0] != t.hour or self.last_loop_time[1] != t.minute:
+            print('Main Loop', t, flush=True)
+            self.last_loop_time[0] = t.hour
+            self.last_loop_time[1] = t.minute
 
     def time_check(self):
         n = datetime.datetime.now()
+        self._loop_print()
+
         if n.hour > 7 and n.hour < 18 and not self.is_running and n.weekday() < 5:
             self.world.start()
             self.bidask.start()
@@ -138,6 +147,7 @@ class Main:
                 self.is_running = False
                 self.world.stop()
                 self.bidask.stop()
+                print('INSERT DAILY DATA', flush=True)
                 stock_daily_insert.daily_insert_data()
 
 
