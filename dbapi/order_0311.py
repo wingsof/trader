@@ -43,7 +43,7 @@ class Order:
                         account_type, price, quantity, is_buy, p)
 
             self.obj = td0311.Td0311('CpTrade.CpTd0311')
-            order_type = '1' if is_buy else '2'
+            order_type = '2' if is_buy else '1'
             self.obj.SetInputValue(0, order_type)
             self.obj.SetInputValue(1, account_num)
             self.obj.SetInputValue(2, account_type)

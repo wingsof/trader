@@ -37,7 +37,7 @@ class Td0311:
 
     def BlockRequest(self):
         db = MongoClient(config.MONGO_SERVER).trader
-        if self.order_type == '1': # buy
+        if self.order_type == '2': # buy
             b = balance.get_balance(self.account_num, self.account_type)
             print('<<<< BUY ', 'BALANCE:', b, 'PRICE*QUANTITY:', self.quantity * self.price)
 
