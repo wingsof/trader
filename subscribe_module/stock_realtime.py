@@ -3,6 +3,7 @@ from pymongo import MongoClient
 import datetime
 import sys
 from PyQt5.QtCore import QCoreApplication, QTimer
+import time
 
 import connection
 import stock_code
@@ -159,6 +160,10 @@ class Main:
 
 
 if __name__ == '__main__':
+    import time_sync
+    time_sync.do_sync()
+    time.sleep(60*5)
+
     conn = connection.Connection()
     while not conn.is_connected():
         time.sleep(5)

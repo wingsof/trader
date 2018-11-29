@@ -179,6 +179,9 @@ class Trader:
 
 if __name__ == '__main__':
     if _platform == 'win32' or _platform == 'win64':
+        from winapi import time_sync
+        time_sync.do_sync()
+        time.sleep(60*5) # waiting for system time synchronization
         conn = connection.Connection()
         while not conn.is_connected():
             time.sleep(5)
