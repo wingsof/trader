@@ -46,7 +46,7 @@ class Td0311:
             print('BUY >>>>', 'FINAL:', b)
 
             LongManifest.add_to_long(
-                    self.account_num, self.code,
+                    self.account_num, self.account_type, self.code,
                     stock_code.code_to_name(self.code),
                     self.quantity, self.price, db)
         else: # sell
@@ -57,7 +57,7 @@ class Td0311:
             balance.update_balance(self.account_num, b)
             print('SELL >>>>', 'FINAL:', b)
 
-            LongManifest.drop_from_long(self.account_num, self.code, db) 
+            LongManifest.drop_from_long(self.account_num, self.account_type, self.code, db) 
 
 
     def id_generator(self, size=6, chars=string.ascii_uppercase + string.digits):

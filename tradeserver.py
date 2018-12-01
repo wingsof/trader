@@ -74,7 +74,7 @@ class Trader:
         self.trade_util = tu.TradeUtil()
         self.account_num = self.trade_util.get_account_number()
         self.account_type = self.trade_util.get_account_type()
-        self.long_manifest = lm.LongManifest(self.account_num)
+        self.long_manifest = lm.LongManifest(self.account_num, self.account_type)
 
         self.get_long_codes()
 
