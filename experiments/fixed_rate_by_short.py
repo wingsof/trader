@@ -44,7 +44,7 @@ def get_profit(code, start_date, end_date, buy_rate, sell_rate):
 
         prev_close = close
 
-    left = money if money is not 0 else bought['quantity'] * prev_close
+    left = money if money is not 0 else (bought['price'] - prev_close) * bought['quantity'] + bought['balance']
     return (left / initial_deposit * 100, trade_count)
 
 

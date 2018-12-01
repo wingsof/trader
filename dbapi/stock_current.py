@@ -10,7 +10,10 @@ class _CpEvent:
     BUY = 1
     SELL = 2
 
-    def set_params(self, obj, code, position, buy_price, sell_price, profit_e, current_obj):
+    PROFIT_MEET_PER = 1.103 # 110.3%
+
+
+    def set_params(self, obj, code, position, buy_price, sell_price, profit_e, bought_price, current_obj):
         self.obj = obj
         self.status = _CpEvent.NONE
         self.code = code
@@ -18,6 +21,8 @@ class _CpEvent:
         self.sell_price = sell_price
         self.is_long = position
         self.current_obj = current_obj
+        self.bought_price = bought_price
+
         self.profit_expected = profit_e
         self.highest_buy_after_hour = 0
         self.lowest_sell_after_hour = 10000000
@@ -28,7 +33,7 @@ class _CpEvent:
         if self.obj.GetHeaderValue(20) == ord('2') and self.obj.GetHeaderValue(3) <= 1520: # 09:00, 15:30
             if self.status == _CpEvent.NONE:
                 if self.is_long:
-                    if price <= self.sell_price:
+                    if price <= self.sell_price or price >= self.bought_price * _CpEvent.PROFIT_MEET_PER:
                         self.status = _CpEvent.SELL
                         #print('SELL TARGET:', self.sell_price, 'CURRENT:', price)
                         self.current_obj.add_to_sell_cart(self.code)
@@ -52,12 +57,14 @@ class _CpEvent:
 
 
 class _StockRealtime:
-    def __init__(self, code, is_long, info, current_obj):
+    def __init__(self, code, is_long, info, bought_price, current_obj):
         self.obj = stockcur_mock.StockCur('DsCbo1.StockCur')
         self.code = code
         self.is_long = is_long
         self.info = info 
         self.current_obj = current_obj
+        self.bought_price = bought_price
+
 
     def subscribe(self):
         handler = stockcur_mock.WithEvents(self.obj, _CpEvent)
@@ -65,7 +72,7 @@ class _StockRealtime:
         handler.set_params(self.obj, self.code, self.is_long, 
                 self.info['prev_close'] + self.info['prev_close'] * self.info['buy_rate'],
                 self.info['prev_close'] - self.info['prev_close'] * self.info['sell_rate'],
-                self.info['profit_expected'], self.current_obj)
+                self.info['profit_expected'], self.bought_price, self.current_obj)
         self.obj.Subscribe()
 
     def unsubscribe(self):
@@ -73,16 +80,25 @@ class _StockRealtime:
 
 
 class StockCurrent:
-    def __init__(self, code_list, long_codes, speculation):
+    def __init__(self, code_list, long_codes, speculation, long_list):
         self.code_list = code_list
         self.long_codes = long_codes
         self.realtime_bucket = []
         self.buy_dict = {}
         self.sell_dict = {}
+        self.long_list = long_list
+
 
         for code in self.code_list:
+            is_long = False
+            bought_price = 0
+            for l in self.long_list:
+                if l['code'] == code:
+                    is_long = True
+                    bought_price = l['price']
+
             row = speculation[speculation['code'] == code].iloc[0]
-            self.realtime_bucket.append(_StockRealtime(code, code in self.long_codes, row, self))
+            self.realtime_bucket.append(_StockRealtime(code, code in self.long_codes, row, bought_price, self))
 
     def stop(self):
         for r in self.realtime_bucket:
@@ -93,7 +109,7 @@ class StockCurrent:
             r.subscribe()
 
     def add_to_buy_cart(self, code, expected):
-        if expected > 105.:
+        if expected > 110.:
             print('BUY CART(%d)' % len(self.buy_dict), code, expected, flush=True)
             self.buy_dict[code] = [expected, 0]
 

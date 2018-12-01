@@ -5,6 +5,7 @@ from datetime import datetime
 import virtualbox
 from utils import speculation
 from dbapi import stock_code
+from utils import profit_calc
 
 class Machine:
     def __init__(self, vbox, vm_name):
@@ -59,7 +60,7 @@ class VBoxControl:
             if self.subscriber == None and self.trader == None:
                 self.last_speculation_date = now
                 print('Start Speculation Processing')
-                speculation.Speculation().get_speculation(now, stock_code.get_kospi200_list())
+                speculation.Speculation().get_speculation(now, stock_code.get_kospi200_list(), profit_calc.MEET_DESIRED_PROFIT)
                 print('Done Speculation Processing')
             else:
                 print('Already machine running, skip pre-speculating')

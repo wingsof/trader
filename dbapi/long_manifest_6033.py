@@ -34,7 +34,7 @@ class LongManifest:
         cursor = self.db[_COLLECTION].find({'account_num':self.account_num})
         return cursor.count()
 
-    def get_long_list(self):
+    def get_long_list(self, store=False):
         long_list = []
         cursor = self.db[_COLLECTION].find({'account_num':self.account_num})
         for c in cursor:
@@ -48,7 +48,9 @@ class LongManifest:
                  'sell_available': sell_available, 'price': price,
                  'all_price': all_price}
             long_list.append(d)
-            Store.RecordLongManifest(d.copy())
+
+            if store:
+                Store.RecordLongManifest(d.copy())
         return long_list
 
     def get_long_codes(self):

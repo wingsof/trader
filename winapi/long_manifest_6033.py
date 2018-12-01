@@ -17,7 +17,7 @@ class LongManifest:
         self.stock_obj.BlockRequest()
         return self.stock_obj.GetHeaderValue(7)
 
-    def get_long_list(self):
+    def get_long_list(self, store=False):
         self.stock_obj = win32com.client.Dispatch('CpTrade.CpTd6033')
         self.stock_obj.SetInputValue(0, self.account_num)
         self.stock_obj.SetInputValue(1, '1')
@@ -36,7 +36,8 @@ class LongManifest:
                  'sell_available': sell_available, 'price': price,
                  'all_price': all_price}
             long_list.append(d)
-            Store.RecordLongManifest(d.copy())
+            if store:
+                Store.RecordLongManifest(d.copy())
 
         return long_list
 
@@ -53,3 +54,12 @@ class LongManifest:
             long_codes.append(code)
 
         return long_codes
+
+
+if __name__ == '__main__':
+    from winapi import trade_util
+    trade = trade_util.TradeUtil()
+    l = LongManifest(trade.get_account_number())
+    print('COUNT:', l.get_count())
+    print('CODES:', l.get_long_codes())
+    print('LIST:', l.get_long_list())

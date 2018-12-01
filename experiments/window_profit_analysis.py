@@ -13,6 +13,7 @@ import numpy as np
 # get result profit for 1 year
 def get_window_profit(code, start_date, end_date, method):
     initial_deposit = 10000000
+    initial_price = 0
     money = initial_deposit
     prev_close = 0
     bought = {'quantity': 0, 'price': 0, 'balance': 0}
@@ -21,8 +22,7 @@ def get_window_profit(code, start_date, end_date, method):
         profit_calc.NORMAL: profit_calc.right_profit,
         profit_calc.SHORT: profit_calc.short_profit,
         profit_calc.MEET_DESIRED_PROFIT: profit_calc.right_sell_profit,
-        profit_calc.BUY_WHEN_BEARISH: profit_calc.left_profit,
-        profit_calc.LIMIT: profit_calc.right_limit_profit,
+        profit_calc.BUY_WHEN_BEARISH: profit_calc.left_profit
     }
 
     today = start_date
@@ -58,39 +58,33 @@ def get_window_profit(code, start_date, end_date, method):
                 prev_close, buy_threshold, sell_threshold, money, trade_count)
         trade_count += t
 
+        if initial_price == 0:
+            initial_price = close
+
         prev_close = close
+        if method == profit_calc.SHORT:
+            left = money if money is not 0 else (bought['price'] - prev_close) * bought['quantity'] + bought['balance']
+        else:
+            left = money if money != 0 else bought['quantity'] * prev_close
+        
+        yield today, left / initial_deposit * 100, sdf.iloc[0]['profit_expected'], buy_rate, sell_rate, close / initial_price * 100, trade_count
         today += timedelta(days=1)
 
-    if method == profit_calc.SHORT:
-        left = money if money is not 0 else (bought['price'] - prev_close) * bought['quantity'] + bought['balance']
-    else:
-        left = money if money != 0 else bought['quantity'] * prev_close
-    return left / initial_deposit * 100, trade_count
 
-#code_list = stock_code.get_kospi200_list()
 code_list = ['A005930']
 start_date = datetime(2015, 11, 1)
 end_date = datetime(2018, 11, 29)
 
-method = [profit_calc.NORMAL, profit_calc.SHORT, profit_calc.MEET_DESIRED_PROFIT, profit_calc.BUY_WHEN_BEARISH, profit_calc.LIMIT]
+method = [profit_calc.NORMAL, profit_calc.SHORT, profit_calc.MEET_DESIRED_PROFIT, profit_calc.BUY_WHEN_BEARISH]
 
+df = pd.DataFrame(columns=['date', 'profit', 'expected', 'buy_threshold', 'sell_threshold', 'price', 'method'])
 
-def get_profit(method):
-    for code in code_list:
-        get_window_profit(code, start_date, end_date, method)
+for code in code_list:
+    for m in method:
+        for date, profit, expected, buy_t, sell_t, p, tcount in get_window_profit(code, start_date, end_date, m):
+            df = df.append({'date': date, 'profit': profit, 'expected': expected, 'buy_threshold': buy_t,
+                        'sell_threshold': sell_t, 'price': p, 'method': m}, ignore_index=True)
 
-
-if __name__ == '__main__':
-    from concurrent.futures import ProcessPoolExecutor, wait
-
-    CPU_USE = 5
-    pool = ProcessPoolExecutor(CPU_USE)
-
-    futures = []
-    futures.append(pool.submit(get_profit, (profit_calc.NORMAL)))
-    futures.append(pool.submit(get_profit, (profit_calc.SHORT)))
-    futures.append(pool.submit(get_profit, (profit_calc.MEET_DESIRED_PROFIT)))
-    futures.append(pool.submit(get_profit, (profit_calc.BUY_WHEN_BEARISH)))
-    futures.append(pool.submit(get_profit, (profit_calc.LIMIT)))
-
-    wait(futures)
+writer = pd.ExcelWriter('a005930.xlsx')
+df.to_excel(writer, 'Sheet1')
+writer.save()

@@ -97,7 +97,10 @@ class Trader:
     def subscribe(self):
         print('TraderServer Subscribe START', flush=True)
         self.subscriber = stock_current.StockCurrent(
-                self.code_list, self.long_codes, self.speculation.get_speculation(self.time_manager.get_today(), self.code_list))
+                self.code_list, 
+                self.long_codes,
+                self.speculation.get_speculation(self.time_manager.get_today(), self.code_list),
+                self.long_manifest.get_long_list(False))
         self.subscriber.start()
         print('TraderServer Subscribe DONE', flush=True)
 
@@ -161,7 +164,7 @@ class Trader:
                 print('ORDER COLLECT TO START', TimeManager.now(), flush=True)
                 Store.RecordStateTransit('ORDER_COLLECT', 'ORDER_START')
                 self.status = Trader.ORDER_START
-                self.order = order.Order(self.long_manifest.get_long_list(), 
+                self.order = order.Order(self.long_manifest.get_long_list(True), 
                         self.account_num, self.account_type)
 
         elif self.status == Trader.ORDER_START:
@@ -181,7 +184,7 @@ if __name__ == '__main__':
     if _platform == 'win32' or _platform == 'win64':
         from winapi import time_sync
         time_sync.do_sync()
-        time.sleep(60*5) # waiting for system time synchronization
+        time.sleep(60*3) # waiting for system time synchronization
         conn = connection.Connection()
         while not conn.is_connected():
             time.sleep(5)

@@ -4,7 +4,21 @@ NORMAL = 'normal'
 SHORT = 'short'
 MEET_DESIRED_PROFIT = 'meet_desired_profit'
 BUY_WHEN_BEARISH = 'buy_when_bearish'
+LIMIT = 'set_limit'
 
+
+def right_limit_profit(bought, low, high, close, prev_close, buy_threshold, sell_threshold, money, trade_count):
+    if bought['quantity'] != 0 and (low <= prev_close - sell_threshold or bought['price'] * 1.1 <= high or bought['price'] * 0.9 >= low):
+        money = close * bought['quantity']
+        money -= money * 0.003
+        bought['quantity'] = 0
+    elif bought['quantity'] == 0 and prev_close != 0 and high >= prev_close + buy_threshold:
+        bought['quantity'] = money / close
+        bought['price'] = close
+        money = 0
+        trade_count += 1
+
+    return money, trade_count
 
 def right_profit(bought, low, high, close, prev_close, buy_threshold, sell_threshold, money, trade_count):
     if bought['quantity'] != 0 and low <= prev_close - sell_threshold:
@@ -70,7 +84,8 @@ def get_avg_profit_by_day_data(df, buy_t, sell_t, method):
         NORMAL: right_profit,
         SHORT: short_profit,
         MEET_DESIRED_PROFIT: right_sell_profit,
-        BUY_WHEN_BEARISH: left_profit
+        BUY_WHEN_BEARISH: left_profit,
+        LIMIT: right_limit_profit
     }
 
     for _, row in df.iterrows():
@@ -82,7 +97,11 @@ def get_avg_profit_by_day_data(df, buy_t, sell_t, method):
         trade_count += tc
         prev_close = row['close']
 
-    left = money if money != 0 else bought['quantity'] * prev_close
+    if method == SHORT:
+        left = money if money is not 0 else (bought['price'] - prev_close) * bought['quantity'] + bought['balance']
+    else:
+        left = money if money != 0 else bought['quantity'] * prev_close
+        
     return left / initial_deposit * 100, trade_count
 
 
