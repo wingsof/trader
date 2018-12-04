@@ -51,8 +51,8 @@ def get_profit(code, start_date, end_date, buy_rate, sell_rate):
 if __name__ == '__main__':
     code = 'A005930'
 
-    start_date = datetime(2018, 1, 1)
-    end_date = datetime(2018, 11, 20)
+    start_date = datetime(2016, 1, 1)
+    end_date = datetime(2017, 1, 1)
 
     buy_t_list = list(np.arange(0.01, 0.065, 0.005))
     sell_t_list = list(np.arange(0.01, 0.065, 0.005))

@@ -22,7 +22,8 @@ def get_window_profit(code, start_date, end_date, method):
         profit_calc.NORMAL: profit_calc.right_profit,
         profit_calc.SHORT: profit_calc.short_profit,
         profit_calc.MEET_DESIRED_PROFIT: profit_calc.right_sell_profit,
-        profit_calc.BUY_WHEN_BEARISH: profit_calc.left_profit
+        profit_calc.BUY_WHEN_BEARISH: profit_calc.left_profit,
+        profit_calc.LIMIT: profit_calc.right_limit_profit
     }
 
     today = start_date
@@ -75,7 +76,7 @@ code_list = ['A005930']
 start_date = datetime(2015, 11, 1)
 end_date = datetime(2018, 11, 29)
 
-method = [profit_calc.NORMAL, profit_calc.SHORT, profit_calc.MEET_DESIRED_PROFIT, profit_calc.BUY_WHEN_BEARISH]
+method = [profit_calc.NORMAL, profit_calc.SHORT, profit_calc.MEET_DESIRED_PROFIT, profit_calc.BUY_WHEN_BEARISH, profit_calc.LIMIT]
 
 df = pd.DataFrame(columns=['date', 'profit', 'expected', 'buy_threshold', 'sell_threshold', 'price', 'method'])
 
@@ -85,6 +86,6 @@ for code in code_list:
             df = df.append({'date': date, 'profit': profit, 'expected': expected, 'buy_threshold': buy_t,
                         'sell_threshold': sell_t, 'price': p, 'method': m}, ignore_index=True)
 
-writer = pd.ExcelWriter('a005930.xlsx')
+writer = pd.ExcelWriter('A005930.xlsx')
 df.to_excel(writer, 'Sheet1')
 writer.save()

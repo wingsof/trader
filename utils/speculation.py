@@ -27,12 +27,14 @@ class Speculation:
 
     def get_far_point(self, code, yesterday):
         collection_name = 'trend_point'
+        
         cursor = self.db[collection_name].find({'code': code, 'date': yesterday})
         if self.use_cache and cursor.count() == 1:
             data = cursor.next()
             return time_converter.intdate_to_datetime(data['trend_date'])
+        
 
-        _, data = stock_chart.get_day_period_data(code, yesterday - timedelta(days=365), yesterday)
+        _, data = stock_chart.get_day_period_data(code, yesterday - timedelta(days=90), yesterday)
         df = pd.DataFrame(data)
         if len(df) == 0:
             return None 
@@ -45,7 +47,7 @@ class Speculation:
         if self.use_cache:
             self.db[collection_name].insert_one({'code': code, 'date': yesterday,
                 'min_date': int(min_date), 'max_date': int(max_date), 'trend_date': int(trend_date)})
-
+        
         return time_converter.intdate_to_datetime(max_date) if max_date < min_date else time_converter.intdate_to_datetime(min_date)
 
     def get_speculation(self, today, code_list, method=profit_calc.MEET_DESIRED_PROFIT):
