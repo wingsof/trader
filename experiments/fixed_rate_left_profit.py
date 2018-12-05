@@ -48,17 +48,38 @@ def get_profit(code, start_date, end_date, buy_rate, sell_rate):
 
 
 if __name__ == '__main__':
-    code = 'A005380'
+    import sys
+    """
+    if len(sys.argv) < 2:
+        print('input the code')
+        sys.exit(1)
+    """
 
-    start_date = datetime(2016, 1, 1)
-    end_date = datetime(2017, 1, 1)
+    start_year = 2015
+    #buy_t_list = list(np.arange(0.01, 0.065, 0.005))
+    #sell_t_list = list(np.arange(0.01, 0.065, 0.005))
+    buy_t_list = [0.02, 0.03, 0.04]
+    sell_t_list = [0.02, 0.03, 0.04]
+    code_list = stock_code.get_kospi200_list()
+    df = pd.DataFrame(columns=['year', 'code', 'buy_rate', 'sell_rate', 'profit', 'trade_count'])
+    
+    while True:
+        start_date = datetime(start_year, 1, 1)
+        for buy_rate in buy_t_list:
+            for sell_rate in sell_t_list:
+                for code in code_list:
+                    profit, count = get_profit(code, start_date, start_date + timedelta(days=365), buy_rate, sell_rate)
+                    df = df.append({'year': start_date.year, 'code': code, 'buy_rate': buy_rate, 'sell_rate': sell_rate, 'profit': profit, 'count': count}, ignore_index=True)
+                    """
+                    print(start_date.year, '{0:0.3f}'.format(buy_rate), 
+                         '{0:0.3f}'.format(sell_rate), 
+                         get_profit(sys.argv[1], start_date, start_date + timedelta(days=365), buy_rate, sell_rate))
+                    """
+        start_year += 1
+        if datetime(start_year, 1, 1) > datetime.now():
+            break
 
-    buy_t_list = list(np.arange(0.01, 0.065, 0.005))
-    sell_t_list = list(np.arange(0.01, 0.065, 0.005))
-    #buy_t_list = [0.036]
-    #sell_t_list = [0.013]
-    for buy_rate in buy_t_list:
-        for sell_rate in sell_t_list:
-            print('{0:0.3f}'.format(buy_rate), 
-                 '{0:0.3f}'.format(sell_rate), 
-                 get_profit(code, start_date, end_date, buy_rate, sell_rate))
+    
+    writer = pd.ExcelWriter('left_result.xlsx')
+    df.to_excel(writer, 'Sheet1')
+    writer.save()

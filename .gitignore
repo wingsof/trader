@@ -1,7 +1,6 @@
 __pycache__
 .pyc
 *lock*
-*.xlsx
 .idea
 running_log
 output
