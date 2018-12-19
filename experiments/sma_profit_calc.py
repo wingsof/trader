@@ -19,8 +19,8 @@ class MovingAverageCross:
     def generate_signals(self):
         self.df['signal'] = 0.0
         self.df['short_mavg'] = self.df['close'].rolling(self.short_ma, min_periods=1).mean()
-        self.df['long_mavg'] = self.df['close'].rolling(self.long_ma, min_periods=1).mean()
-        self.df['signal'][self.short_ma:] = np.where(self.df['short_mavg'][self.short_ma:] > self.df['long_mavg'][self.short_ma:], 1.0, 0.0)
+        #self.df['long_mavg'] = self.df['close'].rolling(self.long_ma, min_periods=1).mean()
+        self.df['signal'][self.short_ma:] = np.where(self.df['close'][self.short_ma:] > self.df['short_mavg'][self.short_ma:], 1.0, 0.0)
         self.df['positions'] = self.df['signal'].diff()
 
 
@@ -49,7 +49,7 @@ def get_window_profit(code, start_date, end_date):
             today += timedelta(days=1)
             continue
 
-        _, data = stock_chart.get_day_period_data(code, today - timedelta(days=200), today - timedelta(days=1))
+        _, data = stock_chart.get_day_period_data(code, today - timedelta(days=40), today - timedelta(days=1))
 
         low = price_list[0]['low']
         high = price_list[0]['high']
@@ -92,6 +92,6 @@ for code in code_list:
     for date, profit, pos, p, tcount in get_window_profit(code, start_date, end_date):
         df = df.append({'date': date, 'profit': profit, 'pos': pos, 'price': p}, ignore_index=True)
 
-writer = pd.ExcelWriter(sys.argv[1] + '_sma.xlsx')
-df.to_excel(writer, 'Sheet1')
-writer.save()
+#writer = pd.ExcelWriter(sys.argv[1] + '_sma.xlsx')
+#df.to_excel(writer, 'Sheet1')
+#writer.save()

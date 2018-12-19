@@ -20,8 +20,8 @@ class MovingAverageCross:
     def generate_signals(self):
         self.df['signal'] = 0.0
         self.df['short_mavg'] = self.df['close'].rolling(self.short_ma, min_periods=1).mean()
-        self.df['long_mavg'] = self.df['close'].rolling(self.long_ma, min_periods=1).mean()
-        self.df['signal'][self.short_ma:] = np.where(self.df['short_mavg'][self.short_ma:] > self.df['long_mavg'][self.short_ma:], 1.0, 0.0)
+        #self.df['long_mavg'] = self.df['close'].rolling(self.long_ma, min_periods=1).mean()
+        self.df['signal'][self.short_ma:] = np.where(self.df['close'][self.short_ma:] > self.df['short_mavg'][self.short_ma:], 1.0, 0.0)
         self.df['positions'] = self.df['signal'].diff()
         print(self.df)
 
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     fig.patch.set_facecolor('white')
     ax1 = fig.add_subplot(111, ylabel='price')
     mac.df['close'].plot(ax=ax1, color='r', lw=2.)
-    mac.df[['short_mavg', 'long_mavg']].plot(ax=ax1, lw=2.)
+    mac.df['short_mavg'].plot(ax=ax1, lw=2.)
 
     ax1.plot(mac.df.ix[mac.df.positions == -1.0].index, 
             mac.df.close[mac.df.positions == -1.0], 'v',
