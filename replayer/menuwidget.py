@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QLineEdit, QPushButton, QDialog, QCalendarWidget
 from PyQt5.QtCore import QDate, pyqtSlot, pyqtSignal
+from datetime import datetime
 
 
 class DatePick(QDialog):
@@ -17,6 +18,8 @@ class DatePick(QDialog):
 
 
 class MenuWidget(QWidget):
+    info_changed = pyqtSignal(str, datetime)
+
     def __init__(self):
         super(MenuWidget, self).__init__()
         self.now = QDate.currentDate()
@@ -42,16 +45,23 @@ class MenuWidget(QWidget):
         self.now = self.now.addDays(1)
         self.update_date()
 
+    @pyqtSlot()
+    def send_info(self):
+        code = str(self.code_input.text())
+        dt = datetime(self.now.year(), self.now.month(), self.now.day() - 1)
+        self.info_changed.emit(code, dt)
+
     def init_ui(self):
         self.layout = QHBoxLayout(self)
         self.code_label = QLabel('Code')
-        self.code_input = QLineEdit()
+        self.code_input = QLineEdit('A035420')
 
         self.date_label = QPushButton('Date')
         self.date_label.clicked.connect(self.pick_date)
         self.date_input = QLabel(self.now.toString('yyyy/M/d'))
 
         self.search_button = QPushButton('Search')
+        self.search_button.clicked.connect(self.send_info)
 
         self.next_day = QPushButton('Next day')
         self.next_day.clicked.connect(self.set_next_day)

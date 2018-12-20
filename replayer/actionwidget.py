@@ -8,9 +8,11 @@ class ActionWidget(QWidget):
 
     def init_ui(self):
         self.layout = QHBoxLayout()
+        self.go_first = QPushButton('Go Beginning')
         self.prev = QPushButton('Prev')
         self.next = QPushButton('Next')
 
+        self.layout.addWidget(self.go_first)
         self.layout.addWidget(self.prev)
         self.layout.addWidget(self.next)
 

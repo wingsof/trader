@@ -1,16 +1,27 @@
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import QDate, pyqtSlot, pyqtSignal
 import bidask_model
 import menuwidget
 import actionwidget
-import bidaskview
+import bidask_view
 import infowidget
+
+from datetime import datetime
 
 class MainWidget(QWidget):
     def __init__(self):
         super(MainWidget, self).__init__()
+        self.init_ui()
+        self.menu.info_changed.connect(self.set_info)
+
+    @pyqtSlot(str, datetime)
+    def set_info(self, code, dt):
+        self.table.set_info(code, dt)
+
+    def init_ui(self):
         self.layout = QGridLayout()
         self.menu = menuwidget.MenuWidget()
-        self.table = bidaskview.BidAskView()
+        self.table = bidask_view.BidAskView()
         self.info = infowidget.InfoWidget()
         self.action = actionwidget.ActionWidget()
 
@@ -19,8 +30,3 @@ class MainWidget(QWidget):
         self.layout.addWidget(self.info, 1, 1)
         self.layout.addWidget(self.action, 2, 0)
         self.setLayout(self.layout)
-        """
-        self.table_view = QTableView()
-        self.table_model = bidask_model.BidAskModel()
-        self.table_view
-        """
