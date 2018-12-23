@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QPalette
+from datetime import datetime
 import bidask_model
 import config
 
@@ -34,10 +35,17 @@ class BidAskTable(QTableView):
 
 
 class BidAskView(QWidget):
+    infoChanged = pyqtSignal(int, datetime)
+
     def __init__(self):
         super(BidAskView, self).__init__()
         self.model = bidask_model.BidAskModel()
+        self.model.infoChanged.connect(self.infoChanged)
         self.init_ui()
+
+    @pyqtSlot()
+    def next(self):
+        self.model.next()
 
     def set_info(self, code, dt):
         self.model.set_info(code, dt)

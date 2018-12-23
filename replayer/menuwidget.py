@@ -48,13 +48,13 @@ class MenuWidget(QWidget):
     @pyqtSlot()
     def send_info(self):
         code = str(self.code_input.text())
-        dt = datetime(self.now.year(), self.now.month(), self.now.day() - 1)
+        dt = datetime(self.now.year(), self.now.month(), self.now.day())
         self.info_changed.emit(code, dt)
 
     def init_ui(self):
         self.layout = QHBoxLayout(self)
         self.code_label = QLabel('Code')
-        self.code_input = QLineEdit('A035420')
+        self.code_input = QLineEdit('A005930')
 
         self.date_label = QPushButton('Date')
         self.date_label.clicked.connect(self.pick_date)

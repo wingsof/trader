@@ -22,8 +22,12 @@ class MainWidget(QWidget):
         self.layout = QGridLayout()
         self.menu = menuwidget.MenuWidget()
         self.table = bidask_view.BidAskView()
+        
         self.info = infowidget.InfoWidget()
         self.action = actionwidget.ActionWidget()
+        self.action.go_next.connect(self.table.next)
+
+        self.table.infoChanged.connect(self.action.infoChanged)
 
         self.layout.addWidget(self.menu, 0, 0)
         self.layout.addWidget(self.table, 1, 0)
