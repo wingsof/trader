@@ -20,6 +20,9 @@ class MarketModel:
         if len(self.data_list) > 0:
             return True
         return False
+    
+    def prev(self):
+        pass
 
     def next(self):
         current_frame = [self.data_list.pop(0)]
@@ -30,7 +33,7 @@ class MarketModel:
             else:
                 break
         self.process_data(current_frame)
-        return current_frame[-1]['date']
+        return current_frame[-1]['date'], []
 
     def add_data_to_dict(self, price, qty, d):
         if price in d:

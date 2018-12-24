@@ -26,8 +26,12 @@ class MainWidget(QWidget):
         self.info = infowidget.InfoWidget()
         self.action = actionwidget.ActionWidget()
         self.action.go_next.connect(self.table.next)
+        self.action.go_prev.connect(self.table.prev)
+        self.action.play.connect(self.table.play)
+        self.action.stop.connect(self.table.stop)
 
         self.table.infoChanged.connect(self.action.infoChanged)
+        self.table.speedChanged.connect(self.info.speedChanged)
 
         self.layout.addWidget(self.menu, 0, 0)
         self.layout.addWidget(self.table, 1, 0)

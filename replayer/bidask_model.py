@@ -1,17 +1,16 @@
-from PyQt5.QtCore import QAbstractTableModel
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QAbstractTableModel, QDate, pyqtSlot, pyqtSignal
 from pymongo import MongoClient
 import time_converter
 import unit, config
 from datetime import timedelta, datetime
 import pandas as pd
-from PyQt5.QtCore import QDate, pyqtSlot, pyqtSignal
-import market_model
+import market_model, playable_market_model
 import config
 
 
 class BidAskModel(QAbstractTableModel):
     infoChanged = pyqtSignal(int, datetime)
+    speedChanged = pyqtSignal(float, float, float, float, float, float, float, float)
 
     def __init__(self):
         super(BidAskModel, self).__init__()
@@ -26,6 +25,12 @@ class BidAskModel(QAbstractTableModel):
 
     def get_close_price(self):
         return self.close_price
+
+    def get_current_market(self):
+        return self.current_market
+
+    def get_price_len(self):
+        return len(self.price_unit_list)
 
     def identify_market_type(self, d):
         market = d['20']
@@ -85,7 +90,7 @@ class BidAskModel(QAbstractTableModel):
         return market_data
 
     def next(self):
-        print('next')
+        highlight = []
         if not self.markets[self.current_market].has_next():
             if self.current_market == config.BEFORE_MARKET:
                 self.current_market = config.IN_MARKET
@@ -95,7 +100,14 @@ class BidAskModel(QAbstractTableModel):
             elif self.current_market == config.AFTER_MARKET:
                 self.current_market = config.IN_MARKET
         else:
-            time = self.markets[self.current_market].next()
+            time, highlight = self.markets[self.current_market].next()
+            self.infoChanged.emit(self.current_market, time)
+            self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(len(self.price_unit_list), config.COLUMN_COUNT))
+        return highlight
+
+    def prev(self):
+        if self.markets[self.current_market].has_prev():
+            time = self.markets[self.current_market].prev()
             self.infoChanged.emit(self.current_market, time)
             self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(len(self.price_unit_list), config.COLUMN_COUNT))
 
@@ -148,7 +160,8 @@ class BidAskModel(QAbstractTableModel):
         self.set_bid_ask_price(yesterday_close, data['3'], data['4'], data['5'])
         market_data = self.classify_data(realtime_cursor, bidask_cursor)
         self.markets[config.BEFORE_MARKET] = market_model.MarketModel(self.price_unit_list, market_data[config.BEFORE_MARKET])
-        self.markets[config.IN_MARKET] = market_model.MarketModel(self.price_unit_list, market_data[config.IN_MARKET], 0)
+        self.markets[config.IN_MARKET] = playable_market_model.PlayableMarketModel(self.price_unit_list, market_data[config.IN_MARKET])
+        self.markets[config.IN_MARKET].speedChanged.connect(self.speedChanged)
         self.markets[config.AFTER_MARKET] = market_model.MarketModel(self.price_unit_list, market_data[config.AFTER_MARKET])
 
         self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(0), self.columnCount(0)))

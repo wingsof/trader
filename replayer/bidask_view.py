@@ -4,10 +4,13 @@ from PyQt5.QtGui import QPalette
 from datetime import datetime
 import bidask_model
 import config
+from PyQt5.QtCore import QTimer
+
 
 class BidAskDelegate(QStyledItemDelegate):
     def __init__(self):
         super(BidAskDelegate, self).__init__()
+        self.highlight = []
 
     def paint(self, painter, option, index):
         if index.column() == config.PERCENTAGE_COL:
@@ -23,8 +26,22 @@ class BidAskDelegate(QStyledItemDelegate):
             elif price > start_price:
                 option.palette.setColor(QPalette.Text, Qt.white)
                 painter.fillRect(option.rect, Qt.red)
+        else:
+            model = index.model()
+            for h in self.highlight:
+                price = model.createIndex(index.row(), config.PRICE_COL).data()
+                if h[1] == price:
+                    if h[0] == config.REALTIME_DATA and (index.column() == config.ASK_TRADE_QTY_COL or index.column() == config.BID_TRADE_QTY_COL):
+                        option.palette.setColor(QPalette.Text, Qt.white)
+                        painter.fillRect(option.rect, Qt.red)
+                    elif h[0] == config.BIDASK_DATA and (index.column() == config.ASK_SPREAD_QTY_COL or index.column() == config.BID_SPREAD_QTY_COL):
+                        option.palette.setColor(QPalette.Text, Qt.white)
+                        painter.fillRect(option.rect, Qt.red)
 
         QStyledItemDelegate.paint(self, painter, option, index)
+
+    def set_highlight(self, highlight):
+        self.highlight = highlight
 
 
 class BidAskTable(QTableView):
@@ -33,19 +50,55 @@ class BidAskTable(QTableView):
         self.delegate = BidAskDelegate()
         self.setItemDelegate(self.delegate)
 
+    def set_highlight(self, highlight):
+        self.delegate.set_highlight(highlight)
 
 class BidAskView(QWidget):
     infoChanged = pyqtSignal(int, datetime)
+    speedChanged = pyqtSignal(float, float, float, float, float, float, float, float)
 
     def __init__(self):
         super(BidAskView, self).__init__()
         self.model = bidask_model.BidAskModel()
         self.model.infoChanged.connect(self.infoChanged)
+        self.model.speedChanged.connect(self.speedChanged)
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.run_timer)
         self.init_ui()
 
     @pyqtSlot()
     def next(self):
-        self.model.next()
+        highlight = self.model.next()
+        if len(highlight) > 0:
+            self.table.set_highlight(highlight)
+            self.model.dataChanged.emit(self.model.createIndex(0, 0), self.model.createIndex(self.model.get_price_len(), config.COLUMN_COUNT))
+            if self.timer.isActive():
+                self.timer.stop()
+        else:
+            self.table.set_highlight([])
+
+    @pyqtSlot()
+    def prev(self):
+        self.model.prev()
+        self.table.set_highlight([])
+
+    @pyqtSlot()
+    def run_timer(self):
+        if self.model.get_current_market() == config.IN_MARKET:
+            self.next()
+        else:
+            self.time.stop()
+
+    @pyqtSlot()
+    def play(self):
+        if not self.timer.isActive() and self.model.get_current_market() == config.IN_MARKET:
+            self.timer.start(100)
+    
+    @pyqtSlot()
+    def stop(self):
+        if self.timer.isActive():
+            self.timer.stop()
 
     def set_info(self, code, dt):
         self.model.set_info(code, dt)
