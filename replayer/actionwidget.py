@@ -40,7 +40,7 @@ class ActionWidget(QWidget):
 
     @pyqtSlot(int, datetime)
     def infoChanged(self, t, dt):
-        print('infoChanged', t, dt)
+        #print('infoChanged', t, dt)
         self.time.setText(dt.strftime('%Y-%m-%d %X'))
         if t == config.BEFORE_MARKET:
             self.market_type.setText('BEFORE')

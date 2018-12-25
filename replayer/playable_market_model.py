@@ -116,7 +116,7 @@ class PlayableMarketModel(QObject):
                     self.plus_data_to_dict(cf['13'], qty, self.frame['ask_weight'])
                 
                 if qty * cf['13'] >= config.HIGHLIGHT_PRICE:
-                    highlight_price.append((config.REALTIME_DATA, cf['13']))
+                    highlight_price.append((config.REALTIME_DATA, cf['26'] == ord('1'), cf['13']))
             else:
                 bid_spread_qty = self.frame['bid_spread_qty']
                 ask_spread_qty = self.frame['ask_spread_qty']
@@ -127,14 +127,14 @@ class PlayableMarketModel(QObject):
                     qty = cf[p[1]]
                     h = self.compare_spread(bid_spread_qty, qty, price)
                     if h > 0:
-                        highlight_price.append((config.BIDASK_DATA, h))
+                        highlight_price.append((config.BIDASK_DATA, True, h))
                     self.frame['bid_spread_qty'][price] = qty            
                 for p in config.ASK_PAIR:
                     price = cf[p[0]]
                     qty = cf[p[1]]
                     h = self.compare_spread(ask_spread_qty, qty, price)
                     if h > 0:
-                        highlight_price.append((config.BIDASK_DATA, h))
+                        highlight_price.append((config.BIDASK_DATA, False, h))
                     self.frame['ask_spread_qty'][price] = qty
         return highlight_price
 

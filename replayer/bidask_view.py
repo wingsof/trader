@@ -30,13 +30,21 @@ class BidAskDelegate(QStyledItemDelegate):
             model = index.model()
             for h in self.highlight:
                 price = model.createIndex(index.row(), config.PRICE_COL).data()
-                if h[1] == price:
-                    if h[0] == config.REALTIME_DATA and (index.column() == config.ASK_TRADE_QTY_COL or index.column() == config.BID_TRADE_QTY_COL):
-                        option.palette.setColor(QPalette.Text, Qt.white)
-                        painter.fillRect(option.rect, Qt.red)
-                    elif h[0] == config.BIDASK_DATA and (index.column() == config.ASK_SPREAD_QTY_COL or index.column() == config.BID_SPREAD_QTY_COL):
-                        option.palette.setColor(QPalette.Text, Qt.white)
-                        painter.fillRect(option.rect, Qt.red)
+                if h[2] == price:
+                    if h[0] == config.REALTIME_DATA:
+                        if  index.column() == config.BID_TRADE_QTY_COL and h[1]:
+                            option.palette.setColor(QPalette.Text, Qt.white)
+                            painter.fillRect(option.rect, Qt.red)    
+                        elif index.column() == config.ASK_TRADE_QTY_COL and not h[1]:
+                            option.palette.setColor(QPalette.Text, Qt.white)
+                            painter.fillRect(option.rect, Qt.red)
+                    elif h[0] == config.BIDASK_DATA:
+                        if index.column() == config.BID_SPREAD_QTY_COL and h[1]:
+                            option.palette.setColor(QPalette.Text, Qt.white)
+                            painter.fillRect(option.rect, Qt.red)
+                        elif index.column() == config.ASK_SPREAD_QTY_COL and not h[1]:
+                            option.palette.setColor(QPalette.Text, Qt.white)
+                            painter.fillRect(option.rect, Qt.red)
 
         QStyledItemDelegate.paint(self, painter, option, index)
 
@@ -93,7 +101,7 @@ class BidAskView(QWidget):
     @pyqtSlot()
     def play(self):
         if not self.timer.isActive() and self.model.get_current_market() == config.IN_MARKET:
-            self.timer.start(100)
+            self.timer.start(50)
     
     @pyqtSlot()
     def stop(self):

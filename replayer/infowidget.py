@@ -21,9 +21,9 @@ class InfoWidget(QWidget):
         self.layout = QGridLayout()
         self.speed_layout = QGridLayout()
         for i, label in enumerate(self.speed_labels):
-            self.speed_layout.addWidget(QLabel(label), i, 0)
+            self.speed_layout.addWidget(QLabel(label), int(i / 2), (i % 2) * 2)
             l = QLabel('0')
-            self.speed_layout.addWidget(l, i, 1)
+            self.speed_layout.addWidget(l, int(i / 2), ((i % 2) * 2) + 1)
             self.speed_label_widget.append(l)
 
         self.layout.addLayout(self.speed_layout, 0, 1)

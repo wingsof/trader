@@ -133,6 +133,10 @@ class BidAskModel(QAbstractTableModel):
         return 0
 
     def set_info(self, code, dt):
+        self.price_unit_list = []
+        self.start_price = 0
+        self.markets = {}
+        self.current_market = config.BEFORE_MARKET
         cursor = self.db[code + '_D'].find({'0': time_converter.datetime_to_intdate(dt)})
         if cursor.count() == 0:
             print('cannot find day data', code, dt)
