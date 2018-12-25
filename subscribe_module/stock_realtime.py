@@ -160,8 +160,6 @@ class Main:
 
 
 if __name__ == '__main__':
-    import time_sync
-    time_sync.do_sync()
     time.sleep(60*3)
 
     conn = connection.Connection()

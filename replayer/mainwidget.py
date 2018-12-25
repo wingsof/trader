@@ -32,6 +32,7 @@ class MainWidget(QWidget):
 
         self.table.infoChanged.connect(self.action.infoChanged)
         self.table.speedChanged.connect(self.info.speedChanged)
+        self.table.defenseChanged.connect(self.info.defenseChanged)
 
         self.layout.addWidget(self.menu, 0, 0)
         self.layout.addWidget(self.table, 1, 0)

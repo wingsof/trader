@@ -14,19 +14,39 @@ class InfoWidget(QWidget):
             '30 MIN BID',
             '30 MIN ASK'
         ]
+
+        self.defense_labels = [
+            '1 MIN BID D',
+            '1 MIN ASK D',
+            '10 MIN BID D',
+            '10 MIN ASK D',
+            '20 MIN BID D',
+            '20 MIN ASK D',
+            '30 MIN BID D',
+            '30 MIN ASK D'
+        ]
         self.speed_label_widget = []
+        self.defense_label_widget = []
         self.init_ui()
 
     def init_ui(self):
         self.layout = QGridLayout()
         self.speed_layout = QGridLayout()
+        self.defense_layout = QGridLayout()
         for i, label in enumerate(self.speed_labels):
             self.speed_layout.addWidget(QLabel(label), int(i / 2), (i % 2) * 2)
             l = QLabel('0')
             self.speed_layout.addWidget(l, int(i / 2), ((i % 2) * 2) + 1)
             self.speed_label_widget.append(l)
+        
+        for i, label in enumerate(self.defense_labels):
+            self.defense_layout.addWidget(QLabel(label), int(i / 2), (i % 2) * 2)
+            l = QLabel('0')
+            self.defense_layout.addWidget(l, int(i / 2), ((i % 2) * 2) + 1)
+            self.defense_label_widget.append(l)
 
-        self.layout.addLayout(self.speed_layout, 0, 1)
+        self.layout.addLayout(self.speed_layout, 0, 0)
+        self.layout.addLayout(self.defense_layout, 0, 1)
         self.setLayout(self.layout)
 
     @pyqtSlot(float, float, float, float, float, float, float, float)
@@ -34,3 +54,9 @@ class InfoWidget(QWidget):
         l = [bid_1, ask_1, bid_10, ask_10, bid_20, ask_20, bid_30, ask_30]
         for i, num in enumerate(l):
             self.speed_label_widget[i].setText('{0:0.1f}'.format(num))
+
+    @pyqtSlot(float, float, float, float, float, float, float, float)
+    def defenseChanged(self, bid_1, ask_1, bid_10, ask_10, bid_20, ask_20, bid_30, ask_30):
+        l = [bid_1, ask_1, bid_10, ask_10, bid_20, ask_20, bid_30, ask_30]
+        for i, num in enumerate(l):
+            self.defense_label_widget[i].setText('{0:0.1f}'.format(num))

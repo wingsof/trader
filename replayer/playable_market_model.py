@@ -7,6 +7,7 @@ import copy
 class PlayableMarketModel(QObject):
     statusChanged = pyqtSignal(int)
     speedChanged = pyqtSignal(float, float, float, float, float, float, float, float) # 1, 10, 20, 30 min bid, ask pair
+    defenseChanged = pyqtSignal(float, float, float, float, float, float, float, float)
 
     def __init__(self, price_list, data_list):
         super(PlayableMarketModel, self).__init__()
@@ -24,11 +25,18 @@ class PlayableMarketModel(QObject):
             'all_qty': 0,
         }
         self.history = []
+        self.last_data_handled = False
         
     def has_next(self):
-        if len(self.data_list) > self.frame['index']:
-            return True
-        return False
+        if not self.last_data_handled:
+            if len(self.data_list) - 1 > self.frame['index']:
+                self.last_data_handled = True
+                return True
+            return False
+        else:
+            if len(self.data_list) > self.frame['index']:
+                return True
+            return False
 
     def has_prev(self):
         if len(self.history) > 0:
@@ -63,6 +71,12 @@ class PlayableMarketModel(QObject):
         thirty_min = self.get_qty_speed(30, index)
         self.speedChanged.emit(one_min[0], one_min[1], ten_min[0], ten_min[1], twenty_min[0], twenty_min[1], 
                             thirty_min[0], thirty_min[1])
+        one_min_d = self.get_defense_speed(1, index)
+        ten_min_d = self.get_defense_speed(10, index)
+        twenty_min_d = self.get_defense_speed(20, index)
+        thirty_min_d = self.get_defense_speed(30, index)
+        self.defenseChanged.emit(one_min_d[0], one_min_d[1], ten_min_d[0], ten_min_d[1], twenty_min_d[0], twenty_min_d[1], 
+                            thirty_min_d[0], thirty_min_d[1])
 
     def get_qty_speed(self, minute, index):
         start_time = self.data_list[index]['date']
@@ -77,6 +91,28 @@ class PlayableMarketModel(QObject):
                         ask_qty += self.data_list[i]['17']
                 else:
                     break
+        return bid_qty / minute, ask_qty / minute
+
+    def get_defense_speed(self, minute, index):
+        start_time = self.data_list[index]['date']
+        bid_qty = 0
+        ask_qty = 0
+        last_data = None
+        for i in range(index, -1, -1):
+            if self.data_list[i]['type'] == config.BIDASK_DATA:
+                if start_time - self.data_list[i]['date'] <= timedelta(minutes=minute):
+                    if last_data is None:
+                        last_data = self.data_list[i]
+                    else:
+                        if last_data['3'] == self.data_list[i]['3'] and last_data['5'] - self.data_list[i]['5'] >= 0:
+                            ask_qty += last_data['5'] - self.data_list[i]['5']
+                        if last_data['7'] == self.data_list[i]['7'] and last_data['9'] - self.data_list[i]['9'] >= 0:
+                            ask_qty += last_data['9'] - self.data_list[i]['9']
+                        if last_data['4'] == self.data_list[i]['4'] and last_data['6'] - self.data_list[i]['6'] >= 0:
+                            bid_qty += last_data['6'] - self.data_list[i]['6']
+                        if last_data['8'] == self.data_list[i]['8'] and last_data['10'] - self.data_list[i]['10'] >= 0:
+                            bid_qty += last_data['10'] - self.data_list[i]['10']
+                        last_data = self.data_list[i]
         return bid_qty / minute, ask_qty / minute
 
     def add_data_to_dict(self, price, qty, d):

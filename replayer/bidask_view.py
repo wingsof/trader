@@ -64,12 +64,14 @@ class BidAskTable(QTableView):
 class BidAskView(QWidget):
     infoChanged = pyqtSignal(int, datetime)
     speedChanged = pyqtSignal(float, float, float, float, float, float, float, float)
+    defenseChanged = pyqtSignal(float, float, float, float, float, float, float, float)
 
     def __init__(self):
         super(BidAskView, self).__init__()
         self.model = bidask_model.BidAskModel()
         self.model.infoChanged.connect(self.infoChanged)
         self.model.speedChanged.connect(self.speedChanged)
+        self.model.defenseChanged.connect(self.defenseChanged)
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.run_timer)
@@ -101,7 +103,7 @@ class BidAskView(QWidget):
     @pyqtSlot()
     def play(self):
         if not self.timer.isActive() and self.model.get_current_market() == config.IN_MARKET:
-            self.timer.start(50)
+            self.timer.start(10)
     
     @pyqtSlot()
     def stop(self):

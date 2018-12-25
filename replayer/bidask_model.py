@@ -11,6 +11,7 @@ import config
 class BidAskModel(QAbstractTableModel):
     infoChanged = pyqtSignal(int, datetime)
     speedChanged = pyqtSignal(float, float, float, float, float, float, float, float)
+    defenseChanged = pyqtSignal(float, float, float, float, float, float, float, float)
 
     def __init__(self):
         super(BidAskModel, self).__init__()
@@ -166,6 +167,7 @@ class BidAskModel(QAbstractTableModel):
         self.markets[config.BEFORE_MARKET] = market_model.MarketModel(self.price_unit_list, market_data[config.BEFORE_MARKET])
         self.markets[config.IN_MARKET] = playable_market_model.PlayableMarketModel(self.price_unit_list, market_data[config.IN_MARKET])
         self.markets[config.IN_MARKET].speedChanged.connect(self.speedChanged)
+        self.markets[config.IN_MARKET].defenseChanged.connect(self.defenseChanged)
         self.markets[config.AFTER_MARKET] = market_model.MarketModel(self.price_unit_list, market_data[config.AFTER_MARKET])
 
         self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(0), self.columnCount(0)))
