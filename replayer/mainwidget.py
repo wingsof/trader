@@ -12,11 +12,11 @@ class MainWidget(QWidget):
     def __init__(self):
         super(MainWidget, self).__init__()
         self.init_ui()
-        self.menu.info_changed.connect(self.set_info)
 
     @pyqtSlot(str, datetime)
     def set_info(self, code, dt):
         self.table.set_info(code, dt)
+        self.info.set_date(dt)
 
     def init_ui(self):
         self.layout = QGridLayout()
@@ -24,6 +24,8 @@ class MainWidget(QWidget):
         self.table = bidask_view.BidAskView()
         
         self.info = infowidget.InfoWidget()
+        self.menu.info_changed.connect(self.set_info)
+
         self.action = actionwidget.ActionWidget()
         self.action.go_next.connect(self.table.next)
         self.action.go_prev.connect(self.table.prev)

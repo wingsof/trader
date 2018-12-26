@@ -6,8 +6,8 @@ import copy
 
 class PlayableMarketModel(QObject):
     statusChanged = pyqtSignal(int)
-    speedChanged = pyqtSignal(float, float, float, float, float, float, float, float) # 1, 10, 20, 30 min bid, ask pair
-    defenseChanged = pyqtSignal(float, float, float, float, float, float, float, float)
+    speedChanged = pyqtSignal(datetime, float, float, float, float, float, float, float, float) # 1, 10, 20, 30 min bid, ask pair
+    defenseChanged = pyqtSignal(datetime, float, float, float, float, float, float, float, float)
 
     def __init__(self, price_list, data_list):
         super(PlayableMarketModel, self).__init__()
@@ -69,13 +69,13 @@ class PlayableMarketModel(QObject):
         ten_min = self.get_qty_speed(10, index)
         twenty_min = self.get_qty_speed(20, index)
         thirty_min = self.get_qty_speed(30, index)
-        self.speedChanged.emit(one_min[0], one_min[1], ten_min[0], ten_min[1], twenty_min[0], twenty_min[1], 
+        self.speedChanged.emit(self.frame['time'], one_min[0], one_min[1], ten_min[0], ten_min[1], twenty_min[0], twenty_min[1], 
                             thirty_min[0], thirty_min[1])
         one_min_d = self.get_defense_speed(1, index)
         ten_min_d = self.get_defense_speed(10, index)
         twenty_min_d = self.get_defense_speed(20, index)
         thirty_min_d = self.get_defense_speed(30, index)
-        self.defenseChanged.emit(one_min_d[0], one_min_d[1], ten_min_d[0], ten_min_d[1], twenty_min_d[0], twenty_min_d[1], 
+        self.defenseChanged.emit(self.frame['time'], one_min_d[0], one_min_d[1], ten_min_d[0], ten_min_d[1], twenty_min_d[0], twenty_min_d[1], 
                             thirty_min_d[0], thirty_min_d[1])
 
     def get_qty_speed(self, minute, index):

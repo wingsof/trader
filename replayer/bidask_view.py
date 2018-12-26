@@ -63,8 +63,8 @@ class BidAskTable(QTableView):
 
 class BidAskView(QWidget):
     infoChanged = pyqtSignal(int, datetime)
-    speedChanged = pyqtSignal(float, float, float, float, float, float, float, float)
-    defenseChanged = pyqtSignal(float, float, float, float, float, float, float, float)
+    speedChanged = pyqtSignal(datetime, float, float, float, float, float, float, float, float)
+    defenseChanged = pyqtSignal(datetime, float, float, float, float, float, float, float, float)
 
     def __init__(self):
         super(BidAskView, self).__init__()
