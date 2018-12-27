@@ -72,8 +72,9 @@ class InfoWidget(QWidget):
         self.spread_speed_table.verticalHeader().hide()
 
         self.spread_model = SpreadModel()
-        self.spread_speed_figure = speed_figure.SpeedFigure()
         self.spread_speed_table.setModel(self.spread_model)
+
+        self.spread_speed_figure = speed_figure.SpeedFigure()
 
         self.layout.addWidget(self.spread_speed_table, 0, 0)
         self.layout.addWidget(self.spread_speed_figure, 1, 0)
@@ -89,3 +90,6 @@ class InfoWidget(QWidget):
         self.spread_model.set_spread_speed(bid_1, ask_1, bid_10, ask_10, bid_20, ask_20, bid_30, ask_30)
         self.spread_speed_figure.add_spread_speed(timestamp, bid_1, ask_1, bid_10, ask_10, bid_20, ask_20, bid_30, ask_30)
 
+    @pyqtSlot(datetime, int, int, bool)
+    def tradeChanged(self, timestamp, price, volume, is_long):
+        pass

@@ -8,6 +8,7 @@ class PlayableMarketModel(QObject):
     statusChanged = pyqtSignal(int)
     speedChanged = pyqtSignal(datetime, float, float, float, float, float, float, float, float) # 1, 10, 20, 30 min bid, ask pair
     defenseChanged = pyqtSignal(datetime, float, float, float, float, float, float, float, float)
+    tradeChaged = pyqtSignal(datetime, int, int, bool) # price, volume, buy / sell
 
     def __init__(self, price_list, data_list):
         super(PlayableMarketModel, self).__init__()
@@ -147,9 +148,11 @@ class PlayableMarketModel(QObject):
                 if cf['26'] == ord('1'): #bid
                     self.add_data_to_dict(cf['13'], qty, self.frame['bid_trade_qty'])
                     self.plus_data_to_dict(cf['13'], qty, self.frame['bid_weight'])
+                    self.tradeChaged.emit(cf['date'], cf['13'], qty, True)
                 else:
                     self.add_data_to_dict(cf['13'], qty, self.frame['ask_trade_qty'])
                     self.plus_data_to_dict(cf['13'], qty, self.frame['ask_weight'])
+                    self.tradeChaged.emit(cf['date'], cf['13'], qty, False)
                 
                 if qty * cf['13'] >= config.HIGHLIGHT_PRICE:
                     highlight_price.append((config.REALTIME_DATA, cf['26'] == ord('1'), cf['13']))
