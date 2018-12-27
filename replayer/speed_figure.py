@@ -5,7 +5,6 @@ from PyQt5.QtChart import QChart, QLineSeries, QChartView, QDateTimeAxis, QValue
 from datetime import time, datetime, timedelta
 import time_converter
 from numpy import random
-import numpy as np
 
 
 class SpeedFigure(QWidget):
@@ -79,6 +78,9 @@ class SpeedFigure(QWidget):
         else:
             if timestamp < self.last_timestamp:
                 return
+            else:
+                self.last_timestamp = timestamp
+
         period = ((bid_10, ask_10), (bid_30, ask_30))
 
         for i in range(2):
@@ -99,7 +101,9 @@ class SpeedFigure(QWidget):
         else:
             if timestamp < self.last_timestamp:
                 return
-
+            else:
+                self.last_timestamp = timestamp
+                
         period = ((bid_10, ask_10), (bid_30, ask_30))
 
         for i in range(2):

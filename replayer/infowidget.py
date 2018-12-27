@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QTableView
 from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, Qt
-import speed_figure
+import speed_figure, price_figure
 from datetime import datetime
 
 
@@ -76,8 +76,11 @@ class InfoWidget(QWidget):
 
         self.spread_speed_figure = speed_figure.SpeedFigure()
 
+        self.price_figure = price_figure.PriceFigure()
+
         self.layout.addWidget(self.spread_speed_table, 0, 0)
-        self.layout.addWidget(self.spread_speed_figure, 1, 0)
+        self.layout.addWidget(self.price_figure, 0, 1)
+        self.layout.addWidget(self.spread_speed_figure, 1, 0, 1, 2)
         self.setLayout(self.layout)
 
     @pyqtSlot(datetime, float, float, float, float, float, float, float, float)
@@ -92,4 +95,4 @@ class InfoWidget(QWidget):
 
     @pyqtSlot(datetime, int, int, bool)
     def tradeChanged(self, timestamp, price, volume, is_long):
-        pass
+        self.price_figure.add_trade(timestamp, price, volume, is_long)
