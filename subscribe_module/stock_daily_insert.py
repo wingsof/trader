@@ -15,17 +15,17 @@ def insert_investor_trend(client, code):
 
     obj.BlockRequest()
     count = obj.GetHeaderValue(1)
-    today = datetime.now()
 
     for i in range(count):
         d = {}
         for j in range(19):
             d[str(j)] = obj.GetDataValue(j, i)
-        t = time_converter.intdate_to_datetime(d['0'])
-        if t.year == today.year and t.month == today.month and t.day == today.day:
-            cursor = client.stock[code + '_INV'].find({'0': d['0']})
-            if cursor.count() == 0:
-                client.stock[code + '_INV'].insert_one(d)
+
+        if int(d['0'] / 10000) == 0:
+            continue
+        cursor = client.stock[code + '_INV'].find({'0': d['0']})
+        if cursor.count() == 0:
+            client.stock[code + '_INV'].insert_one(d)
 
 
 def insert_short_cover(client, code):    
@@ -34,18 +34,16 @@ def insert_short_cover(client, code):
 
     obj.BlockRequest()
     count = obj.GetHeaderValue(0)
-    today = datetime.now()
 
     for i in range(count):
         d = {}
         for j in range(11):
             d[str(j)] = obj.GetDataValue(j, i)
-
-        t = time_converter.intdate_to_datetime(d['0'])
-        if t.year == today.year and t.month == today.month and t.day == today.day:
-            cursor = client.stock[code + '_COVER'].find({'0': d['0']})
-            if cursor.count() == 0:
-                client.stock[code + '_COVER'].insert_one(d)
+        if int(d['0'] / 10000) == 0:
+            continue
+        cursor = client.stock[code + '_COVER'].find({'0': d['0']})
+        if cursor.count() == 0:
+	    client.stock[code + '_COVER'].insert_one(d)
 
 
 def daily_insert_data():
