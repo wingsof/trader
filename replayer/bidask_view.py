@@ -65,7 +65,7 @@ class BidAskView(QWidget):
     infoChanged = pyqtSignal(int, datetime)
     speedChanged = pyqtSignal(datetime, float, float, float, float, float, float, float, float)
     defenseChanged = pyqtSignal(datetime, float, float, float, float, float, float, float, float)
-    tradeChaged = pyqtSignal(datetime, int, int, bool) # price, volume, buy / sell
+    tradeChanged = pyqtSignal(datetime, int, int, bool) # price, volume, buy / sell
 
     def __init__(self):
         super(BidAskView, self).__init__()
@@ -73,7 +73,7 @@ class BidAskView(QWidget):
         self.model.infoChanged.connect(self.infoChanged)
         self.model.speedChanged.connect(self.speedChanged)
         self.model.defenseChanged.connect(self.defenseChanged)
-        self.model.tradeChaged.connect(self.tradeChaged)
+        self.model.tradeChanged.connect(self.tradeChanged)
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.run_timer)
