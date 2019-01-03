@@ -55,7 +55,6 @@ class PriceFigure(QWidget):
             self.prices.append(price)
             self.volumes.append(volume)
         else:
-            print('Draw Graph')
             price_mean = np.mean(self.prices)
             self.prices = []
             self.price_series.append(int(timestamp.timestamp() * 1000), price_mean)
