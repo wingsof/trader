@@ -6,6 +6,8 @@ from utils import time_converter
 from dbapi import stock_chart
 import pandas as pd
 from datetime import datetime
+from datetime import date
+from datetime import timedelta
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -14,7 +16,11 @@ class PriceTrendLine:
     MINIMUM_JUMP = 2
 
     def __init__(self, data):
-        self.price_list = list(map(lambda x: {'date': time_converter.intdate_to_datetime(x['0']), 'close': x['5'], 'xaxis': x['0']}, data))
+        self.i = 0
+        def inc():
+            self.i += 1
+            return self.i
+        self.price_list = list(map(lambda x: {'date': time_converter.intdate_to_datetime(x['0']), 'close': x['5'], 'xaxis': inc()}, data))
         self.df = pd.DataFrame(self.price_list)
         self.df = self.df.set_index('date')
 
@@ -32,11 +38,15 @@ class PriceTrendLine:
                     if c['date'] == v1['date'] or c['date'] == v2['date']: continue
                     x1, x2, y1, y2, cx, cy = v1['xaxis'], v2['xaxis'], v1['close'], v2['close'], c['xaxis'], c['close']
                     result = (y1 - y2) * cx + (x2 - x1) * cy + x1 * y2 - x2 * y1
+                    
                     if (isUpperLine and result < 0) or (not isUpperLine and result > 0) :
                         found = False
+                        #print('Faled')
                         break
-
+                    #if not isUpperLine:
+                    #    print(result, v1['date'], v2['date'], c['date'])
                 if found:
+                    if not isUpperLine: print('Success')
                     return [v1['date'], v2['date']], [v1['close'], v2['close']]
 
     def generate_line(self):
@@ -46,7 +56,7 @@ class PriceTrendLine:
         return upper_line, lower_line
 
 if __name__ == '__main__':
-    _, data = stock_chart.get_day_period_data('A005380', datetime(2018, 1, 1), datetime(2018, 11, 30))
+    _, data = stock_chart.get_day_period_data('A005930', date.today() - timedelta(days=90), datetime(2019,10,22))
     mac = PriceTrendLine(data)
     upper_line, lower_line = mac.generate_line()
     fig = plt.figure()
