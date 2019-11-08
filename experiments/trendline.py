@@ -13,20 +13,20 @@ import numpy as np
 
 
 class PriceTrendLine:
-    MINIMUM_JUMP = 2
+    MINIMUM_JUMP = 5
 
     def __init__(self, data):
         self.i = 0
         def inc():
             self.i += 1
             return self.i
-        self.price_list = list(map(lambda x: {'date': time_converter.intdate_to_datetime(x['0']), 'close': x['5'], 'xaxis': inc()}, data))
+        self.price_list = list(map(lambda x: {'date': time_converter.intdate_to_datetime(x['0']), 'close': x['5'], 'xaxis': inc(), 'volume': x['6'], 'foreign': x['11']}, data))
         self.df = pd.DataFrame(self.price_list)
         self.df = self.df.set_index('date')
 
     def _find_line(self, isUpperLine):
         for i, v1 in enumerate(reversed(self.price_list)):
-            left_jump_index = len(self.price_list) - i  - int(len(self.price_list) / 10)
+            left_jump_index = len(self.price_list) - i  - PriceTrendLine.MINIMUM_JUMP
             if left_jump_index < 0:
                 left_jump_index = 0
 
@@ -56,14 +56,19 @@ class PriceTrendLine:
         return upper_line, lower_line
 
 if __name__ == '__main__':
-    _, data = stock_chart.get_day_period_data('A005930', date.today() - timedelta(days=90), datetime(2019,10,22))
+    # A005930: 2016,10,6
+    today = datetime(2018, 1, 30)
+    _, data = stock_chart.get_day_period_data('A000070', today - timedelta(days=90), today)
     mac = PriceTrendLine(data)
     upper_line, lower_line = mac.generate_line()
     fig = plt.figure()
     fig.patch.set_facecolor('white')
-    ax1 = fig.add_subplot(111, ylabel='price')
+    ax1 = fig.add_subplot(311, ylabel='price')
+    ax2 = fig.add_subplot(312, ylabel='volume')
+    ax3 = fig.add_subplot(313, ylabel='foreign')
     mac.df['close'].plot(ax=ax1, color='r', lw=2.)
     ax1.plot(upper_line[0], upper_line[1], color='b', lw=2., marker = 'o')
     ax1.plot(lower_line[0], lower_line[1], color='g', lw=2., marker = 'o')
-
+    mac.df['volume'].plot(ax=ax2, color='g')
+    mac.df['foreign'].plot(ax=ax3, color='b')
     plt.show()
