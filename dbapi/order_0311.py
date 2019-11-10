@@ -10,7 +10,7 @@ from dbapi import config
 from utils.store import Store
 
 class Order:
-    BALANCE_DIVIDER = 10.
+    BALANCE_DIVIDER = 20.
     """
     LONG DICT TYPE
         [{'code': code, 'name': name, 'quantity': quantity,

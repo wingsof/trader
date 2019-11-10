@@ -70,8 +70,10 @@ def get_window_profit(code, start_date, end_date, cons):
         high = price_list[0]['high']
         close = price_list[0]['close']
 
-        b_condition = max(high_past) < high
-        s_condition = min(low_past) > low
+        eighty_price = (max(high_past) - min(low_past)) * 0.8 + min(low_past)
+        twenty_price = (max(high_past) - min(low_past)) * 0.2 + min(low_past)
+        b_condition = eighty_price < high
+        s_condition = twenty_price > low
 
         if bought['quantity'] != 0 and s_condition:
             money = close * bought['quantity']
@@ -89,7 +91,7 @@ def get_window_profit(code, start_date, end_date, cons):
         left = money if money != 0 else bought['quantity'] * prev_close
         
         yield today, left / initial_deposit * 100, close / initial_price * 100, trade_count
-        print(today, 'P:', '{0:0.3f}'.format(left / initial_deposit * 100), '{0:0.3f}'.format(close / initial_price * 100), 'T:', trade_count)
+        print(today, 'P:', '{0:0.3f}'.format(left / initial_deposit * 100), '{0:0.3f}'.format(close / initial_price * 100), 'T:', trade_count, '80%:', eighty_price, '20%:', twenty_price, 'H:', high)
         today += timedelta(days=1)
 
 #code_list = ['A005930']
@@ -100,10 +102,9 @@ end_date = datetime(2018, 11, 29)
 df = pd.DataFrame(columns=['code', 'date', 'profit', 'days', 'price'])
 
 for code in code_list:
-    for r in range(10, 101, 10):
-        for date, profit, p, tcount in get_window_profit(code, start_date, end_date, r):
-            df = df.append({'code': code, 'date': date, 'profit': profit, 'days': r, 'price': p}, ignore_index=True)
+    for date, profit, p, tcount in get_window_profit(code, start_date, end_date, 20):
+        df = df.append({'code': code, 'date': date, 'profit': profit, 'days': 20, 'price': p}, ignore_index=True)
 
-writer = pd.ExcelWriter(sys.argv[1] + '_updays.xlsx')
-df.to_excel(writer, 'Sheet1')
-writer.save()
+#writer = pd.ExcelWriter(sys.argv[1] + '_updays.xlsx')
+#df.to_excel(writer, 'Sheet1')
+#writer.save()

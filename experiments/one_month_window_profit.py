@@ -69,6 +69,8 @@ def get_window_profit(code, start_date, end_date, method):
 
 #code_list = stock_code.get_kospi200_list()
 code_list = ['A005930']
+#code_list = ['A035420']
+
 start_date = datetime(2015, 11, 1)
 end_date = datetime(2018, 11, 29)
 

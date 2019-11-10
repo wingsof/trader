@@ -20,6 +20,7 @@ def insert_investor_trend(client, code):
         d = {}
         for j in range(19):
             d[str(j)] = obj.GetDataValue(j, i)
+            
         if int(d['0'] / 10000) == 0:
             continue
         cursor = client.stock[code + '_INV'].find({'0': d['0']})
@@ -42,7 +43,7 @@ def insert_short_cover(client, code):
             continue
         cursor = client.stock[code + '_COVER'].find({'0': d['0']})
         if cursor.count() == 0:
-            client.stock[code + '_COVER'].insert_one(d)
+	        client.stock[code + '_COVER'].insert_one(d)
 
 
 def daily_insert_data():
@@ -61,10 +62,4 @@ def daily_insert_data():
 
 
 if __name__ == '__main__':
-    """
-    start_date = datetime(2013, 1, 1)
-    end_date = datetime.now()
-    l, data = stock_chart.get_day_period_data('A005490', start_date, end_date)
-    print(data)
-    """
     daily_insert_data()

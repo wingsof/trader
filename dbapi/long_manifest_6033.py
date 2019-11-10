@@ -10,14 +10,15 @@ _COLLECTION = 'long_list'
 
 class LongManifest:
     @staticmethod
-    def drop_from_long(account_num, code, db):
-        db[_COLLECTION].delete_one({'account_num': account_num, 'code': code})
+    def drop_from_long(account_num, account_type, code, db):
+        db[_COLLECTION].delete_one({'account_num': account_num, 'account_type': account_type, code': code})
 
     @staticmethod
-    def add_to_long(account_num, code, name, quantity, price, db):
+    def add_to_long(account_num, account_type, code, name, quantity, price, db):
         db[_COLLECTION].insert_one({
             'code': code,
             'account_num': account_num,
+            'account_type' : account_type,
             'name': name,
             'quantity': quantity,
             'sell_available': quantity,
@@ -26,17 +27,18 @@ class LongManifest:
 
 
 
-    def __init__(self, account_num):
+    def __init__(self, account_num, account_type):
         self.db = MongoClient(config.MONGO_SERVER).trader
         self.account_num = account_num
+        self.account_type = account_type
 
     def get_count(self):
-        cursor = self.db[_COLLECTION].find({'account_num':self.account_num})
+        cursor = self.db[_COLLECTION].find({'account_num':self.account_num, 'account_type': self.account_type})
         return cursor.count()
 
     def get_long_list(self, store=False):
         long_list = []
-        cursor = self.db[_COLLECTION].find({'account_num':self.account_num})
+        cursor = self.db[_COLLECTION].find({'account_num':self.account_num, 'account_type': self.account_type})
         for c in cursor:
             code = c['code']
             name = c['name']
@@ -55,20 +57,10 @@ class LongManifest:
 
     def get_long_codes(self):
         long_codes = []
-        cursor = self.db[_COLLECTION].find({'account_num':self.account_num})
+        cursor = self.db[_COLLECTION].find({'account_num':self.account_num, 'account_type': self.account_type})
         for i in cursor:
             long_codes.append(i['code'])    
         return long_codes
-
-    def insert_long(self, code, name, account_num, sell_available, price):
-        self.db[_COLLECTION].insert_one({
-            'code': code,
-            'account_num': account_num,
-            'name': name,
-            'quantity': sell_available,
-            'sell_available': sell_available,
-            'price': price
-        })
 
     def sold(self, code):
         self.db[_COLLECTION].delete_one({'code': code})
@@ -77,7 +69,8 @@ class LongManifest:
     def _insert_long(self, code, name, sell_available, price):
         self.db[_COLLECTION].insert_one({
             'code': code,
-            'account_num': 'test',
+            'account_num': 'test-account',
+            'account_type': 'test-type',
             'name': name,
             'quantity': sell_available,
             'sell_available': sell_available,
@@ -88,7 +81,7 @@ class LongManifest:
 if __name__ == '__main__':
     lm = LongManifest('test')
     db = MongoClient(config.MONGO_SERVER).trader
-    db[_COLLECTION].delete_many({'account_num': 'test'})
+    db[_COLLECTION].delete_many({'account_num': 'test-account'})
 
     lm._insert_long('A005930', 'LGE', 10, 48000)
     lm._insert_long('A005920', 'HI', 2, 49000)
@@ -99,4 +92,4 @@ if __name__ == '__main__':
     lm.sold('A005930')
     lc = lm.get_long_codes()
     assert lc[0] == 'A005920'
-    db[_COLLECTION].delete_many({'account_num': 'test'})
+    db[_COLLECTION].delete_many({'account_num': 'test-account'})
