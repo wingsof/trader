@@ -158,6 +158,7 @@ class Order:
         def add_quantity(item, q):
             qcopy = q.copy()
             prices = get_prices(item, qcopy)
+            # TODO BUG: if prices is empty, cannot use min
             index = prices.index(min(prices))
             qcopy[index] += 1
             if is_over_limit(item, qcopy, self.balance): return False
