@@ -159,7 +159,7 @@ def start_short_code_collector(q):
 
 
 if __name__ == '__main__':
-    #time.sleep(60*3)
+    time.sleep(60*3)
 
     conn = connection.Connection()
     while not conn.is_connected():
