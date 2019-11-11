@@ -18,7 +18,6 @@ class ShortCollector:
     SUBSCRIBE_PERIOD = 1
     def __init__(self, q):
         self.heart_beat = QTimer()
-        self.is_running = False
         self.queue = q
         self.heart_beat.timeout.connect(self.time_check)
         self.heart_beat.start(10000 * ShortCollector.SUBSCRIBE_PERIOD)
@@ -50,28 +49,19 @@ class ShortCollector:
             except:
                 break
 
-        n = datetime.now()
         self._loop_print()
-        is_testing = False
 
-        if (is_testing and not self.is_running) or (n.hour > 7 and n.hour < 18 and not self.is_running and n.weekday() < 5):
-            code_diff = set(codes).difference(self.current_subscribe_codes)
-            for code in code_diff:
-                print('START SUBSCRIBE', code)
-                bidask = bidask_realtime.StockRealtime(code, self.client)
-                stock_current = stock_current_realtime.StockRealtime(code, self.client)
-                self.realtime_subscribers.append(bidask)
-                self.realtime_subscribers.append(stock_current)
-                bidask.subscribe()
-                stock_current.subscribe()
-    
-            self.current_subscribe_codes.extend(list(code_diff))
-            self.is_running = True
-        else:
-            if self.is_running and n.hour >= 18:
-                self.is_running = False
-                for s in self.realtime_subscribers:
-                    s.unsubscribe()
+        code_diff = set(codes).difference(self.current_subscribe_codes)
+        for code in code_diff:
+            print('START SUBSCRIBE', code)
+            bidask = bidask_realtime.StockRealtime(code, self.client)
+            stock_current = stock_current_realtime.StockRealtime(code, self.client)
+            self.realtime_subscribers.append(bidask)
+            self.realtime_subscribers.append(stock_current)
+            bidask.subscribe()
+            stock_current.subscribe()
+
+        self.current_subscribe_codes.extend(list(code_diff))
 
 
 class Cp7043:
@@ -159,7 +149,7 @@ def start_short_code_collector(q):
 
 
 if __name__ == '__main__':
-    time.sleep(60*3)
+    #time.sleep(60*3)
 
     conn = connection.Connection()
     while not conn.is_connected():
