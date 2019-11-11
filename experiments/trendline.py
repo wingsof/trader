@@ -13,7 +13,7 @@ import numpy as np
 
 
 class PriceTrendLine:
-    MINIMUM_JUMP = 5
+    MINIMUM_JUMP = 3
 
     def __init__(self, data):
         self.i = 0
@@ -57,8 +57,12 @@ class PriceTrendLine:
 
 if __name__ == '__main__':
     # A005930: 2016,10,6
-    today = datetime(2018, 1, 30)
-    _, data = stock_chart.get_day_period_data('A000070', today - timedelta(days=90), today)
+    if len(sys.argv) < 5:
+        print('python trendline.py [code] [year] [month] [day]')
+        sys.exit(1)
+
+    today = datetime(int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]))
+    _, data = stock_chart.get_day_period_data(sys.argv[1], today - timedelta(days=30), today)
     mac = PriceTrendLine(data)
     upper_line, lower_line = mac.generate_line()
     fig = plt.figure()
