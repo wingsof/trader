@@ -5,6 +5,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 import pandas as pd
+import numpy as np
 
 from dbapi import config
 
@@ -24,6 +25,7 @@ def get_bull_codes_by_date(d):
     cursor = db['KOSDAQ_BY_TRADED'].find({'date': {'$gte':starttime, '$lte': endtime}})
     return (list(cursor)[0])
 
+
 def get_morning_prices(d, code):
     db = MongoClient(config.MONGO_SERVER)['stock']
     starttime = d.replace(hour = 9, minute = 0)
@@ -31,6 +33,7 @@ def get_morning_prices(d, code):
     
     cursor = db[code].find({'date': {'$gte':starttime, '$lte': endtime}})
     return list(cursor)
+
 
 def get_one_day_prices(d, code):
     db = MongoClient(config.MONGO_SERVER)['stock']
@@ -40,20 +43,17 @@ def get_one_day_prices(d, code):
     cursor = db[code].find({'date': {'$gte':starttime, '$lte': endtime}})
     return list(cursor)
 
+
 def get_ba_by_datetime(code, d, t):
     db = MongoClient(config.MONGO_SERVER)['stock']
     starttime = d.replace(hour = 8, minute = 30)
     endtime = d.replace(hour = 16, minute = 00)
-    cursor = db[code + '_BA'].find({'date': {'$gte':starttime, '$lte': endtime}, '1': {'$eq': t}})
+    
+    cursor = db[code + '_BA'].find({'date': {'$gte':starttime, '$lte': endtime}, '1': {'$eq': int(t)}})
     last_data = list(cursor)[-1]
-    return last_data['24'], last_data['23']  # wanna buy, wanna sell
+     # wanna buy, wanna sell
+    return last_data['24'], last_data['23'], last_data['6'] + last_data['10'] + last_data['14'] + last_data['18'] + last_data['22'], last_data['5'] + last_data['9'] + last_data['13'] + last_data['17'] + last_data['21']
 
-def get_one_day_ba(d, code):
-    db = MongoClient(config.MONGO_SERVER)['stock']
-    starttime = d.replace(hour = 8, minute = 30)
-    endtime = d.replace(hour = 16, minute = 00)
-    cursor = db[code + '_BA'].find({'date': {'$gte':starttime, '$lte': endtime}})
-    return list(cursor)
 
 def check_tripple(df):
     start_time = df.iloc[0]['3']
@@ -75,39 +75,70 @@ def check_tripple(df):
     if tripple:
         print(code, (df.iloc[-1]['13'] - next_min.iloc[0]['13']) / next_min.iloc[0]['13'] * 100)
 
-    return tripple
+    return df.iloc[-1]['13'], tripple
 
-def fetch_speed_data(code, d, df):
+def fetch_speed_data(code, d, df, price):
     start_time = df.iloc[0]['3']
     end_time = df.iloc[-1]['3']
 
-    new_df = pd.DataFrame(columns=['time', 'price', 'buy_speed', 'sell_speed', 'buy_sum', 'sell_sum', 'buy_ba', 'sell_ba', 'up_cap', 'down_cap'])
+    new_df = pd.DataFrame(columns=['time', 'price', 'buy_speed', 'sell_speed', 'buy_sum', 'sell_sum', 'buy_ba', 'sell_ba', 'buy_within_5', 'sell_within_5', 'up_cap', 'down_cap'])
     
     buy_sum = 0
     sell_sum = 0
+    count = 0
+    sell_price = 0
     while start_time < end_time + 1:
         min_data = df[df['3'] == start_time]
         if len(min_data) == 0:
             start_time += 1
             continue
+        count += 1
         buy_data = min_data[min_data['14'] == 49]
         sell_data = min_data[min_data['14'] == 50]
 
         buy_sum += buy_data['17'].sum()
         sell_sum += sell_data['17'].sum()
 
-        buy_ba, sell_ba = get_ba_by_datetime(code, d, start_time)
+        if count > 3 and sell_price == 0:
+            if sell_sum > buy_sum:
+                if count == 4:
+                    sell_price = -1
+                    print('DROP')
+                    return None, -1
+                else:
+                    print(count, min_data.iloc[-1]['13'])
+                    sell_price = min_data.iloc[-1]['13']
+                    return None, sell_price
 
+        buy_speed_ratio = 0
+        sell_speed_ratio = 0
+
+        buy_ba, sell_ba, buy_within_5, sell_within_5 = get_ba_by_datetime(code, d, start_time)
+
+        if  buy_data['17'].sum() > 0:
+            buy_speed_ratio = sell_within_5 / buy_data['17'].sum()
+        if sell_data['17'].sum() > 0:
+            sell_speed_ratio = buy_within_5 / sell_data['17'].sum()
+
+        if buy_speed_ratio > 10:
+            buy_speed_ratio = 10
+        if sell_speed_ratio > 10:
+            sell_speed_ratio = 10
+
+        #print(start_time, min_data.iloc[-1]['13'], buy_within_5, sell_within_5, buy_speed_ratio, sell_speed_ratio)
         current = d.replace(hour = int(start_time / 100), minute = int(start_time % 100))
         new_df = new_df.append({'time':current,
                                 'price':min_data.iloc[-1]['13'],
                                 'buy_speed': buy_data['17'].sum(),
                                 'sell_speed': sell_data['17'].sum(),
-                                'buy_sum': buy_sum, 'sell_sum': sell_sum, 'buy_ba': buy_ba, 'sell_ba': sell_ba,
-                                'up_cap': buy_ba / buy_data['17'].sum(), 'down_cap': sell_ba / sell_data['17'].sum(),
+                                'buy_sum': buy_sum, 'sell_sum': sell_sum, 'buy_ba': buy_within_5, 'sell_ba': sell_within_5,
+                                'up_cap': buy_speed_ratio, 'down_cap': sell_speed_ratio,
                                 }, ignore_index=True)
         start_time += 1
-    return new_df
+
+    if sell_price == 0:
+        sell_price = df.iloc[-1]['13']
+    return new_df, sell_price
 
 if __name__ == '__main__':
     codes = list(get_bull_codes_by_date(startdate).values())
@@ -116,31 +147,35 @@ if __name__ == '__main__':
     for code in codes:
         data = get_morning_prices(startdate, code)
         df = pd.DataFrame(data)
-        is_tripple = check_tripple(df)
+        price, is_tripple = check_tripple(df)
 
         if is_tripple:
             one_day_data = get_one_day_prices(startdate, code)
-            one_day_ba = get_one_day_ba(startdate, code)
+            
             one_day_df = pd.DataFrame(one_day_data)
-            speeds = fetch_speed_data(code, startdate, one_day_df)
+            one_day_df = one_day_df[one_day_df['20'] == ord('2')]
+
+            speeds, sprice = fetch_speed_data(code, startdate, one_day_df, price)
+            print(code, startdate, 'BUY Price', price, 'SELL Price', sprice)
             #print(speeds[0], speeds[1])
             # wanna simple strategy calculating current buy_speed can go up to where and vice versa and calculating
-            
+            """
             fig = plt.figure()
             fig.patch.set_facecolor('white')
-            ax1 = fig.add_subplot(411, ylabel='price')
-            ax2 = fig.add_subplot(412, ylabel='speed')
-            ax3 = fig.add_subplot(413, ylabel='sum')
-            ax4 = fig.add_subplot(414, ylabel='cap')
-            speed_df = speeds[2]
+            ax1 = fig.add_subplot(511, ylabel='price')
+            ax2 = fig.add_subplot(512, ylabel='speed')
+            ax3 = fig.add_subplot(513, ylabel='sum')
+            ax4 = fig.add_subplot(514, ylabel='cap')
+            ax5 = fig.add_subplot(515, ylabel='ba_size')
+            #speed_df = speeds[2]
 
-            speed_df.plot(ax=ax1, x='time', y='price', color='r', lw=2.)
-            speed_df.plot(ax=ax2, x='time', y=['buy_speed', 'sell_speed'])
-            speed_df.plot(ax=ax3, x='time', y=['buy_sum', 'sell_sum'])
-            speed_df.plot(ax=ax4, x='time', y=['up_cap', 'down_cap'])
-            
+            speeds.plot(ax=ax1, x='time', y='price', color='r', lw=2.)
+            speeds.plot(ax=ax2, x='time', y=['buy_speed', 'sell_speed'])
+            speeds.plot(ax=ax3, x='time', y=['buy_sum', 'sell_sum'])
+            speeds.plot(ax=ax4, x='time', y=['up_cap', 'down_cap'])
+            speeds.plot(ax=ax5, x='time', y=['buy_ba', 'sell_ba'])
             plt.show()
-            
+            """
     #print(start_time)
         
         # data['13'] == prices

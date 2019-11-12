@@ -14,3 +14,9 @@ class TradeUtil:
     def get_account_type(self):
         return self.trade_obj.GoodsList(self.get_account_number(), 1)[0]
 
+
+if __name__ == '__main__':
+    tu = TradeUtil()
+    print(tu.get_account_number())
+    print(tu.get_account_type())
+
