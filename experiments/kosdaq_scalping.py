@@ -40,6 +40,21 @@ def get_one_day_prices(d, code):
     cursor = db[code].find({'date': {'$gte':starttime, '$lte': endtime}})
     return list(cursor)
 
+def get_ba_by_datetime(code, d, t):
+    db = MongoClient(config.MONGO_SERVER)['stock']
+    starttime = d.replace(hour = 8, minute = 30)
+    endtime = d.replace(hour = 16, minute = 00)
+    cursor = db[code + '_BA'].find({'date': {'$gte':starttime, '$lte': endtime}, '1': {'$eq': t}})
+    last_data = list(cursor)[-1]
+    return last_data['24'], last_data['23']  # wanna buy, wanna sell
+
+def get_one_day_ba(d, code):
+    db = MongoClient(config.MONGO_SERVER)['stock']
+    starttime = d.replace(hour = 8, minute = 30)
+    endtime = d.replace(hour = 16, minute = 00)
+    cursor = db[code + '_BA'].find({'date': {'$gte':starttime, '$lte': endtime}})
+    return list(cursor)
+
 def check_tripple(df):
     start_time = df.iloc[0]['3']
 
@@ -62,13 +77,11 @@ def check_tripple(df):
 
     return tripple
 
-def fetch_speed_data(d, df):
+def fetch_speed_data(code, d, df):
     start_time = df.iloc[0]['3']
     end_time = df.iloc[-1]['3']
 
-    buy_speeds = []
-    sell_speeds = []
-    new_df = pd.DataFrame(columns=['time', 'price', 'buy_speed', 'sell_speed'])
+    new_df = pd.DataFrame(columns=['time', 'price', 'buy_speed', 'sell_speed', 'buy_sum', 'sell_sum', 'buy_ba', 'sell_ba', 'up_cap', 'down_cap'])
     
     buy_sum = 0
     sell_sum = 0
@@ -79,21 +92,22 @@ def fetch_speed_data(d, df):
             continue
         buy_data = min_data[min_data['14'] == 49]
         sell_data = min_data[min_data['14'] == 50]
-        buy_speeds.append(buy_data['17'].sum())
-        sell_speeds.append(sell_data['17'].sum())
 
         buy_sum += buy_data['17'].sum()
         sell_sum += sell_data['17'].sum()
-        
+
+        buy_ba, sell_ba = get_ba_by_datetime(code, d, start_time)
+
         current = d.replace(hour = int(start_time / 100), minute = int(start_time % 100))
         new_df = new_df.append({'time':current,
                                 'price':min_data.iloc[-1]['13'],
                                 'buy_speed': buy_data['17'].sum(),
                                 'sell_speed': sell_data['17'].sum(),
-                                'buy_sum': buy_sum, 'sell_sum': sell_sum,
+                                'buy_sum': buy_sum, 'sell_sum': sell_sum, 'buy_ba': buy_ba, 'sell_ba': sell_ba,
+                                'up_cap': buy_ba / buy_data['17'].sum(), 'down_cap': sell_ba / sell_data['17'].sum(),
                                 }, ignore_index=True)
         start_time += 1
-    return buy_speeds, sell_speeds, new_df
+    return new_df
 
 if __name__ == '__main__':
     codes = list(get_bull_codes_by_date(startdate).values())
@@ -106,19 +120,24 @@ if __name__ == '__main__':
 
         if is_tripple:
             one_day_data = get_one_day_prices(startdate, code)
+            one_day_ba = get_one_day_ba(startdate, code)
             one_day_df = pd.DataFrame(one_day_data)
-            speeds = fetch_speed_data(startdate, one_day_df)
+            speeds = fetch_speed_data(code, startdate, one_day_df)
             #print(speeds[0], speeds[1])
+            # wanna simple strategy calculating current buy_speed can go up to where and vice versa and calculating
+            
             fig = plt.figure()
             fig.patch.set_facecolor('white')
-            ax1 = fig.add_subplot(311, ylabel='price')
-            ax2 = fig.add_subplot(312, ylabel='speed')
-            ax3 = fig.add_subplot(313, ylabel='sum')
+            ax1 = fig.add_subplot(411, ylabel='price')
+            ax2 = fig.add_subplot(412, ylabel='speed')
+            ax3 = fig.add_subplot(413, ylabel='sum')
+            ax4 = fig.add_subplot(414, ylabel='cap')
             speed_df = speeds[2]
 
             speed_df.plot(ax=ax1, x='time', y='price', color='r', lw=2.)
             speed_df.plot(ax=ax2, x='time', y=['buy_speed', 'sell_speed'])
             speed_df.plot(ax=ax3, x='time', y=['buy_sum', 'sell_sum'])
+            speed_df.plot(ax=ax4, x='time', y=['up_cap', 'down_cap'])
             
             plt.show()
             
