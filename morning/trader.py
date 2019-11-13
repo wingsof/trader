@@ -5,22 +5,23 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from pymongo import MongoClient
 import pymongo
 import time
-from PyQt5.QtCore import QCoreApplication, QTimer
+from PyQt5.QtCore import QCoreApplication, QTimer, QThread
+from multiprocessing import Process, Queue
 
 from sys import platform as _platform
 if _platform == 'win32' or _platform == 'win64':
     from winapi import config
     from winapi import connection
     from winapi import trade_util
+    from winapi import balance_5331a as balance
 else:
     from dbapi import config
     from dbapi import connection
     from dbapi import trade_util
+    from dbapi import balance_5331a as balance
 
 class Trader:
-    def __init__(self):
-        pass
-
+    
     def get_db_connection(self):
         try:
             MongoClient(config.MONGO_SERVER)
@@ -47,21 +48,33 @@ class Trader:
         self.trade_util = trade_util.TradeUtil()
         self.account_num = self.trade_util.get_account_number()
         self.account_type = self.trade_util.get_account_type()
+        self.balance = balance.get_balance(self.account_num, self.account_type)
         print('Account Num', self.account_num, 'Account Type', self.account_type)
         if len(self.account_num) > 0 and len(self.account_type) > 0:
-            return True
+            pass
         else:
             print('Account is not correct')
             return False
 
-        return False
+        codes = []
+        Cp7043().request(codes)
+        if len(codes) == 0:
+            print('CODE LOAD failed')
+            return False
+
+        return True
+    
+    def start(self):
+        self.trade_launcher = TradeLauncher(self.codes)
+        self.trade_launcher.set_account_info(self.account_num, self.account_type, self.balance)
+        self.trade_launcher.launch()
+            
 
 if __name__ == '__main__':
     if _platform == 'win32' or _platform == 'win64':
         conn = connection.Connection()
         while not conn.is_connected():
             time.sleep(5)
-
 
     app = QCoreApplication(sys.argv)
     trader = Trader()
