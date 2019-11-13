@@ -7,37 +7,9 @@ from datetime import datetime
 from pymongo import MongoClient
 from pipeline import Pipeline
 
-
-class _CpEvent:
-    def set_params(self, obj, code, callback):
-        self.obj = obj
-        self.code = code
-        self.callback = callback
-
-    def OnReceived(self):
-        d = {}
-        for i in range(29):
-            d[str(i)] = self.obj.GetHeaderValue(i)
-        d['date'] = datetime.now()
-        self.callback(d)
-
-
-class StockRealtime:
-    def __init__(self, code, callback):
-        self.obj = win32com.client.Dispatch('DsCbo1.StockCur')
-        self.code = code
-        self.callback = callback
-        # construct pipeline
-
-    def subscribe(self):
-        handler = win32com.client.WithEvents(self.obj, _CpEvent)
-        self.obj.SetInputValue(0, self.code)
-        handler.set_params(self.obj, self.code, self.callback)
-        self.obj.Subscribe()
-
-    def unsubscribe(self):
-        self.obj.Unsubscribe()
-
+# TODO: how to abstract streaming datas
+from streams.stock_realtime import StockRealtime
+from streams.stock_ba_realtime import StockBaRealtime
 
 from filters.in_market_filter import InMarketFilter
 from strategy.start_three_up_strategy import StartThreeUpStrategy
@@ -46,14 +18,26 @@ class ObserveRealtimeCode:
     def __init__(self, q, code):
         self.queue = q
         self.code = code
+        self.stock_current = None
+        self.ba_current = None
+        self.bid_prices = []
+        self.ask_prices = []
         self.pipeline = Pipeline()
         self.pipeline.set_elements(InMarketFilter(), StartThreeUpStrategy())
 
     def start_observe(self):
-        self.stock_current = StockRealtime(self.code, self.process_data)
+        if self.stock_current == None:
+            self.stock_current = StockRealtime(self.code, self.process_data)
+            self.stock_current.subscribe()
+            self.ba_current = StockBaRealtime(self.code, self.ba_data)
+            self.ba_current.subscribe()
 
     def process_data(self, tick):
-        process = self.pipeline.stream_in_data(tick)
-        result = process.result()
+        self.pipeline.pipe_in(tick)
+        self.pipeline.result()
         #print('PUT MSG', self.msg, os.getpid())
         #self.queue.put(self.msg)
+    
+    def ba_data(self, tick):
+        self.bid_prices = [tick['3'], tick['7'], tick['11'], tick['15'], tick['19']]
+        self.ask_prices = [tick['4'], tick['8'], tick['12'], tick['16'], tick['20']]

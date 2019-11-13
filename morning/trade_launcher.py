@@ -40,7 +40,7 @@ class TradeWorker(QObject):
                 break
 
 
-class TraderLauncher:
+class TradeLauncher:
     def __init__(self, codes):
         self.codes = codes
         self.workers = []
@@ -58,6 +58,7 @@ class TraderLauncher:
             worker.connect_start_signal(runner_thread.started)
             runner_thread.start()
         print('RUN All Threads')
+        # TODO: before 9:00 AM, check Cp7043 for today surge codes
 
     def set_account_info(self, account_num, account_type, balance):
         self.account_num = account_num

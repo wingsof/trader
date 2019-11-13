@@ -8,20 +8,26 @@ import time
 from PyQt5.QtCore import QCoreApplication, QTimer, QThread
 from multiprocessing import Process, Queue
 
+from trade_launcher import TradeLauncher
+
 from sys import platform as _platform
 if _platform == 'win32' or _platform == 'win64':
     from winapi import config
     from winapi import connection
     from winapi import trade_util
     from winapi import balance_5331a as balance
+    from winapi import cp7043
 else:
     from dbapi import config
     from dbapi import connection
     from dbapi import trade_util
     from dbapi import balance_5331a as balance
+    from dbapi import cp7043
 
 class Trader:
-    
+    def __init__(self):
+        self.codes = []
+
     def get_db_connection(self):
         try:
             MongoClient(config.MONGO_SERVER)
@@ -56,9 +62,8 @@ class Trader:
             print('Account is not correct')
             return False
 
-        codes = []
-        Cp7043().request(codes)
-        if len(codes) == 0:
+        cp7043.Cp7043().request(self.codes)
+        if len(self.codes) == 0:
             print('CODE LOAD failed')
             return False
 

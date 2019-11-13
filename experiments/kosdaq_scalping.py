@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 # startdate = datetime(2019, 11, 11)
 
 # first day for collecting
-startdate = datetime(2019, 11, 11)
+startdate = datetime(2019, 11, 12)
 
 def get_bull_codes_by_date(d):
     db = MongoClient(config.MONGO_SERVER)['stock']
@@ -28,7 +28,7 @@ def get_bull_codes_by_date(d):
 
 def get_morning_prices(d, code):
     db = MongoClient(config.MONGO_SERVER)['stock']
-    starttime = d.replace(hour = 9, minute = 0)
+    starttime = d.replace(hour = 8, minute = 30)
     endtime = d.replace(hour = 9, minute = 10)
     
     cursor = db[code].find({'date': {'$gte':starttime, '$lte': endtime}})
@@ -55,12 +55,13 @@ def get_ba_by_datetime(code, d, t):
     return last_data['24'], last_data['23'], last_data['6'] + last_data['10'] + last_data['14'] + last_data['18'] + last_data['22'], last_data['5'] + last_data['9'] + last_data['13'] + last_data['17'] + last_data['21']
 
 
-def check_tripple(df):
+def check_tripple(code, df):
     start_time = df.iloc[0]['3']
 
     tripple = True
     for i in range(3):
         min_data = df[df['3'] == start_time]
+        # code argument is for testing purpose
         #print(min_data['13'].iloc[0], min_data['13'].iloc[-1])
 
         if i == 0:
@@ -147,13 +148,18 @@ if __name__ == '__main__':
     for code in codes:
         data = get_morning_prices(startdate, code)
         df = pd.DataFrame(data)
-        price, is_tripple = check_tripple(df)
+        df = df[df['20'] == ord('2')]
+        df = df[1:]
+
+        price, is_tripple = check_tripple(code, df)
 
         if is_tripple:
             one_day_data = get_one_day_prices(startdate, code)
             
             one_day_df = pd.DataFrame(one_day_data)
             one_day_df = one_day_df[one_day_df['20'] == ord('2')]
+            one_day_df = one_day_df[1:]
+            
 
             speeds, sprice = fetch_speed_data(code, startdate, one_day_df, price)
             print(code, startdate, 'BUY Price', price, 'SELL Price', sprice)

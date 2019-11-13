@@ -35,6 +35,7 @@ if __name__ == '__main__':
             today_inst_vol = d['12']
             today_all_vol = d['6']
             per_estimate =  -(today_inst_vol + today_foreign_vol)
+            # TODO: 외부기관의 경우 잡히지 않는데, 이를 개인 매수세에서 잘라내는 방법 확인 필요
             per_total += per_estimate
             df = df.append({'code': code, 'date': time_converter.intdate_to_datetime(d['0']),
                             'price': d['5'], 'per': per_total,
