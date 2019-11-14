@@ -37,6 +37,9 @@ if __name__ == '__main__':
     trader.set_selector(
         kosdaq_current_bull_codes.KosdaqCurrentBullCodes(is_repeat=True, repeat_msec=60000))
 
+    #trader.set_selector(
+    #    kosdaq_current_bull_codes.KosdaqCurrentBullCodes(from_date=datetime.now(), until_date=datetime.now())
+
     if is_simulation:
         trader.set_executor(cybos_account.CybosAccount())
     else:
