@@ -15,13 +15,14 @@ import matplotlib.pyplot as plt
 # startdate = datetime(2019, 11, 11)
 
 # first day for collecting
-startdate = datetime(2019, 11, 12)
+startdate = datetime(2019, 11, 14)
+alpha_hour = 0 # 2019, 11, 14 수능날 추가 시간 필요
 
 def get_bull_codes_by_date(d):
     db = MongoClient(config.MONGO_SERVER)['stock']
 
     starttime = d.replace(hour = 9, minute = 0)
-    endtime = d.replace(hour = 9, minute = 10)
+    endtime = d.replace(hour = 9 + alpha_hour, minute = 10)
     cursor = db['KOSDAQ_BY_TRADED'].find({'date': {'$gte':starttime, '$lte': endtime}})
     return (list(cursor)[0])
 
@@ -29,7 +30,7 @@ def get_bull_codes_by_date(d):
 def get_morning_prices(d, code):
     db = MongoClient(config.MONGO_SERVER)['stock']
     starttime = d.replace(hour = 8, minute = 30)
-    endtime = d.replace(hour = 9, minute = 10)
+    endtime = d.replace(hour = 9 + alpha_hour, minute = 30)
     
     cursor = db[code].find({'date': {'$gte':starttime, '$lte': endtime}})
     return list(cursor)
@@ -38,7 +39,7 @@ def get_morning_prices(d, code):
 def get_one_day_prices(d, code):
     db = MongoClient(config.MONGO_SERVER)['stock']
     starttime = d.replace(hour = 8, minute = 30)
-    endtime = d.replace(hour = 16, minute = 00)
+    endtime = d.replace(hour = 16 + alpha_hour, minute = 00)
     
     cursor = db[code].find({'date': {'$gte':starttime, '$lte': endtime}})
     return list(cursor)
@@ -61,6 +62,8 @@ def check_tripple(code, df):
     tripple = True
     for i in range(3):
         min_data = df[df['3'] == start_time]
+        if len(min_data) == 0:
+            return 0, False
         # code argument is for testing purpose
         #print(min_data['13'].iloc[0], min_data['13'].iloc[-1])
 
@@ -72,8 +75,13 @@ def check_tripple(code, df):
                 tripple = False
         start_time += 1
     
-    next_min = df[df['3'] == start_time]
     if tripple:
+        while True:
+            next_min = df[df['3'] == start_time]
+            #print(code, start_time, len(next_min))
+            if len(next_min) > 0:
+                break
+            start_time += 1
         print(code, (df.iloc[-1]['13'] - next_min.iloc[0]['13']) / next_min.iloc[0]['13'] * 100)
 
     return df.iloc[-1]['13'], tripple

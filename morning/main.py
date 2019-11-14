@@ -8,8 +8,8 @@ import time
 from PyQt5.QtCore import QCoreApplication, QTimer, QThread
 from multiprocessing import Process, Queue
 
-from morning.chooser import kosdaq_current_bull_codes
-from morning.account import cybos_account, fake_account
+from chooser import kosdaq_current_bull_codes
+from account import cybos_account, fake_account
 from trader import Trader
 
 is_simulation = True
@@ -33,6 +33,7 @@ if __name__ == '__main__':
         print('Not satisfied conditions', flush=True)
         sys.exit(1)
 
+    # selector should prefix code type to identify it later to use proper stream
     trader.set_selector(
         kosdaq_current_bull_codes.KosdaqCurrentBullCodes(is_repeat=True, repeat_msec=60000))
 
