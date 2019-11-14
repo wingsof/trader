@@ -3,31 +3,30 @@ from datetime import datetime
 
 
 
-class _CpEvent:
+class _BaEvent:
     def set_params(self, obj, code, callback):
-        self.obj = obj
         self.code = code
+        self.obj = obj
         self.callback = callback
 
     def OnReceived(self):
         d = {}
-        for i in range(29):
+        for i in range(69):
             d[str(i)] = self.obj.GetHeaderValue(i)
-        d['date'] = datetime.now()
+        d['date'] = datetime.datetime.now()
         self.callback(d)
 
 
-class StockRealtime:
-    # TODO: BA Data streaming
+class CybosStockBaTick:
     def __init__(self, code, callback):
-        self.obj = win32com.client.Dispatch('DsCbo1.StockCur')
+        self.obj = win32com.client.Dispatch("DsCbo1.StockJpBid")
         self.code = code
         self.callback = callback
 
     def subscribe(self):
-        handler = win32com.client.WithEvents(self.obj, _CpEvent)
+        handler = win32com.client.WithEvents(self.obj, _BaEvent)
         self.obj.SetInputValue(0, self.code)
-        handler.set_params(self.obj, self.code, self.callback)
+        handler.set_params(self.code, self.obj, self.callback)
         self.obj.Subscribe()
 
     def unsubscribe(self):
