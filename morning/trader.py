@@ -1,23 +1,24 @@
-import os
-import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from pymongo import MongoClient
 import pymongo
+import sys
+from pymongo import MongoClient
 from PyQt5.QtCore import QCoreApplication, QObject, pyqtSlot
+from cybos_api import connection
+
 from trade_launcher import TradeLauncher
 
 class Trader(QObject):
     def __init__(self, is_simulation = False):
         super().__init__()
+        self.is_simulation = is_simulation
+        self.app = QCoreApplication(sys.argv)
 
-        if is_simulation:
+        if self.is_simulation:
             import signal
             signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-        self.app = QCoreApplication(sys.argv)
         self.trade_launcher = TradeLauncher()
         self.choosers = []
+        self.streams = []
         self.executor = None
 
     def get_db_connection(self):
@@ -39,21 +40,22 @@ class Trader(QObject):
         self.executor = executor
 
     def set_stream_pipeline(self, *streams):
-        # Use clock connect between streams when simulation is on
-        pass
+        # TODO: Use clock connect between streams when simulation is on
+        for stream in streams:
+            self.streams.append(str(stream))
 
     def set_filter_pipeline(self, stream_index, *filt):
         pass
 
     def ready(self):
-        """ TODO: how to handle connection?
-        conn = connection.Connection()
-        if not conn.is_connected():
-            print('Network not connected', flush=True)
-            return False
-        else:
-            print('Connect OK')
-        """
+        if not self.is_simulation:
+            conn = connection.Connection()
+            if not conn.is_connected():
+                print('Network not connected', flush=True)
+                return False
+            else:
+                print('Connect OK')
+        
         if not self.get_db_connection():
             print('Cannot connect to Mongo')
             return False
@@ -63,8 +65,10 @@ class Trader(QObject):
     @pyqtSlot(set)
     def chooser_watcher(self, running_targets):
         for target in running_targets:
+            target_information = {'target': target, 
+                                  'streams': self.streams}
             # TODO: how to deliver pipelines information?
-            self.trade_launcher.add_target(target)
+            self.trade_launcher.add_target(target_information)
 
     def run(self):
         for ch in self.choosers:

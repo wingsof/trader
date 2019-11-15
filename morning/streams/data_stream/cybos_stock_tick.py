@@ -1,7 +1,6 @@
 import win32com.client
 from datetime import datetime
-import morning.streams.data_stream.data_stream
-
+import data_stream
 
 class _CpEvent:
     def set_params(self, obj, code, callback):
@@ -18,9 +17,14 @@ class _CpEvent:
 
 
 class CybosStockTick(data_stream.DataStream):
-    # TODO: BA Data streaming
-    def __init__(self, code, callback):
+
+    def __init__(self):
         super().__init__('cybos_stock_tick', True)
+        self.obj = None
+        self.code = ''
+        self.callback = None
+
+    def set_target(self, code, callback):
         self.obj = win32com.client.Dispatch('DsCbo1.StockCur')
         self.code = code
         self.callback = callback

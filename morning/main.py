@@ -17,6 +17,7 @@ is_simulation = True
 
 if __name__ == '__main__':
     if not is_simulation:
+        from cybos_api import connection
         conn = connection.Connection()
         while not conn.is_connected():
             time.sleep(5)

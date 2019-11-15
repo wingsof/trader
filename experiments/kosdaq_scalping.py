@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 # startdate = datetime(2019, 11, 11)
 
 # first day for collecting
-startdate = datetime(2019, 11, 14)
+startdate = datetime(2019, 11, 15)
 alpha_hour = 0 # 2019, 11, 14 수능날 추가 시간 필요
 
 def get_bull_codes_by_date(d):
@@ -57,6 +57,9 @@ def get_ba_by_datetime(code, d, t):
 
 
 def check_tripple(code, df):
+    if len(df) == 0:
+        return 0, False
+
     start_time = df.iloc[0]['3']
 
     tripple = True
@@ -158,7 +161,7 @@ if __name__ == '__main__':
         df = pd.DataFrame(data)
         df = df[df['20'] == ord('2')]
         df = df[1:]
-
+        
         price, is_tripple = check_tripple(code, df)
 
         if is_tripple:

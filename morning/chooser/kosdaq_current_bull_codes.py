@@ -30,10 +30,11 @@ class KosdaqCurrentBullCodes(chooser.Chooser):
         cp =  Cp7043()
         codes = []
         cp.request(codes)
+        
         diff = set(codes).difference(self.current_codes)
         if len(set(codes).difference(self.current_codes)) > 0:
             self.current_codes.extend(diff)
-            code_set = {}
+            code_set = set()
             for c in diff:
                 code_set.add('stock_code:kosdaq:' + c)
             self.code_changed.emit(code_set)
@@ -81,7 +82,8 @@ if __name__ == '__main__':
 
     class CybosReceiver(QObject):
         def __init__(self):
-            self.kosdaq = KosdaqCurrentBullCodes(is_repeat = True, repeat_msec = 5)
+            super().__init__()
+            self.kosdaq = KosdaqCurrentBullCodes(is_repeat = True, repeat_msec = 1000)
             self.kosdaq.code_changed.connect(self.get_codes)
             self.kosdaq.run()
 
@@ -91,6 +93,6 @@ if __name__ == '__main__':
 
 
     app = QCoreApplication(sys.argv)
-    #r = CodeReceiver()
+    r = CodeReceiver()
     cr = CybosReceiver()
     app.exec()
