@@ -22,7 +22,7 @@ class TradeWorker(QObject):
 
     def __init__(self, job_input):
         #print('Create Worker', job_input)
-        super(TradeWorker, self).__init__()
+        super().__init__()
         self.job_input = job_input
 
     def connect_start_signal(self, s):
@@ -41,9 +41,12 @@ class TradeWorker(QObject):
 
 
 class TradeLauncher:
-    def __init__(self, codes):
-        self.codes = codes
+    def __init__(self):
+        self.targets = []
         self.workers = []
+
+    def add_target(self, target):
+        self.targets.append(target)
 
     def launch(self):
         for code in self.codes:

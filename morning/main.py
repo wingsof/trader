@@ -1,7 +1,4 @@
-import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from pymongo import MongoClient
 import pymongo
 import time
@@ -12,14 +9,10 @@ from chooser import kosdaq_current_bull_codes
 from account import cybos_account, fake_account
 from trader import Trader
 
-is_simulation = True
+from streams.data_stream.cybos_stock_tick import CybosStockTick
+from streams.data_stream.cybos_stock_ba_tick import CybosStockBaTick
 
-if is_simulation:
-    from dbapi import connection
-    from dbapi import config
-else:
-    from winapi import connection
-    from winapi import config
+is_simulation = True
 
 
 if __name__ == '__main__':
@@ -34,7 +27,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # selector should prefix code type to identify it later to use proper stream
-    trader.set_selector(
+    trader.set_chooser(
         kosdaq_current_bull_codes.KosdaqCurrentBullCodes(is_repeat=True, repeat_msec=60000))
 
     #trader.set_selector(
@@ -49,9 +42,7 @@ if __name__ == '__main__':
     # Naming Rule : API Provider + Financial Type + Stream Type
 
     # TODO: how to provide the datetime?
-    csr = CybosStockRealtime()
-    csbr = CybosStockBaRealtime()
-    trader.set_stream_pipeline(csr, csbr)
+    trader.set_stream_pipeline(CybosStockTick(), CybosStockBaTick())
 
     """
         trader = Trader(True)

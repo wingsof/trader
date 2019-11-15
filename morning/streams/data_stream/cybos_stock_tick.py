@@ -17,10 +17,10 @@ class _CpEvent:
         self.callback(d)
 
 
-class CybosStockRealtime(data_stream.DataStream):
+class CybosStockTick(data_stream.DataStream):
     # TODO: BA Data streaming
     def __init__(self, code, callback):
-        super.init
+        super().__init__('cybos_stock_tick', True)
         self.obj = win32com.client.Dispatch('DsCbo1.StockCur')
         self.code = code
         self.callback = callback

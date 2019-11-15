@@ -19,6 +19,7 @@ class _BaEvent:
 
 class CybosStockBaTick:
     def __init__(self, code, callback):
+        super().__init__('cybos_stock_ba_tick', True)
         self.obj = win32com.client.Dispatch("DsCbo1.StockJpBid")
         self.code = code
         self.callback = callback
