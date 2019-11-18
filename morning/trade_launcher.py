@@ -6,13 +6,16 @@ from PyQt5.QtCore import QCoreApplication, QTimer, QThread, QObject, QProcess
 from PyQt5 import QtCore
 from multiprocessing import Process, Queue
 import os
-from observe_realtime_code import ObserveRealtimeCode
+#from observe_realtime_code import ObserveRealtimeCode
 
 
 def start_observe_data(queue, code):
-    app = QCoreApplication(sys.argv)
-    o = ObserveRealtimeCode(queue, code)
-    o.start_observe()
+    app = QCoreApplication([])
+    print('JOB INPUT', code)
+
+    #o = ObserveRealtimeCode(queue, code)
+    #o.start_observe()
+
     app.exec()
 
 
@@ -21,7 +24,6 @@ class TradeWorker(QObject):
     msg_from_job = QtCore.pyqtSignal(object)
 
     def __init__(self, job_input):
-        #print('Create Worker', job_input)
         super().__init__()
         self.job_input = job_input
 
@@ -47,20 +49,24 @@ class TradeLauncher:
 
     def add_target(self, target):
         self.targets.append(target)
+        print('ADD TARGET', len(self.targets))
 
     def launch(self):
-        for code in self.codes:
+        print('RUN All Threads', len(self.targets))
+
+        for target in self.targets:
+            print('Create Thread')
             runner_thread = QThread()
-            worker = TradeWorker(job_input=code)
+            worker = TradeWorker(job_input=target)
 
             worker.msg_from_job.connect(self.handle_msg)
             worker.moveToThread(runner_thread)
 
-            self.workers.append((code, runner_thread, worker))
+            self.workers.append((target, runner_thread, worker))
 
             worker.connect_start_signal(runner_thread.started)
             runner_thread.start()
-        print('RUN All Threads')
+        self.targets.clear()
         # TODO: before 9:00 AM, check Cp7043 for today surge codes
 
     def set_account_info(self, account_num, account_type, balance):

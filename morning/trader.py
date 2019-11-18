@@ -2,9 +2,8 @@ import pymongo
 import sys
 from pymongo import MongoClient
 from PyQt5.QtCore import QCoreApplication, QObject, pyqtSlot
-from cybos_api import connection
 
-from trade_launcher import TradeLauncher
+from morning.trade_launcher import TradeLauncher
 
 class Trader(QObject):
     def __init__(self, is_simulation = False):
@@ -42,13 +41,16 @@ class Trader(QObject):
     def set_stream_pipeline(self, *streams):
         # TODO: Use clock connect between streams when simulation is on
         for stream in streams:
-            self.streams.append(str(stream))
+            # TODO: need to convert to string?
+            self.streams.append(stream)
 
     def set_filter_pipeline(self, stream_index, *filt):
         pass
 
     def ready(self):
         if not self.is_simulation:
+            from morning.cybos_api import connection
+
             conn = connection.Connection()
             if not conn.is_connected():
                 print('Network not connected', flush=True)
@@ -69,12 +71,14 @@ class Trader(QObject):
                                   'streams': self.streams}
             # TODO: how to deliver pipelines information?
             self.trade_launcher.add_target(target_information)
+        self.trade_launcher.launch()
+
 
     def run(self):
         for ch in self.choosers:
             ch.code_changed.connect(self.chooser_watcher)
             ch.run()
-        # start selector
+
         self.app.exec()
 
 

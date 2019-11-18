@@ -1,15 +1,12 @@
-
-import os
-import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # for cybos_api
-
-import chooser
 from datetime import datetime
 from pymongo import MongoClient
 from PyQt5.QtCore import QTimer, pyqtSlot
-from cybos_api.cp7043 import Cp7043
 
-class KosdaqCurrentBullCodes(chooser.Chooser):
+from morning.chooser.chooser import Chooser
+from morning.cybos_api.cp7043 import Cp7043
+
+
+class KosdaqCurrentBullCodes(Chooser):
 
     def __init__(self, is_repeat = False, from_datetime = datetime.now(), until_datetime = datetime.now(), repeat_msec = 0):
         super().__init__()

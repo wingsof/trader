@@ -1,5 +1,6 @@
 import win32com.client
 from datetime import datetime
+from morning.streams.data_stream.data_stream import DataStream
 
 
 
@@ -17,7 +18,7 @@ class _BaEvent:
         self.callback(d)
 
 
-class CybosStockBaTick:
+class CybosStockBaTick(DataStream):
     def __init__(self):
         super().__init__('cybos_stock_ba_tick', True)
         self.obj = None

@@ -5,19 +5,19 @@ import time
 from PyQt5.QtCore import QCoreApplication, QTimer, QThread
 from multiprocessing import Process, Queue
 
-from chooser import kosdaq_current_bull_codes
-from account import cybos_account, fake_account
-from trader import Trader
+from morning.chooser import kosdaq_current_bull_codes
+from morning.account import cybos_account, fake_account
+from morning.trader import Trader
 
-from streams.data_stream.cybos_stock_tick import CybosStockTick
-from streams.data_stream.cybos_stock_ba_tick import CybosStockBaTick
+from morning.streams.data_stream.cybos_stock_tick import CybosStockTick
+from morning.streams.data_stream.cybos_stock_ba_tick import CybosStockBaTick
 
 is_simulation = True
 
 
 if __name__ == '__main__':
     if not is_simulation:
-        from cybos_api import connection
+        from morning.cybos_api import connection
         conn = connection.Connection()
         while not conn.is_connected():
             time.sleep(5)
@@ -45,6 +45,7 @@ if __name__ == '__main__':
     # TODO: how to provide the datetime?
     trader.set_stream_pipeline(CybosStockTick(), CybosStockBaTick())
 
+    trader.run()
     """
         trader = Trader(True)
     # selector 는 실시간으로 항목을 추가할 수 있다
