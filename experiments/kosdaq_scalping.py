@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 # startdate = datetime(2019, 11, 11)
 
 # first day for collecting
-startdate = datetime(2019, 11, 15)
+startdate = datetime(2019, 11, 18)
 alpha_hour = 0 # 2019, 11, 14 수능날 추가 시간 필요
 
 def get_bull_codes_by_date(d):
@@ -153,8 +153,10 @@ def fetch_speed_data(code, d, df, price):
     return new_df, sell_price
 
 if __name__ == '__main__':
-    codes = list(get_bull_codes_by_date(startdate).values())
-    codes = codes[2:]
+    bull_codes = get_bull_codes_by_date(startdate)
+    bull_codes.pop('_id', None)
+    bull_codes.pop('date', None)
+    codes = list(bull_codes.values())
 
     for code in codes:
         data = get_morning_prices(startdate, code)
