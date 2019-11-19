@@ -33,7 +33,7 @@ class KosdaqCurrentBullCodes(Chooser):
             self.current_codes.extend(diff)
             code_set = set()
             for c in diff:
-                code_set.add('cybos:stock_code:kosdaq:' + c)
+                code_set.add(c)
             self.code_changed.emit(code_set)
 
     def run(self):
@@ -57,5 +57,5 @@ class KosdaqCurrentBullCodes(Chooser):
             code.pop('_id', None)
             code.pop('date', None)
             for c in code.values():
-                code_set.add('cybos:stock_code:kosdaq:' + c)
+                code_set.add(c)
         self.code_changed.emit(code_set)

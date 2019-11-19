@@ -1,0 +1,4 @@
+
+
+class StockBaTickConverter:
+    def __

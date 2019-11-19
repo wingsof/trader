@@ -4,44 +4,32 @@ import pymongo
 import time
 import logging
 
+from morning.logging import logger
 from morning.trader import Trader
-from morning.trading_system import TradingSystem
+from morning.trading_tunnel import TradingTunnel
 
 from morning.pipeline.chooser.cybos.db.kosdaq_bull_chooser import KosdaqBullChooser
-from morning.pipeline.stream.cybos.stock.db.tick import StockDbRealtime
-from morning.pipeline.converter.cybos.stock.tick_converter import StockTickConverter
-from morning.pipeline.filter.
+from morning.pipeline.stream.cybos.stock.db.tick import DatabaseTick
+from morning.pipeline.converter.cybos.stock.tick import StockTickConverter
+from morning.pipeline.converter.cybos.stock.bidask import StockBaTickConverter
+from morning.pipeline.filter.in_market import InMarketFilter
 
-
-def setup_log():
-    logg = logging.getLogger('morning_main')
-    logg.setLevel(logging.INFO)
-
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(formatter)
-    logg.addHandler(stream_handler)
-
-    file_handler = logging.FileHandler('log_morning_main.log')
-    logg.addHandler(file_handler)
-    return logg
 
 
 if __name__ == '__main__':
-    
     trader = Trader()
 
     if not trader.ready():
         print('Not satisfied conditions', flush=True)
         sys.exit(1)
 
-    ts = TradingSystem()
-    ts.set_chooser(KosdaqBullChooser())
+    tt = TradingTunnel()
+    tt.set_chooser(KosdaqBullChooser())
     kosdaq_tick_pipeline = {
             'name': 'kosdaq_tick',
-            'stream': StockDbRealtime(),
+            'stream': DatabaseTick(),
             'converter': StockTickConverter(),
-            'filter': [InMarket()],
+            'filter': [InMarketFilter()],
             'strategy': [PriceUpTrend()]
     }
 
@@ -49,8 +37,8 @@ if __name__ == '__main__':
             'name': 'kosdaq_ba_tick',
             'stream': TickBaRealtime(),
             'converter': TickBaRealtimeConverter(),
-            'filter': [InBaMarket()],
-            'strategy': [ThreeUp(), BuyTrend()]
+            'filter': [InMarketFilter()],
+            'strategy': [BidAskBuyTrend()]
     }
     ts.add_pipeline(kosdaq_tick_pipeline)
     ts.add_pipeline(kosdaq_ba_tick_pipeline)
@@ -62,10 +50,10 @@ if __name__ == '__main__':
         trader.set_executor(cybos_account.CybosAccount())
     else:
         trader.set_executor(fake_account.FakeAccount())
-    trader.add_ts(ts)
+    trader.add_tt(ts)
 
     trader.run()
-
+    """
     usecase2 = {
             'name': 'stock_tick',
             'stream': TickRealtime(),
@@ -106,7 +94,7 @@ if __name__ == '__main__':
     #trader.set_stream_pipeline(CybosStockTick(), CybosStockBaTick())
 
     #trader.run()
-    """
+
         trader = Trader(True)
     # selector 는 실시간으로 항목을 추가할 수 있다
     trader.set_selector(KosdaqCurrentBullCodes(True, 60000))
