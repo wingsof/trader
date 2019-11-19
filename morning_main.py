@@ -2,37 +2,45 @@ import sys
 from pymongo import MongoClient
 import pymongo
 import time
-from PyQt5.QtCore import QCoreApplication, QTimer, QThread
-from multiprocessing import Process, Queue
+import logging
 
-from morning.chooser import kosdaq_current_bull_codes
-from morning.account import cybos_account, fake_account
 from morning.trader import Trader
+from morning.trading_system import TradingSystem
 
-from morning.streams.data_stream.cybos_stock_tick import CybosStockTick
-from morning.streams.data_stream.cybos_stock_ba_tick import CybosStockBaTick
+from morning.pipeline.chooser.cybos.db.kosdaq_bull_chooser import KosdaqBullChooser
+from morning.pipeline.stream.cybos.stock.db.tick import StockDbRealtime
+from morning.pipeline.converter.cybos.stock.tick_converter import StockTickConverter
+from morning.pipeline.filter.
 
-is_simulation = True
+
+def setup_log():
+    logg = logging.getLogger('morning_main')
+    logg.setLevel(logging.INFO)
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    logg.addHandler(stream_handler)
+
+    file_handler = logging.FileHandler('log_morning_main.log')
+    logg.addHandler(file_handler)
+    return logg
 
 
 if __name__ == '__main__':
-    if not is_simulation:
-        from morning.cybos_api import connection
-        conn = connection.Connection()
-        while not conn.is_connected():
-            time.sleep(5)
+    
+    trader = Trader()
 
-    trader = Trader(is_simulation)
     if not trader.ready():
         print('Not satisfied conditions', flush=True)
         sys.exit(1)
 
     ts = TradingSystem()
-    ts.set_chooser(kosdaq_current_bull_codes.KosdaqCurrentBullCodes(is_repeat=True, repeat_msec=60000))
+    ts.set_chooser(KosdaqBullChooser())
     kosdaq_tick_pipeline = {
             'name': 'kosdaq_tick',
-            'stream': TickRealtime(),
-            'converter': TickRealtimeConverter(),
+            'stream': StockDbRealtime(),
+            'converter': StockTickConverter(),
             'filter': [InMarket()],
             'strategy': [PriceUpTrend()]
     }
