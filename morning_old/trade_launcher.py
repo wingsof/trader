@@ -8,11 +8,14 @@ from multiprocessing import Process, Queue
 import os
 #from observe_realtime_code import ObserveRealtimeCode
 
+from morning.pipeline.pipeline import Pipeline
 
-def start_observe_data(queue, code):
+def start_observe_data(queue, elements_info):
     app = QCoreApplication([])
-    print('JOB INPUT', code)
+    print('JOB INPUT', elements_info)
 
+    pipeline = Pipeline(elements_info, queue) 
+    pipeline.start()
     #o = ObserveRealtimeCode(queue, code)
     #o.start_observe()
 

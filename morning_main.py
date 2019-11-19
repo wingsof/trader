@@ -27,10 +27,26 @@ if __name__ == '__main__':
         print('Not satisfied conditions', flush=True)
         sys.exit(1)
 
-    # selector should prefix code type to identify it later to use proper stream
-    trader.set_chooser(
-        kosdaq_current_bull_codes.KosdaqCurrentBullCodes(is_repeat=True, repeat_msec=60000))
+    ts = TradingSystem()
+    ts.set_chooser(kosdaq_current_bull_codes.KosdaqCurrentBullCodes(is_repeat=True, repeat_msec=60000))
+    kosdaq_tick_pipeline = {
+            'name': 'kosdaq_tick',
+            'stream': TickRealtime(),
+            'converter': TickRealtimeConverter(),
+            'filter': [InMarket()],
+            'strategy': [PriceUpTrend()]
+    }
 
+    kodaq_ba_tick_pipeline = {
+            'name': 'kosdaq_ba_tick',
+            'stream': TickBaRealtime(),
+            'converter': TickBaRealtimeConverter(),
+            'filter': [InBaMarket()],
+            'strategy': [ThreeUp(), BuyTrend()]
+    }
+    ts.add_pipeline(kosdaq_tick_pipeline)
+    ts.add_pipeline(kosdaq_ba_tick_pipeline)
+    ts.set_decision(Kosdaq_decision())
     #trader.set_selector(
     #    kosdaq_current_bull_codes.KosdaqCurrentBullCodes(from_date=datetime.now(), until_date=datetime.now())
 
@@ -38,14 +54,50 @@ if __name__ == '__main__':
         trader.set_executor(cybos_account.CybosAccount())
     else:
         trader.set_executor(fake_account.FakeAccount())
+    trader.add_ts(ts)
+
+    trader.run()
+
+    usecase2 = {
+            'name': 'stock_tick',
+            'stream': TickRealtime(),
+            'converter': TickRealtimeConverter(),
+            'filter': [InMarket()],
+            'strategy': [pair],
+    }
+
+    usecase2_1 = {
+            'name': 'stock_tick',
+            'stream': TickRealtime(),
+            'converter': TickRealtimeConverter(),
+            'filter': [InMarket()],
+            'strategy': [pair],
+    }
+
+    usecase3 = {
+            'name': 'stock_tick',
+            'stream': TickRealtime(),
+            'converter': TickRealtimeConverter(),
+            'filter': [InMarket()],
+            'strategy': [UpTrend(), BuyTrend()],
+    }
+
+    usecase3_1 = {
+            'name': 'stock_ba_tick',
+            'stream': TickBaRealtime(),
+            'converter': TickBaRealtimeConverter(),
+            'filter': [InMarket()],
+            'strategy': [BaUpTrend()],
+    }
+
 
     # TODO: use converters are over-engineering?
     # Naming Rule : API Provider + Financial Type + Stream Type
 
     # TODO: how to provide the datetime?
-    trader.set_stream_pipeline(CybosStockTick(), CybosStockBaTick())
+    #trader.set_stream_pipeline(CybosStockTick(), CybosStockBaTick())
 
-    trader.run()
+    #trader.run()
     """
         trader = Trader(True)
     # selector 는 실시간으로 항목을 추가할 수 있다

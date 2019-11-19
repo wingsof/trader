@@ -33,7 +33,7 @@ class KosdaqCurrentBullCodes(Chooser):
             self.current_codes.extend(diff)
             code_set = set()
             for c in diff:
-                code_set.add('stock_code:kosdaq:' + c)
+                code_set.add('cybos:stock_code:kosdaq:' + c)
             self.code_changed.emit(code_set)
 
     def run(self):
@@ -57,39 +57,5 @@ class KosdaqCurrentBullCodes(Chooser):
             code.pop('_id', None)
             code.pop('date', None)
             for c in code.values():
-                code_set.add('stock_code:kosdaq:' + c)
+                code_set.add('cybos:stock_code:kosdaq:' + c)
         self.code_changed.emit(code_set)
-
-
-if __name__ == '__main__':
-    from PyQt5.QtCore import QCoreApplication, QTimer, QObject
-    import sys
-    import signal
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
-    class CodeReceiver(QObject):
-        def __init__(self):
-            super().__init__()
-            self.kosdaq = KosdaqCurrentBullCodes(is_repeat = False, from_datetime=datetime(2019, 11, 15, 8, 50, 0), until_datetime=datetime(2019, 11, 15, 9, 5, 0))
-            self.kosdaq.code_changed.connect(self.get_codes)
-            self.kosdaq.run()
-
-        @pyqtSlot(set)
-        def get_codes(self, codes):
-            print(codes)
-
-    class CybosReceiver(QObject):
-        def __init__(self):
-            super().__init__()
-            self.kosdaq = KosdaqCurrentBullCodes(is_repeat = True, repeat_msec = 1000)
-            self.kosdaq.code_changed.connect(self.get_codes)
-            self.kosdaq.run()
-
-        @pyqtSlot(set)
-        def get_codes(self, codes):
-            print(codes)
-
-
-    app = QCoreApplication(sys.argv)
-    r = CodeReceiver()
-    cr = CybosReceiver()
-    app.exec()

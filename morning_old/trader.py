@@ -39,9 +39,7 @@ class Trader(QObject):
         self.executor = executor
 
     def set_stream_pipeline(self, *streams):
-        # TODO: Use clock connect between streams when simulation is on
         for stream in streams:
-            # TODO: need to convert to string?
             self.streams.append(stream)
 
     def set_filter_pipeline(self, stream_index, *filt):
@@ -68,8 +66,10 @@ class Trader(QObject):
     def chooser_watcher(self, running_targets):
         for target in running_targets:
             target_information = {'target': target, 
-                                  'streams': self.streams}
-            # TODO: how to deliver pipelines information?
+                                  'streams': self.streams,
+                                  'converters': [],
+                                  'filters':[],
+                                  'strategies':[]}
             self.trade_launcher.add_target(target_information)
         self.trade_launcher.launch()
 

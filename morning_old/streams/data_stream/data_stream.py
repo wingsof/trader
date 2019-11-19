@@ -1,7 +1,8 @@
 from datetime import datetime
+from abc import *
 
 
-class DataStream:        
+class DataStream(metaclass=ABCMeta):        
     def __init__(self, stream_name = 'Unknown', is_realtime = True, from_datetime = None, until_datetime = None):
         self.stream_name = stream_name
         self.is_realtime = is_realtime
@@ -14,6 +15,17 @@ class DataStream:
 
         return self.stream_name + '/' + str(self.is_realtime) + '/' + str(self.from_datetime) + '/' + str(self.until_datetime)
 
+    @abstractmethod
+    def vendor(self):
+        return ''
+
+    @abstractmethod
+    def accept_in(self):
+        return ['']
+
+    @abstractmethod
+    def output_format(self):
+        return ''
 
 
 if __name__ == '__main__':
