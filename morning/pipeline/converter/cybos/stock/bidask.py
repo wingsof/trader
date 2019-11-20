@@ -1,4 +1,5 @@
 
 
 class StockBaTickConverter:
-    def __
+    def __init__(self):
+        pass

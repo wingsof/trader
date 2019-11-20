@@ -3,6 +3,7 @@ from pymongo import MongoClient
 import pymongo
 import time
 import logging
+from datetime import datetime
 
 from morning.logging import logger
 from morning.trader import Trader
@@ -13,7 +14,7 @@ from morning.pipeline.stream.cybos.stock.db.tick import DatabaseTick
 from morning.pipeline.converter.cybos.stock.tick import StockTickConverter
 from morning.pipeline.converter.cybos.stock.bidask import StockBaTickConverter
 from morning.pipeline.filter.in_market import InMarketFilter
-
+from morning.pipeline.strategy.stock.start_with_up import StartWithUp
 
 
 if __name__ == '__main__':
@@ -24,34 +25,34 @@ if __name__ == '__main__':
         sys.exit(1)
 
     tt = TradingTunnel()
-    tt.set_chooser(KosdaqBullChooser())
+    tt.set_chooser(KosdaqBullChooser(from_datetime=datetime(2019,11,19), until_datetime=datetime(2019,11,20)))
     kosdaq_tick_pipeline = {
             'name': 'kosdaq_tick',
             'stream': DatabaseTick(),
             'converter': StockTickConverter(),
             'filter': [InMarketFilter()],
-            'strategy': [PriceUpTrend()]
+            'strategy': [StartWithUp(3)]
     }
 
+    """
     kodaq_ba_tick_pipeline = {
             'name': 'kosdaq_ba_tick',
-            'stream': TickBaRealtime(),
-            'converter': TickBaRealtimeConverter(),
+            'stream': DatabaseBidAskTick(),
+            'converter': StockBaTickConverter(),
             'filter': [InMarketFilter()],
             'strategy': [BidAskBuyTrend()]
     }
-    ts.add_pipeline(kosdaq_tick_pipeline)
-    ts.add_pipeline(kosdaq_ba_tick_pipeline)
-    ts.set_decision(Kosdaq_decision())
+    """
+    tt.add_pipeline(kosdaq_tick_pipeline)
+    # ts.add_pipeline(kosdaq_ba_tick_pipeline)
+    # ts.set_decision(Kosdaq_decision())
     #trader.set_selector(
     #    kosdaq_current_bull_codes.KosdaqCurrentBullCodes(from_date=datetime.now(), until_date=datetime.now())
 
-    if is_simulation:
-        trader.set_executor(cybos_account.CybosAccount())
-    else:
-        trader.set_executor(fake_account.FakeAccount())
-    trader.add_tt(ts)
+    #trader.set_executor(fake_account.FakeAccount())
+    trader.add_tunnel(tt)
 
+    #trader.set_account(cybos_account.CybosAccount())
     trader.run()
     """
     usecase2 = {
