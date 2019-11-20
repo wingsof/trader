@@ -10,14 +10,18 @@ from morning.trader import Trader
 from morning.trading_tunnel import TradingTunnel
 
 from morning.pipeline.chooser.cybos.db.kosdaq_bull_chooser import KosdaqBullChooser
+from morning.pipeline.chooser.mock_samsung_chooser import MockSamsungChooser
 from morning.pipeline.stream.cybos.stock.db.tick import DatabaseTick
+from morning.pipeline.stream.cybos.stock.db.bidask_tick import DatabaseBidAskTick
 from morning.pipeline.converter.cybos.stock.tick import StockTickConverter
-from morning.pipeline.converter.cybos.stock.bidask import StockBaTickConverter
+from morning.pipeline.converter.cybos.stock.bidask import StockBidAskTickConverter
 from morning.pipeline.filter.in_market import InMarketFilter
 from morning.pipeline.strategy.stock.start_with_up import StartWithUp
+from morning.pipeline.strategy.stock.bidask.buy_sum_trend import BidAskBuySumTrend
 
 
 if __name__ == '__main__':
+    logger.setup_main_log()
     trader = Trader()
 
     if not trader.ready():
@@ -25,26 +29,26 @@ if __name__ == '__main__':
         sys.exit(1)
 
     tt = TradingTunnel()
-    tt.set_chooser(KosdaqBullChooser(from_datetime=datetime(2019,11,19), until_datetime=datetime(2019,11,20)))
+    tt.set_chooser(MockSamsungChooser(from_datetime=datetime(2019,11,19), until_datetime=datetime(2019,11,20)))
     kosdaq_tick_pipeline = {
             'name': 'kosdaq_tick',
-            'stream': DatabaseTick(),
+            'stream': DatabaseTick(datetime(2019, 11, 20), datetime(2019, 11, 21), True),
             'converter': StockTickConverter(),
             'filter': [InMarketFilter()],
             'strategy': [StartWithUp(3)]
     }
 
-    """
-    kodaq_ba_tick_pipeline = {
+    
+    kosdaq_ba_tick_pipeline = {
             'name': 'kosdaq_ba_tick',
-            'stream': DatabaseBidAskTick(),
-            'converter': StockBaTickConverter(),
+            'stream': DatabaseBidAskTick(datetime(2019, 11, 20), datetime(2019, 11, 21)),
+            'converter': StockBidAskTickConverter(),
             'filter': [InMarketFilter()],
-            'strategy': [BidAskBuyTrend()]
+            'strategy': [BidAskBuySumTrend()]
     }
-    """
+    
     tt.add_pipeline(kosdaq_tick_pipeline)
-    # ts.add_pipeline(kosdaq_ba_tick_pipeline)
+    tt.add_pipeline(kosdaq_ba_tick_pipeline)
     # ts.set_decision(Kosdaq_decision())
     #trader.set_selector(
     #    kosdaq_current_bull_codes.KosdaqCurrentBullCodes(from_date=datetime.now(), until_date=datetime.now())
