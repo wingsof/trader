@@ -16,4 +16,7 @@ class KosdaqBullChooser(Chooser):
             codes = self.codes[-1]
             codes.pop('_id', None)
             codes.pop('date', None)
-            self.selection_changed.emit(set(codes.values()))
+            prefixed_codes = []
+            for v in codes.values():
+                prefixed_codes.append('cybos:' + v)
+            self.selection_changed.emit(set(prefixed_codes))

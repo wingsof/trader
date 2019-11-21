@@ -24,4 +24,4 @@ def test_get_bull_codes():
     app.exec() 
     assert len(recv.targets)
     for target in recv.targets:
-        assert target.startswith('A')
+        assert target.startswith('cybos:A')

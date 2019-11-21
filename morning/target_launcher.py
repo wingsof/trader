@@ -4,18 +4,19 @@ from morning.logging import logger
 from morning.target_runner import TargetRunner
 
 def _start_target(log_queue, queue, job_info):
+    app = QCoreApplication([])
     logger.setup_client(log_queue, job_info[0])
     logger.print('PROCESS START')
-    app = QCoreApplication([])
 
     tr = TargetRunner(queue, job_info[0], job_info[1])
 
     if tr.is_realtime():
+        logger.print('Run realtime')
         app.exec()
     else:
+        logger.print('Run db')
         tr.db_clock_start()
     logger.print('PROCESS DONE')
-
 
 
 class TargetLauncher(QObject):
