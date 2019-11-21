@@ -11,11 +11,16 @@ from morning.trading_tunnel import TradingTunnel
 
 from morning.pipeline.chooser.cybos.db.kosdaq_bull_chooser import KosdaqBullChooser
 from morning.pipeline.chooser.cybos.db.one_code_chooser import DatabaseOneCodeChooser
+
 from morning.pipeline.stream.cybos.stock.db.tick import DatabaseTick
 from morning.pipeline.stream.cybos.stock.db.bidask_tick import DatabaseBidAskTick
+
 from morning.pipeline.converter.cybos.stock.tick import StockTickConverter
 from morning.pipeline.converter.cybos.stock.bidask import StockBidAskTickConverter
+
 from morning.pipeline.filter.in_market import InMarketFilter
+from morning.pipeline.filter.drop_data import DropDataFilter
+
 from morning.pipeline.strategy.stock.start_with_up import StartWithUp
 from morning.pipeline.strategy.stock.bidask.buy_sum_trend import BidAskBuySumTrend
 
@@ -34,7 +39,7 @@ if __name__ == '__main__':
             'name': 'kosdaq_tick',
             'stream': DatabaseTick(datetime(2019, 11, 20), datetime(2019, 11, 21), True, True),
             'converter': StockTickConverter(),
-            'filter': [InMarketFilter()],
+            'filter': [InMarketFilter(), DropDataFilter(1)],
             'strategy': [StartWithUp(3)]
     }
 

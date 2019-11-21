@@ -1,3 +1,4 @@
+from morning.logging import logger
 
 
 
@@ -8,6 +9,6 @@ class BidAskBuySumTrend:
     def set_output(self, next_ele):
         self.next_elements = next_ele
 
-    def received(self, data):
+    def received(self, datas):
         if self.next_elements is not None:
-            self.next_elements.received(data)
+            self.next_elements.received(datas)

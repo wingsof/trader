@@ -14,4 +14,6 @@ class InMarketFilter:
             for data in datas:
                 if data['market_type'] == dt.MarketType.IN_MARKET:
                     filtered_datas.append(data)
-            self.next_elements.received(filtered_datas)
+            
+            if len(filtered_datas):
+                self.next_elements.received(filtered_datas)

@@ -1,11 +1,11 @@
 
 
 class MarketType:
-    PRE_MARKET_EXP = '1'
-    IN_MARKET = '2'
-    PRE_MARKET_CUR = '3' # StockOutCur
-    AFTER_MARKET = '4'
-    AFTER_MARKET_EXP = '5'
+    PRE_MARKET_EXP = ord('1')
+    IN_MARKET = ord('2')
+    PRE_MARKET_CUR = ord('3') # StockOutCur
+    AFTER_MARKET = ord('4')
+    AFTER_MARKET_EXP = ord('5')
 
 
 class CybosStockTick:

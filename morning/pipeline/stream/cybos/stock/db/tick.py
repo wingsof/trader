@@ -21,6 +21,14 @@ class DatabaseTick:
         
         cursor = stock[code].find({'date': {'$gte':self.from_datetime, '$lte': self.until_datetime}})
         self.data = list(cursor)
+        import pandas as pd
+        if self.check_whole_data:
+            df = pd.DataFrame(self.data)
+            market = df['20']
+            if len(market[market == 49]) > 10 and len(market[market == 50]) > 100 and len(market[market == 53]) > 10:
+                pass
+            else:
+                self.data = []
 
     def set_output(self, next_ele):
         self.next_elements = next_ele
@@ -46,7 +54,7 @@ class DatabaseTick:
 
             if self.next_elements:
                 self.next_elements.received([d])
-        logger.print(len(self.data))
+
         return len(self.data)
 
     def is_realtime(self):

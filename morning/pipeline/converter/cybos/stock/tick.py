@@ -13,7 +13,6 @@ class StockTickConverter:
         if self.next_elements is not None:
             converted_datas = []
             for data in datas:
-                logger.print(data)
                 converted_datas.append(dt.cybos_stock_tick_convert(data))
             self.next_elements.received(converted_datas)
 

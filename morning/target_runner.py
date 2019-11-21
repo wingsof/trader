@@ -47,7 +47,7 @@ class TargetRunner:
     def db_clock_start(self):
         if self.main_stream:
             while self.main_stream.received([]) > 0:
-                logger.print('delivered')
+                pass
 
     def received(self, data):
         # use decision here
