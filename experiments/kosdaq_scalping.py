@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 # startdate = datetime(2019, 11, 11)
 
 # first day for collecting
-startdate = datetime(2019, 11, 20)
+startdate = datetime(2019, 11, 21)
 alpha_hour = 0 # 2019, 11, 14 수능날 추가 시간 필요
 
 def get_bull_codes_by_date(d):

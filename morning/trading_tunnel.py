@@ -3,8 +3,9 @@ from morning.target_launcher import TargetLauncher
 
 
 class TradingTunnel(QObject):
-    def __init__(self):
+    def __init__(self, trader):
         super().__init__()
+        self.trader = trader
         self.chooser = None
         self.pipelines = []
         self.targets = []
@@ -34,4 +35,5 @@ class TradingTunnel(QObject):
             self.chooser.start()
 
     def handle_msg(self, msg):
-        print('MSG to Main Process:', msg, QThread.currentThreadId())
+        self.trader.handle_trading(msg)
+        print('MSG to Main Process:', msg)

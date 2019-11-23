@@ -11,9 +11,14 @@ class TargetRunner:
         self.setup_pipeline(pipelines)
     
     def setup_pipeline(self, pipelines):
+        decision = None
         for p in pipelines:
             # filter and strategy is list type
             stream, converter, filt, strategy = p['stream'], p['converter'], p['filter'], p['strategy']
+            if decision is None:
+                decision = p['decision']
+                decision.set_environ(self.target, self.msg_queue)
+
             stream.set_output(converter)
             prev_filt = converter # for when no filter
             if len(filt) > 0:
@@ -24,7 +29,7 @@ class TargetRunner:
                     prev_filt = f
             for s in strategy:
                 prev_filt.set_output(s)
-                s.set_output(self)
+                s.set_output(decision)
 
     def is_realtime(self):
         return self.main_stream == None
@@ -48,7 +53,3 @@ class TargetRunner:
         if self.main_stream:
             while self.main_stream.received([]) > 0:
                 pass
-
-    def received(self, data):
-        # use decision here
-        pass

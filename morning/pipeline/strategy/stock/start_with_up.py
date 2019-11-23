@@ -25,20 +25,23 @@ class StartWithUp:
                 n = datetime.now()
                 n = n.replace(hour = hour, minute = minute, second = second)
                 if n - self.start_minsec > timedelta(minutes=self.cont_min):
-                    if self.check_dataframe():
-                        pass # Deliver passed result
+                    if self.check_dataframe(self.df):
+                        logger.print({'name':self.__class__.__name__, 'type': 'Bool', 'value': 'True'}, minsec)
+                        self.next_elements.received([{'name':self.__class__.__name__, 'type': 'Bool', 'value': 'True'}])
+                    else:
+                        logger.print(self.__class__.__name__, minsec, 'Fail')
                     self.done = True
                 else:
                     self.df = pd.concat([self.df, pd.DataFrame(datas)])
 
             #self.next_elements.received(datas)
-    def check_dataframe(self):
-        start_time = self.df['time_with_sec'][0]
+    def check_dataframe(self, df):
+        start_time = df['time_with_sec'].iloc[0]
         condition_met = True
         for i in range(self.cont_min):
             until_time = self._add_next_min(start_time)
             filtered_df = df[(df.time_with_sec >= start_time) & (df.time_with_sec < until_time)]
-            if filtered_df['current_price'][-1] <= filtered_df['current_price'][0]:
+            if filtered_df['current_price'].iloc[-1] <= filtered_df['current_price'].iloc[0]:
                 condition_met = False
                 break
             until_time = start_time

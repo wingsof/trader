@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from morning.config import db
 from morning.logging import logger
+import pandas as pd
 
 
 class DatabaseTick:
@@ -11,9 +12,13 @@ class DatabaseTick:
         self.check_whole_data = check_whole_data
         self.child_streams = []
         self.next_elements = None
+        self.save_to_excel = False
 
     def is_acceptable_target(self, code):
         return code.startswith('cybos:A')
+
+    def set_save_to_excel(self, is_save):
+        self.save_to_excel = is_save
 
     def set_target(self, target):
         code = target.split(':')[1]
@@ -21,14 +26,19 @@ class DatabaseTick:
         
         cursor = stock[code].find({'date': {'$gte':self.from_datetime, '$lte': self.until_datetime}})
         self.data = list(cursor)
-        import pandas as pd
+        logger.print(target, 'Length', len(self.data))
         if self.check_whole_data:
             df = pd.DataFrame(self.data)
+
+            if self.save_to_excel:
+                df.to_excel(code + '_from_db.xlsx')
+
             market = df['20']
             if len(market[market == 49]) > 10 and len(market[market == 50]) > 100 and len(market[market == 53]) > 10:
                 pass
             else:
                 self.data = []
+                logger.print('Abnormal detected', target)
 
     def set_output(self, next_ele):
         self.next_elements = next_ele
