@@ -24,6 +24,7 @@ class BoolAndDecision:
         for d in datas:
             if d['type'] == 'BidAsk':
                 self.bidask_table = d['value']
+                self.time = d['time']
                 return
             else:
                 self.decision[d['name']] = d['value'] == 'True'
@@ -31,7 +32,10 @@ class BoolAndDecision:
         if len(self.decision) >= self.and_input_count:
             result = all(self.decision.values())
             if self.queue and len(self.bidask_table) > 0:
-                if result: # Use third ask bid price
+                if self.bought and self.time > 150000:
+                    self.queue.put_nowait(self.target + ':' + 'SELL:' + str(self.bidask_table[7]) + ':' + str(self.time))
+                    self.bought = False
+                elif result: # Use third ask bid price
                     if self.trade_count > 0:
                         self.queue.put_nowait(self.target + ':' + 'BUY:' + str(self.bidask_table[2]) + ':' + str(self.time))
                         self.trade_count -= 1

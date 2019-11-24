@@ -21,10 +21,21 @@ class TradingTunnel(QObject):
             runner_thread = QThread()
             worker = TargetLauncher(job_input=(target, self.pipelines))
             worker.msg_from_job.connect(self.handle_msg)
+            worker.work_done.connect(self.runner_finished)
+            runner_thread.started.connect(self.runner_started)
+
             worker.moveToThread(runner_thread)
             self.targets.append((target, runner_thread, worker))
             worker.connect_start_signal(runner_thread.started)
             runner_thread.start()
+
+    @pyqtSlot()
+    def runner_started(self):
+        self.trader.increment_runner()
+
+    @pyqtSlot()
+    def runner_finished(self):
+        self.trader.decrement_runner()
 
 
     def add_pipeline(self, p):

@@ -15,11 +15,13 @@ def _start_target(log_queue, queue, job_info):
     else:
         tr.db_clock_start()
     logger.print('PROCESS DONE')
-    queue.put('done')
+    queue.put_nowait('done')
+    queue.close()
 
 
 class TargetLauncher(QObject):
     msg_from_job = pyqtSignal(object)
+    work_done = pyqtSignal()
 
     def __init__(self, job_input):
         super().__init__()
@@ -29,12 +31,7 @@ class TargetLauncher(QObject):
     def connect_start_signal(self, s):
         s.connect(self._run)
 
-    def join_subprocess(self):
-        if self.p is not None:
-            self.p.join()
-
     def _run(self):
-        #print('Work Thread Started', self.job_input)
         queue = Queue()
         self.p = Process(target = _start_target, args=(logger._log_queue, queue, self.job_input))
         self.p.start()
@@ -42,6 +39,6 @@ class TargetLauncher(QObject):
             msg = queue.get()
             if msg == 'done':
                 logger.print('OK, quit')
+                self.work_done.emit()
                 break
             self.msg_from_job.emit(msg)
-

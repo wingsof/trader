@@ -27,7 +27,7 @@ class DatabaseTick:
         cursor = stock[code].find({'date': {'$gte':self.from_datetime, '$lte': self.until_datetime}})
         self.data = list(cursor)
         logger.print(target, 'Length', len(self.data))
-        if self.check_whole_data:
+        if len(self.data) > 0 and self.check_whole_data:
             df = pd.DataFrame(self.data)
 
             if self.save_to_excel:

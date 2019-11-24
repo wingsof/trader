@@ -59,6 +59,11 @@ def _setup_log(queue):
             break
 
 
+def exit_main_log():
+    global _log_queue
+    _log_queue.put_nowait([-1, -1])
+
+
 def setup_main_log():
     global _log_queue, _log_prefix
     _log_queue = Queue()
