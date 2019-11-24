@@ -45,7 +45,7 @@ class Trader(QObject):
         logger.print('RUNNER(-)', self.runner_count)
 
         if not self.realtime and self.runner_count is 0:
-            self.app.quit()
+            QTimer.singleShot(0, self.app.quit)
 
     def set_account(self, account):
         self.account = account
@@ -59,4 +59,5 @@ class Trader(QObject):
         # if not use app.exec(), no way to receive message from QThread signal
         QTimer.singleShot(1000, self._run)
         self.app.exec()
+        self.account = None
         logger.exit_main_log()

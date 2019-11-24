@@ -4,6 +4,7 @@ from pymongo import MongoClient
 import pymongo
 import time
 from datetime import datetime, timedelta
+import faulthandler
 
 from morning.trader import Trader
 from morning.trading_tunnel import TradingTunnel
@@ -31,10 +32,11 @@ from morning.account.fake_account import FakeAccount
 
 
 if __name__ == '__main__':
-    start_datetime = datetime(2019, 11, 11)
+    faulthandler.enable()
+    start_datetime = datetime(2019, 11, 18)
     
     fake_account = FakeAccount('account.xlsx')
-    while start_datetime < datetime(2019, 11, 24):
+    while start_datetime < datetime(2019, 11, 23):
         print('START: ', start_datetime)
         until_datetime = start_datetime + timedelta(days=1)
         if start_datetime.weekday() > 4:
@@ -42,8 +44,8 @@ if __name__ == '__main__':
             continue
 
         fake_account.set_date(start_datetime.date())
-        trader = Trader(False)
 
+        trader = Trader(False)
         if not trader.ready():
             print('Not satisfied conditions', flush=True)
             sys.exit(1)

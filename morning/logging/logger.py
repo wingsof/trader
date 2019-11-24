@@ -1,7 +1,6 @@
 import logging
 from multiprocessing import Queue, Process
 
-
 _log_queue = None
 _log_prefix = ''
 
@@ -22,11 +21,14 @@ def _put_msg(loglevel, msg):
 
 
 def print(*args):
-    _put_msg(logging.INFO, args)
+    pass
+    #print(args)
+    #_put_msg(logging.INFO, args)
 
 
 def warning(*args):
-    _put_msg(logging.WARNING, args)
+    pass
+    #_put_msg(logging.WARNING, args)
 
 
 def error(*args):
@@ -34,12 +36,14 @@ def error(*args):
 
 
 def setup_client(queue, prefix):
-    global _log_queue, _log_prefix
-    _log_queue = queue
-    _log_prefix = prefix
+    pass
+    #global _log_queue, _log_prefix
+    #_log_queue = queue
+    #_log_prefix = prefix
 
 
 def _setup_log(queue):
+    """
     logg = logging.getLogger('morning')
     logg.setLevel(logging.INFO)
 
@@ -53,21 +57,25 @@ def _setup_log(queue):
     logg.addHandler(file_handler)
     while True:
         msg = queue.get()
-        logg.log(msg[0], msg[1])
-
         if msg[0] == -1:
             break
+        logg.log(msg[0], msg[1])
+    """
 
 
 def exit_main_log():
+    """
     global _log_queue
     _log_queue.put_nowait([-1, -1])
+    """
 
 
 def setup_main_log():
+    """
     global _log_queue, _log_prefix
     _log_queue = Queue()
     p = Process(target = _setup_log, args=(_log_queue,))
     p.start()
     _log_prefix = 'main'
     return _log_queue
+    """
