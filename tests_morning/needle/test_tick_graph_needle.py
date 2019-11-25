@@ -28,5 +28,5 @@ def test_tick_graph_needle():
         print('date' in t)
         test_tsg.send_received([t])
     assert len(stg.df) == 5
-    published = stg.progress()
+    published = stg.process()
     assert published[0] == 'A000001'

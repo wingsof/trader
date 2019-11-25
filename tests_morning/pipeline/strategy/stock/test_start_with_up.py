@@ -49,6 +49,17 @@ def test_check_dataframe():
     df = pd.DataFrame(datas)
     assert not swu.check_dataframe(df)
 
+    datas = [{'time_with_sec': 90100, 'current_price': 100},
+            {'time_with_sec': 90130, 'current_price': 200},
+            {'time_with_sec': 90201, 'current_price': 200},
+            {'time_with_sec': 90241, 'current_price': 100},
+            {'time_with_sec': 90303, 'current_price': 100},
+            {'time_with_sec': 90353, 'current_price': 200},
+            {'time_with_sec': 90405, 'current_price': 0}]
+    df = pd.DataFrame(datas)
+    assert not swu.check_dataframe(df)
+
+
 def test_received():
     class Receiver:
         def __init__(self):

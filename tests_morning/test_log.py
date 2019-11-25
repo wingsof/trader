@@ -8,10 +8,9 @@ from morning.logging import logger
 def start_process(queue):
     logger.setup_client(queue, 'client')
     i = 0
-    while True:
-        time.sleep(1)
-        logger.warning('new_proces, hello world', i)
-        i += 1
+    time.sleep(1)
+    logger.warning('new_proces, hello world', i)
+    time.sleep(1)
 
 
 def test_logging():
@@ -20,12 +19,9 @@ def test_logging():
     p2 = Process(target = start_process, args=(q,))
     p2.start()
 
-    while True:
-        time.sleep(1)
-        logger.warning('main process, hello world')
+    time.sleep(1)
+    logger.warning('main process, hello world')
+    time.sleep(3)
+    logger._log_queue.put_nowait([-1, -1])
     
-    p2.wait()
 
-
-if __name__ == '__main__':
-    test_logging()

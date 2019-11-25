@@ -35,7 +35,7 @@ class StartWithUp:
                 if n - self.start_minsec > timedelta(minutes=self.cont_min):
                     if self.check_dataframe(self.df):
                         logger.print({'name':self.__class__.__name__, 'type': 'Bool', 'value': 'True'}, minsec)
-                        self.next_elements.received([{'name':self.__class__.__name__, 'type': 'Bool', 'value': 'True'}])
+                        self.next_elements.received([{'name':self.__class__.__name__, 'type': 'Bool', 'value': 'True', 'price': datas[0]['current_price']}])
                     else:
                         logger.print(self.__class__.__name__, minsec, 'Fail')
                     self.done = True
@@ -46,13 +46,15 @@ class StartWithUp:
     def check_dataframe(self, df):
         start_time = df['time_with_sec'].iloc[0]
         condition_met = True
-        for i in range(self.cont_min):
+        for _ in range(self.cont_min):
             until_time = self._add_next_min(start_time)
             filtered_df = df[(df.time_with_sec >= start_time) & (df.time_with_sec < until_time)]
-            if filtered_df['current_price'].iloc[-1] <= filtered_df['current_price'].iloc[0]:
+
+            if len(filtered_df) == 0 or filtered_df['current_price'].iloc[-1] <= filtered_df['current_price'].iloc[0]:
                 condition_met = False
                 break
-            until_time = start_time
+            start_time = until_time
+
         return condition_met
 
     def _add_next_min(self, t):
