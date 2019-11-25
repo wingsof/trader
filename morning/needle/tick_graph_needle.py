@@ -20,7 +20,7 @@ class TickGraphNeedle:
     def filter_codes(self, codes):
         self.codes.extend(codes)
 
-    def out_min_graph(self):
+    def process(self):
         published = []
         for c in self.codes:
             df = self.df[self.df['Code'] == c]
@@ -59,7 +59,7 @@ class TickGraphNeedle:
 
     def received(self, datas):
         for d in datas:
-            if len(self.codes) > 0 or d['code'] in self.codes:
+            if len(self.codes) > 0 and d['code'] in self.codes:
                 date = None
                 if 'date' in d and self.date is not None:
                     db_date = d['date']

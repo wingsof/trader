@@ -30,6 +30,7 @@ from morning.pipeline.decision.bool_and_decision import BoolAndDecision
 from morning.account.fake_account import FakeAccount
 
 from morning.needle.tick_graph_needle import TickGraphNeedle
+from morning.needle.tick_excel_needle import TickExcelNeedle
 
 if __name__ == '__main__':
     start_datetime = datetime(2019, 11, 20)
@@ -58,9 +59,13 @@ if __name__ == '__main__':
 
         swu = StartWithUp(3)
         stg = TickGraphNeedle()
+        ten = TickExcelNeedle()
         stg.filter_codes(['A082800'])
         stg.filter_date(date(2019, 11, 20))
+        ten.filter_codes(['A082800'])
+        ten.filter_date(date(2019, 11, 20))
         stg.tick_connect(swu)
+        ten.tick_connect(swu)
 
         kosdaq_tick_pipeline = { 'name': 'kosdaq_tick',
                                 'stream': DatabaseTick(from_datetime, until_datetime, True, True),
@@ -85,7 +90,8 @@ if __name__ == '__main__':
         trader.run()
     
         print('-------------------------', 'DONE')
-        stg.out_min_graph()
+        stg.process()
+        ten.process()
         start_datetime += timedelta(days = 1)
 
     fake_account.summary()
