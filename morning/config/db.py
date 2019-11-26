@@ -1,5 +1,1 @@
-
-
-
-HOME_MONGO_ADDRESS = 'mongodb://nnnlife.iptime.org:27017'
-
+HOME_MONGO_ADDRESS = 'mongodb://192.168.0.22:27017'

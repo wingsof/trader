@@ -3,6 +3,7 @@ from morning.config import db
 from morning.logging import logger
 import pandas as pd
 from morning.cybos_api import stock_chart
+from utils import time_converter
 
 
 class DayTick:
@@ -22,11 +23,13 @@ class DayTick:
         stock = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
         
         if self.fetch_from_cybos:
-            _, self.data = stock_chart.get_day_period_data(code, self.from_date, self.until_date)
+            _, self.data = stock_chart.get_day_period_data(target.split(':')[1], self.from_date, self.until_date)
             stock[code].drop()
             stock[code].insert_many(self.data)
         else:
-            cursor = stock[code].find({'date': {'$gte':self.from_date, '$lte': self.until_date}})
+            s = time_converter.datetime_to_intdate(self.from_date)
+            f = time_converter.datetime_to_intdate(self.until_date)
+            cursor = stock[code].find({'0': {'$gte':s, '$lte': f}})
             self.data = list(cursor)
 
         logger.print(target, 'Length', len(self.data))
@@ -46,7 +49,7 @@ class DayTick:
         return False
 
     def have_clock(self):
-        return False
+        return True
     
         
 

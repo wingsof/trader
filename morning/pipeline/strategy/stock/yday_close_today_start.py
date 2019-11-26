@@ -4,6 +4,7 @@
 
 class YdayCloseTodayStart:
     def __init__(self, inverse):
+        print('-------------', inverse)
         self.inverse = inverse
         self.next_elements = None
         self.yesterday_close = 0
@@ -13,9 +14,20 @@ class YdayCloseTodayStart:
         self.next_elements = next_ele
 
     def received(self, datas):
-        if self.yesterday_close == 0:
-            pass # set yesterday price
+        if self.next_elements is not None:
+            for d in datas:
+                if self.yesterday_close > 0:
+                    if self.compare_price(self.yesterday_close, d['start_price']):
+                        profit_r = (d['highest_price'] - d['start_price']) / d['start_price'] * 100.
+                        self.next_elements.received([{'name':self.__class__.__name__, 'type': 'Bool', 'value': 'True', 'price': profit_r}])
+
+                self.yesterday_close = d['close_price']
+
+    def compare_price(self, yday, current):
+        if not self.inverse:
+            if current > yday:
+                return True
         else:
-            pass 
-            # if open price is higher than yesterday_close then 
-            #   highest price - open price set as profit rate and deliver to next
+            if yday < current:
+                return True
+        return False

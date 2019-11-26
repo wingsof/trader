@@ -10,26 +10,55 @@ from morning.pipeline.chooser.cybos.db.kosdaq_bull_chooser import KosdaqBullChoo
 from morning.pipeline.strategy.stock.yday_close_today_start import YdayCloseTodayStart
 from morning.pipeline.converter.cybos.stock.day_tick import StockDayTickConverter
 from morning.pipeline.decision.bool_and_decision import BoolAndDecision
+from morning.account.day_profit_compare_account import DayProfitCompareAccount
+from morning.cybos_api import stock_chart
 
 from datetime import datetime, timedelta, date
+from pymongo import MongoClient
+from morning.config import db
 
+fetch_cybos = True
+start_date = datetime(2019, 1, 1)
+end_date = datetime.now()
+bull_chooser_date = datetime(2019, 11, 25)
 
 def trading():
-    trader = Trader(False)
-    tt = TradingTunnel(trader)
-    tt.set_chooser(KosdaqBullChooser(datetime(2019, 11, 11), datetime.now()))
+    day_profit_compare_account = DayProfitCompareAccount('start_price_effect')
 
-    pipeline = {'name': 'start_price_effect',
-                'stream': DayTick(datetime(2019, 1, 1), datetime.now(), True),
-                'converter': StockDayTickConverter(),
-                'filter': [],
-                'strategy': YdayCloseTodayStart(True),
-                'decision': BoolAndDecision(1, 1)}
-    tt.add_pipeline(pipeline)
+    for inverse in [0, 1]:
+        trader = Trader(False)
 
-    trader.add_tunnel(tt)
-    trader.run()
+        # TODO: Fix fake date
+        day_profit_compare_account.set_up(inverse, None)
+        tt = TradingTunnel(trader)
+        
+        
+        tt.set_chooser(KosdaqBullChooser(bull_chooser_date, datetime.now()))
 
+        pipeline = {'name': 'start_price_effect',
+                    'stream': DayTick(start_date, end_date, False),
+                    'converter': StockDayTickConverter(),
+                    'filter': [],
+                    'strategy': [YdayCloseTodayStart(bool(inverse))],
+                    'decision': BoolAndDecision(1, 1000000)}
+        tt.add_pipeline(pipeline)
+
+        trader.add_tunnel(tt)
+        trader.set_account(day_profit_compare_account)
+        trader.run()
+    day_profit_compare_account.summary()
 
 if __name__ == '__main__':
     morning_launcher.morning_launcher(True, trading)
+    """
+    if fetch_cybos:
+        kbc = KosdaqBullChooser(bull_chooser_date, datetime.now())
+        codes = kbc.codes[-1]
+        codes.pop('_id', None)
+        codes.pop('date', None)
+        client = MongoClient(db.HOME_MONGO_ADDRESS)
+        for code in codes.values():
+            _, data = stock_chart.get_day_period_data(code, start_date, end_date)
+            client.stock[code + '_D'].drop()
+            client.stock[code + '_D'].insert_many(data)
+    """

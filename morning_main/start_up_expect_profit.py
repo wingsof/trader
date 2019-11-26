@@ -15,15 +15,16 @@ from morning.pipeline.filter.drop_data import DropDataFilter
 from morning.pipeline.strategy.stock.start_with_up import StartWithUp
 from morning.account.day_profit_compare_account import DayProfitCompareAccount
 
-if __name__ == '__main__':
-    traders = []
-    day_profit_compare_account = DayProfitCompareAccount()
+from morning_main import morning_launcher
 
-    for up_tick in [1, 2, 3, 4, 5, 6, 7, 8]:
+def trading():
+    day_profit_compare_account = DayProfitCompareAccount('start_up')
+
+    for up_tick in [2, 3, 4, 5, 6, 7, 8, 9]:
         from_datetime = datetime(2019, 11, 11)
 
-        while from_datetime < datetime(2019, 11, 25):
-            print('START: ', from_datetime, '-------------------------')
+        while from_datetime < datetime(2019, 11, 27):
+            print('START: ', up_tick, from_datetime, '-------------------------')
             
             until_datetime = from_datetime + timedelta(days=1)
             if from_datetime.weekday() > 4:
@@ -31,7 +32,6 @@ if __name__ == '__main__':
                 continue
 
             trader = Trader(False)
-            traders.append(trader)
             day_profit_compare_account.set_up(up_tick, from_datetime)
 
             tt = TradingTunnel(trader)
@@ -53,3 +53,7 @@ if __name__ == '__main__':
             from_datetime += timedelta(days = 1)
 
     day_profit_compare_account.summary()
+
+
+if __name__ == '__main__':
+    morning_launcher.morning_launcher(True, trading)

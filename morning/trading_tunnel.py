@@ -8,7 +8,8 @@ class TradingTunnel(QObject):
         self.trader = trader
         self.chooser = None
         self.pipelines = []
-        self.targets = []
+        self.threads = []
+        self.workers = []
 
     def set_chooser(self, chooser):
         self.chooser = chooser
@@ -18,16 +19,22 @@ class TradingTunnel(QObject):
     def _chooser_selection_changed(self, targets):
         # chooser should deliver targets which not duplicated
         for target in targets:
-            runner_thread = QThread()
+            runner_thread = QThread(self)
             worker = TargetLauncher(job_input=(target, self.pipelines))
+            self.workers.append(worker)
             worker.msg_from_job.connect(self.handle_msg)
             worker.work_done.connect(self.runner_finished)
             runner_thread.started.connect(self.runner_started)
 
             worker.moveToThread(runner_thread)
-            self.targets.append((target, runner_thread, worker))
+            self.threads.append(runner_thread)
             worker.connect_start_signal(runner_thread.started)
             runner_thread.start()
+
+    def wait_threads(self):
+        for thread in self.threads:
+            thread.quit()
+            thread.wait()
 
     @pyqtSlot()
     def runner_started(self):

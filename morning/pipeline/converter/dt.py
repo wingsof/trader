@@ -62,8 +62,20 @@ class CybosStockBidAskTick:
 
 
 class CybosStockDayTick:
-    pass
-
+    DATE = '0'
+    TIME = '1' # hhmm
+    START_PRICE = '2'
+    HIGHEST_PRICE = '3'
+    LOWEST_PRICE = '4'
+    CLOSE_PRICE = '5'
+    VOLUME = '6'
+    AMOUNT = '7'
+    CUM_SELL_VOLUME = '8'
+    CUM_BUY_VOLUME = '9'
+    FOREIGNER_HOLD_VOLUME = '10'
+    FOREIGNER_HOLD_RATE = '11'
+    INSTITUTION_BUY_VOLUME = '12'
+    INSTITUTION_CUM_BUY_VOLUME = '13'
 
 
 stock_tick = {}

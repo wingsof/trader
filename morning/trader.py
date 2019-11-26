@@ -13,11 +13,7 @@ class Trader(QObject):
         self.realtime = realtime
         self.account = None
         self.runner_count = -1
-
-
-        
         self.app = QEventLoop()
-        #self.app = QCoreApplication(sys.argv)
         self.trade_tunnels = []
 
     def ready(self):
@@ -45,7 +41,9 @@ class Trader(QObject):
         logger.print('RUNNER(-)', self.runner_count)
 
         if not self.realtime and self.runner_count is 0:
-            self.app.quit()
+            for tt in self.trade_tunnels:
+                tt.wait_threads()
+            QTimer.singleShot(0, self.app.quit)
 
     def set_account(self, account):
         self.account = account

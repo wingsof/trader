@@ -3,15 +3,17 @@ import pandas as pd
 
 
 class DayProfitCompareAccount:
-    def __init__(self, save_to_file = ''):
-        self.start_up_count = 3
+    def __init__(self, option_name):
+        self.option = 0
+        self.option_name = option_name
+
         self.date = datetime.now().date()
-        self.df = pd.DataFrame(columns = ['date', 'startup', 'code', 'max_profit'])
-        self.start_ups = set()
+        self.df = pd.DataFrame(columns = ['date', option_name, 'code', 'max_profit'])
+        self.option_set = set()
 
     def set_up(self, c, d):
-        self.start_up_count = c
-        self.start_ups.add(c)
+        self.option = c
+        self.option_set.add(c)
         self.date = d
 
     def get_highest_price(self, date, code, price):
@@ -22,15 +24,20 @@ class DayProfitCompareAccount:
         return price
 
     def summary(self):
-        self.df.to_excel('start_up.xlsx')
-        for c in self.start_ups:
-            print(c, 'AVG PROFIT', self.df[self.df['startup'] == c]['max_profit'].mean())
+        self.df.to_excel(self.option_name + '.xlsx')
+        for c in self.option_set:
+            print(c, 'AVG PROFIT', self.df[self.df[self.option_name] == c]['max_profit'].mean())
 
     def transaction(self, msg):
         _, code, trade, price, _ = str(msg).split(':')
-        price = int(price)
+        price = float(price)
         if trade == 'BUY':
-            highest_price = self.get_highest_price(self.date, code, price)
-            row = {'date': self.date, 'startup': self.start_up_count,
-                    'code': code, 'max_profit': (highest_price - price) / price * 100}
-            self.df = self.df.append(row, ignore_index = True)
+            if self.date is not None:
+                highest_price = self.get_highest_price(self.date, code, price)
+                row = {'date': self.date, self.option_name: self.option,
+                        'code': code, 'max_profit': (highest_price - price) / price * 100}
+                self.df = self.df.append(row, ignore_index = True)
+            else:
+                row = {'date': datetime.now(), self.option_name: self.option,
+                        'code': code, 'max_profit': price}
+                self.df = self.df.append(row, ignore_index = True)
