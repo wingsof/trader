@@ -34,9 +34,10 @@ from morning.account.fake_account import FakeAccount
 from morning.needle.tick_graph_needle import TickGraphNeedle
 from morning.needle.tick_excel_needle import TickExcelNeedle
 
-if __name__ == '__main__':
+from morning_main import morning_launcher
+
+def trading():
     start_datetime = datetime(2019, 11, 20)
-    traders = []
 
     fake_account = FakeAccount('account.xlsx')
     while start_datetime < datetime(2019, 11, 21):
@@ -48,7 +49,6 @@ if __name__ == '__main__':
 
         fake_account.set_date(start_datetime.date())
         trader = Trader(False)
-        traders.append(trader) # For preventing segmentation fault
         if not trader.ready():
             print('Not satisfied conditions', flush=True)
             sys.exit(1)
@@ -97,6 +97,10 @@ if __name__ == '__main__':
         start_datetime += timedelta(days = 1)
 
     fake_account.summary()
+
+if __name__ == '__main__':
+    morning_launcher.morning_launcher(True, trading)
+
 
     """
     usecase2 = {

@@ -61,8 +61,14 @@ class CybosStockBidAskTick:
     OUT_TIME_TOTAL_BID_REMAIN = '26'
 
 
+class CybosStockDayTick:
+    pass
+
+
+
 stock_tick = {}
 stock_ba_tick = {}
+stock_day_tick = {}
 
 for k, v in vars(CybosStockTick).items():
     if not k.startswith('_'):
@@ -71,6 +77,11 @@ for k, v in vars(CybosStockTick).items():
 for k, v in vars(CybosStockBidAskTick).items():
     if not k.startswith('_'):
         stock_ba_tick[v] = k.lower()
+
+for k, v in vars(CybosStockDayTick).items():
+    if not k.startswith('_'):
+        stock_day_tick[v] = k.lower()
+
 
 
 def cybos_stock_tick_convert(raw_data):
@@ -88,6 +99,16 @@ def cybos_stock_ba_tick_convert(raw_data):
     for k, v in raw_data.items():
         if k in stock_ba_tick:
             converted[stock_ba_tick[k]] = v
+        else:
+            converted[k] = v
+    return converted
+
+
+def cybos_stock_day_tick_convert(raw_data):
+    converted = {}
+    for k, v in raw_data.items():
+        if k in stock_day_tick:
+            converted[stock_day_tick[k]] = v
         else:
             converted[k] = v
     return converted

@@ -18,5 +18,5 @@ class BuySumTrend:
             
             if self.last_result ^ result:
                 logger.print({'name':self.__class__.__name__, 'type': 'Bool', 'value': str(result)}, d['time_with_sec'])
-                self.next_elements.received([{'name':self.__class__.__name__, 'type': 'Bool', 'value': str(result)}])
+                self.next_elements.received([{'name':self.__class__.__name__, 'type': 'Bool', 'value': str(result), 'price': datas[0]['current_price']}])
                 self.last_result = result

@@ -42,7 +42,6 @@ class StartWithUp:
                 else:
                     self.df = pd.concat([self.df, pd.DataFrame(datas)])
 
-            #self.next_elements.received(datas)
     def check_dataframe(self, df):
         start_time = df['time_with_sec'].iloc[0]
         condition_met = True

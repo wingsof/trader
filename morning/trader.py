@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QCoreApplication, QObject, QTimer, pyqtSlot
+from PyQt5.QtCore import QCoreApplication, QObject, QTimer, pyqtSlot, QEventLoop
 import sys
 import signal
 from morning.logging import logger
@@ -8,16 +8,16 @@ class Trader(QObject):
     def __init__(self, realtime = True):
         # TODO: remove below line
         super().__init__()
-        logger.setup_main_log()
+        #logger.setup_main_log()
 
         self.realtime = realtime
         self.account = None
         self.runner_count = -1
 
-        if not self.realtime:
-            signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-        self.app = QCoreApplication(sys.argv)
+        
+        self.app = QEventLoop()
+        #self.app = QCoreApplication(sys.argv)
         self.trade_tunnels = []
 
     def ready(self):
@@ -59,4 +59,3 @@ class Trader(QObject):
         # if not use app.exec(), no way to receive message from QThread signal
         QTimer.singleShot(1000, self._run)
         self.app.exec()
-        logger.exit_main_log()
