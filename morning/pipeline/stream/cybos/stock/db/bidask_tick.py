@@ -30,6 +30,7 @@ class DatabaseBidAskTick:
             if self.data[0]['date'] < until_datetime:
                 d = self.data.pop(0)
                 d['stream'] = self.__class__.__name__
+                d['target'] = self.target_code
                 datas.append(d)
             else:
                 break

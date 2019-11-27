@@ -13,8 +13,7 @@ class BoolAndDecision:
     def set_output(self, next_ele):
         pass
 
-    def set_environ(self, target, queue):
-        # self.target = target
+    def set_environ(self, queue):
         self.queue = queue
 
     def received(self, datas):
@@ -41,16 +40,22 @@ class BoolAndDecision:
             else:
                 # Unknown purpose
                 value = datas[-1]['value']
+
+                if 'price' in datas[-1]:
+                    value = datas[-1]['price']
+                elif 'profit' in datas[-1]:
+                    value = datas[-1]['profit']
             
             target, date = datas[-1]['target'], datas[-1]['date']
+            strategy = datas[-1]['name']
 
             # currently not allow duplicated trade
             if not self.bought and result:
-                self.queue_put_nowait({ 'target': target, 'date': date,
-                                       'result': result, 'value': value})
+                self.queue.put_nowait({ 'target': target, 'date': date, 'stream': stream_name,
+                                            'strategy': strategy, 'result': result, 'value': value})
                 self.bought = True
             elif self.bought and not result:
                 self.bought = False
-                self.queue_put_nowait({ 'target': target, 'date': date,
-                                    'result': result, 'value': value})
+                self.queue.put_nowait({ 'target': target, 'date': date, 'stream': stream_name,
+                                        'strategy': strategy, 'result': result, 'value': value})
                 self.trade_count -= 1

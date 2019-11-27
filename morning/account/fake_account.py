@@ -10,7 +10,7 @@ class FakeAccount:
         self.save_to_file = save_to_file
         self.date = datetime.now().date()
         self.day_profit = 0
-        self.df = pd.DataFrame(columns=['date', 'time', 'vendor', 'code', 'trade', 'price', 'profit'])
+        self.df = pd.DataFrame(columns=['date', 'code', 'trade', 'price', 'profit'])
         self.profit_df = pd.DataFrame(columns=['date', 'code', 'profit', 'profit_r'])
 
     def set_date(self, d):
@@ -26,11 +26,11 @@ class FakeAccount:
     def transaction(self, msg):
         # Investing 1 / 10 amount
         #logger.print(str(msg))
-        vendor, code, trade, price, time = str(msg).split(':')
+        buy, code, price = msg['result'], msg['target'], msg['value']
         price = int(price)
-        
+
         profit = 0
-        if trade == 'BUY':
+        if buy:
             self.account[code] = price
         else:
             vol = (self.amount / 10) / self.account[code]
@@ -41,7 +41,7 @@ class FakeAccount:
             self.profit_df = self.profit_df.append(profit_d, ignore_index = True)
             
 
-        data = {'date': self.date, 'time': time, 'vendor':vendor, 'code': code, 'trade': trade, 'price': price, 'profit': profit}
+        data = {'date': self.date, 'code': code, 'trade': 'BUY' if buy else 'SELL', 'price': price, 'profit': profit}
         self.df = self.df.append(data, ignore_index = True)
         #self.df.to_excel('account.xlsx')
         # vendor:target:BUY:ask_price:time

@@ -24,7 +24,6 @@ from morning.pipeline.filter.drop_data import DropDataFilter
 
 from morning.pipeline.strategy.stock.start_with_up import StartWithUp
 from morning.pipeline.strategy.stock.buy_sum_trend import BuySumTrend
-from morning.pipeline.strategy.stock.bidask.buy_sum_trend import BidAskBuySumTrend
 from morning.pipeline.strategy.stock.bidask.deliver_bidask import DeliverBidAsk
 
 from morning.pipeline.decision.bool_and_decision import BoolAndDecision

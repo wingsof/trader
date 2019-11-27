@@ -17,7 +17,7 @@ class TargetRunner:
             stream, converter, filt, strategy = p['stream'], p['converter'], p['filter'], p['strategy']
             if decision is None:
                 decision = p['decision']
-                decision.set_environ(self.target, self.msg_queue)
+                decision.set_environ(self.msg_queue)
 
             stream.set_output(converter)
             prev_filt = converter # for when no filter

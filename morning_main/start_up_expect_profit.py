@@ -20,10 +20,10 @@ from morning_main import morning_launcher
 def trading():
     day_profit_compare_account = DayProfitCompareAccount('start_up')
 
-    for up_tick in [2, 3, 4, 5, 6, 7, 8, 9]:
+    for up_tick in [5]:
         from_datetime = datetime(2019, 11, 11)
 
-        while from_datetime < datetime(2019, 11, 27):
+        while from_datetime < datetime(2019, 11, 28):
             print('START: ', up_tick, from_datetime, '-------------------------')
             
             until_datetime = from_datetime + timedelta(days=1)
@@ -32,7 +32,7 @@ def trading():
                 continue
 
             trader = Trader(False)
-            day_profit_compare_account.set_up(up_tick, from_datetime)
+            day_profit_compare_account.set_up(up_tick)
 
             tt = TradingTunnel(trader)
             tt.set_chooser(KosdaqBullChooser(from_datetime, until_datetime))

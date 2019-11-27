@@ -7,11 +7,10 @@ from utils import time_converter
 from datetime import datetime
 
 class DayTick:
-    def __init__(self, from_date, until_date, is_main_clock = False):
+    def __init__(self, from_date, until_date, is_main_clock = True):
         self.is_main_clock = is_main_clock
         self.from_date = from_date
         self.until_date = until_date
-        self.fetch_from_cybos = fetch_from_cybos
         self.save_to_excel = False
         self.next_elements = None
         self.target_code = ''
@@ -25,15 +24,10 @@ class DayTick:
         day_code = code + '_D'
         stock = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
         
-        if self.fetch_from_cybos:
-            _, self.data = stock_chart.get_day_period_data(code, self.from_date, self.until_date)
-            stock[day_code].drop()
-            stock[day_code].insert_many(self.data)
-        else:
-            s = time_converter.datetime_to_intdate(self.from_date)
-            f = time_converter.datetime_to_intdate(self.until_date)
-            cursor = stock[day_code].find({'0': {'$gte':s, '$lte': f}})
-            self.data = list(cursor)
+        s = time_converter.datetime_to_intdate(self.from_date)
+        f = time_converter.datetime_to_intdate(self.until_date)
+        cursor = stock[day_code].find({'0': {'$gte':s, '$lte': f}})
+        self.data = list(cursor)
 
         logger.print(target, 'Length', len(self.data))
 
@@ -54,7 +48,7 @@ class DayTick:
         return False
 
     def have_clock(self):
-        return True
+        return self.is_main_clock
     
         
 

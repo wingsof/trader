@@ -4,11 +4,9 @@
 
 class YdayCloseTodayStart:
     def __init__(self, inverse):
-        print('-------------', inverse)
         self.inverse = inverse
         self.next_elements = None
         self.yesterday_close = 0
-
 
     def set_output(self, next_ele):
         self.next_elements = next_ele
@@ -23,7 +21,7 @@ class YdayCloseTodayStart:
                                                     'target': d['target'],
                                                     'stream': d['stream'], 
                                                     'date': d['date'],
-                                                    'value': profit_r}])
+                                                    'value': True, 'profit': profit_r}])
 
                 self.yesterday_close = d['close_price']
 
@@ -32,6 +30,6 @@ class YdayCloseTodayStart:
             if current > yday:
                 return True
         else:
-            if yday < current:
+            if current < yday:
                 return True
         return False
