@@ -35,7 +35,11 @@ class StartWithUp:
                 if n - self.start_minsec > timedelta(minutes=self.cont_min):
                     if self.check_dataframe(self.df):
                         logger.print({'name':self.__class__.__name__, 'type': 'Bool', 'value': 'True'}, minsec)
-                        self.next_elements.received([{'name':self.__class__.__name__, 'type': 'Bool', 'value': 'True', 'price': datas[0]['current_price']}])
+                        self.next_elements.received([{'name':self.__class__.__name__, 
+                                                    'target': datas[-1]['target'],
+                                                    'stream': datas[-1]['stream'],
+                                                    'date': datas[-1]['date'],
+                                                    'value': True}])
                     else:
                         logger.print(self.__class__.__name__, minsec, 'Fail')
                     self.done = True

@@ -19,7 +19,11 @@ class YdayCloseTodayStart:
                 if self.yesterday_close > 0:
                     if self.compare_price(self.yesterday_close, d['start_price']):
                         profit_r = (d['highest_price'] - d['start_price']) / d['start_price'] * 100.
-                        self.next_elements.received([{'name':self.__class__.__name__, 'type': 'Bool', 'value': 'True', 'price': profit_r}])
+                        self.next_elements.received([{'name':self.__class__.__name__, 
+                                                    'target': d['target'],
+                                                    'stream': d['stream'], 
+                                                    'date': d['date'],
+                                                    'value': profit_r}])
 
                 self.yesterday_close = d['close_price']
 

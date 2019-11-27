@@ -17,6 +17,13 @@ class DeliverBidAsk:
                     'first_bid_price', 'second_bid_price',
                     'third_bid_price', 'fourth_bid_price',
                     'fifth_bid_price']
+
             for d in datas:
-                self.next_elements.received([{'name':self.__class__.__name__, 'type': 'BidAsk', 
-                    'value': [d[k] for k in keys], 'time':d['time']}])
+                stream_name = d['stream']
+                date = d['date']
+                target = d['target']
+                self.next_elements.received([{'name':self.__class__.__name__, 
+                                            'target': target,
+                                            'stream': stream_name, 
+                                            'date': date,
+                                            'value': [d[k] for k in keys]}])

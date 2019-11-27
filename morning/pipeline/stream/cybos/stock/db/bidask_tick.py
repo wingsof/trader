@@ -8,6 +8,7 @@ class DatabaseBidAskTick:
         self.until_datetime = until_datetime
         self.check_whole_data = check_whole_data
         self.is_main_clock = is_main_clock
+        self.target_code = ''
 
     def is_acceptable_target(self, code):
         return code.startswith('cybos:A')
@@ -17,6 +18,7 @@ class DatabaseBidAskTick:
 
     def set_target(self, target):
         code = target.split(':')[1]
+        self.target_code = code
         stock_ba = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
         
         cursor = stock_ba[code + '_BA'].find({'date': {'$gte':self.from_datetime, '$lte': self.until_datetime}})
@@ -26,7 +28,9 @@ class DatabaseBidAskTick:
         datas = []
         while len(self.data) > 0:
             if self.data[0]['date'] < until_datetime:
-                datas.append(self.data.pop(0))
+                d = self.data.pop(0)
+                d['stream'] = self.__class__.__name__
+                datas.append(d)
             else:
                 break
         if self.next_elements:
@@ -35,8 +39,7 @@ class DatabaseBidAskTick:
     def received(self, data):
         if len(self.data) > 0:
             d = self.data.pop(0)
-            return d, d['date']        
-        return None, None
+            #TODO: nothing to do alone, how to handle it?
 
     def is_realtime(self):
         return False

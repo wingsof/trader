@@ -1,4 +1,5 @@
-* Fake Accout에 시간 필요
+* 눌림목, 비슷한 패턴 찾기
+
 * chooser 에서 동시 두가지 code 이상을 던져줄 수 있는 기능
     * is_acceptable 확인
 * CYBOS 위주로 일단 완성하고, 일반화 작업 진행 (1. DB, 2. 키움 등)
@@ -6,6 +7,7 @@
 
 Done
 ---------------------------
+* Fake Accout에 시간 필요
 * Child Counting... 언제 끝날지 어떻게 확인?
 * Decision 에서 최종 결정 (BoolAndDecision), Decision은 총 몇개 bool 받는지 인자로 전달
 * database로 돌릴 경우 main clock 에 start time을 다른 db로 연결할 필요가 있을지 고려

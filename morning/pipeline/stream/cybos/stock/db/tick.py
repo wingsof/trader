@@ -13,6 +13,7 @@ class DatabaseTick:
         self.child_streams = []
         self.next_elements = None
         self.save_to_excel = False
+        self.target_code = ''
 
     def is_acceptable_target(self, code):
         return code.startswith('cybos:A')
@@ -22,6 +23,7 @@ class DatabaseTick:
 
     def set_target(self, target):
         code = target.split(':')[1]
+        self.target_code = code
         stock = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
         
         cursor = stock[code].find({'date': {'$gte':self.from_datetime, '$lte': self.until_datetime}})
@@ -62,6 +64,8 @@ class DatabaseTick:
             for c in self.child_streams:
                 c.clock(d['date'])
 
+            d['stream'] = self.__class__.__name__
+            d['target'] = self.target_code
             if self.next_elements:
                 self.next_elements.received([d])
 
