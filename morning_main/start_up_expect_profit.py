@@ -15,17 +15,17 @@ from morning.pipeline.filter.drop_data import DropDataFilter
 from morning.pipeline.strategy.stock.start_with_up import StartWithUp
 from morning.account.day_profit_compare_account import DayProfitCompareAccount
 
-from morning.needle.tick_excel_needle import TickExcelNeedle
+from morning.needle.tick_graph_needle import TickGraphNeedle
 
 from morning_main import morning_launcher
 
 def trading():
     day_profit_compare_account = DayProfitCompareAccount('start_up')
 
-    for up_tick in [2]:
-        from_datetime = datetime(2019, 11, 22)
+    for up_tick in [3]:
+        from_datetime = datetime(2019, 11, 21)
 
-        while from_datetime < datetime(2019, 11, 23):
+        while from_datetime < datetime(2019, 11, 22):
             print('START: ', up_tick, from_datetime, '-------------------------')
             
             until_datetime = from_datetime + timedelta(days=1)
@@ -39,8 +39,8 @@ def trading():
             tt = TradingTunnel(trader)
             tt.set_chooser(KosdaqBullChooser(from_datetime, until_datetime))
             swu = StartWithUp(up_tick)
-            ten = TickExcelNeedle()
-            ten.tick_connect(swu)
+            tgn = TickGraphNeedle()
+            tgn.tick_connect(swu)
             start_up_profit_pipeline = { 'name': 'start_up_profit',
                                     'stream': DatabaseTick(from_datetime, until_datetime, True, True),
                                     'converter': StockTickConverter(),

@@ -47,8 +47,12 @@ class StartWithUp:
                                                     'date': datas[-1]['date'],
                                                     'value': True, 
                                                     'price': datas[-1]['current_price']}])
+                        for g in self.graph_adder:
+                            g.set_flag(datas[-1]['date'], 'SUCCESS')
                     else:
                         logger.print(self.__class__.__name__, minsec, 'Fail')
+                        for g in self.graph_adder:
+                            g.set_flag(datas[-1]['date'], 'FAIL')
                     self.done = True
                 else:
                     self.df = pd.concat([self.df, pd.DataFrame(datas)])

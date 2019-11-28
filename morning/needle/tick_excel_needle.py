@@ -16,21 +16,19 @@ class TickExcelNeedle:
     def filter_codes(self, codes):
         self.codes.extend(codes)
 
-    def process(self):
-        if self.df is None:
-            return
+    def set_flag(self, date, desc):
+        pass
 
-        self.df.to_excel('all.xlsx')
+    def process(self):
         if self.df is not None and len(self.df) > 0:
             prefix = ''
-
+            code = self.df['target'].iloc[-1]
             if self.date is not None:
                 prefix = self.date.strftime('%Y%m%d_')
+            else:
+                prefix = self.df['date'].iloc[-1].strftime('%Y%m%d_')
             # groupby code and save to file
-            for name, group in self.df.groupby('code'):
-                if len(group) > 0:
-                    suffix = group['code'].iloc[0] + '.xlsx'
-                    group.to_excel(suffix)
+            self.df.to_excel(prefix + code + '.xlsx')
 
     def received(self, datas):
         db_date = datas[0]['date']

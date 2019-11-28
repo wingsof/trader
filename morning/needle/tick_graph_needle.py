@@ -1,15 +1,16 @@
 import pandas as pd
 from datetime import datetime, time
-import matplotlib.pyplot as plt
-import mpl_finance
-import matplotlib.dates as matdates
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 
 class TickGraphNeedle:
     def __init__(self):
         self.date = None
         self.codes = []
-        self.df = pd.DataFrame(columns=['Date', 'Code', 'Price', 'Volume'])
+        self.df = pd.DataFrame(columns=['date', 'code', 'price', 'volume'])
+        self.shapes = []
+        self.annotations = []
 
     def tick_connect(self, strategy):
         strategy.add_graph(self)
@@ -20,60 +21,51 @@ class TickGraphNeedle:
     def filter_codes(self, codes):
         self.codes.extend(codes)
 
-    def process(self):
-        published = []
-        for c in self.codes:
-            df = self.df[self.df['Code'] == c]
-            df = df.set_index('Date')
-            # 2. date filter? : received 에서 date 확인했기 때문에 필요 없어 보임
-            # 3. Group by로 할 경우, 빈 데이터는 group size 0으로 확인 가능
-            if len(df) > 0:
-                minute_df = pd.DataFrame(columns = ['Date', 'Code', 'Open', 'Low', 'High', 'Close', 'Volume'])
-                for name, group in df.groupby(pd.Grouper(freq='60s')):
-                    if len(group) > 0:
-                        minute_df = minute_df.append({'Date':name, 'Code': group['Code'].iloc[0], 'Open': group['Price'].iloc[0],
-                                            'Low': group['Price'].min(), 'High': group['Price'].max(),
-                                            'Close': group['Price'].iloc[-1], 'Volume': group['Volume'].sum()}, 
-                                            ignore_index = True)
-                    else:
-                        minute_df = minute_df.append({'Date':name, 'Code': c, 'Open': 0,
-                                            'Low': 0, 'High': 0,
-                                            'Close': 0, 'Volume': 0}, 
-                                            ignore_index = True)
-                if len(minute_df) > 0:
-                    fig = plt.figure(figsize=(12, 8))
-                    ax = fig.add_subplot(111)
-                    
-                    ohlc = minute_df.loc[:, ['Date', 'Open', 'High', 'Low', 'Close']]
-                    ohlc['Date'] = ohlc['Date'].apply(matdates.date2num)
-                    ohlc = ohlc.astype(float)
-                    # for 5 data, .0005 is appropriate
-                    mpl_finance.candlestick_ohlc(ax, ohlc.values, width=.0005, colorup='r', colordown='b')
-                    ax.xaxis.set_major_formatter(matdates.DateFormatter('%H:%M'))
-                    plt.xticks(rotation='vertical')
-                    plt.savefig(c + '.png')
-                    published.append(c)
-                    
-        return published
+    def set_flag(self, date, desc):
+        self.shapes.append(
+            dict(x0=date, x1=date, y0=0, y1=1, xref='x', yref='paper', line_width=2))
+        self.annotations.append(
+            dict(x=date, y=0.05, xref='x', yref='paper', showarrow=True, xanchor='left', text=desc))
 
+
+    def process(self):
+        if self.df is not None and len(self.df) > 0:
+            prefix = ''
+            code = self.df['code'].iloc[-1]
+            if self.date is not None:
+                prefix = self.date.strftime('%Y%m%d_')
+            else:
+                prefix = self.df['date'].iloc[-1].strftime('%Y%m%d_')
+            self.df = self.df.set_index('date')
+
+            minute_df = pd.DataFrame(columns = ['date', 'code', 'open', 'low', 'high', 'close', 'volume'])
+            for name, group in self.df.groupby(pd.Grouper(freq='180s')):
+                if len(group) > 0:
+                    minute_df = minute_df.append({'date':name, 'code': group['code'].iloc[0], 'open': group['price'].iloc[0],
+                                                'low': group['price'].min(), 'high': group['price'].max(),
+                                                'close': group['price'].iloc[-1], 'volume': group['volume'].sum()}, ignore_index = True)
+
+            if len(minute_df) > 0:
+                fig = make_subplots(rows=2, cols=1)
+                fig.add_trace(go.Candlestick(x=minute_df['date'],
+                                open=minute_df['open'], high=minute_df['high'],
+                                low=minute_df['low'], close=minute_df['close'],
+                                increasing_line_color='red', decreasing_line_color='blue'), row=1, col=1)
+                fig.add_trace(go.Bar(x=minute_df['date'], y=minute_df['volume']), row=2, col=1)
+                fig.update_layout(title=code, yaxis_tickformat='d', shapes=self.shapes, annotations=self.annotations)
+                fig.write_html(prefix+code+'.html', auto_open=False)
 
     def received(self, datas):
-        for d in datas:
-            if len(self.codes) > 0 and d['code'] in self.codes:
-                date = None
-                if 'date' in d and self.date is not None:
-                    db_date = d['date']
-                    if db_date.date() != self.date:
-                        continue
+        db_date = datas[0]['date']
+        code = datas[0]['target']
+        if self.date is not None:
+            if db_date.date() != self.date:
+                return
+        elif len(self.codes) > 0:
+            if code not in self.codes:
+                return
 
-                if 'date' in d:
-                    date = d['date']
-                else:
-                    date = datetime.now()
-                    minsec = d['time_with_sec']
-                    hour, minute, second = int(minsec / 10000), int(minsec % 10000 / 100), int(minsec % 100)
-                    date.replace(hour = hour, minute = minute, second = second)
-                
-                row = {'Date': date, 'Code': d['code'], 'Price': d['current_price'], 'Volume': d['volume']}
-                self.df = self.df.append(row, ignore_index = True)
+        for d in datas:                
+            row = {'date': d['date'], 'code': d['target'], 'price': d['current_price'], 'volume': d['volume']}
+            self.df = self.df.append(row, ignore_index = True)
         
