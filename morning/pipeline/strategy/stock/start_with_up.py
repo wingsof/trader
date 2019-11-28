@@ -14,13 +14,19 @@ class StartWithUp:
     def add_graph(self, adder):
         self.graph_adder.append(adder)
 
+    def finalize(self):
+        for g in self.graph_adder:
+            g.process()
+
+        if self.next_elements:
+            self.next_elements.finalize()
+
     def set_output(self, next_ele):
         self.next_elements = next_ele
 
     def received(self, datas):
-        if len(self.graph_adder) > 0:
-            for g in self.graph_adder:
-                g.received(datas)
+        for g in self.graph_adder:
+            g.received(datas)
 
         if self.next_elements is not None and not self.done:
             minsec = datas[0]['time_with_sec']

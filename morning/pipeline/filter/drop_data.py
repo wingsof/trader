@@ -9,6 +9,10 @@ class DropDataFilter:
     def set_output(self, next_ele):
         self.next_elements.append(next_ele)
 
+    def finalize(self):
+        for next_ele in self.next_elements:
+            next_ele.finalize()
+
     def received(self, datas):
         if len(self.next_elements) > 0:
             if self.drop_count > 0:

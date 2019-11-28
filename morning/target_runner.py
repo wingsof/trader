@@ -53,3 +53,5 @@ class TargetRunner:
         if self.main_stream:
             while self.main_stream.received([]) > 0:
                 pass
+            
+            self.main_stream.finalize()

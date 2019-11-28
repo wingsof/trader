@@ -12,6 +12,9 @@ class ProfitDecision:
     def set_environ(self, queue):
         self.queue = queue
 
+    def finalize(self):
+        pass
+
     def received(self, datas):
         if self.queue is None or len(datas) == 0:
             logger.warning(self.__class__.__name__, 'No queue error')

@@ -10,6 +10,9 @@ class BoolAndDecision:
         self.bought = False
         self.bidask_table = []
 
+    def finalize(self):
+        pass
+
     def set_output(self, next_ele):
         pass
 
@@ -30,6 +33,7 @@ class BoolAndDecision:
             else:
                 self.decision[d['name']] = d
         
+        # TODO: Refactoring required
         if len(self.decision) >= self.and_input_count:
             result = all([k['value'] for k in self.decision.values()])
             stream_name = datas[-1]['stream']

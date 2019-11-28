@@ -58,6 +58,13 @@ class DatabaseTick:
     def add_child_streams(self, s):
         self.child_streams.append(s)
 
+    def finalize(self):
+        for c in self.child_streams:
+            c.finalize()
+        
+        if self.next_elements:
+            self.next_elements.finalize()
+
     def received(self, data):
         if len(self.data) > 0:
             d = self.data.pop(0)

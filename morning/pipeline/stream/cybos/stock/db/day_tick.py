@@ -18,6 +18,10 @@ class DayTick:
     def set_save_to_excel(self, is_save):
         self.save_to_excel = is_save
 
+    def finalize(self):
+        if self.next_elements:
+            self.next_elements.finalize()
+
     def set_target(self, target):
         code = target.split(':')[1]
         self.target_code = code

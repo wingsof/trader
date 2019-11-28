@@ -8,6 +8,10 @@ class StockBidAskTickConverter:
     def set_output(self, next_ele):
         self.next_elements = next_ele
 
+    def finalize(self):
+        if self.next_elements:
+            self.next_elements.finalize()
+
     def received(self, datas):
         if self.next_elements is not None:
             converted_datas = []
