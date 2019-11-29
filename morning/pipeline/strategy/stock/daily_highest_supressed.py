@@ -12,6 +12,7 @@ class DailyHighestSuppressed:
         self.search_days = search_days
         self.past_highest = 0
         self.df = None
+        self.graph_adder = []
 
     def add_graph(self, adder):
         self.graph_adder.append(adder)
@@ -32,7 +33,8 @@ class DailyHighestSuppressed:
         if l == 0:
             return False
 
-        self.past_highest = [d['3'] for d in day_datas].max()
+        self.past_highest = max([d['3'] for d in day_datas])
+        logger.print('past highest', self.past_highest)
         return True
 
     def received(self, datas):
@@ -49,6 +51,8 @@ class DailyHighestSuppressed:
                     for d in datas:
                         if d['current_price'] > self.past_highest:
                             self.entered = (True, d['date'])
+                            logger.print('entered')
+
                     
                     if self.entered[0]:
                         self.df = pd.DataFrame(datas)

@@ -42,7 +42,7 @@ def trading():
         pipeline = {'name': 'catch_supressed',
                     'stream': DatabaseTick(from_datetime, until_datetime, True, True),
                     'converter': StockTickConverter(),
-                    'filter': [InMarketFilter(), DropDataFilter()],
+                    'filter': [InMarketFilter(), DropDataFilter(1)],
                     'strategy': [dhs],
                     'decision': BoolAndDecision(1, 1)}
         tt.add_pipeline(pipeline)
