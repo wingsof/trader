@@ -51,13 +51,6 @@ def trading():
 if __name__ == '__main__':
     if fetch_cybos:
         kbc = KosdaqBullChooser(bull_chooser_date, datetime.now())
-        codes = kbc.codes[-1]
-        codes.pop('_id', None)
-        codes.pop('date', None)
-        client = MongoClient(db.HOME_MONGO_ADDRESS)
-        for code in codes.values():
-            _, data = stock_chart.get_day_period_data(code, start_date, end_date)
-            client.stock[code + '_D'].drop()
-            client.stock[code + '_D'].insert_many(data)
+        kbc.store_daily_data_in_db()
     
     morning_launcher.morning_launcher(True, trading)

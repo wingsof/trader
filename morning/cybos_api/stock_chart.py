@@ -47,12 +47,23 @@ def get_period_data_raw(code, start_date, end_date = 0, period_type='m'):
 
     return len(data), reversed(data)
 
+
 def get_day_period_data(code, startdate, enddate):
     pivot = startdate
     result = []
     while enddate - pivot > timedelta(days=365 * 4):
         _, result[len(result):len(result)] = get_period_data_raw(code, pivot, pivot + timedelta(365 * 4), period_type='D')
         pivot = pivot + timedelta(days=365 * 4 + 1)
-    _, result[len(result):len(result)] = get_period_data_raw(code, pivot, enddate, period_type='D')
+    l, result[len(result):len(result)] = get_period_data_raw(code, pivot, enddate, period_type='D')
+    return len(result), result
 
+
+def get_min_period_data(code, startdate, enddate):
+    pivot = startdate
+    result = []
+    while enddate - pivot > timedelta(days=5):
+        _, result[len(result):len(result)] = get_period_data_raw(code, pivot, pivot + timedelta(days=5))
+        pivot = pivot + timedelta(days=6)
+
+    l, result[len(result):len(result)] = get_period_data_raw(code, pivot, enddate)
     return len(result), result

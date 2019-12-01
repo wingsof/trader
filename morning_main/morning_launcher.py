@@ -6,6 +6,7 @@ from PyQt5.QtCore import QCoreApplication, QThread
 import signal
 
 from morning.logging import logger
+import pythoncom
 
 
 class _RunnerThread(QThread):
@@ -14,6 +15,9 @@ class _RunnerThread(QThread):
         self.running_function = running_function
 
     def run(self):
+
+        pythoncom.CoInitialize()
+
         self.running_function()
 
 

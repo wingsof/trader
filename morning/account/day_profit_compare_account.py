@@ -1,11 +1,14 @@
 from datetime import datetime
 import pandas as pd
-
+from pymongo import MongoClient
+from morning.config import db
+from utils import time_converter
 
 class DayProfitCompareAccount:
-    def __init__(self, option_name):
+    def __init__(self, option_name, use_cybos=False):
         self.option = 0
         self.option_name = option_name
+        self.use_cybos = use_cybos
 
         self.df = pd.DataFrame(columns = ['date', option_name, 'code', 'max_profit'])
         self.option_set = set()
@@ -15,12 +18,21 @@ class DayProfitCompareAccount:
         self.option_set.add(c)
 
     def get_highest_price(self, date, code, price):
-        from morning.cybos_api import stock_chart
-        l, data = stock_chart.get_day_period_data(code, date, date)
-        if l == 1:
-            print('get_highest_price', data[0]['3'])
-            return data[0]['3']
+        if self.use_cybos:
+            from morning.cybos_api import stock_chart
+            l, data = stock_chart.get_day_period_data(code, date, date)
+            if l == 1:
+                return data[0]['3']
+        else:
+            stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
+            d = time_converter.datetime_to_intdate(date)
+            cursor = stock_db[code + '_D'].find({'0': {'$gte':d, '$lte': d}})
+        
+            if cursor.count() == 1:
+                return (list(cursor))[0]['3']
+
         return price
+
 
     def summary(self):
         for c in self.option_set:

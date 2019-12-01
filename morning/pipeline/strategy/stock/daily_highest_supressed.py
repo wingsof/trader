@@ -1,7 +1,9 @@
 from morning.logging import logger
 from datetime import datetime, timedelta
 import pandas as pd
-
+from utils import time_converter
+from morning.config import db
+from pymongo import MongoClient
 
 
 class DailyHighestSuppressed:
@@ -28,13 +30,16 @@ class DailyHighestSuppressed:
         self.next_elements = next_ele
 
     def get_past_record(self, target):
-        from morning.cybos_api import stock_chart
-        l, day_datas = stock_chart.get_day_period_data(target, datetime.now() - timedelta(days=self.search_days), datetime.now())
-        if l == 0:
+        stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
+        start = time_converter.datetime_to_intdate(datetime.now() - timedelta(days=self.search_days))
+        end = time_converter.datetime_to_intdate(datetime.now())
+        cursor = stock_db[target + '_D'].find({'0': {'$gte':start, '$lt': end}})
+        
+        if cursor.count() == 0:
             return False
 
-        self.past_highest = max([d['3'] for d in day_datas])
-        logger.print('past highest', self.past_highest)
+        self.past_highest = max([d['3'] for d in list(cursor)])
+
         return True
 
     def received(self, datas):
@@ -46,43 +51,50 @@ class DailyHighestSuppressed:
                 if not self.get_past_record(datas[-1]['target']):
                     logger.print(datas[-1]['target'], 'no daily records')
                     self.done = True
+                    return
                 
-                if not self.entered[0]:
-                    for d in datas:
-                        if d['current_price'] > self.past_highest:
-                            self.entered = (True, d['date'])
-                            logger.print('entered')
-
-                    
-                    if self.entered[0]:
-                        self.df = pd.DataFrame(datas)
-                else:
-                    self.df.append(datas, ignore_index = True)
-                    time_passed = d['date'] - self.entered[1]
-                    if time_passed > timedelta(minutes = 9):
-                        if self.check_dataframe(self.df):
-                            self.next_elements.received([{'name':self.__class__.__name__, 
-                                                        'target': datas[-1]['target'],
-                                                        'stream': datas[-1]['stream'],
-                                                        'date': datas[-1]['date'],
-                                                        'value': True, 
-                                                        'price': datas[-1]['current_price']}])
-                            for g in self.graph_adder:
-                                g.set_flag(datas[-1]['date'], 'SUPRESSED')
-                            self.done = True
+            if not self.entered[0]:
+                for d in datas:
+                    if d['current_price'] > self.past_highest:
+                        self.entered = (True, d['date'])
+                        logger.print('entered')
+                        
+                
+                if self.entered[0]:
+                    self.df = pd.DataFrame(datas)
+                    self.df = self.df.set_index('date')
+                    for g in self.graph_adder:
+                            g.set_flag(datas[-1]['date'], 'ENTERED:' + str(self.past_highest))
+            else:
+                self.df.append(datas, ignore_index = True)
+                time_passed = datas[-1]['date'] - self.entered[1]
+                if time_passed > timedelta(minutes = 9):
+                    if self.check_dataframe(self.df):
+                        self.next_elements.received([{'name':self.__class__.__name__, 
+                                                    'target': datas[-1]['target'],
+                                                    'stream': datas[-1]['stream'],
+                                                    'date': datas[-1]['date'],
+                                                    'value': True, 
+                                                    'price': datas[-1]['current_price']}])
+                        for g in self.graph_adder:
+                            g.set_flag(datas[-1]['date'], 'SUPRESSED')
+                        self.done = True
+        
 
     def check_dataframe(self, df):
         minute_df = pd.DataFrame(columns = ['date', 'code', 'open', 'low', 'high', 'close', 'avg', 'volume'])
-        for name, group in self.df.groupby(pd.Grouper(freq='180s')):
+        for name, group in df.groupby(pd.Grouper(freq='180s')):
             if len(group) > 0:
-                minute_df = minute_df.append({'date':name, 'code': group['code'].iloc[0], 'open': group['price'].iloc[0],
-                                            'low': group['price'].min(), 'high': group['price'].max(),
-                                            'close': group['price'].iloc[-1], 'avg': group['price'].mean(), 'volume': group['volume'].sum()}, ignore_index = True)
+                minute_df = minute_df.append({'date':name, 'code': group['code'].iloc[0], 'open': group['current_price'].iloc[0],
+                                            'low': group['current_price'].min(), 'high': group['current_price'].max(),
+                                            'close': group['current_price'].iloc[-1], 'avg': group['current_price'].mean(), 'volume': group['volume'].sum()}, ignore_index = True)
 
-        if minute_df(len) > 0:
+        if len(minute_df) > 0:
+            first = minute_df.iloc[0]
             last = minute_df.iloc[-1]
             cutted = minute_df.iloc[1:-1, :]
-            if len(cutted[cutted['avg'] < last['close']]) == 0:
+            
+            if len(cutted) > 0 and len(cutted[cutted['avg'] < last['close']]) == 0 and first['close'] <= last['close']:
                 return True
         
         return False
