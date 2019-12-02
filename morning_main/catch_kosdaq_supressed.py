@@ -1,9 +1,4 @@
 # Using minute data and check condition in Kosdaq Market
-
-
-
-
-
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -20,13 +15,14 @@ from morning.pipeline.filter.in_market import InMarketFilter
 from morning.pipeline.filter.drop_data import DropDataFilter
 from morning.pipeline.strategy.stock.daily_highest_supressed import DailyHighestSuppressed
 from morning.account.day_profit_compare_account import DayProfitCompareAccount
-from morning_main.kosdaq_trend import KosdaqTrend
+from morning_main.trend_record.kosdaq_trend import KosdaqTrend
+from morning.pipeline.strategy.stock.minute_suppressed import MinuteSuppressed
 
 from morning.needle.tick_graph_needle import TickGraphNeedle
 
 from morning_main import morning_launcher
 from morning.needle.tick_graph_needle import TickGraphNeedle
-
+from morning.back_data.holidays import is_holidays
 
 def trading():
     day_profit_compare_account = DayProfitCompareAccount('catch_kosdaq_supressed')
@@ -34,10 +30,9 @@ def trading():
 
     while from_datetime < datetime(2019, 11, 29):
         print('START: ', from_datetime, '-------------------------')
-        if from_datetime.weekday() > 4:
+        if is_holidays(from_datetime):
             from_datetime += timedelta(days = 1)
             continue
-        # TODO: Consider holidays for long period testing
         
         kt = KosdaqTrend(from_datetime)
         if not kt.current_greater_than_mean():
@@ -58,7 +53,7 @@ def trading():
                     'stream': MinTick(from_datetime, True),
                     'converter': StockDayTickConverter(),
                     'filter': [],
-                    'strategy': [],
+                    'strategy': [MinuteSuppressed()],
                     'decision': BoolAndDecision(1, 1)}
         tt.add_pipeline(pipeline)
 

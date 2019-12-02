@@ -4,6 +4,7 @@ from pymongo import MongoClient
 from morning.pipeline.chooser.chooser import Chooser
 from morning.config import db
 from morning.cybos_api import stock_chart
+from morning.back_data.fetch_stock_data import get_day_period_data
 
 class KosdaqBullChooser(Chooser):
     def __init__(self, from_datetime = datetime.now(), until_datetime = datetime.now(), max_count=40):
@@ -16,13 +17,7 @@ class KosdaqBullChooser(Chooser):
 
     def store_daily_data_in_db(self, days=180):
         for code in self._get_codes(False):
-            l, data = stock_chart.get_day_period_data(code, self.until_datetime - timedelta(days=days), self.until_datetime)
-            if l > 0:
-                self.mc[code + '_D'].drop()
-                self.mc[code + '_D'].insert_many(data)
-            else:
-                print('No Data')
-
+            get_day_period_data(code, self.until_datetime - timedelta(days=days), self.until_datetime)
 
     def _get_codes(self, add_prefix=True):
         if len(self.codes):

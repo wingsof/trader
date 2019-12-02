@@ -4,12 +4,13 @@ import pandas as pd
 from utils import time_converter
 from morning.config import db
 from pymongo import MongoClient
-
+from morning.back_data.fetch_stock_data import get_day_past_highest
 
 class DailyHighestSuppressed:
-    def __init__(self, search_days = 180):
+    def __init__(self, date, search_days = 180):
         self.next_elements = None
         self.done = False
+        self.date = date
         self.entered = (False, None)
         self.search_days = search_days
         self.past_highest = 0
@@ -30,15 +31,9 @@ class DailyHighestSuppressed:
         self.next_elements = next_ele
 
     def get_past_record(self, target):
-        stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
-        start = time_converter.datetime_to_intdate(datetime.now() - timedelta(days=self.search_days))
-        end = time_converter.datetime_to_intdate(datetime.now())
-        cursor = stock_db[target + '_D'].find({'0': {'$gte':start, '$lt': end}})
-        
-        if cursor.count() == 0:
+        self.past_highest = get_day_past_highest(target, self.date, self.search_days)
+        if self.past_highest == 0:
             return False
-
-        self.past_highest = max([d['3'] for d in list(cursor)])
 
         return True
 

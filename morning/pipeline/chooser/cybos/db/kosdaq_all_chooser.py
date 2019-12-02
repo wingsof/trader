@@ -4,6 +4,7 @@ from pymongo import MongoClient
 from morning.pipeline.chooser.chooser import Chooser
 from morning.config import db
 from utils import time_converter
+from morning.back_data.fetch_stock_data import get_day_period_data
 
 
 class KosdaqAllChooser(Chooser):
@@ -25,10 +26,23 @@ class KosdaqAllChooser(Chooser):
         self.selection_changed.emit(set(['cybos:'+ code for code in self.codes]))
 
     def _filter_consecutive_buy_days(self, date):
-        for code in self.codes:
+        codes = self.codes
+        self.codes = []
+        for code in codes:
             from_date = date - timedelta(days=20)
-            db_data = list(self.stock[code + '_D'].find({'0': {'$gte':time_converter.datetime_to_intdate(from_date), 
-                                                                '$lte': time_converter.datetime_to_intdate(date)}}))
+            data = get_day_period_data(code, from_date, date)
 
-            if len(db_data) > 3 and time_converter.intdate_to_datetime(db_data[-1]['0']).date() == today:
+            if len(data) < self.institution_buy_days:
+                continue
+            
+            data = data[-(self.institution_buy_days):]
+            remove = False
+            for d in data:
+                if d['12'] < 0:
+                    remove = True
+                    break
+            
+            if not remove:
+                self.codes.append(code)
+
                 

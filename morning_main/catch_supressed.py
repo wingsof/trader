@@ -21,6 +21,7 @@ from morning.needle.tick_graph_needle import TickGraphNeedle
 from morning_main import morning_launcher
 from PyQt5.QtCore import QCoreApplication
 from morning.needle.tick_graph_needle import TickGraphNeedle
+from morning.back_data.holidays import is_holidays
 
 
 def trading():
@@ -42,7 +43,7 @@ def trading():
         #kbc.store_daily_data_in_db()
 
         tt.set_chooser(kbc)
-        dhs = DailyHighestSuppressed(5)
+        dhs = DailyHighestSuppressed(from_datetime, 5)
         tgn = TickGraphNeedle(out_when_flag=True)
         tgn.tick_connect(dhs)
 
