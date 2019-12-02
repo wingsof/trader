@@ -44,5 +44,3 @@ class KosdaqAllChooser(Chooser):
             
             if not remove:
                 self.codes.append(code)
-
-                

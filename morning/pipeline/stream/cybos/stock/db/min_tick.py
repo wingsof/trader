@@ -25,7 +25,8 @@ class MinTick:
         s = time_converter.datetime_to_intdate(self.date)
         cursor = stock[minute_code].find({'0': {'$gte':s, '$lte': s}})
         self.data = list(cursor)
-        logger.print(target, 'Length', len(self.data))
+        #logger.print(target, 'Length', len(self.data))
+        print('Length', len(self.data))
 
     def set_output(self, next_ele):
         self.next_elements = next_ele
