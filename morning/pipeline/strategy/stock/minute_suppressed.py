@@ -4,6 +4,8 @@ from morning.back_data.fetch_stock_data import get_day_past_highest
 from scipy.signal import argrelextrema
 import numpy as np
 
+# Refer to https://pythonawesome.com/overview-of-the-peaks-dectection-algorithms-available-in-python/  for finding peaks
+
 class MinuteSuppressed:
     def __init__(self):
         self.past_highest = 0
