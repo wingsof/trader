@@ -12,8 +12,12 @@ class KosdaqAllChooser(Chooser):
         super().__init__()
         self.institution_buy_days = institution_buy_days
         self.stock = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
-        self.codes = list(self.stock['KOSDAQ_CODES'].find())
-        if self.codes.count() == 0:
+        self.codes = []
+        codes = list(self.stock['KOSDAQ_CODES'].find())
+        for code in codes:
+            self.codes.append(code['code'])
+        
+        if len(self.codes) == 0:
             from morning.cybos_api.stock_code import get_kosdaq_code_list
             self.codes = get_kosdaq_code_list()
             for code in self.codes:
@@ -29,6 +33,7 @@ class KosdaqAllChooser(Chooser):
         codes = self.codes
         self.codes = []
         for code in codes:
+            print('FILTER', code, len(codes))
             from_date = date - timedelta(days=20)
             data = get_day_period_data(code, from_date, date)
 

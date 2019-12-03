@@ -64,10 +64,14 @@ if __name__ == '__main__':
     import os
     import sys
     sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-    from winapi import connection
+    #from connection import connection
 
-    conn = connection.Connection()
-    print("Connected", conn.is_connected())
+    #conn = connection.Connection()
+    #print("Connected", conn.is_connected())
+    codes = get_kosdaq_code_list()
+    
+    print(len(codes))
+    """
     print("Left", conn.request_left_count())
     print("KOSPI ", get_kospi_code_list())
     print("Warning", is_there_warning('A134780'))
@@ -78,3 +82,4 @@ if __name__ == '__main__':
     country_code = get_country_code()
     for code in country_code:
         print(code, get_us_name(code))
+    """
