@@ -27,9 +27,12 @@ def _insert_day_data(db, code, days, working_days, db_suffix):
     if db is not None and len(empty_periods) > 0:
         from morning.cybos_api import stock_chart
         for p in empty_periods:
-            length, data = stock_chart.get_day_period_data(code, p[0], p[1])
+            if db_suffix == '_D':
+                length, data = stock_chart.get_day_period_data(code, p[0], p[1])
+            elif db_suffix == '_M':
+                length, data = stock_chart.get_min_period_data(code, p[0], p[1])
             if length > 0:
-                print('INSERT', code + db_suffix, length)
+                #print('INSERT', code + db_suffix, length)
                 db[code + db_suffix].insert_many(data)
 
     return empty_periods
@@ -39,7 +42,7 @@ def get_day_period_data(code, from_date, until_date, db_suffix='_D'):
     stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
 
     db_data = list(stock_db[code + db_suffix].find({'0': {'$gte':time_converter.datetime_to_intdate(from_date), '$lte': time_converter.datetime_to_intdate(until_date)}}))
-    print('DB LEN', len(db_data))
+    #print('DB LEN', len(db_data))
     
     days = [time_converter.intdate_to_datetime(d['0']).date() for d in db_data]
     days = list(dict.fromkeys(days))

@@ -33,7 +33,7 @@ class KosdaqAllChooser(Chooser):
         codes = self.codes
         self.codes = []
         for code in codes:
-            print('FILTER', code, len(codes))
+            #print('FILTER', code, len(codes))
             from_date = date - timedelta(days=20)
             data = get_day_period_data(code, from_date, date)
 
