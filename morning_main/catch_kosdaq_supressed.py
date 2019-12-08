@@ -13,44 +13,44 @@ from morning.pipeline.converter.cybos.stock.day_tick import StockDayTickConverte
 from morning.pipeline.stream.cybos.stock.db.min_tick import MinTick
 from morning.pipeline.filter.in_market import InMarketFilter
 from morning.pipeline.filter.drop_data import DropDataFilter
+from morning.pipeline.chooser.cybos.db.kosdaq_search_bull_chooser import KosdaqSearchBullChooser
 from morning.pipeline.strategy.stock.daily_highest_supressed import DailyHighestSuppressed
-from morning.account.day_profit_compare_account import DayProfitCompareAccount
+from morning.account.fake_account import FakeAccount
 from morning_main.trend_record.kosdaq_trend import KosdaqTrend
 from morning.pipeline.strategy.stock.minute_suppressed import MinuteSuppressed
 
 from morning.needle.tick_graph_needle import TickGraphNeedle
 
 from morning_main import morning_launcher
-from morning.needle.tick_graph_needle import TickGraphNeedle
 from morning.back_data.holidays import is_holidays
 
+from morning.back_data import fetch_stock_data
+
 def trading():
-    day_profit_compare_account = DayProfitCompareAccount('catch_kosdaq_supressed')
+    fake_account = FakeAccount('catch_kosdaq_supressed')
     from_datetime = datetime(2018, 1, 1)
 
-    while from_datetime < datetime(2019, 11, 29):
+    while from_datetime < datetime(2019, 12, 7):
         print('START: ', from_datetime, '-------------------------')
         if is_holidays(from_datetime):
             from_datetime += timedelta(days = 1)
             continue
         
-        kt = KosdaqTrend(from_datetime)
+        kt = KosdaqTrend(from_datetime.date())
         if not kt.current_greater_than_mean():
             from_datetime += timedelta(days = 1)
             continue
-
+        
         trader = Trader(False)
-        day_profit_compare_account.set_up(0)
-
+        fake_account.set_date(from_datetime.date())
         tt = TradingTunnel(trader)
-        kac = KosdaqAllChooser()
-        kac.set_date(from_datetime)
-
-        tt.set_chooser(kac)
-        #dhs = DailyHighestSuppressed(5)
+        ksbc = KosdaqSearchBullChooser(from_datetime.date(), 3)
+        for code in ksbc.codes:
+            fetch_stock_data.get_day_minute_period_data(code, from_datetime.date(), from_datetime.date())
+        tt.set_chooser(ksbc)
         
         pipeline = {'name': 'catch_kosdaq_supressed',
-                    'stream': MinTick(from_datetime, True),
+                    'stream': MinTick(from_datetime.date(), True),
                     'converter': StockDayTickConverter(),
                     'filter': [],
                     'strategy': [MinuteSuppressed()],
@@ -58,11 +58,11 @@ def trading():
         tt.add_pipeline(pipeline)
 
         trader.add_tunnel(tt)
-        trader.set_account(day_profit_compare_account)
+        trader.set_account(fake_account)
         trader.run()
         from_datetime += timedelta(days = 1)
 
-    day_profit_compare_account.summary()
+    fake_account.summary()
 
 
 if __name__ == '__main__':

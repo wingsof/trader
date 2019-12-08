@@ -15,7 +15,6 @@ class _RunnerThread(QThread):
         self.running_function = running_function
 
     def run(self):
-
         pythoncom.CoInitialize()
 
         self.running_function()

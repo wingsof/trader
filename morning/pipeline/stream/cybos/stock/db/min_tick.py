@@ -3,7 +3,7 @@ from morning.config import db
 from utils import time_converter
 from morning.logging import logger
 from datetime import datetime
-
+from morning.back_data import fetch_stock_data
 
 class MinTick:
     def __init__(self, date, is_main_clock=True):
@@ -19,12 +19,7 @@ class MinTick:
     def set_target(self, target):
         code = target.split(':')[1]
         self.target_code = code
-        minute_code = code + '_M'
-        stock = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
-        
-        s = time_converter.datetime_to_intdate(self.date)
-        cursor = stock[minute_code].find({'0': {'$gte':s, '$lte': s}})
-        self.data = list(cursor)
+        self.data = fetch_stock_data.get_day_minute_period_data_force_from_db(code, self.date, self.date)
         #logger.print(target, 'Length', len(self.data))
         print('Length', len(self.data))
 
