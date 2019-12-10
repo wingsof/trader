@@ -35,12 +35,12 @@ def trading():
         if is_holidays(from_datetime):
             from_datetime += timedelta(days = 1)
             continue
-        
+        """
         kt = KosdaqTrend(from_datetime.date())
         if not kt.current_greater_than_mean():
             from_datetime += timedelta(days = 1)
             continue
-        
+        """
         trader = Trader(False)
         fake_account.set_date(from_datetime.date())
         tt = TradingTunnel(trader)

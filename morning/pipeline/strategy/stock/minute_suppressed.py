@@ -134,7 +134,8 @@ class MinuteSuppressed:
                         highest_price = self.moving_average.max()
                     risk = float("{0:.2f}".format((highest_price - lowest_price) / lowest_price * 100.))
                     is_cross_margin = self.moving_average[-1] > self.buy_margin_price[0] or self.moving_average[-1] > self.buy_margin_price[1]
-                    if self.buy_hold is None and is_cross_margin:
+                    over_price = (d['close_price'] - self.open_price) / self.open_price * 100 > 10.
+                    if self.buy_hold is None and is_cross_margin and risk < 13. and not over_price:
                         logger.print(d['date'], d['target'], 'BUY')
                         self.buy_hold = d['date']
                         if self.next_elements is not None:

@@ -6,3 +6,4 @@ running_log
 output
 *.swp
 .log
+tmp
