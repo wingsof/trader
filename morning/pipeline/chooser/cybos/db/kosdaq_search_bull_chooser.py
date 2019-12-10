@@ -32,7 +32,7 @@ class KosdaqSearchBullChooser(Chooser):
 
     def _search_from_database(self, search_day, max_count, institution_buy_days):
         bulls = list(self.stock['KOSDAQ_BULL'].find({
-                                        'date': {'$eq': search_day}, 
+                                        'date': {'$eq': datetime(search_day.year, search_day.month, search_day.day)}, 
                                         'count': {'$eq': max_count},
                                         'institution_buy_days': {'$eq': institution_buy_days}}))
         if len(bulls) > 0:
@@ -63,7 +63,7 @@ class KosdaqSearchBullChooser(Chooser):
                 self._filter_consecutive_buy_days(yesterday)
 
             self.codes = self.codes[:self.max_count]
-            db_insert_data = {'date': yesterday, 'count': self.max_count, 
+            db_insert_data = {'date': datetime(yesterday.year, yesterday.month, yesterday.day), 'count': self.max_count, 
                             'institution_buy_days': self.institution_buy_days}
             for i, code in enumerate(self.codes):
                 db_insert_data[str(i)] = code
