@@ -7,3 +7,5 @@ output
 *.swp
 .log
 tmp
+.ipynb*
+.pytest*
