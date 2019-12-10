@@ -28,8 +28,19 @@ def is_holidays(date):
             return True
     return False
 
+def get_yesterday(today):
+    today = today if today.__class__.__name__ == 'date' else today.date()
+
+    yesterday = today
+    while is_holidays(yesterday):
+        yesterday -= timedelta(days=1)
+
+    return yesterday
 
 def get_working_days(from_date, until_date):
+    from_date = from_date if from_date.__class__.__name__ == 'date' else from_date.date()
+    until_date = until_date if until_date.__class__.__name__ == 'date' else until_date.date()
+    
     working_days = []
     while from_date <= until_date:
         if not is_holidays(from_date):

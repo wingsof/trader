@@ -16,8 +16,10 @@ class KosdaqBullChooser(Chooser):
         self.codes = list(self.mc['KOSDAQ_BY_TRADED'].find({'date': {'$gte':from_datetime, '$lte': until_datetime}}))
 
     def store_daily_data_in_db(self, days=180):
-        for code in self._get_codes(False):
-            get_day_period_data(code, self.until_datetime - timedelta(days=days), self.until_datetime)
+        # deprecated
+        #for code in self._get_codes(False):
+        #    get_day_period_data(code, self.until_datetime - timedelta(days=days), self.until_datetime)
+        pass
 
     def _get_codes(self, add_prefix=True):
         if len(self.codes):

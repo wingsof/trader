@@ -4,7 +4,7 @@ from pymongo import MongoClient
 from morning.pipeline.chooser.chooser import Chooser
 from morning.config import db
 from morning.back_data.fetch_stock_data import get_day_period_data
-from morning.back_data.holidays import is_holidays
+from morning.back_data.holidays import is_holidays, get_yesterday
 
 
 class KosdaqSearchBullChooser(Chooser):
@@ -30,20 +30,44 @@ class KosdaqSearchBullChooser(Chooser):
                 self.stock['KOSDAQ_CODES'].insert_one({'code': code})
         self._search_day_data(remote_codes)
 
+    def _search_from_database(self, search_day, max_count, institution_buy_days):
+        bulls = list(self.stock['KOSDAQ_BULL'].find({
+                                        'date': {'$eq': search_day}, 
+                                        'count': {'$eq': max_count},
+                                        'institution_buy_days': {'$eq': institution_buy_days}}))
+        if len(bulls) > 0:
+            bull = bulls[0]
+            codes = []
+            for i in range(max_count):
+                codes.append(bull[str(i)])
+            return codes
+
+        return []
+
     def _search_day_data(self, codes):
-        datas = []
-        for code in codes:
-            data = get_day_period_data(code, self.from_date, self.from_date)
-            if len(data) > 0:
-                data[0]['code'] = code
-                datas.append(data[0])
+        yesterday = get_yesterday(self.from_date)
+        self.codes = self._search_from_database(yesterday, self.max_count, self.institution_buy_days)
+        if len(self.codes):
+            pass
+        else:
+            datas = []
+            for code in codes:
+                data = get_day_period_data(code, yesterday, yesterday)
+                if len(data) > 0:
+                    data[0]['code'] = code
+                    datas.append(data[0])
 
-        datas = sorted(datas, key=lambda i: i['7'], reverse=True)
-        self.codes = [d['code'] for d in datas]
-        if self.institution_buy_days > 0:
-            self._filter_consecutive_buy_days(self.from_date)
+            datas = sorted(datas, key=lambda i: i['7'], reverse=True)
+            self.codes = [d['code'] for d in datas]
+            if self.institution_buy_days > 0:
+                self._filter_consecutive_buy_days(yesterday)
 
-        self.codes = self.codes[:self.max_count]
+            self.codes = self.codes[:self.max_count]
+            db_insert_data = {'date': yesterday, 'count': self.max_count, 
+                            'institution_buy_days': self.institution_buy_days}
+            for i, code in enumerate(self.codes):
+                db_insert_data[str(i)] = code
+            self.stock['KOSDAQ_BULL'].insert_one(db_insert_data)
 
     def start(self):
         self.selection_changed.emit(set(['cybos:'+ code for code in self.codes]))
@@ -59,11 +83,6 @@ class KosdaqSearchBullChooser(Chooser):
                 continue
             
             data = data[-(self.institution_buy_days):]
-            remove = False
-            for d in data:
-                if d['12'] < 0:
-                    remove = True
-                    break
-            
-            if not remove:
+            if all([d['12'] > 0 for d in data]):
                 self.codes.append(code)
+                
