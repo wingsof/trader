@@ -10,6 +10,7 @@ class FakeAccount:
         self.save_to_file = save_to_file
         self.date = datetime.now().date()
         self.day_profit = 0
+        self.additional_info = []
         self.df = pd.DataFrame(columns=['date', 'code', 'trade', 'price', 'profit'])
         self.profit_df = pd.DataFrame(columns=['date', 'code', 'profit', 'profit_r'])
 
@@ -21,7 +22,12 @@ class FakeAccount:
         print(self.profit_df)
         self.df.to_excel('account.xlsx')
         self.profit_df.to_excel('summary.xlsx')
-        
+    
+    def clear_additional_info(self):
+        self.additional_info.clear()
+
+    def add_additional_info(self, name, value):
+        self.additional_info.append((name, value))
 
     def transaction(self, msg):
         # Investing 1 / 10 amount
@@ -38,6 +44,8 @@ class FakeAccount:
             self.day_profit += remain
             profit = remain / (self.amount / 10) * 100.
             profit_d = {'date': self.date, 'code': code, 'profit': remain, 'profit_r': profit}
+            for additional in self.additional_info:
+                profit_d[additional[0]] = additional[1]
             self.profit_df = self.profit_df.append(profit_d, ignore_index = True)
             
 

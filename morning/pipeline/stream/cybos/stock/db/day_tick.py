@@ -48,9 +48,6 @@ class DayTick:
                 self.next_elements.received([d])
         return len(self.data)
 
-    def is_realtime(self):
-        return False
-
     def have_clock(self):
         return self.is_main_clock
     

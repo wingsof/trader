@@ -42,8 +42,5 @@ class DatabaseBidAskTick:
             d = self.data.pop(0)
             #TODO: nothing to do alone, how to handle it?
 
-    def is_realtime(self):
-        return False
-
     def have_clock(self):
         return self.is_main_clock

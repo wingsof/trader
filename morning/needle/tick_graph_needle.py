@@ -12,6 +12,7 @@ class TickGraphNeedle:
         self.data = []
         self.shapes = []
         self.annotations = []
+        self.extra_shapes_date = set()
         self.out_when_flag = out_when_flag
 
     def tick_connect(self, strategy):
@@ -19,7 +20,7 @@ class TickGraphNeedle:
 
     def filter_date(self, d):
         self.date = d
-
+        
     def filter_codes(self, codes):
         self.codes.extend(codes)
 
@@ -28,7 +29,6 @@ class TickGraphNeedle:
             dict(x0=date, x1=date, y0=0, y1=1, xref='x', yref='paper', line_width=2))
         self.annotations.append(
             dict(x=date, y=0.05, xref='x', yref='paper', showarrow=True, xanchor='left', text=desc))
-
 
     def process(self):
         if self.out_when_flag and len(self.shapes) == 0:

@@ -1,17 +1,21 @@
 import pandas as pd
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
 class TickMinGraphNeedle:
-    def __init__(self, out_when_flag = False):
+    def __init__(self, out_when_flag = False, write_to_html = False):
         self.date = None
+        self.write_to_html = write_to_html
         self.codes = []
         self.data = []
         self.shapes = []
         self.annotations = []
         self.out_when_flag = out_when_flag
+        self.figure = None
+        self.extra_shapes_date = set()
+        self.ma_array = None
 
     def tick_connect(self, strategy):
         strategy.add_graph(self)
@@ -19,9 +23,20 @@ class TickMinGraphNeedle:
     def filter_date(self, d):
         self.date = d
 
+    def set_moving_average(self, dates, avgs):
+        self.ma_array = (dates, avgs)
+        
     def filter_codes(self, codes):
         self.codes.extend(codes)
 
+    def set_circle_flag(self, date, value, is_up, desc= ''):
+        if date not in self.extra_shapes_date:
+            self.extra_shapes_date.add(date)
+            print('set_circle_flag', date, value)
+            color = "LightSeaGreen" if not is_up else "orange"
+            self.shapes.append(
+                dict(type='circle', x0=date-timedelta(minutes=1), x1=date+timedelta(minutes=1), y0=value - 100, y1=value + 100, xref='x', yref='y', line_color=color))        
+        
     def set_flag(self, date, desc):
         self.shapes.append(
             dict(x0=date, x1=date, y0=0, y1=1, xref='x', yref='paper', line_width=2))
@@ -56,18 +71,23 @@ class TickMinGraphNeedle:
                                                 'buy_moment': buy_volume, 'sell_moment': sell_volume}, ignore_index = True)
 
             if len(minute_df) > 0:
-                fig = make_subplots(rows=4, cols=1)
+                fig = make_subplots(rows=3, cols=1)
                 fig.add_trace(go.Candlestick(x=minute_df['date'],
                                 open=minute_df['open'], high=minute_df['high'],
                                 low=minute_df['low'], close=minute_df['close'],
                                 increasing_line_color='red', decreasing_line_color='blue'), row=1, col=1)
+                if self.ma_array is not None:
+                    fig.add_trace(go.Scatter(x=self.ma_array[0], y=self.ma_array[1], name='MA 20', line=dict(color='green')), row=1, col=1)
                 fig.add_trace(go.Bar(x=minute_df['date'], y=minute_df['volume']), row=2, col=1)
                 fig.add_trace(go.Scatter(x=minute_df['date'], y=minute_df['cum_buy'], name='culmulate buy', line=dict(color='red')), row=3, col=1)
                 fig.add_trace(go.Scatter(x=minute_df['date'], y=minute_df['cum_sell'], name='culmulate sell', line=dict(color='blue')), row=3, col=1)
-                fig.add_trace(go.Scatter(x=minute_df['date'], y=minute_df['buy_moment'], name='buy moment', line=dict(color='red')), row=4, col=1)
-                fig.add_trace(go.Scatter(x=minute_df['date'], y=minute_df['sell_moment'], name='sell moment', line=dict(color='blue')), row=4, col=1)
-                fig.update_layout(title=code, yaxis_tickformat='d', shapes=self.shapes, annotations=self.annotations)
-                fig.write_html(prefix+code+'.html', auto_open=False)
+                #fig.add_trace(go.Scatter(x=minute_df['date'], y=minute_df['buy_moment'], name='buy moment', line=dict(color='red')), row=4, col=1)
+                #fig.add_trace(go.Scatter(x=minute_df['date'], y=minute_df['sell_moment'], name='sell moment', line=dict(color='blue')), row=4, col=1)
+                fig.update_layout(title=code, yaxis_tickformat='d', shapes=self.shapes, annotations=self.annotations, autosize=False, width=1200, height=1200,)
+                if self.write_to_html:
+                    fig.write_html(prefix+code+'.html', auto_open=False)
+                else:
+                    self.figure = fig
 
     def received(self, datas):
         db_date = datas[0]['date']
