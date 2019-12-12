@@ -90,6 +90,7 @@ class Order:
             self.obj.SetInputValue(5, price)
 
             self.obj.BlockRequest()
+            #GetDibStatus() == 0 is OK, othersie it is ERROR 
             print('ORDER Status', self.obj.GetDibStatus(), self.obj.GetDibMsg1())
             """ check result with CpConclusion 
             result = {

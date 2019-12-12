@@ -19,6 +19,8 @@ def _put_msg(loglevel, msg):
     global _log_queue
     if _log_queue:
         _log_queue.put_nowait((loglevel, '[' + _log_prefix + ']\t' + _get_msg_to_string(msg)))
+    else:
+        print(msg)
 
 
 def print(*args):

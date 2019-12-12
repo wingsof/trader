@@ -1,6 +1,6 @@
 import win32com.client
 from datetime import datetime
-
+from morning.pipeline.converter.cybos.stock.bidask import StockBidAskTickConverter
 
 class _CpEvent:
     def set_params(self, obj, code, filter_callback):
@@ -18,7 +18,7 @@ class _CpEvent:
         self.filter_callback([d])
 
 
-class BidAskRealtime:
+class _BidAskRealtime:
     def __init__(self, code):
         self.obj = win32com.client.Dispatch("DsCbo1.StockJpBid")
         self.code = code
@@ -34,23 +34,29 @@ class BidAskRealtime:
 
 
 class CybosBidAskTick:
-    def __init__(self):
+    def __init__(self, use_converter=True):
         self.next_element = None
         self.bidask_realtime = None
+        self.use_converter = use_converter
+        if use_converter:
+            self.bidask_converter = StockBidAskTickConverter()
+            self.bidask_converter.set_output(self)
 
     def set_target(self, target):
         code = target.split(':')[1]
         self.target_code = code
-        self.bidask_realtime = BidAskRealtime(code)
+        self.bidask_realtime = _BidAskRealtime(code)
+        if self.use_converter:
+            self.bidask_realtime.subscribe(self.bidask_converter.received)
 
     def set_output(self, next_ele):
         self.next_element = next_ele
-        self.bidask_realtime.subscribe(self.next_element.received)
-
-    def clock(self, _):
-        pass
 
     def received(self, data):
+        if self.next_element:
+            self.next_element.received(data)
+
+    def clock(self, _):
         pass
 
     def have_clock(self):
