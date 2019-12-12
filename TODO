@@ -1,5 +1,27 @@
-* morning_launcher 통해 Thread 안에서 request 시 문제 발생?, BullChooser 로 테스팅
+Roadmap
 
+ver0.1 - 2019/12/31
+* Account 와 Bidask 연동 구현
+* 총 금액에서 Watching 하는 좀목만큼 분할 사용
+* 2019년 11월 손실 분석 및 보완 / 손익 테스팅
+* Creon 연동 테스팅
+
+ver0.2 - 2020/1/31
+* 손실 분석 및 보완 테스팅
+* ver0.1 안정화 및 시스템 refactoring
+* 알고리즘 후보군 찾기
+* pattern matching algorithm 적용 아이디어, 7 day / 6 day / 5 day 처럼 순차적 끝점 비교 방법/ Finger Print 처럼 값을 패턴을 상수화할 수 있는 방법이 있는가? 음악 찾기 프로그램에서 쓰는 알고리즘은?
+	* https://medium.com/intrasonics/a-fingerprint-for-audio-3b337551a671
+	* 중요한 부분은 day to day 간 갭차
+	* https://www.youtube.com/playlist?list=PLQVvvaa0QuDe6ZBtkCNWNUbdaBo2vA4RO
+
+ver0.3
+
+ver1.0
+
+
+
+* morning_launcher 통해 Thread 안에서 request 시 문제 발생?, BullChooser 로 테스팅
 
 * 눌림목
     * 신고가 터지고(몇 일까지 확인?), 3분봉으로 확인, 다음 3개 분봉 이후부터 신고가일 때의 close 돌파 확인 시 매수
