@@ -70,21 +70,18 @@ class MinuteSuppressed:
 
     def _handle_data(self, datas):
         if self.done: return
-        
+
         for d in datas:
-            if d['date'].hour >= 15  and d['date'].minute >= 10:
-                if self.buy_hold is not None:
-                    if self.next_element is not None:
-                        self.next_element.received([{'name': self.__class__.__name__,
-                                                        'target': d['target'],
-                                                        'stream': d['stream'],
-                                                        'date': d['date'],
-                                                        'value': False, 'price': d['close_price']}])
-                    for g in self.graph_adder:
-                            g.set_flag(d['date'], 'SELL')
+            if d['date'].hour >= 15  and d['date'].minute >= 10 and self.buy_hold is not None:
+                if self.next_element is not None:
+                    self.next_element.received([{'name': self.__class__.__name__,
+                                                    'target': d['target'],
+                                                    'stream': d['stream'],
+                                                    'date': d['date'],
+                                                    'value': False, 'price': d['close_price']}])
+                for g in self.graph_adder:
+                        g.set_flag(d['date'], 'SELL')
                 self.done = True
-            elif self.buy_hold is not None and d['date'] - self.buy_hold < timedelta(minutes=10):
-                continue
 
             if self.open_price == 0:
                 self.open_price = d['start_price']
@@ -97,6 +94,10 @@ class MinuteSuppressed:
                 continue
             else:
                 self.moving_average = np.append(self.moving_average, [self.price_array[-10:].mean()])
+
+
+            if self.buy_hold is not None and d['date'] - self.buy_hold < timedelta(minutes=10):
+                continue
 
             reverse_prices = self._get_reversed(self.moving_average)
             peaks_top, prominences_top = self._calculate(self.moving_average)
@@ -123,21 +124,8 @@ class MinuteSuppressed:
                     self.buy_margin_price[0] = self.moving_average[peaks_top[-1]]
                     self.buy_margin_price[1] = self.moving_average[peaks_top[-2]] if len(peaks_top) > 1 else self.moving_average[peaks_top[-1]]
             elif self.current_stage == 1:
-                
                 lowest_price, highest_price = 0, 0
-                if not volume_trend or not bottom:
-                    if self.buy_hold is not None:
-                        self.buy_hold = None
-                        if self.next_element is not None:
-                            self.next_element.received([{'name': self.__class__.__name__,
-                                                            'target': d['target'],
-                                                            'stream': d['stream'],
-                                                            'date': d['date'],
-                                                            'value': False, 'price': d['close_price']}])
-                        for g in self.graph_adder:
-                            g.set_flag(d['date'], 'SELL')
-                    self.current_stage = 0
-                else:
+                if volume_trend and bottom:
                     if len(self.moving_average) > 50:
                         lowest_price = self.moving_average[:-50].min()
                         highest_price = self.moving_average[:-50].max()
@@ -146,7 +134,7 @@ class MinuteSuppressed:
                         highest_price = self.moving_average.max()
                     risk = float("{0:.2f}".format((highest_price - lowest_price) / lowest_price * 100.))
                     is_cross_margin = self.moving_average[-1] > self.buy_margin_price[0] or self.moving_average[-1] > self.buy_margin_price[1]
-                    over_price = (d['close_price'] - self.open_price) / self.open_price * 100 > 10.
+                    over_price = (d['close_price'] - self.open_price) / self.open_price * 100 > 10. # TODO : double check with price_exceed?
                     if self.buy_hold is None and is_cross_margin and risk < 13. and not over_price:
                         logger.print(d['date'], d['target'], 'BUY')
                         self.buy_hold = d['date']
@@ -156,18 +144,27 @@ class MinuteSuppressed:
                                                             'stream': d['stream'],
                                                             'date': d['date'],
                                                             'value': True, 'price': d['close_price'], 'risk': risk}])
+                            self.current_stage = 2
                         for g in self.graph_adder:
                             g.set_flag(d['date'], 'BUY')
+                else:
+                    self.current_stage = 0
+            elif self.current_stage == 2:
+                if (not volume_trend or not bottom) and self.buy_hold is not None:
+                    self.buy_hold = None
+                    if self.next_element is not None:
+                        self.next_element.received([{'name': self.__class__.__name__,
+                                                        'target': d['target'],
+                                                        'stream': d['stream'],
+                                                        'date': d['date'],
+                                                        'value': False, 'price': d['close_price']}])
+                    for g in self.graph_adder:
+                        g.set_flag(d['date'], 'SELL')
+                    self.current_stage = 0
 
+                    
     def received(self, datas):
         for g in self.graph_adder:
             g.received(datas)
 
         self._handle_data(datas)
-                        # Handle risk
-
-                    
-
-
-
-        

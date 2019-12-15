@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QCoreApplication, QTimer, QThread, QObject, QProcess, pyqtSignal
-from multiprocessing import Process, Queue
+from PyQt5.QtCore import QCoreApplication, QTimer, QThread, QObject, QProcess, pyqtSignal, QMutex, QMutexLocker
+from multiprocessing import Process
 from morning.logging import logger
 from morning.target_runner import TargetRunner
 
@@ -14,27 +14,23 @@ def _start_target(log_queue, queue, job_info):
         app.exec()
     else:
         tr.db_clock_start()
-    #logger.print('PROCESS DONE', job_info[0])
-    queue.put_nowait('done')
+
+    logger.print('PROCESS DONE', job_info[0])
+    queue.put('done')
     queue.close()
 
 
 class TargetLauncher(QObject):
-    msg_from_job = pyqtSignal(object)
-    work_done = pyqtSignal()
-
-    def __init__(self, job_input):
+    def __init__(self, q, job_input):
         super().__init__()
         self.job_input = job_input
+        self.queue = q
         self.p = None
 
-    def connect_start_signal(self, s):
-        s.connect(self._run)
-
-    def _run(self):
-        queue = Queue()
-        self.p = Process(target = _start_target, args=(logger._log_queue, queue, self.job_input))
+    def start_worker(self):
+        self.p = Process(target = _start_target, args=(logger._log_queue, self.queue, self.job_input))
         self.p.start()
+        """
         while True:
             msg = queue.get()
             if msg == 'done':
@@ -42,3 +38,4 @@ class TargetLauncher(QObject):
                 self.work_done.emit()
                 break
             self.msg_from_job.emit(msg)
+        """

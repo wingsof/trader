@@ -4,7 +4,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..' 
 
 from pymongo import MongoClient
 import pandas as pd
-from morning.cybos_api import stock_chart
 from morning.config import db
 from datetime import datetime, timedelta, date
 from morning.back_data import fetch_stock_data
@@ -33,5 +32,3 @@ class KosdaqTrend:
     def get_yesterday_ma(self):
         prices = self.df['5'].rolling(20).mean()
         return prices.iloc[-1]
-
-    

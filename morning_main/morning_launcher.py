@@ -6,7 +6,6 @@ from PyQt5.QtCore import QCoreApplication, QThread
 import signal
 
 from morning.logging import logger
-import pythoncom
 
 
 class _RunnerThread(QThread):
@@ -15,7 +14,10 @@ class _RunnerThread(QThread):
         self.running_function = running_function
 
     def run(self):
-        pythoncom.CoInitialize()
+        import platform
+        if platform.system() == 'Windows':
+            import pythoncom
+            pythoncom.CoInitialize()
 
         self.running_function()
 
@@ -26,9 +28,10 @@ def morning_launcher(allow_interrupt, running_function):
     if allow_interrupt:
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-    thread = _RunnerThread(running_function)
-    thread.finished.connect(app.quit)
-    thread.start()
+    #thread = _RunnerThread(running_function)
+    #thread.finished.connect(app.quit)
+    #thread.start()
+    running_function()
 
     app.exec()
     logger.exit_main_log()

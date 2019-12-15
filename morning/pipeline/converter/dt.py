@@ -62,7 +62,7 @@ class CybosStockBidAskTick:
 
 
 class CybosStockDayTick:
-    DATE = '0'
+    #DATE = '0'
     TIME = '1' # hhmm
     START_PRICE = '2'
     HIGHEST_PRICE = '3'
