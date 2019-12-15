@@ -2,6 +2,8 @@ import win32com.client
 import time
 from morning.cybos_api import connection
 from morning.logging import logger
+from morning.trade_record import record_realtime_order_event
+
 
 class _OrderRealtime:
     def set_params(self, obj, order_obj):
@@ -16,18 +18,20 @@ class _OrderRealtime:
         order_num = self.obj.GetHeaderValue(5)    # long order number 
         quantity = self.obj.GetHeaderValue(3)      # long quantity
         price = self.obj.GetHeaderValue(4)       # long price 
+        # 6번은 원주문
         code = self.obj.GetHeaderValue(9)        # code
         order_type = self.obj.GetHeaderValue(12) # string '1' 매도, '2' 매수
         total_quantity = self.obj.GetHeaderValue(23)    # count of stock left
         result = {
             'flag': flag,
             'code': code,
-            'order_num': order_num,
+            'order_number': order_num,
             'quantity': quantity,
             'price': price,
             'order_type': order_type,
             'total_quantity': total_quantity
         }
+        record_realtime_order_event(result)
         self.order_obj.order_event(result.copy())
 
 
@@ -62,3 +66,5 @@ class Order:
 
             self.obj.BlockRequest()
             return self.obj.GetDibStatus(), self.obj.GetDibMsg1()
+        
+        return -1, 'Order Process Error(quantity=0)'

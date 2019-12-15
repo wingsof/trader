@@ -1,5 +1,6 @@
 import logging
 from multiprocessing import Queue, Process
+import builtins
 
 
 _log_queue = None
@@ -20,7 +21,7 @@ def _put_msg(loglevel, msg):
     if _log_queue:
         _log_queue.put_nowait((loglevel, '[' + _log_prefix + ']\t' + _get_msg_to_string(msg)))
     else:
-        print(msg)
+        builtins.print(msg, flush=True)
 
 
 def print(*args):

@@ -8,7 +8,7 @@ from morning.logging import logger
 class MinuteSuppressed:
     def __init__(self):
         self.graph_adder = []
-        self.next_elements = None
+        self.next_element = None
         self.open_price = 0
         self.moving_average = np.array([])
         self.current_stage = 0
@@ -26,20 +26,20 @@ class MinuteSuppressed:
             g.set_moving_average(self.date_array, self.moving_average)
             g.process()
 
-        if self.next_elements:
-            self.next_elements.finalize()
+        if self.next_element:
+            self.next_element.finalize()
 
     def set_output(self, next_ele):
-        self.next_elements = next_ele
+        self.next_element = next_ele
 
     def _get_reversed(self, s):
         distance_from_mean = s.mean() - s
         return distance_from_mean + s.mean()
 
     def _find_trend(self, x, indexes, prominences, is_upper):
-        if not is_upper and indexes.shape[0] < 3:
+        if not is_upper and indexes.shape[0] < 2:
             return False, False
-        elif is_upper and indexes.shape[0] < 3:
+        elif is_upper and indexes.shape[0] < 2:
             return False, True
         
         short_trend = x[indexes[-1]] - x[indexes[-2]] > 0
@@ -68,17 +68,14 @@ class MinuteSuppressed:
         #peaks = np.r_[np.array([0]), peaks]
         return peaks, prominences
 
-    def received(self, datas):
-        for g in self.graph_adder:
-            g.received(datas)
-
+    def _handle_data(self, datas):
         if self.done: return
         
         for d in datas:
-            if d['date'].hour >= 15:
+            if d['date'].hour >= 15  and d['date'].minute >= 10:
                 if self.buy_hold is not None:
-                    if self.next_elements is not None:
-                        self.next_elements.received([{'name': self.__class__.__name__,
+                    if self.next_element is not None:
+                        self.next_element.received([{'name': self.__class__.__name__,
                                                         'target': d['target'],
                                                         'stream': d['stream'],
                                                         'date': d['date'],
@@ -131,8 +128,8 @@ class MinuteSuppressed:
                 if not volume_trend or not bottom:
                     if self.buy_hold is not None:
                         self.buy_hold = None
-                        if self.next_elements is not None:
-                            self.next_elements.received([{'name': self.__class__.__name__,
+                        if self.next_element is not None:
+                            self.next_element.received([{'name': self.__class__.__name__,
                                                             'target': d['target'],
                                                             'stream': d['stream'],
                                                             'date': d['date'],
@@ -153,14 +150,20 @@ class MinuteSuppressed:
                     if self.buy_hold is None and is_cross_margin and risk < 13. and not over_price:
                         logger.print(d['date'], d['target'], 'BUY')
                         self.buy_hold = d['date']
-                        if self.next_elements is not None:
-                            self.next_elements.received([{'name': self.__class__.__name__,
+                        if self.next_element is not None:
+                            self.next_element.received([{'name': self.__class__.__name__,
                                                             'target': d['target'],
                                                             'stream': d['stream'],
                                                             'date': d['date'],
                                                             'value': True, 'price': d['close_price'], 'risk': risk}])
                         for g in self.graph_adder:
                             g.set_flag(d['date'], 'BUY')
+
+    def received(self, datas):
+        for g in self.graph_adder:
+            g.received(datas)
+
+        self._handle_data(datas)
                         # Handle risk
 
                     

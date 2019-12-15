@@ -8,7 +8,7 @@ from morning.back_data.holidays import is_holidays, get_yesterday
 
 
 class KosdaqSearchBullChooser(Chooser):
-    def __init__(self, d: date, institution_buy_days=0, max_count=40):
+    def __init__(self, d: date, use_db=False, institution_buy_days=0, max_count=40):
         super().__init__()
         while is_holidays(d):
             d -= timedelta(days = 1)
@@ -19,9 +19,10 @@ class KosdaqSearchBullChooser(Chooser):
         self.stock = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
         self.codes = []
         remote_codes = []
-        codes = list(self.stock['KOSDAQ_CODES'].find())
-        for code in codes:
-            remote_codes.append(code['code'])
+        if use_db:
+            codes = list(self.stock['KOSDAQ_CODES'].find())
+            for code in codes:
+                remote_codes.append(code['code'])
 
         if len(remote_codes) == 0:
             from morning.cybos_api.stock_code import get_kosdaq_code_list

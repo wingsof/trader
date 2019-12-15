@@ -30,7 +30,7 @@ def trading():
     fake_account = FakeAccount('catch_kosdaq_supressed')
     from_datetime = datetime(2018, 1, 1)
 
-    while from_datetime < datetime(2019, 12, 11):
+    while from_datetime < datetime(2019, 12, 14):
         print('START: ', from_datetime, '-------------------------')
         if is_holidays(from_datetime):
             from_datetime += timedelta(days = 1)
@@ -48,7 +48,7 @@ def trading():
         trader = Trader(False)
         fake_account.set_date(from_datetime.date())
         tt = TradingTunnel(trader)
-        ksbc = KosdaqSearchBullChooser(from_datetime.date())
+        ksbc = KosdaqSearchBullChooser(from_datetime.date(), True)
         for code in ksbc.codes:
             fetch_stock_data.get_day_minute_period_data(code, from_datetime.date(), from_datetime.date())
         tt.set_chooser(ksbc)

@@ -6,9 +6,7 @@ from morning.logging import logger
 
 class Trader(QObject):
     def __init__(self, realtime = True):
-        # TODO: remove below line
         super().__init__()
-        #logger.setup_main_log()
 
         self.realtime = realtime
         self.account = None

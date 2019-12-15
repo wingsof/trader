@@ -14,7 +14,7 @@ def _start_target(log_queue, queue, job_info):
         app.exec()
     else:
         tr.db_clock_start()
-    logger.print('PROCESS DONE', job_info[0])
+    #logger.print('PROCESS DONE', job_info[0])
     queue.put_nowait('done')
     queue.close()
 

@@ -7,3 +7,10 @@ def get_balance(account_num, account_type):
     acc_obj.BlockRequest()
     return acc_obj.GetHeaderValue(45)
 
+
+if __name__ == '__main__':
+    import trade_util
+    tu = trade_util.TradeUtil()
+    print(get_balance(tu.get_account_number(), tu.get_account_type()))
+
+
