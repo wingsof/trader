@@ -32,12 +32,11 @@ class RealtimeMinuteSuppressed:
 
             if current - self.current_datetime > timedelta(minutes=1):
                 dt = self.current_datetime
-                self.tick_prices.append(d['current_price'])
                 year, month, day, hour, minute = dt.year, dt.month, dt.day, dt.hour, dt.minute
-                min_data = {'date': datetime(year, month, day, hour, minute), 
-                            'cum_buy_volume': d['cum_buy_volume'],
-                            'cum_sell_volume': d['cum_sell_volume'], 
-                            'close_price': d['current_price'], 
+                min_data = {'date': datetime(year, month, day, hour, minute),
+                            'cum_buy_volume': d['cum_buy_volume'], # currently just use current vol
+                            'cum_sell_volume': d['cum_sell_volume'], # currently just use current vol
+                            'close_price': d['current_price'],
                             'start_price': self.tick_prices[0],
                             'highest_price': max(self.tick_prices),
                             'lowest_price': min(self.tick_prices),
@@ -46,6 +45,7 @@ class RealtimeMinuteSuppressed:
                 self.tick_prices.clear()
                 self.ms.received([min_data])
                 self.current_datetime = d['date']
+                self.tick_prices.append(d['current_price'])
             else:
                 self.tick_prices.append(d['current_price'])
 

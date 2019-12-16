@@ -7,6 +7,7 @@ from datetime import datetime
 import signal
 
 from morning.logging import logger
+from morning.cybos_api.connection import Connection
 
 from morning.trader import Trader
 
@@ -37,6 +38,11 @@ def start_trading(code, account):
 
 
 if __name__ == '__main__':
+    conn = Connection()
+    if not conn.is_connected():
+        print('CYBOS is not connected')
+        sys.exit(1)
+
     app = QCoreApplication(sys.argv)
     logger.setup_main_log()
     signal.signal(signal.SIGINT, signal.SIG_DFL)
