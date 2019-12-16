@@ -47,7 +47,10 @@ class DatabaseTick:
                 df.to_excel(code + '_from_db.xlsx')
 
             market = df['20']
-            if len(market[market == 49]) > 10 and len(market[market == 50]) > 100 and len(market[market == 53]) > 10:
+            has_enough_market_type = len(market[market == 49]) > 10 and len(market[market == 50]) > 100 and len(market[market == 53]) > 10
+            start_time = df['3']
+            has_time_scope = len(start_time[start_time < 900]) > 10 and len(start_time[start_time > 1520]) > 10
+            if has_enough_market_type and has_time_scope:
                 pass
             else:
                 self.data = []
