@@ -6,6 +6,7 @@ from PyQt5.QtCore import QCoreApplication
 from datetime import datetime
 import signal
 
+from morning.cybos_api.connection import Connection
 from morning.trader import Trader
 
 from morning.account.cybos_kosdaq_account import CybosKosdaqAccount
@@ -37,12 +38,17 @@ def start_trading(code, account):
 
 
 if __name__ == '__main__':
+    conn = Connection()
+    if not conn.is_connected():
+        print('CYBOS is not connected')
+        sys.exit(1)
+
     app = QCoreApplication(sys.argv)
     logger.setup_main_log()
     if allow_interrupt:
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-	traders = []
+    traders = []
     ksbc = KosdaqSearchBullChooser(datetime.now().date(), False) # not use database to search codes
     account = CybosKosdaqAccount()
 	for code in ksbc.codes:
