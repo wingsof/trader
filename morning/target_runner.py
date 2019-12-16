@@ -5,7 +5,7 @@ class TargetRunner:
     def __init__(self, target, pipelines, msg_handler):
         self.target = target
         self.streams = []
-		self.msg_handler = msg_handler
+        self.msg_handler = msg_handler
         self.setup_stream(pipelines)
         self.setup_pipeline(pipelines)
     

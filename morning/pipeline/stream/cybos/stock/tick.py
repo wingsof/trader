@@ -39,7 +39,9 @@ class CybosStockTick:
         self.stock_realtime = None
 
     def set_target(self, target):
-        code = target.split(':')[1]
+        code = target
+        if ':' in target:
+            code = target.split(':')[1]
         self.target_code = code
         self.stock_realtime = StockRealtime(code)
 

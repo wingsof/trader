@@ -6,6 +6,8 @@ from PyQt5.QtCore import QCoreApplication
 from datetime import datetime
 import signal
 
+from morning.logging import logger
+
 from morning.trader import Trader
 
 from morning.account.cybos_kosdaq_account import CybosKosdaqAccount
@@ -27,28 +29,24 @@ def start_trading(code, account):
                 'filter': [InMarketFilter(), DropDataFilter(1)],
                 'strategy': [RealtimeMinuteSuppressed()],
                 'decision': BoolAndDecision(1, 2)} # trade count = 2
-	trader.add_pipeline(pipeline)
+    trader.add_pipeline(pipeline)
     trader.set_account(account)
+    trader.run()
 
-	trader.run()
-	tunnel.set_code(code)
-
-	return trader
+    return trader
 
 
 if __name__ == '__main__':
     app = QCoreApplication(sys.argv)
     logger.setup_main_log()
-    if allow_interrupt:
-        signal.signal(signal.SIGINT, signal.SIG_DFL)
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-	traders = []
+    traders = []
     ksbc = KosdaqSearchBullChooser(datetime.now().date(), False) # not use database to search codes
     account = CybosKosdaqAccount()
-	for code in ksbc.codes:
-		account.set_bidask_monitoring(code)
-		traders.append(start_trading(code, account))
+    for code in ksbc.codes:
+        account.set_bidask_monitoring(code)
+        traders.append(start_trading(code, account))
 
     app.exec()
     logger.exit_main_log()
-    morning_launcher.morning_launcher(True, trading)
