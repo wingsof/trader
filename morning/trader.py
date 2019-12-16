@@ -1,11 +1,13 @@
 from morning.logging import logger
 from morning.target_runner import TargetRunner
+from PyQt5.QtCore import QThread
 
 
-class Trader:
-    def __init__(self, code):
+class Trader(QThread):
+    def __init__(self, code, thread_running=True):
         self.runner = None
         self.code = code
+        self.thread_running = thread_running
         self.account = None
         self.pipelines = []
 
@@ -21,4 +23,11 @@ class Trader:
         self.account = account
 
     def run(self):
-        self.runner = TargetRunner(self.code, self.pipelines, self.handle_trading)
+        TargetRunner(self.code, self.pipelines, self.handle_trading)
+        pass
+
+    def start_trading(self):
+        if not self.thread_running:
+            self.runner = TargetRunner(self.code, self.pipelines, self.handle_trading)
+        else:
+            self.start()

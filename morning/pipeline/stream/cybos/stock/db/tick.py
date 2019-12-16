@@ -22,10 +22,12 @@ class DatabaseTick:
         self.save_to_excel = is_save
 
     def set_target(self, target):
-        code = target.split(':')[1]
+        code = target
+        if ':' in target:
+            code = target.split(':')[1]
         self.target_code = code
         stock = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
-        
+
         cursor = stock[code].find({'date': {'$gte':self.from_datetime, '$lte': self.until_datetime}})
         self.data = list(cursor)
         logger.print(target, 'Length', len(self.data))

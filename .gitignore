@@ -10,3 +10,4 @@ tmp
 .ipynb*
 .pytest*
 framework_test
+.vscode
