@@ -7,8 +7,6 @@ from datetime import datetime
 import signal
 
 from morning.logging import logger
-from morning.cybos_api.connection import Connection
-
 from morning.trader import Trader
 
 from morning.account.fake_account import FakeAccount
@@ -25,7 +23,7 @@ from morning.pipeline.stream.cybos.stock.db.tick import DatabaseTick
 def start_trading(code, account):
     trader = Trader(code, True)
     pipeline = {'name': 'kosdaq_bull',
-                'stream': DatabaseTick(datetime(2019, 12, 13), datetime(2019, 12, 14), False),
+                'stream': DatabaseTick(datetime(2019, 12, 13), datetime(2019, 12, 14), True),
                 'converter': StockTickConverter(),
                 'filter': [InMarketFilter(), DropDataFilter(1)],
                 'strategy': [RealtimeMinuteSuppressed()],
@@ -53,7 +51,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     traders = []
-    ksbc = KosdaqSearchBullChooser(datetime(2019, 12, 13).date(), False) # not use database to search codes
+    ksbc = KosdaqSearchBullChooser(datetime(2019, 12, 13).date(), True) # not use database to search codes
     print(ksbc.codes)
     #ksbc.codes = ['A091990']#, 'A078130', 'A097520', 'A225430', 'A082800', 'A238120']
     account = FakeAccount()

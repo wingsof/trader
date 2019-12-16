@@ -98,6 +98,8 @@ class MinuteSuppressed:
 
             if self.buy_hold is not None and d['date'] - self.buy_hold < timedelta(minutes=10):
                 continue
+            #elif 'VI' in d and d['VI']:
+            #    continue
 
             reverse_prices = self._get_reversed(self.moving_average)
             peaks_top, prominences_top = self._calculate(self.moving_average)

@@ -16,9 +16,6 @@ class DatabaseTick:
         self.target_code = ''
         self.data = []
 
-    def is_acceptable_target(self, code):
-        return code.startswith('cybos:A')
-
     def set_save_to_excel(self, is_save):
         self.save_to_excel = is_save
 

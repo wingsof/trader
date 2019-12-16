@@ -1,5 +1,7 @@
 Roadmap
 
+* VI 발동시 거래량에 따른 확률이 있을까?
+
 ver0.1 - 2019/12/31
 * Account 와 Bidask 연동 구현
 * 총 금액에서 Watching 하는 좀목만큼 분할 사용

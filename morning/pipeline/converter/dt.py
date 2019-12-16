@@ -27,7 +27,7 @@ class CybosStockTick:
     VOLUME = '17'
     TIME_WITH_SEC = '18'
     MARKET_TYPE_EXP = '19'
-    MARKET_TYPE = '20'
+    MARKET_TYPE = '20' # 장중에 49 ('1') 나오는 경우 VI 발동 2분동안
     OUT_TIME_VOLUME = '21'
 
 
