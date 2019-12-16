@@ -21,6 +21,7 @@ from morning.pipeline.stream.cybos.stock.tick import CybosStockTick
 def trading():
     ksbc = KosdaqSearchBullChooser(datetime.now().date(), False) # not use database to search codes
     account = CybosKosdaqAccount()
+
     trader = Trader(True)
     tunnel = TradingTunnel(trader)
 
@@ -36,6 +37,9 @@ def trading():
     tunnel.add_pipeline(pipeline)
     trader.add_tunnel(tunnel)
     trader.set_account(account)
+
+    #for code in ksbc.codes:
+    #    account.set_bidask_monitoring(code)
     trader.run()
 
 

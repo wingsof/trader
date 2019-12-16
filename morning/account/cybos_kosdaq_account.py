@@ -37,8 +37,10 @@ class CybosKosdaqAccount:
         bidask.set_target(code)
         
         self.montoring_bidask.append(bidask)
+        logger.print('START Monitoring BA', code)
 
     def received(self, bidask_datas):
+        #logger.print('received', bidask_datas)
         for d in bidask_datas:
             self.bidask_table[d['target']] = {
                 'ask': [d[k] for k in ask_keys],

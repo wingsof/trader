@@ -3,7 +3,7 @@ from datetime import datetime
 from morning.pipeline.converter.cybos.stock.bidask import StockBidAskTickConverter
 
 class _CpEvent:
-    def set_params(self, obj, code, filter_callback):
+    def set_params(self, code, obj, filter_callback):
         self.code = code
         self.obj = obj
         self.filter_callback = filter_callback
@@ -12,7 +12,7 @@ class _CpEvent:
         d = {}
         for i in range(69):
             d[str(i)] = self.obj.GetHeaderValue(i)
-        d['date'] = datetime.datetime.now()
+        d['date'] = datetime.now()
         d['stream'] = 'CybosBidAskTick'
         d['target'] = self.code
         self.filter_callback([d])
@@ -43,7 +43,9 @@ class CybosBidAskTick:
             self.bidask_converter.set_output(self)
 
     def set_target(self, target):
-        code = target.split(':')[1]
+        code = target
+        if ':' in target:
+            code = target.split(':')[1]
         self.target_code = code
         self.bidask_realtime = _BidAskRealtime(code)
         if self.use_converter:

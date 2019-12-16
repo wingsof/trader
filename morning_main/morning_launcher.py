@@ -16,8 +16,9 @@ class _RunnerThread(QThread):
     def run(self):
         import platform
         if platform.system() == 'Windows':
-            import pythoncom
-            pythoncom.CoInitialize()
+            pass
+            #import pythoncom
+            #pythoncom.CoInitialize()
 
         self.running_function()
 
