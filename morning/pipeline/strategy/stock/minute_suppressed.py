@@ -166,6 +166,6 @@ class MinuteSuppressed:
     def received(self, datas):
         for g in self.graph_adder:
             g.received(datas)
-        if len(datas) > 0:
-            logger.print('TICK RECEIVED', datas[0])
+        #if len(datas) > 0:
+        #    logger.print('TICK RECEIVED', datas[0])
         self._handle_data(datas)

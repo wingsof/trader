@@ -29,10 +29,11 @@ def start_trading(code, account):
                 'converter': StockTickConverter(),
                 'filter': [InMarketFilter(), DropDataFilter(1)],
                 'strategy': [RealtimeMinuteSuppressed()],
-                'decision': BoolAndDecision(1, 2)} # trade count = 2
+                'decision': BoolAndDecision(1, 1)} # trade count = 2
     trader.add_pipeline(pipeline)
     trader.set_account(account)
-    trader.run()
+    trader.account_msg_arrived.connect(account.transaction)
+    trader.start_trading()
 
     return trader
 

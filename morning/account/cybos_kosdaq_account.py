@@ -1,10 +1,13 @@
+from datetime import datetime
+from PyQt5.QtCore import QObject, pyqtSlot
+
 from morning.cybos_api.trade_util import TradeUtil
 from morning.cybos_api.balance import get_balance
 from morning.pipeline.stream.cybos.stock.bidask_tick import CybosBidAskTick
 from morning.account.order.order_transaction import OrderTransaction
 from morning.logging import logger
 
-from datetime import datetime
+
 
 
 ask_keys = ['first_ask_price', 'second_ask_price', 'third_ask_price', 
@@ -13,10 +16,11 @@ bid_keys = ['first_bid_price', 'second_bid_price', 'third_bid_price',
                     'fourth_bid_price', 'fifth_bid_price']
 
 
-class CybosKosdaqAccount:
+class CybosKosdaqAccount(QObject):
     EXPECTED_DAY_MAX_COUNT = 16
 
     def __init__(self, save_to_file = ''):
+        super().__init__()
         trade_util = TradeUtil()
         self.montoring_bidask = []
         self.account_balance = get_balance(trade_util.get_account_number(), trade_util.get_account_type())
@@ -46,6 +50,7 @@ class CybosKosdaqAccount:
                 'ask': [d[k] for k in ask_keys],
                 'bid': [d[k] for k in bid_keys]}        
 
+    @pyqtSlot(object)
     def transaction(self, msg):
         buy, code, price = msg['result'], msg['target'], msg['value']
         price = int(price)

@@ -23,19 +23,29 @@ from morning.pipeline.stream.cybos.stock.db.tick import DatabaseTick
 
 
 def start_trading(code, account):
-    trader = Trader(code, False)
+    trader = Trader(code, True)
     pipeline = {'name': 'kosdaq_bull',
-                'stream': DatabaseTick(datetime(2019, 12, 16), datetime(2019, 12, 17), False)
+                'stream': DatabaseTick(datetime(2019, 12, 13), datetime(2019, 12, 14), False),
                 'converter': StockTickConverter(),
                 'filter': [InMarketFilter(), DropDataFilter(1)],
                 'strategy': [RealtimeMinuteSuppressed()],
                 'decision': BoolAndDecision(1, 1)} # trade count = 2
     trader.add_pipeline(pipeline)
     trader.set_account(account)
+    trader.account_msg_arrived.connect(account.transaction)
     trader.start_trading()
 
     return trader
 
+
+app = None
+clients_count = 0
+
+def decrement_thread_count():
+    global clients_count
+    clients_count -= 1
+    if clients_count == 0:
+        app.quit()
 
 if __name__ == '__main__':
     app = QCoreApplication(sys.argv)
@@ -43,11 +53,15 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     traders = []
-    ksbc = KosdaqSearchBullChooser(datetime.now().date(), False) # not use database to search codes
+    ksbc = KosdaqSearchBullChooser(datetime(2019, 12, 13).date(), False) # not use database to search codes
+    print(ksbc.codes)
+    #ksbc.codes = ['A091990']#, 'A078130', 'A097520', 'A225430', 'A082800', 'A238120']
     account = FakeAccount()
-    account.set_date(datetime.now().date())
+    account.set_date(datetime(2019, 12, 13).date())
+    clients_count = len(ksbc.codes)
     for code in ksbc.codes:
         traders.append(start_trading(code, account))
+        traders[-1].finished.connect(decrement_thread_count)
 
     app.exec()
     account.summary()

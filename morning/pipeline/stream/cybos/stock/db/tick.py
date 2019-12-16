@@ -14,6 +14,7 @@ class DatabaseTick:
         self.next_elements = None
         self.save_to_excel = False
         self.target_code = ''
+        self.data = []
 
     def is_acceptable_target(self, code):
         return code.startswith('cybos:A')
@@ -30,7 +31,18 @@ class DatabaseTick:
 
         cursor = stock[code].find({'date': {'$gte':self.from_datetime, '$lte': self.until_datetime}})
         self.data = list(cursor)
-        logger.print(target, 'Length', len(self.data))
+        """
+        i = 0
+        while True:
+            cursor = stock[code].find({'date': {'$gte':self.from_datetime, '$lte': self.until_datetime}}).skip(i * 500).limit(500)
+            self.data.extend(list(cursor))
+            #print(len(self.data))
+            if cursor.count(with_limit_and_skip=True) < 500:
+                break
+            i += 1
+        """
+
+        #logger.print(target, 'Length', len(self.data))
         if len(self.data) > 0 and self.check_whole_data:
             df = pd.DataFrame(self.data)
 

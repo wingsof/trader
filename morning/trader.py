@@ -1,10 +1,13 @@
 from morning.logging import logger
 from morning.target_runner import TargetRunner
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, pyqtSignal
 
 
 class Trader(QThread):
-    def __init__(self, code, thread_running=True):
+    account_msg_arrived = pyqtSignal(object)
+
+    def __init__(self, code, thread_running=False):
+        super().__init__()
         self.runner = None
         self.code = code
         self.thread_running = thread_running
@@ -15,16 +18,17 @@ class Trader(QThread):
         self.pipelines.append(p)
 
     def handle_trading(self, msg):
-        logger.print('Handle Trading:', msg)
-        if self.account:
-            self.account.transaction(msg)
+        self.account_msg_arrived.emit(msg)
 
     def set_account(self, account):
         self.account = account
 
     def run(self):
-        TargetRunner(self.code, self.pipelines, self.handle_trading)
-        pass
+        tr = TargetRunner(self.code, self.pipelines, self.handle_trading)
+        # streams len should be 1
+        while tr.streams[0].received([]) > 0:
+            pass
+
 
     def start_trading(self):
         if not self.thread_running:

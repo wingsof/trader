@@ -1,10 +1,13 @@
 import pandas as pd
 from datetime import datetime
+from PyQt5.QtCore import QObject, pyqtSlot
+
 #from morning.logging import logger
 
 
-class FakeAccount:
+class FakeAccount(QObject):
     def __init__(self, save_to_file = '', fresh_daily = True):
+        super().__init__()
         self.amount = 10000000
         self.account = {}
         self.save_to_file = save_to_file
@@ -29,6 +32,7 @@ class FakeAccount:
     def add_additional_info(self, name, value):
         self.additional_info.append((name, value))
 
+    @pyqtSlot(object)
     def transaction(self, msg):
         # Investing 1 / 10 amount
         #logger.print(str(msg))

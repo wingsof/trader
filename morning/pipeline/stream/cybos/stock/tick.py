@@ -1,6 +1,6 @@
 import win32com.client
 from datetime import datetime
-
+from morning.logging import logger
 
 class _CpEvent:
     def set_params(self, obj, code, filter_callback):
@@ -12,7 +12,9 @@ class _CpEvent:
         d = {}
         for i in range(29):
             d[str(i)] = self.obj.GetHeaderValue(i)
-        d['date'] = datetime.now()
+        dt = datetime.now()
+        hour, min, second = int(d['18'] / 10000), int(d['18'] % 10000 / 100), int(d['18'] % 100)
+        d['date'] = datetime(dt.year, dt.month, dt.day, hour, min, second)
         d['stream'] = 'CybosStockTick'
         d['target'] = self.code
         self.filter_callback([d])
@@ -28,6 +30,7 @@ class StockRealtime:
         self.obj.SetInputValue(0, self.code)
         handler.set_params(self.obj, self.code, filter_callback)
         self.obj.Subscribe()
+        logger.print('START Subscribe', self.code)
 
     def unsubscribe(self):
         self.obj.Unsubscribe()
