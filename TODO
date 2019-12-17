@@ -3,6 +3,17 @@ Roadmap
 A005290 12월 17일 data 비교(min, real)
      * ISODate("2019-12-17T11:41:01.110Z")
 
+* pattern match
+    목표 : 특정 종목의 1주일 거래량과 가격이 이전 과거 데이터를 통해 유사한 종목 확인, 평균 가격 상승률을 예측
+           타당성 : 역사는 반복된다?
+    종목 선정
+    1개월 volume average  200위까지
+    기간 1년
+
+    해당 stock window = 1 week
+    1. StandardScaler 통해 volume diff 진행
+
+
 * mongodb XFS Filesystem 적용
 
 ver0.1 - 2019/12/31
