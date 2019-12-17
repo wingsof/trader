@@ -19,7 +19,9 @@ def test_time_gap():
             'date': datetime(2019, 2, 1, 9, 1, 1),
             'cum_buy_volume': 1,
             'cum_sell_volume': 1,
+            'yesterday_diff': 10,
             'current_price': 100,
+            'market_type': ord('2'),
             'stream': 'Receiver',
             'target': 'A000001'
     }
@@ -28,6 +30,8 @@ def test_time_gap():
             'cum_buy_volume': 1,
             'cum_sell_volume': 1,
             'current_price': 150,
+            'yesterday_diff': 10,
+            'market_type': ord('2'),
             'stream': 'Receiver',
             'target': 'A000001'
     }
@@ -37,4 +41,4 @@ def test_time_gap():
     rms.received([sample2])
     assert rcv.last_min_tick is not None
     assert rcv.last_min_tick['date'] == datetime(2019, 2, 1, 9, 1)
-    assert rcv.last_min_tick['close_price'] == 150 # intended
+    assert rcv.last_min_tick['close_price'] == 100 # intended

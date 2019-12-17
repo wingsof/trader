@@ -40,24 +40,27 @@ class RealtimeMinuteSuppressed:
             if current.minute != self.current_datetime.minute:
                 dt = self.current_datetime
                 year, month, day, hour, minute = dt.year, dt.month, dt.day, dt.hour, dt.minute
-                start_price = self.ticks[0]['current_price']
-                if self.is_first_tick:
-                    self.is_first_tick = False
-                    start_price = self.ticks[0]['current_price'] - self.ticks[0]['yesterday_diff']
+                if len(self.ticks) == 0:
+                    logger.error('ticks len is 0', d['target'], current.minute, self.current_datetime.minute)
+                else:
+                    start_price = self.ticks[0]['current_price']
+                    if self.is_first_tick:
+                        self.is_first_tick = False
+                        start_price = self.ticks[0]['current_price'] - self.ticks[0]['yesterday_diff']
 
-                min_data = {'date': datetime(year, month, day, hour, minute),
-                            'cum_buy_volume': self.ticks[-1]['cum_buy_volume'], # currently just use current vol
-                            'cum_sell_volume': self.ticks[-1]['cum_sell_volume'], # currently just use current vol
-                            'close_price': self.ticks[-1]['current_price'],
-                            'start_price': start_price,
-                            'highest_price': max([t['current_price'] for t in self.ticks]),
-                            'lowest_price': min([t['current_price'] for t in self.ticks]),
-                            'VI': self.is_vi,
-                            'stream': d['stream'],
-                            'target': d['target']}
-                self.ticks.clear()
-                self.ms.received([min_data])
-                self.current_datetime = d['date']
+                    min_data = {'date': datetime(year, month, day, hour, minute),
+                                'cum_buy_volume': self.ticks[-1]['cum_buy_volume'], # currently just use current vol
+                                'cum_sell_volume': self.ticks[-1]['cum_sell_volume'], # currently just use current vol
+                                'close_price': self.ticks[-1]['current_price'],
+                                'start_price': start_price,
+                                'highest_price': max([t['current_price'] for t in self.ticks]),
+                                'lowest_price': min([t['current_price'] for t in self.ticks]),
+                                'VI': self.is_vi,
+                                'stream': d['stream'],
+                                'target': d['target']}
+                    self.ticks.clear()
+                    self.ms.received([min_data])
+                    self.current_datetime = d['date']
 
             self.ticks.append(d)
 

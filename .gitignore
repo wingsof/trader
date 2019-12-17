@@ -11,3 +11,5 @@ tmp
 .pytest*
 framework_test
 .vscode
+*.xlsx
+*.log

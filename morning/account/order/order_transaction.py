@@ -21,7 +21,7 @@ class OrderTransaction(QObject):
         trade_util = TradeUtil()
         self.account_num = trade_util.get_account_number()
         self.account_type = trade_util.get_account_type()
-        self.order_in_queue = OrderInQueue(self.account_type, self.account_type)
+        self.order_in_queue = OrderInQueue(self.account_num, self.account_type)
 
         self.order_wait_queue = dict()  # key: code, value: dict(date, is_buy, quantity, price)
         self.on_market_queue = dict() # key: code, value: [date, quantity, is_buy, price, order_number]
