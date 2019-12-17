@@ -1,8 +1,12 @@
-Roadmap
 
-A005290 12월 17일 data 비교(min, real)
+
+A005290 12월 17일 data 비교(min, real) - Done
      * ISODate("2019-12-17T11:41:01.110Z")
 
+* 장 마감 전까지 Sell signal 안오는 경우 다음 날 손익 통계?
+* 수익률 특정 %로 고정했을 때, 승률 (BUY 이후, 고점이 몇인지 기록하면 통계 알 수 있을 듯)
+* https://towardsdatascience.com/backtesting-trading-strategies-less-sorcery-and-more-statistics-on-your-side-241ac41d18b0
+    * back testing 관련 자료
 * pattern match
     목표 : 특정 종목의 1주일 거래량과 가격이 이전 과거 데이터를 통해 유사한 종목 확인, 평균 가격 상승률을 예측
            타당성 : 역사는 반복된다?
@@ -17,13 +21,15 @@ A005290 12월 17일 data 비교(min, real)
 * mongodb XFS Filesystem 적용
 
 ver0.1 - 2019/12/31
-* Account 와 Bidask 연동 구현
-* 총 금액에서 Watching 하는 좀목만큼 분할 사용
-* 2019년 11월 손실 분석 및 보완 / 손익 테스팅
-* Creon 연동 테스팅
+* Account 와 Bidask 연동 구현 - Done
+* 총 금액에서 Watching 하는 좀목만큼 분할 사용 - 개선 필요 - Done
+* 2019년 11월 손실 분석 및 보완 / 손익 테스팅 - Done
+* Creon 연동 테스팅 - Progressing
 
 ver0.2 - 2020/1/31
 * 손실 분석 및 보완 테스팅
+* 총 금액에서 Watching 하는 좀목만큼 분할 사용 - unknown 확률에서 2~16 트레이딩을 할 때, 금액 분할을 어떻게?
+    * 동시에 이뤄지는 최대 갯수는?
 * ver0.1 안정화 및 시스템 refactoring
 * VI 발동시 거래량에 따른 확률이 있을까?
 * 알고리즘 후보군 찾기
@@ -42,19 +48,10 @@ ver1.0
 
 
 
-* morning_launcher 통해 Thread 안에서 request 시 문제 발생?, BullChooser 로 테스팅
-
 * 눌림목
     * 신고가 터지고(몇 일까지 확인?), 3분봉으로 확인, 다음 3개 분봉 이후부터 신고가일 때의 close 돌파 확인 시 매수
         * 다음 3개 분봉 후 이미 급상승일 경우는 포기
     * 손절가는 금일 최저점 or 3% 이하, 매도는 매도 속도 급상승
-
-* 눌림목 2
-    * 다음의 조건은?
-    * (1) 코스닥 20일 평균선 상회
-    * (2) 기관 3일 이상 매수
-    * (3) 눌리는 지점 확인 및 매수 걸어놓기 -> 매수 걸리면, 매수세/매도세 확인 후 조건
-    * (4) 손절가는 어떻게?
 
 * BID / ASK 호가 이동하는 속도로 판단하는 알고리즘
 
@@ -62,11 +59,6 @@ ver1.0
     * 항상 DB에서 지우고, 다시 insert 하는 것도 burden, DB 에 있는 경우 DB에서 사용, 없는 경우 cybos API 로 얻어와
       append 로 붙이는 거 고려
 
-* Strategy 에서 그래프 뽑아내기
-* 비슷한 패턴 찾기
-
-* chooser 에서 동시 두가지 code 이상을 던져줄 수 있는 기능
-    * is_acceptable 확인
 * CYBOS 위주로 일단 완성하고, 일반화 작업 진행 (1. DB, 2. 키움 등)
 
 * 코스피 200 종목 동일하게 추세로 선물 거래는?
@@ -75,8 +67,6 @@ ver1.0
     * 비추천 리스크 값
         * 9.07, 8.62, 6.37, 6.77, 6.21, 12.78, 9.98, 20.14, 10.05 8.51, 20.13, 14.56, 19.36, 13.61, 14.62, 15.08, 15.71
         * 오히려 상승한 경우 11.2, 9.3, 9.06, 7.78, 9.3, 8.86, 11.23, 10.83, 12.57
-        * 11.2에서 9.15 먹은 거는?
-    * Sell 조건 추가 - 마지막 Bottom 밑으로 가격 떨어지는 경우 매도
 
 Done
 ---------------------------
@@ -88,3 +78,4 @@ Done
     * 예를 들어, Buy 결정을 내릴 시 호가 확인이 필요
 * Strategy 에서는 strategy_name:(score or bool) string으로 값을 return
 * Decision 에서 전달시 argument는? type:code:
+* Strategy 에서 그래프 뽑아내기

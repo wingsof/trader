@@ -15,7 +15,7 @@ class FakeAccount(QObject):
         self.day_profit = 0
         self.additional_info = []
         self.df = pd.DataFrame(columns=['date', 'code', 'trade', 'price', 'profit'])
-        self.profit_df = pd.DataFrame(columns=['date', 'code', 'profit', 'profit_r'])
+        self.profit_df = pd.DataFrame(columns=['date', 'code', 'profit', 'profit_r', 'buy_time', 'sell_time'])
 
     def set_date(self, d):
         self.date = d
@@ -36,18 +36,20 @@ class FakeAccount(QObject):
     def transaction(self, msg):
         # Investing 1 / 10 amount
         logger.print(str(msg))
-        buy, code, price = msg['result'], msg['target'], msg['value']
+        buy, code, price, tdate = msg['result'], msg['target'], msg['value'], msg['date']
         price = int(price)
 
         profit = 0
         if buy:
-            self.account[code] = price
+            self.account[code] = dict(price=price, date=tdate)
         else:
-            vol = (self.amount / 10) / self.account[code]
-            remain = (price * vol) - (self.account[code] * vol)
+            vol = (self.amount / 10) / self.account[code]['price']
+            remain = (price * vol) - (self.account[code]['price'] * vol)
             self.day_profit += remain
             profit = remain / (self.amount / 10) * 100.
-            profit_d = {'date': self.date, 'code': code, 'profit': remain, 'profit_r': profit}
+            profit_d = {'date': self.date, 'code': code, 
+                        'profit': remain, 'profit_r': profit, 
+                        'buy_time': self.account[code]['date'], 'sell_time': tdate}
             for additional in self.additional_info:
                 profit_d[additional[0]] = additional[1]
             self.profit_df = self.profit_df.append(profit_d, ignore_index = True)

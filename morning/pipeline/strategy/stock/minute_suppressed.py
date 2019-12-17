@@ -123,6 +123,8 @@ class MinuteSuppressed:
             if self.current_stage == 0:
                 if bottom and not top and volume_trend and not price_exceed:
                     self.current_stage = 1
+                    if len(peaks_top) == 0:
+                        continue
                     self.buy_margin_price[0] = self.moving_average[peaks_top[-1]]
                     self.buy_margin_price[1] = self.moving_average[peaks_top[-2]] if len(peaks_top) > 1 else self.moving_average[peaks_top[-1]]
             elif self.current_stage == 1:
@@ -168,6 +170,5 @@ class MinuteSuppressed:
     def received(self, datas):
         for g in self.graph_adder:
             g.received(datas)
-        #if len(datas) > 0:
-        #    logger.print('TICK RECEIVED', datas[0])
+
         self._handle_data(datas)

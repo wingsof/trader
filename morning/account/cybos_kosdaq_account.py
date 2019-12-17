@@ -17,16 +17,20 @@ bid_keys = ['first_bid_price', 'second_bid_price', 'third_bid_price',
 
 
 class CybosKosdaqAccount(QObject):
-    EXPECTED_DAY_MAX_COUNT = 16
+    EXPECTED_DAY_AVG_COUNT = 8.5
 
     def __init__(self, save_to_file = ''):
         super().__init__()
         trade_util = TradeUtil()
+        self.account_number = trade_util.get_account_number()
+        self.account_type = trade_util.get_account_type()
         self.montoring_bidask = []
-        self.account_balance = get_balance(trade_util.get_account_number(), trade_util.get_account_type())
-        self.one_shot_amount = int(self.account_balance / CybosKosdaqAccount.EXPECTED_DAY_MAX_COUNT)
         self.bidask_table = dict()
         self.order_transaction = OrderTransaction(self)
+
+    def get_one_shot_amount(self):
+        # TODO: what is most fair to divide money?
+        return int(get_balance(self.account_number, self.account_type) / CybosKosdaqAccount.EXPECTED_DAY_AVG_COUNT)
 
     def get_ask_price(self, code, n_th):
         if code not in self.bidask_table or n_th > 4:
@@ -61,7 +65,7 @@ class CybosKosdaqAccount(QObject):
         bidask_str = 'ask' if buy else 'bid'
         process_price = self.bidask_table[code][bidask_str][4]
         # does not support split selling
-        quantity= int(self.one_shot_amount / process_price) if buy else 0
+        quantity= int(self.get_one_shot_amount() / process_price) if buy else 0
 
         if buy and quantity == 0:
             logger.error('not enough to buy shares', self.one_shot_amount, process_price)
