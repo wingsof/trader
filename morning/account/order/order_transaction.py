@@ -30,7 +30,11 @@ class OrderTransaction(QObject):
 
     def make_order(self, code, price, quantity, is_buy):
         if not is_buy:
-            quantity = self.long_list[code]['quantity']
+            if code in self.long_list:
+                quantity = self.long_list[code]
+            else:
+                logger.error(code, 'is not int long_list')
+                return
 
         record_make_order(code, price, quantity, is_buy)
         status, msg = self.order.process(code, quantity, self.account_num, 
