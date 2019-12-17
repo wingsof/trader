@@ -66,6 +66,7 @@ class RealtimeMinuteSuppressed:
             self.ticks.append(d)
 
     def finalize(self):
+        self.ms.finalize()
         if self.next_element:
             self.next_element.finalize()
 
@@ -76,3 +77,6 @@ class RealtimeMinuteSuppressed:
 
         def received(self, msg):
             self.callback(msg)
+
+        def finalize(self):
+            pass
