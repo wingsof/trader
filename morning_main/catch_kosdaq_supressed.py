@@ -27,17 +27,19 @@ loop = None
 def decrement_thread_count():
     global clients_count
     clients_count -= 1
+    print('COUNT', clients_count)
     if clients_count == 0:
         loop.quit()
 
 
 def trading():
     global clients_count
+    global loop
 
     fake_account = FakeAccount('catch_kosdaq_supressed')
     from_datetime = datetime(2018, 1, 1)
 
-    while from_datetime < datetime(2018, 1, 3):
+    while from_datetime < datetime(2019, 12, 14):
         loop = QEventLoop()
         traders = []
         print('START: ', from_datetime, '-------------------------')
@@ -52,7 +54,7 @@ def trading():
         fake_account.add_additional_info('yesterday_ma', kt.get_yesterday_ma())
         ksbc = KosdaqSearchBullChooser(from_datetime.date(), True)
         fake_account.set_date(from_datetime.date())
-        global_counts = len(ksbc.codes)
+        clients_count = len(ksbc.codes)
         for code in ksbc.codes:
             trader = Trader(code, True)
             traders.append(trader) 

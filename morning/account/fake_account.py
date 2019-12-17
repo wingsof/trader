@@ -2,7 +2,7 @@ import pandas as pd
 from datetime import datetime
 from PyQt5.QtCore import QObject, pyqtSlot
 
-#from morning.logging import logger
+from morning.logging import logger
 
 
 class FakeAccount(QObject):
@@ -35,7 +35,7 @@ class FakeAccount(QObject):
     @pyqtSlot(object)
     def transaction(self, msg):
         # Investing 1 / 10 amount
-        #logger.print(str(msg))
+        logger.print(str(msg))
         buy, code, price = msg['result'], msg['target'], msg['value']
         price = int(price)
 

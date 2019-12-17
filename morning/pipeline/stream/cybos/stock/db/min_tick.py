@@ -17,7 +17,9 @@ class MinTick:
             self.next_elements.finalize()
 
     def set_target(self, target):
-        code = target.split(':')[1]
+        code = target
+        if ':' in target:
+            code = target.split(':')[1]
         self.target_code = code
         self.data = fetch_stock_data.get_day_minute_period_data_force_from_db(code, self.date, self.date)
         #logger.print(target, 'Length', len(self.data))
