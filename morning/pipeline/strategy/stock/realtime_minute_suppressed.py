@@ -49,6 +49,7 @@ class RealtimeMinuteSuppressed:
                         start_price = self.ticks[0]['current_price'] - self.ticks[0]['yesterday_diff']
 
                     min_data = {'date': datetime(year, month, day, hour, minute),
+                                'volume': sum([t['volume'] for t in self.ticks]),
                                 'cum_buy_volume': self.ticks[-1]['cum_buy_volume'], # currently just use current vol
                                 'cum_sell_volume': self.ticks[-1]['cum_sell_volume'], # currently just use current vol
                                 'close_price': self.ticks[-1]['current_price'],
