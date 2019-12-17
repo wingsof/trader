@@ -1,5 +1,9 @@
 Roadmap
 
+A005290 12월 17일 data 비교(min, real)
+     * ISODate("2019-12-17T11:41:01.110Z")
+
+* mongodb XFS Filesystem 적용
 
 ver0.1 - 2019/12/31
 * Account 와 Bidask 연동 구현
@@ -13,6 +17,7 @@ ver0.2 - 2020/1/31
 * VI 발동시 거래량에 따른 확률이 있을까?
 * 알고리즘 후보군 찾기
 * pattern matching algorithm 적용 아이디어, 7 day / 6 day / 5 day 처럼 순차적 끝점 비교 방법/ Finger Print 처럼 값을 패턴을 상수화할 수 있는 방법이 있는가? 음악 찾기 프로그램에서 쓰는 알고리즘은?
+    * Day to Day 간 간격, Day Start / End 격차, Day 내에서의 Trend Line 비교, 거래량 비교
 	* https://medium.com/intrasonics/a-fingerprint-for-audio-3b337551a671
 	* 중요한 부분은 day to day 간 갭차
 	* https://www.youtube.com/playlist?list=PLQVvvaa0QuDe6ZBtkCNWNUbdaBo2vA4RO
