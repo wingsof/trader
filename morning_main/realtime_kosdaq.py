@@ -32,7 +32,6 @@ def start_trading(code, account):
                 'decision': BoolAndDecision(1, 1)} # trade count = 2
     trader.add_pipeline(pipeline)
     trader.set_account(account)
-    trader.account_msg_arrived.connect(account.transaction)
     trader.start_trading()
 
     return trader

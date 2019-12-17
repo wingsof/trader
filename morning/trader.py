@@ -22,6 +22,7 @@ class Trader(QThread):
 
     def set_account(self, account):
         self.account = account
+        self.account_msg_arrived.connect(account.transaction)
 
     def run(self):
         tr = TargetRunner(self.code, self.pipelines, self.handle_trading)
