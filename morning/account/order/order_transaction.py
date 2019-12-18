@@ -52,19 +52,20 @@ class OrderTransaction(QObject):
 
     @pyqtSlot()
     def _check_order_wait_queue(self):
-        print('START timeout')
+        logger.print('check order wait timeout')
         remove_keys = []
         for k, v in self.order_wait_queue.items():
-            print(datetime.now() - v['date'])
             if datetime.now() - v['date'] > timedelta(seconds=8):
                 logger.error('Order queue not processed(will be removed)', k)
                 remove_keys.append(k)
 
         for k in remove_keys:
+            logger.print('remove key', k)
             self.order_wait_queue.pop(k, None)
 
     @pyqtSlot()
     def _check_on_market_queue(self):
+        logger.print('check on market queue')
         orders = self.order_in_queue.request()
         # Use Cp5339 and verify not traded items
         for k, v in self.on_market_queue.items():
@@ -111,7 +112,7 @@ class OrderTransaction(QObject):
             logger.error('code is not in order wait queue', code)
 
     def handle_traded(self, code, is_buy, result):
-        print(self.on_market_queue)
+        logger.print('handle_traded', code, is_buy)
         if code in self.on_market_queue:
             on_market_item = self.on_market_queue[code]
             traded_quantity = result['quantity']
@@ -136,6 +137,7 @@ class OrderTransaction(QObject):
             logger.error('code is not in on market queue', code)
 
     def handle_edited(self, code, is_buy, result):
+        logger.print('handle_edited', code, is_buy)
         if code in self.on_market_queue:
             on_market_item = self.on_market_queue[code]
             if on_market_item['order_modify_type'] == OrderTransaction.CANCEL:
