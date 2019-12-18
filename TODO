@@ -3,6 +3,9 @@
 A005290 12월 17일 data 비교(min, real) - Done
      * ISODate("2019-12-17T11:41:01.110Z")
 
+* stage 1 에서 over_price 빼는 경우 수익률 오히려, 낮음 결론
+* prominence 로 peak extract 부분 수익률 확인 및 호가에 따른 extract 고려
+
 * 장 마감 전까지 Sell signal 안오는 경우 다음 날 손익 통계?
 * 수익률 특정 %로 고정했을 때, 승률 (BUY 이후, 고점이 몇인지 기록하면 통계 알 수 있을 듯)
 * https://towardsdatascience.com/backtesting-trading-strategies-less-sorcery-and-more-statistics-on-your-side-241ac41d18b0
