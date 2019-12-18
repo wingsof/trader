@@ -34,7 +34,7 @@ class KosdaqSearchBullChooser(Chooser):
     def _search_from_database(self, search_day, max_count, institution_buy_days):
         bulls = list(self.stock['KOSDAQ_BULL'].find({
                                         'date': {'$eq': datetime(search_day.year, search_day.month, search_day.day)}, 
-                                        'count': {'$eq': 40},
+                                        'count': {'$eq': max_count},
                                         'institution_buy_days': {'$eq': institution_buy_days}}))
         if len(bulls) > 0:
             bull = bulls[0]
