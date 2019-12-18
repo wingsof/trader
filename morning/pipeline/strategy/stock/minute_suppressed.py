@@ -12,6 +12,7 @@ class MinuteSuppressed:
         self.open_price = 0
         self.moving_average = np.array([])
         self.current_stage = 0
+        self.highest_after_buy = 0
         self.buy_margin_price = [0, 0]
         self.buy_hold = None
         self.price_array = np.array([])
@@ -149,18 +150,22 @@ class MinuteSuppressed:
                                                             'date': d['date'],
                                                             'value': True, 'price': d['close_price'], 'risk': risk}])
                             self.current_stage = 2
+                            self.highest_after_buy = d['close_price']
                         for g in self.graph_adder:
                             g.set_flag(d['date'], 'BUY')
                 else:
                     self.current_stage = 0
             elif self.current_stage == 2:
+                if d['highest_price'] > self.highest_after_buy:
+                    self.highest_after_buy = d['highest_price']
+
                 if (not volume_trend or not bottom) and self.buy_hold is not None:
                     self.buy_hold = None
                     if self.next_element is not None:
                         self.next_element.received([{'name': self.__class__.__name__,
                                                         'target': d['target'],
                                                         'stream': d['stream'],
-                                                        'date': d['date'],
+                                                        'date': d['date'], 'highest': self.highest_after_buy,
                                                         'value': False, 'price': d['close_price']}])
                     for g in self.graph_adder:
                         g.set_flag(d['date'], 'SELL')
