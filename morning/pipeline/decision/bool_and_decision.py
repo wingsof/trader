@@ -53,13 +53,16 @@ class BoolAndDecision:
             target, date = datas[-1]['target'], datas[-1]['date']
             strategy = datas[-1]['name']
 
-            # currently not allow duplicated trade
             if not self.bought and result:
-                self.runner({ 'target': target, 'date': date, 'stream': stream_name,
-                                            'strategy': strategy, 'result': result, 'value': value})
+                msg = { 'target': target, 'date': date, 'stream': stream_name,
+                        'strategy': strategy, 'result': result, 'value': value}
+                self.runner(msg)
                 self.bought = True
             elif self.bought and not result:
+                msg = { 'target': target, 'date': date, 'stream': stream_name,
+                        'strategy': strategy, 'result': result, 'value': value}
+                if 'highest' in datas[0]:
+                    msg['highest'] = datas[0]['highest']
                 self.bought = False
-                self.runner({ 'target': target, 'date': date, 'stream': stream_name,
-                                        'strategy': strategy, 'result': result, 'value': value})
                 self.trade_count -= 1
+                self.runner(msg)
