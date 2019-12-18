@@ -12,7 +12,7 @@ class FakeAccount(QObject):
         self.save_to_file = save_to_file
         self.date = datetime.now().date()
         self.additional_info = []
-        self.profit_df = pd.DataFrame(columns=['date', 'code', 'buy_price', 'sell_price', 'profit', 'profit_r', 'buy_time', 'sell_time'])
+        self.profit_df = pd.DataFrame(columns=['date', 'code', 'buy_price', 'sell_price', 'profit_r', 'buy_time', 'sell_time'])
 
     def set_date(self, d):
         self.date = d
@@ -49,4 +49,4 @@ class FakeAccount(QObject):
             self.profit_df = self.profit_df.append(profit_d, ignore_index = True)
             
 
-        data = {'date': self.date, 'code': code, 'trade': 'BUY' if buy else 'SELL', 'price': price, 'profit': profit}
+        #data = {'date': self.date, 'code': code, 'trade': 'BUY' if buy else 'SELL', 'price': price, 'profit': profit}

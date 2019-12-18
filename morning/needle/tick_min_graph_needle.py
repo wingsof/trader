@@ -35,7 +35,7 @@ class TickMinGraphNeedle:
             print('set_circle_flag', date, value, is_up)
             color = "LightSeaGreen" if not is_up else "orange"
             self.shapes.append(
-                dict(type='circle', x0=date-timedelta(minutes=1), x1=date+timedelta(minutes=1), y0=value-100, y1=value+100, xref='x', yref='y', line_color=color))        
+                dict(type='circle', x0=date-timedelta(minutes=1), x1=date+timedelta(minutes=1), y0=value-(value*0.01), y1=value+(value*0.01), xref='x', yref='y', line_color=color))        
         
     def set_flag(self, date, desc):
         self.shapes.append(

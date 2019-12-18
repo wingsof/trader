@@ -79,7 +79,8 @@ class MinuteSuppressed:
                                                     'target': d['target'],
                                                     'stream': d['stream'],
                                                     'date': d['date'],
-                                                    'value': False, 'price': d['close_price']}])
+                                                    'value': False, 'price': d['close_price'],
+                                                    'highest': self.highest_after_buy}])
                 for g in self.graph_adder:
                         g.set_flag(d['date'], 'SELL')
                 self.done = True
