@@ -11,7 +11,7 @@ from morning.pipeline.converter.cybos.stock.day_tick import StockDayTickConverte
 from morning.pipeline.stream.cybos.stock.db.min_tick import MinTick
 from morning.pipeline.chooser.cybos.db.stock_search_bull_chooser import StockSearchBullChooser
 from morning.account.fake_account import FakeAccount
-from morning_main.trend_record.kosdaq_trend import KosdaqTrend
+from morning_main.trend_record.kospi_trend import KospiTrend
 from morning.pipeline.strategy.stock.minute_suppressed import MinuteSuppressed
 
 from morning.needle.tick_graph_needle import TickGraphNeedle
@@ -39,9 +39,10 @@ def trading():
     global loop
 
     fake_account = FakeAccount('catch_kosdaq_supressed')
-    from_datetime = datetime(2019, 12, 18)
+    from_datetime = datetime(2018, 1, 1)
 
-    while from_datetime < datetime(2019, 12, 19):
+
+    while from_datetime < datetime(2019, 12, 20):
         loop = QEventLoop()
         traders = []
         print('START: ', from_datetime, '-------------------------')
@@ -49,12 +50,13 @@ def trading():
             from_datetime += timedelta(days = 1)
             continue
         
-        kt = KosdaqTrend(from_datetime.date())
+        kt = KospiTrend(from_datetime.date())
 
         fake_account.clear_additional_info()
-        fake_account.add_additional_info('yesterday_kosdaq', kt.get_yesterday_index())
+        fake_account.add_additional_info('yesterday_kospi', kt.get_yesterday_index())
         fake_account.add_additional_info('yesterday_ma', kt.get_yesterday_ma())
-        ksbc = StockSearchBullChooser(StockSearchBullChooser.KOSDAQ, from_datetime.date(), True)
+        ksbc = StockSearchBullChooser(StockSearchBullChooser.KOSPI, from_datetime.date(), True)
+
         fake_account.set_date(from_datetime.date())
         clients_count = len(ksbc.codes)
         for code in ksbc.codes:
@@ -79,7 +81,11 @@ def trading():
         from_datetime += timedelta(days = 1)
 
     fake_account.summary()
+    
+
 
 
 if __name__ == '__main__':
     morning_launcher.morning_launcher(True, trading)
+    from_datetime = datetime(2018, 1, 1)
+

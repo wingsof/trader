@@ -36,7 +36,7 @@ class ShortCollector:
 
 
 if __name__ == '__main__':
-    #time.sleep(60*3)
+    time.sleep(60*3)
     today = datetime.now().date()
     yesterday = holidays.get_yesterday(today)
     conn = connection.Connection()

@@ -29,6 +29,7 @@ class Trader(QThread):
         # streams len should be 1
         while tr.streams[0].received([]) > 0:
             pass
+        tr.streams[0].finalize()
 
 
     def start_trading(self):

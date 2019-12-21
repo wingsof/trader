@@ -10,7 +10,7 @@ from morning.logging import logger
 from morning.trader import Trader
 
 from morning.account.fake_account import FakeAccount
-from morning.pipeline.chooser.cybos.db.kosdaq_search_bull_chooser import KosdaqSearchBullChooser
+from morning.pipeline.chooser.cybos.db.stock_search_bull_chooser import StockearchBullChooser
 from morning.pipeline.converter.cybos.stock.tick import StockTickConverter
 from morning.pipeline.filter.in_market import InMarketFilter
 from morning.pipeline.filter.drop_data import DropDataFilter
@@ -50,7 +50,8 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     traders = []
-    ksbc = KosdaqSearchBullChooser(datetime(2019, 12, 17).date(), True) # not use database to search codes
+    ksbc = StockSearchBullChooser(StockSearchBullChooser.KOSDAQ,
+                                datetime(2019, 12, 17).date(), True) # not use database to search codes
     print(ksbc.codes)
     #ksbc.codes = ['A091990']#, 'A078130', 'A097520', 'A225430', 'A082800', 'A238120']
     ksbc.codes = ['A005290']

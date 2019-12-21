@@ -16,6 +16,26 @@ def is_kospi_200(code):
     return obj.GetStockKospi200Kind(code)
 
 
+def get_kospi_company_code_list():
+    obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
+    codes = obj.GetStockListByMarket(1)
+    company_codes = []
+    for code in codes:
+        if is_company_stock(code):
+            company_codes.append(code)
+    return company_codes
+
+
+def get_kosdaq_company_code_list():
+    obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
+    codes = obj.GetStockListByMarket(2)
+    company_codes = []
+    for code in codes:
+        if is_company_stock(code):
+            company_codes.append(code)
+    return company_codes
+
+
 def is_company_stock(code):
     obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
     return obj.GetStockSectionKind(code) == 1
@@ -69,8 +89,8 @@ if __name__ == '__main__':
     #conn = connection.Connection()
     #print("Connected", conn.is_connected())
     codes = get_kosdaq_code_list()
-    
-    print(len(codes))
+    for code in codes:
+        print(code, get_industry_name(code), code_to_name(code), is_company_stock(code))
     """
     print("Left", conn.request_left_count())
     print("KOSPI ", get_kospi_code_list())

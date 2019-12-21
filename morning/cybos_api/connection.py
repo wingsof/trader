@@ -32,10 +32,7 @@ if __name__ == '__main__':
         import os
         import sys
         sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-        from winapi import stock_chart
-        #chart = stock_chart.StockChart('A005930')
-        #for data in chart.get_by_date(20181018):
-        #    print(data)
+
         print("Remain Time", conn.get_remain_time())
         print("Realtime", conn.realtime_left_count())
         print("Request", conn.request_left_count())

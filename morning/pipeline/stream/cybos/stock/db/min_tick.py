@@ -5,6 +5,7 @@ from morning.logging import logger
 from datetime import datetime
 from morning.back_data import fetch_stock_data
 
+
 class MinTick:
     def __init__(self, date, is_main_clock=True):
         self.is_main_clock = is_main_clock

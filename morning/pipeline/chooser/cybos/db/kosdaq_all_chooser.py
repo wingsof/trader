@@ -18,8 +18,8 @@ class KosdaqAllChooser(Chooser):
             self.codes.append(code['code'])
         print('KOSDAQ_CODES', len(self.codes))
         if len(self.codes) == 0:
-            from morning.cybos_api.stock_code import get_kosdaq_code_list
-            self.codes = get_kosdaq_code_list()
+            from morning.cybos_api.stock_code import get_kosdaq_company_code_list
+            self.codes = get_kosdaq_company_code_list()
             for code in self.codes:
                 self.stock['KOSDAQ_CODES'].insert_one({'code': code})
         

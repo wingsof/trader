@@ -56,7 +56,8 @@ class CybosStockTick:
         pass
 
     def finalize(self):
-        pass
+        if self.next_element:
+            self.next_element.finalize()
 
     def received(self, data):
         pass
