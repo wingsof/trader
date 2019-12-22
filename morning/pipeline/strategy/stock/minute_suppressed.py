@@ -25,9 +25,11 @@ class MinuteSuppressed:
         self.graph_adder.append(adder)
 
     def finalize(self):
+        
         if self.buy_hold is not None:
             self._send_short()
-            
+        
+
         for g in self.graph_adder:
             g.set_moving_average(self.date_array, self.moving_average)
             g.process()
@@ -74,7 +76,8 @@ class MinuteSuppressed:
         return peaks, prominences
 
     def _send_short(self):
-        self.buy_hold = None        
+        self.buy_hold = None
+        self.current_stage = 0    
         if self.next_element is not None:
             self.next_element.received([{'name': self.__class__.__name__,
                                             'target': self.latest_tick['target'],
@@ -179,12 +182,11 @@ class MinuteSuppressed:
             elif self.current_stage == 2:
                 if d['highest_price'] > self.highest_after_buy:
                     self.highest_after_buy = d['highest_price']
-
+                # add condition: current price is under -1% than highest
                 if (not volume_trend or not bottom) and self.buy_hold is not None:
                     
                     for g in self.graph_adder:
                         g.set_flag(d['date'], 'SELL')
-                    self.current_stage = 0
                     self._send_short()
 
                     

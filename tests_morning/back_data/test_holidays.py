@@ -11,3 +11,6 @@ def test_get_yesterday():
 
     today = date(2019, 12, 10)
     assert date(2019, 12, 9) == get_yesterday(today)
+
+    today = date(2018, 5, 2)
+    assert date(2018, 4, 30) == get_yesterday(today)

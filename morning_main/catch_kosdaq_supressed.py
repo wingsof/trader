@@ -41,7 +41,7 @@ def trading():
     fake_account = FakeAccount('catch_kosdaq_supressed')
     from_datetime = datetime(2018, 1, 1)
 
-    while from_datetime < datetime(2019, 12, 20):
+    while from_datetime < datetime(2019, 1, 1):
         loop = QEventLoop()
         traders = []
         print('START: ', from_datetime, '-------------------------')

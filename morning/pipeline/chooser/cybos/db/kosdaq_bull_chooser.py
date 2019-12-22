@@ -28,14 +28,8 @@ class KosdaqBullChooser(Chooser):
             codes.pop('date', None)
             prefixed_codes = []
             for v in codes.values():
-                if add_prefix:
-                    prefixed_codes.append('cybos:' + v)
-                else:
-                    prefixed_codes.append(v)
+                prefixed_codes.append(v)
                 if len(prefixed_codes) >= self.max_count:
                     break
             return set(prefixed_codes)
         return set()
-
-    def start(self):
-        self.selection_changed.emit(self._get_codes())

@@ -11,12 +11,31 @@ from morning.back_data.holidays import is_holidays
 
 from PyQt5.QtCore import QEventLoop
 import platform
-
+from pymongo import MongoClient
+from morning.config import db
 
 
 def trading():
-    # first phase
+    # day data insertion: INSERT DAY DATA
+    """     INSERT DAY DATA
+    from morning.back_data.fetch_stock_data import get_day_period_data
+
+    from_datetime = datetime(2017, 1, 1)
+    until_datetime = datetime(2019, 12, 21)
+    stock = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
+    remote_codes = []
+    kospi_codes = list(stock['KOSPI_CODES'].find())
+    kosdaq_codes = list(stock['KOSDAQ_CODES'].find())
+    codes = []
+    codes.extend(kospi_codes)
+    codes.extend(kosdaq_codes)
+    for code in codes:
+        remote_codes.append(code['code'])
+    for code in remote_codes:
+        get_day_period_data(code, from_datetime.date(), until_datetime.date())
     """
+    
+    # second phase: INSERT BULL CODE and CODES
     from_datetime = datetime(2018, 1, 1)
 
     while from_datetime < datetime(2019, 12, 21):
@@ -28,8 +47,10 @@ def trading():
         StockSearchBullChooser(StockSearchBullChooser.KOSDAQ, from_datetime.date(), True)
         StockSearchBullChooser(StockSearchBullChooser.KOSPI, from_datetime.date(), True)
         from_datetime += timedelta(days = 1)
-    """
-    # second phase
+    
+
+    # third phase INSERT MINUTE DATA
+    """ INSERT MINUTE DATA by following StockSearchBullChooser
     from_datetime = datetime(2018, 5, 29)
 
     while from_datetime < datetime(2019, 12, 21):
@@ -49,7 +70,7 @@ def trading():
             get_day_minute_period_data(code, from_datetime.date(), (from_datetime + timedelta(days=3)).date())
 
         from_datetime += timedelta(days = 1)
-
+    """ 
 
     print('DONE')
     

@@ -1,7 +1,8 @@
 Progressing
 --------------------
 
-* 종목을 늘렸을 때, 수익 비교
+* 시장 주도주의 정의는?
+* 종목을 늘렸을 때, 수익 비교 - 차이없음
 * 장 마감 전까지 Sell signal 안오는 경우 다음 날 손익 통계? - 주기적 실제 데이터 기반으로 검토
 * 수익률 특정 %로 고정했을 때, 승률 (BUY 이후, 고점이 몇인지 기록하면 통계 알 수 있을 듯)
 * https://towardsdatascience.com/backtesting-trading-strategies-less-sorcery-and-more-statistics-on-your-side-241ac41d18b0
@@ -21,7 +22,7 @@ Progressing
         * 다음 3개 분봉 후 이미 급상승일 경우는 포기
     * 손절가는 금일 최저점 or 3% 이하, 매도는 매도 속도 급상승
 
-* BID / ASK 호가 이동하는 속도로 판단하는 알고리즘
+
 
 * DB / Cybos API 만들기
     * 항상 DB에서 지우고, 다시 insert 하는 것도 burden, DB 에 있는 경우 DB에서 사용, 없는 경우 cybos API 로 얻어와
@@ -89,3 +90,4 @@ Done
 * Strategy 에서는 strategy_name:(score or bool) string으로 값을 return
 * Decision 에서 전달시 argument는? type:code:
 * Strategy 에서 그래프 뽑아내기
+* BID / ASK 호가 이동하는 속도로 판단하는 알고리즘 - 결국 가격 이동?

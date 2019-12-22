@@ -72,9 +72,10 @@ class StockSearchBullChooser(Chooser):
                     data[0]['code'] = code
                     datas.append(data[0])
 
-            print('start sort')
             datas = sorted(datas, key=lambda i: i['7'], reverse=True)
+            
             self.codes = [d['code'] for d in datas]
+
             if self.institution_buy_days > 0:
                 self._filter_consecutive_buy_days(yesterday)
 
