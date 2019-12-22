@@ -10,7 +10,7 @@ class MinuteSuppressed:
     def __init__(self):
         self.graph_adder = []
         self.next_element = None
-        self.open_price = 0
+        #self.open_price = 0
         self.moving_average = np.array([])
         self.current_stage = 0
         self.highest_after_buy = 0
@@ -106,8 +106,8 @@ class MinuteSuppressed:
                 self.done = True
                 break
 
-            if self.open_price == 0:
-                self.open_price = d['start_price']
+            #if self.open_price == 0:
+            #    self.open_price = d['start_price']
 
             self.price_array = np.append(self.price_array, [d['close_price']])
             self.date_array = np.append(self.date_array, [d['date']])
@@ -134,7 +134,7 @@ class MinuteSuppressed:
 
             cum_sum = (d['cum_buy_volume'] + d['cum_sell_volume']) * 0.1
             volume_trend = d['cum_buy_volume'] > d['cum_sell_volume'] + cum_sum
-            price_exceed = (d['close_price'] - self.open_price) / self.open_price * 100. > 15.
+            #price_exceed = (d['close_price'] - self.open_price) / self.open_price * 100. > 15.
             bottom = trend_bottom[0] and trend_bottom[1]
             top = trend_top[0] and trend_top[1]
             
@@ -145,7 +145,7 @@ class MinuteSuppressed:
                     g.set_circle_flag(self.date_array[p_bottom], self.moving_average[p_bottom], False)
 
             if self.current_stage == 0:
-                if bottom and not top and volume_trend and not price_exceed:
+                if bottom and not top and volume_trend:# and not price_exceed:
                     self.current_stage = 1
                     if len(peaks_top) == 0:
                         continue
@@ -162,8 +162,8 @@ class MinuteSuppressed:
                         highest_price = self.moving_average.max()
                     risk = float("{0:.2f}".format((highest_price - lowest_price) / lowest_price * 100.))
                     is_cross_margin = self.moving_average[-1] > self.buy_margin_price[0] or self.moving_average[-1] > self.buy_margin_price[1]
-                    over_price = (d['close_price'] - self.open_price) / self.open_price * 100 > 10. # TODO : double check with price_exceed?
-                    if self.buy_hold is None and is_cross_margin and risk < 13. and not over_price:
+                    #over_price = (d['close_price'] - self.open_price) / self.open_price * 100 > 10. # TODO : double check with price_exceed?
+                    if self.buy_hold is None and is_cross_margin and risk < 13.: #and not over_price:
                         logger.print(d['date'], d['target'], 'BUY')
                         self.buy_hold = d['date']
                         if self.next_element is not None:

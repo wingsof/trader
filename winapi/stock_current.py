@@ -24,13 +24,10 @@ class _CpEvent:
 
 
 class _StockRealtime:
-    def __init__(self, code, is_long, info, bought_price, current_obj, db):
+    def __init__(self, code, current_obj, db):
         self.obj = win32com.client.Dispatch('DsCbo1.StockCur')
         self.code = code
-        self.is_long = is_long
-        self.info = info 
         self.current_obj = current_obj
-        self.bought_price = bought_price
         self.db = db
 
     def subscribe(self):
@@ -44,25 +41,15 @@ class _StockRealtime:
 
 
 class StockCurrent:
-    def __init__(self, code_list, long_codes, speculation, long_list):
+    def __init__(self, code_list):
         self.code_list = code_list
-        self.long_codes = long_codes
         self.realtime_bucket = []
         self.buy_dict = {}
         self.sell_dict = {}
-        self.long_list = long_list
         self.client = MongoClient(config.MONGO_SERVER)
 
         for code in self.code_list:
-            is_long = False
-            bought_price = 0
-            for l in self.long_list:
-                if l['code'] == code:
-                    is_long = True
-                    bought_price = l['price']
-
-            row = speculation[speculation['code'] == code].iloc[0]
-            self.realtime_bucket.append(_StockRealtime(code, is_long, row, bought_price, self, self.client.stock))
+            self.realtime_bucket.append(_StockRealtime(code, self, self.client.stock))
 
     def stop(self):
         for r in self.realtime_bucket:

@@ -38,7 +38,7 @@ def trading():
     global clients_count
     global loop
 
-    fake_account = FakeAccount('catch_kosdaq_supressed')
+    fake_account = FakeAccount('catch_kospi_supressed')
     from_datetime = datetime(2019, 12, 20)
 
 
