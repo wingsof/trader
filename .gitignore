@@ -13,3 +13,5 @@ framework_test
 .vscode
 *.xlsx
 *.log
+morning/config/db.py
+auto/auto.py

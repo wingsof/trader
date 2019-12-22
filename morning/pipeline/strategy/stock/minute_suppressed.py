@@ -83,6 +83,7 @@ class MinuteSuppressed:
                                             'value': False,
                                             'price': self.latest_tick['close_price'],
                                             'highest': self.highest_after_buy}])
+            logger.print(self.latest_tick['date'], self.latest_tick['target'], 'SELL')
             
 
     def _handle_data(self, datas):
@@ -184,6 +185,7 @@ class MinuteSuppressed:
                     for g in self.graph_adder:
                         g.set_flag(d['date'], 'SELL')
                     self.current_stage = 0
+                    self._send_short()
 
                     
     def received(self, datas):

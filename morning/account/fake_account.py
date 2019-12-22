@@ -19,7 +19,7 @@ class FakeAccount(QObject):
 
     def summary(self):
         print(self.profit_df)
-        self.profit_df.to_excel('profit.xlsx')
+        self.profit_df.to_excel('profit_' + self.save_to_file + '.xlsx')
     
     def clear_additional_info(self):
         self.additional_info.clear()
