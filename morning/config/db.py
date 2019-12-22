@@ -1,1 +1,0 @@
-HOME_MONGO_ADDRESS = 'mongodb://192.168.0.22:27017'
