@@ -71,8 +71,8 @@ class MinuteSuppressed:
         peaks, _ = find_peaks(x, distance=10)
         prominences = peak_prominences(x, peaks)[0]
 
-        peaks = np.extract(prominences > x.mean() * 0.003, peaks)
-        prominences = np.extract(prominences > x.mean() * 0.003, prominences)
+        peaks = np.extract(prominences > x.mean() * 0.001, peaks)
+        prominences = np.extract(prominences > x.mean() * 0.001, prominences)
         return peaks, prominences
 
     def _send_short(self):

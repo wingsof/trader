@@ -11,7 +11,7 @@ import stock_current_realtime
 
 from multiprocessing import Process, Queue
 from PyQt5.QtCore import QCoreApplication, QTimer
-import db
+import db_info
 
 
 class ShortCollector:
@@ -24,7 +24,7 @@ class ShortCollector:
         self.current_subscribe_codes = []
         self.last_loop_time = [0, 0]
         self.realtime_subscribers = []
-        self.client = MongoClient(db.HOME_MONGO_ADDRESS)
+        self.client = MongoClient(db_info.HOME_MONGO_ADDRESS)
 
     def network_check(self):
         conn = connection.Connection()
@@ -133,7 +133,7 @@ class Cp7043:
 
 def start_short_code_collector(q):
     last_minute = current_minute = datetime.now().minute
-    client = MongoClient(db.HOME_MONGO_ADDRESS)
+    client = MongoClient(db_info.HOME_MONGO_ADDRESS)
     db = client.stock
     db['KOSDAQ_BY_TRADED']
     db['KOSPI_BY_TRADED']

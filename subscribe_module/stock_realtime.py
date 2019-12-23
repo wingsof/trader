@@ -155,8 +155,8 @@ class Main:
                 self.is_running = False
                 self.world.stop()
                 self.bidask.stop()
-                print('INSERT DAILY DATA', flush=True)
-                stock_daily_insert.daily_insert_data()
+                #print('INSERT DAILY DATA', flush=True)
+                #stock_daily_insert.daily_insert_data()
 
 
 if __name__ == '__main__':
