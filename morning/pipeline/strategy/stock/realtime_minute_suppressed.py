@@ -42,6 +42,7 @@ class RealtimeMinuteSuppressed:
                 year, month, day, hour, minute = dt.year, dt.month, dt.day, dt.hour, dt.minute
                 if len(self.ticks) == 0:
                     logger.error('ticks len is 0', d['target'], current.minute, self.current_datetime.minute)
+                    self.ticks.append(d)
                 else:
                     start_price = self.ticks[0]['current_price']
                     if self.is_first_tick:
@@ -60,10 +61,11 @@ class RealtimeMinuteSuppressed:
                                 'stream': d['stream'],
                                 'target': d['target']}
                     self.ticks.clear()
+                    self.ticks.append(d) # This shoule be put before send event
                     self.ms.received([min_data])
                     self.current_datetime = d['date']
-
-            self.ticks.append(d)
+            else:
+                self.ticks.append(d)
 
     def finalize(self):
         self.ms.finalize()
