@@ -15,7 +15,7 @@ import db_info
 
 
 class ShortCollector:
-    SUBSCRIBE_PERIOD = 1
+    SUBSCRIBE_PERIOD = 6 # 1 minute
     def __init__(self, q):
         self.heart_beat = QTimer()
         self.queue = q
@@ -24,6 +24,8 @@ class ShortCollector:
         self.current_subscribe_codes = []
         self.last_loop_time = [0, 0]
         self.realtime_subscribers = []
+        self.prev_kospi_codes = []
+        self.prev_kosdaq_codes = []
         self.client = MongoClient(db_info.HOME_MONGO_ADDRESS)
 
     def network_check(self):
@@ -40,15 +42,41 @@ class ShortCollector:
             self.last_loop_time[1] = t.minute
             self.network_check()    
 
-    def time_check(self):
-        global current_subscribe_count
-        #print("Queue Size: ", self.queue.qsize())
+    def get_diff_codes(self):
         codes = []
-        while self.queue.qsize():
-            try:
-                codes = self.queue.get_nowait()
-            except:
-                break
+        cp =  Cp7043(Cp7043.KOSPI)
+        kospi_codes = []
+        cp.request(kospi_codes)
+
+        kosdaq_codes = []
+        cp =  Cp7043(Cp7043.KOSDAQ)
+        cp.request(kosdaq_codes)
+
+        codes.extend(kospi_codes)
+        codes.extend(kosdaq_codes)
+
+        if len(set(kospi_codes).difference(self.prev_kospi_codes)) > 0:
+            print('KOSPI CODE HAS DIFFERENCES')
+            d = {}
+            d['date'] = datetime.now()
+            for i, c in enumerate(kospi_codes):
+                d[str(i)] = c
+            db['KOSPI_BY_TRADED'].insert_one(d)
+            self.prev_kospi_codes = kospi_codes
+
+        if len(set(kosdaq_codes).difference(self.prev_kosdaq_codes)) > 0:
+            print('KOSDAQ CODE HAS DIFFERENCES')
+            d = {}
+            d['date'] = datetime.now()
+            for i, c in enumerate(kosdaq_codes):
+                d[str(i)] = c
+            db['KOSDAQ_BY_TRADED'].insert_one(d)
+            self.prev_kosdaq_codes = kosdaq_codes
+
+        return set(codes)
+
+    def time_check(self):
+        codes = self.get_diff_codes()
 
         self._loop_print()
         print('SUBSCRIBE COUNT', current_subscribe_count)
@@ -126,71 +154,19 @@ class Cp7043:
                 if len(retCode) >= Cp7043.MAX_CODE_COUNT:
                     print('break')
                     break
-        
  
         return True
 
 
-def start_short_code_collector(q):
-    last_minute = current_minute = datetime.now().minute
-    client = MongoClient(db_info.HOME_MONGO_ADDRESS)
-    db = client.stock
-    db['KOSDAQ_BY_TRADED']
-    db['KOSPI_BY_TRADED']
-
-    prev_kospi_codes = []
-    prev_kosdaq_codes = []
-    while True:
-        if last_minute != current_minute:
-            codes = []
-            cp =  Cp7043(Cp7043.KOSPI)
-            kospi_codes = []
-            cp.request(kospi_codes)
-
-            kosdaq_codes = []
-            cp =  Cp7043(Cp7043.KOSDAQ)
-            cp.request(kosdaq_codes)
-
-            codes.extend(kospi_codes)
-            codes.extend(kosdaq_codes)
-
-            q.put(codes)
-            last_minute = datetime.now().minute
-
-            if len(set(kospi_codes).difference(prev_kospi_codes)) > 0:
-                print('CODE HAS DIFFERENCES')
-                d = {}
-                d['date'] = datetime.now()
-                for i, c in enumerate(kospi_codes):
-                    d[str(i)] = c
-                db['KOSPI_BY_TRADED'].insert_one(d)
-                prev_kospi_codes = kospi_codes
-
-            if len(set(kosdaq_codes).difference(prev_kosdaq_codes)) > 0:
-                print('CODE HAS DIFFERENCES')
-                d = {}
-                d['date'] = datetime.now()
-                for i, c in enumerate(kosdaq_codes):
-                    d[str(i)] = c
-                db['KOSDAQ_BY_TRADED'].insert_one(d)
-                prev_kosdaq_codes = kosdaq_codes
-        else:
-            time.sleep(1)
-            current_minute = datetime.now().minute
-
-
 if __name__ == '__main__':
-    #time.sleep(60*3)
+    print("Start Short Strategy", flush=True)
+    time.sleep(60*3)
     current_subscribe_count = 0
     conn = connection.Connection()
     while not conn.is_connected():
         time.sleep(5)
     
-    q = Queue()
-    p = Process(target = start_short_code_collector, args=(q,))
-    p.start()
-    print("Short Strategy", flush=True)
-
+    print("Running Start", flush=True)
     
     app = QCoreApplication(sys.argv)
     sc = ShortCollector(q)
