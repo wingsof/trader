@@ -31,6 +31,6 @@ message_reader.start()
 while True:
     #stream_readwriter.request_stock_day_data(sock, 'A005930', date(2019, 12, 20), date(2019, 12, 20)) 
     print('send threading', threading.get_ident())
-    print(stream_readwriter.request_stock_day_data(message_reader, 'A005930', date(2019, 12, 20), date(2019, 12, 20)))
+    print(stream_readwriter.request_stock_day_data(message_reader, 'A005930', date(2019, 12, 24), date(2019, 12, 24)))
     print('send done', threading.get_ident())
     time.sleep(10)

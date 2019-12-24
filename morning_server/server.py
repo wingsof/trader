@@ -19,6 +19,7 @@ from morning.config import db
 
 
 app = Flask(__name__)
+app.debug = True
 collectors = []
 
 
@@ -32,6 +33,14 @@ def find_request_collector():
             return c
     return None
 
+
+def find_collector_by_id(msg_id):
+    for c in collectors:
+        if c['request_id'] == msg_id:
+            return c
+    return None
+
+
 def handle_collector(sock, header, body):
     print('HANDLE COLLECTOR', hex(threading.get_ident()))
     collectors.append({
@@ -39,8 +48,15 @@ def handle_collector(sock, header, body):
         'capability': body['capability'],
         'subscribe_count': 0,
         'request_pending': False,
+        'request_id': None,
         'request_socket': None
     })
+
+
+def response_handler(sock, header, body):
+    collector = find_collector_by_id(header['_id'])
+    collector['request_pending'] = False
+    stream_readwriter.write(collector['request_socket'], header, body)
 
 
 def handle_request(sock, header, body):
@@ -52,9 +68,9 @@ def handle_request(sock, header, body):
             break
 
     collector['request_socket'] = sock
+    collector['request_id'] = header['_id']
     stream_readwriter.write(collector['socket'], header, body)
-    msg = stream_readwriter.read(collector['socket'])
-    stream_readwriter.write(collector[sock], msg['header'], msg['body'])
+    
     """
 
     stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
@@ -66,8 +82,9 @@ def handle_request(sock, header, body):
         '$lte': datetime_to_intdate(until_datetime)}}))
     header['type'] = message.RESPONSE
     time.sleep(5)
-    """
+    
     stream_readwriter.write(sock, header, data)
+    """
     print('HANDLE REQUEST DONE', hex(threading.get_ident()))
 
 
@@ -93,7 +110,7 @@ def handle_subscribe(sock, header, body):
 def handle(sock, address):
     print('new connection', hex(threading.get_ident()))
     print('address', address)
-    stream_readwriter.dispatch_message(sock, handle_collector, handle_request, handle_subscribe)
+    stream_readwriter.dispatch_message(sock, handle_collector, handle_request, response_handler, handle_subscribe)
     
 
 @app.route('/')

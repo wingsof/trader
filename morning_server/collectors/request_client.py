@@ -9,8 +9,10 @@ from cybos_api import stock_chart
 
 
 def request_handler(sock, header, body):
+    print('request_handler')
     if header['method'] == message.DAY_DATA:
         _, data = stock_chart.get_day_period_data(body['code'], body['from'], body['until'])
+        print(data)
         header['type'] = message.RESPONSE
         stream_readwriter.write(sock, header, data)
 
@@ -28,6 +30,7 @@ if __name__ == '__main__':
     sock.connect(server_address)
     header = stream_readwriter.create_header(message.COLLECTOR, message.MARKET_STOCK, message.COLLECTOR_DATA)
     body = {'capability': message.CAPABILITY_REQUEST_RESPONSE | message.CAPABILITY_COLLECT_SUBSCRIBE}
+    stream_readwriter.write(sock, header, body)
     stream_readwriter.dispatch_message(sock, None, request_handler, subscribe_handler)
     
 

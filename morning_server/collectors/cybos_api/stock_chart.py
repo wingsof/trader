@@ -1,5 +1,5 @@
 import os, sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..' + os.sep + '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..' + os.sep + '..' + os.sep + '..')))
 
 import win32com.client
 from utils import time_converter
