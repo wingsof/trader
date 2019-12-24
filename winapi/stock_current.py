@@ -9,24 +9,9 @@ from winapi import config
 from pymongo import MongoClient
 
 class _CpEvent:
-    NONE = 0
-    BUY = 1
-    SELL = 2
-
-    PROFIT_MEET_PER = 1.103 # 110.3%
-
-    def set_params(self, obj, code, position, buy_price, sell_price, profit_e, bought_price, current_obj, db):
+    def set_params(self, obj, code, db):
         self.obj = obj
-        self.status = _CpEvent.NONE
         self.code = code
-        self.buy_price = buy_price
-        self.sell_price = sell_price
-        self.is_long = position
-        self.bought_price = bought_price
-        self.current_obj = current_obj
-        self.profit_expected = profit_e
-        self.highest_buy_after_hour = 0
-        self.lowest_sell_after_hour = 10000000
         self.db = db
 
     def OnReceived(self):
@@ -37,49 +22,18 @@ class _CpEvent:
 
         self.db[self.code].insert_one(d)
 
-        price = self.obj.GetHeaderValue(13)
-
-        if self.obj.GetHeaderValue(20) == ord('2') and self.obj.GetHeaderValue(3) <= 1520: # 09:00, 15:30
-            if self.status == _CpEvent.NONE:
-                if self.is_long:
-                    if price <= self.sell_price or price >= self.bought_price * _CpEvent.PROFIT_MEET_PER:
-                        self.status = _CpEvent.SELL
-                        self.current_obj.add_to_sell_cart(self.code)
-                else:
-                    if price >= self.buy_price:
-                        self.status = _CpEvent.BUY
-                        self.current_obj.add_to_buy_cart(self.code, self.profit_expected)
-            elif self.status == _CpEvent.BUY and price <= self.sell_price:
-                self.current_obj.cancel_to_buy_cart(self.code)
-
-        elif self.status != _CpEvent.NONE and self.obj.GetHeaderValue(20) == ord('5'): # 15:20-15:30
-            if self.status == _CpEvent.BUY and self.obj.GetHeaderValue(14) == ord('1'):
-                if price > self.highest_buy_after_hour:
-                    self.highest_buy_after_hour = price
-                    self.current_obj.set_buy_price(self.code, price)
-            elif self.status == _CpEvent.SELL and self.obj.GetHeaderValue(14) == ord('2'):
-                if price < self.lowest_sell_after_hour:
-                    self.lowest_sell_after_hour = price
-                    self.current_obj.set_sell_price(self.code, price)
-
 
 class _StockRealtime:
-    def __init__(self, code, is_long, info, bought_price, current_obj, db):
+    def __init__(self, code, current_obj, db):
         self.obj = win32com.client.Dispatch('DsCbo1.StockCur')
         self.code = code
-        self.is_long = is_long
-        self.info = info 
         self.current_obj = current_obj
-        self.bought_price = bought_price
         self.db = db
 
     def subscribe(self):
         handler = win32com.client.WithEvents(self.obj, _CpEvent)
         self.obj.SetInputValue(0, self.code)
-        handler.set_params(self.obj, self.code, self.is_long, 
-                self.info['prev_close'] + self.info['prev_close'] * self.info['buy_rate'],
-                self.info['prev_close'] - self.info['prev_close'] * self.info['sell_rate'],
-                self.info['profit_expected'], self.bought_price, self.current_obj, self.db)
+        handler.set_params(self.obj, self.code, self.db)
         self.obj.Subscribe()
 
     def unsubscribe(self):
@@ -87,25 +41,15 @@ class _StockRealtime:
 
 
 class StockCurrent:
-    def __init__(self, code_list, long_codes, speculation, long_list):
+    def __init__(self, code_list):
         self.code_list = code_list
-        self.long_codes = long_codes
         self.realtime_bucket = []
         self.buy_dict = {}
         self.sell_dict = {}
-        self.long_list = long_list
         self.client = MongoClient(config.MONGO_SERVER)
 
         for code in self.code_list:
-            is_long = False
-            bought_price = 0
-            for l in self.long_list:
-                if l['code'] == code:
-                    is_long = True
-                    bought_price = l['price']
-
-            row = speculation[speculation['code'] == code].iloc[0]
-            self.realtime_bucket.append(_StockRealtime(code, is_long, row, bought_price, self, self.client.stock))
+            self.realtime_bucket.append(_StockRealtime(code, self, self.client.stock))
 
     def stop(self):
         for r in self.realtime_bucket:

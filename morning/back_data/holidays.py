@@ -31,7 +31,7 @@ def is_holidays(date):
 def get_yesterday(today):
     today = today if today.__class__.__name__ == 'date' else today.date()
 
-    yesterday = today
+    yesterday = today - timedelta(days=1)
     while is_holidays(yesterday):
         yesterday -= timedelta(days=1)
 

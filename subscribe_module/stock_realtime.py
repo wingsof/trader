@@ -10,7 +10,7 @@ import stock_code
 import time
 import bidask_realtime
 import stock_daily_insert
-
+import db
 
 class CpWorldCur:
     def set_params(self, client, db_conn):
@@ -91,7 +91,7 @@ class WorldSubscribe:
                             'CZ#399106', 'COMP', 'HK#HS', 'HSCE',
                             'GR#DAX', 'JP#NI225', 'SHANG', 'SPX', 'EDNH', 'SOX', 'ENXH']
 
-        self.client = MongoClient('mongodb://192.168.0.22:27017')
+        self.client = MongoClient(db.HOME_MONGO_ADDRESS)
         self.is_running = False
 
     def start(self):
@@ -155,8 +155,8 @@ class Main:
                 self.is_running = False
                 self.world.stop()
                 self.bidask.stop()
-                print('INSERT DAILY DATA', flush=True)
-                stock_daily_insert.daily_insert_data()
+                #print('INSERT DAILY DATA', flush=True)
+                #stock_daily_insert.daily_insert_data()
 
 
 if __name__ == '__main__':

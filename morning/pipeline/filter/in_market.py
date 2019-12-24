@@ -16,7 +16,11 @@ class InMarketFilter:
         if len(self.next_elements) > 0:
             filtered_datas = []
             for data in datas:
+                d = data['date']
+                in_time =  (d.hour >= 9 and d.minute > 2) and (d.hour <=15 and d.minute < 20)
                 if data['market_type'] == dt.MarketType.IN_MARKET:
+                    filtered_datas.append(data)
+                elif data['market_type'] == dt.MarketType.PRE_MARKET_EXP and in_time: # VI
                     filtered_datas.append(data)
             
             if len(filtered_datas):

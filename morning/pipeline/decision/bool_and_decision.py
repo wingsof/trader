@@ -6,7 +6,7 @@ class BoolAndDecision:
         self.and_input_count = and_input_count
         self.trade_count = trade_count
         self.decision = {}
-        self.queue = None
+        self.runner_callback = None
         self.bought = False
         self.bidask_table = []
 
@@ -16,11 +16,11 @@ class BoolAndDecision:
     def set_output(self, next_ele):
         pass
 
-    def set_environ(self, queue):
-        self.queue = queue
+    def set_environ(self, runner_callback):
+        self.runner = runner_callback
 
     def received(self, datas):
-        if self.queue is None or len(datas) == 0:
+        if self.runner is None or len(datas) == 0:
             logger.warning(self.__class__.__name__, 'No queue error')
             return
         elif not self.bought and self.trade_count == 0:
@@ -53,13 +53,16 @@ class BoolAndDecision:
             target, date = datas[-1]['target'], datas[-1]['date']
             strategy = datas[-1]['name']
 
-            # currently not allow duplicated trade
             if not self.bought and result:
-                self.queue.put_nowait({ 'target': target, 'date': date, 'stream': stream_name,
-                                            'strategy': strategy, 'result': result, 'value': value})
+                msg = { 'target': target, 'date': date, 'stream': stream_name,
+                        'strategy': strategy, 'result': result, 'value': value}
+                self.runner(msg)
                 self.bought = True
             elif self.bought and not result:
+                msg = { 'target': target, 'date': date, 'stream': stream_name,
+                        'strategy': strategy, 'result': result, 'value': value}
+                if 'highest' in datas[0]:
+                    msg['highest'] = datas[0]['highest']
                 self.bought = False
-                self.queue.put_nowait({ 'target': target, 'date': date, 'stream': stream_name,
-                                        'strategy': strategy, 'result': result, 'value': value})
                 self.trade_count -= 1
+                self.runner(msg)

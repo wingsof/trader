@@ -7,7 +7,7 @@ from PyQt5.QtCore import QCoreApplication, QTimer
 
 import connection
 import stock_code
-
+import db_info
 
 
 class CpEvent:
@@ -43,7 +43,7 @@ class StockRealtime:
 
 class BidAsk:
     def __init__(self):
-        self.client = MongoClient('mongodb://192.168.0.22:27017')
+        self.client = MongoClient(db_info.HOME_MONGO_ADDRESS)
         self.is_running = False
 
 

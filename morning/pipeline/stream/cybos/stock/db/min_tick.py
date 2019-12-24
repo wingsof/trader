@@ -5,6 +5,7 @@ from morning.logging import logger
 from datetime import datetime
 from morning.back_data import fetch_stock_data
 
+
 class MinTick:
     def __init__(self, date, is_main_clock=True):
         self.is_main_clock = is_main_clock
@@ -17,7 +18,9 @@ class MinTick:
             self.next_elements.finalize()
 
     def set_target(self, target):
-        code = target.split(':')[1]
+        code = target
+        if ':' in target:
+            code = target.split(':')[1]
         self.target_code = code
         self.data = fetch_stock_data.get_day_minute_period_data_force_from_db(code, self.date, self.date)
         #logger.print(target, 'Length', len(self.data))

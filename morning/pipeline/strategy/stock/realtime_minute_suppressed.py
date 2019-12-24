@@ -11,7 +11,9 @@ class RealtimeMinuteSuppressed:
         self.ms_wrapper = self._MinuteSuppressedWrapper(self.signal_received)
         self.ms.set_output(self.ms_wrapper)
         self.current_datetime = None
-        self.tick_prices = []
+        self.ticks = []
+        self.is_first_tick = True
+        self.is_vi = False
 
     def add_graph(self, _):
         pass
@@ -30,26 +32,43 @@ class RealtimeMinuteSuppressed:
             if self.current_datetime is None:
                 self.current_datetime = current
 
-            if current - self.current_datetime > timedelta(minutes=1):
-                dt = self.current_datetime
-                self.tick_prices.append(d['current_price'])
-                year, month, day, hour, minute = dt.year, dt.month, dt.day, dt.hour, dt.minute
-                min_data = {'date': datetime(year, month, day, hour, minute), 
-                            'cum_buy_volume': d['cum_buy_volume'],
-                            'cum_sell_volume': d['cum_sell_volume'], 
-                            'close_price': d['current_price'], 
-                            'start_price': self.tick_prices[0],
-                            'highest_price': max(self.tick_prices),
-                            'lowest_price': min(self.tick_prices),
-                            'stream': d['stream'],
-                            'target': d['target']}
-                self.tick_prices.clear()
-                self.ms.received([min_data])
-                self.current_datetime = d['date']
+            if (current.hour >= 9 and current.minute > 2) and (current.hour <=15 and current.minute < 20) and d['market_type'] == ord('1'):
+                self.is_vi = True
             else:
-                self.tick_prices.append(d['current_price'])
+                self.is_vi = False
+
+            if current.minute != self.current_datetime.minute:
+                dt = self.current_datetime
+                year, month, day, hour, minute = dt.year, dt.month, dt.day, dt.hour, dt.minute
+                if len(self.ticks) == 0:
+                    logger.error('ticks len is 0', d['target'], current.minute, self.current_datetime.minute)
+                    self.ticks.append(d)
+                else:
+                    start_price = self.ticks[0]['current_price']
+                    if self.is_first_tick:
+                        self.is_first_tick = False
+                        start_price = self.ticks[0]['current_price'] - self.ticks[0]['yesterday_diff']
+
+                    min_data = {'date': datetime(year, month, day, hour, minute),
+                                'volume': sum([t['volume'] for t in self.ticks]),
+                                'cum_buy_volume': self.ticks[-1]['cum_buy_volume'], # currently just use current vol
+                                'cum_sell_volume': self.ticks[-1]['cum_sell_volume'], # currently just use current vol
+                                'close_price': self.ticks[-1]['current_price'],
+                                'start_price': start_price,
+                                'highest_price': max([t['current_price'] for t in self.ticks]),
+                                'lowest_price': min([t['current_price'] for t in self.ticks]),
+                                'VI': self.is_vi,
+                                'stream': d['stream'],
+                                'target': d['target']}
+                    self.ticks.clear()
+                    self.ticks.append(d) # This shoule be put before send event
+                    self.ms.received([min_data])
+                    self.current_datetime = d['date']
+            else:
+                self.ticks.append(d)
 
     def finalize(self):
+        self.ms.finalize()
         if self.next_element:
             self.next_element.finalize()
 
@@ -60,3 +79,6 @@ class RealtimeMinuteSuppressed:
 
         def received(self, msg):
             self.callback(msg)
+
+        def finalize(self):
+            pass

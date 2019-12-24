@@ -90,17 +90,10 @@ class Trader:
             if c not in self.code_list:
                 if not stock_code.is_there_warning(c):
                     self.code_list.append(c)
-                else:
-                    Store.RecordStateTransit('NONE', 'NONE', c + ' IS WARNING STATUS, Handle it manually')
-
 
     def subscribe(self):
         print('TraderServer Subscribe START', flush=True)
-        self.subscriber = stock_current.StockCurrent(
-                self.code_list, 
-                self.long_codes,
-                self.speculation.get_speculation(self.time_manager.get_today(), self.code_list),
-                self.long_manifest.get_long_list(False))
+        self.subscriber = stock_current.StockCurrent(self.code_list)
         self.subscriber.start()
         print('TraderServer Subscribe DONE', flush=True)
 
@@ -139,45 +132,18 @@ class Trader:
 
         if self.status == Trader.NOT_RUNNING: # ready is done when first running
             if self.time_manager.is_runnable():
-                Store.RecordStateTransit('NOT_RUNNING', 'RUNNING')
                 self.status = Trader.RUNNING
                 self.subscribe()
             else:
-                Store.RecordStateTransit('NOT_RUNNING', 'WAITING')
                 self.status = Trader.WAITING
         elif self.status == Trader.WAITING:
             if self.time_manager.is_runnable():
-                Store.RecordStateTransit('WAITING', 'RUNNING')
                 if not self.ready():
-                    Store.RecordStateTransit('WAITING', 'RUNNING', 'READY ERROR')
                     sys.exit(1)
                 self.status = Trader.RUNNING
                 self.subscribe()
         elif self.status == Trader.RUNNING:
-            if self.time_manager.is_order_collect_time():
-                Store.RecordStateTransit('RUNNING', 'ORDER_COLLECT')
-                self.status = Trader.ORDER_COLLECT
-
-        elif self.status == Trader.ORDER_COLLECT:
-            print('ORDER COLLECT STATUS', TimeManager.now(), flush=True)
-            if self.time_manager.is_order_start_time():
-                print('ORDER COLLECT TO START', TimeManager.now(), flush=True)
-                Store.RecordStateTransit('ORDER_COLLECT', 'ORDER_START')
-                self.status = Trader.ORDER_START
-                self.order = order.Order(self.long_manifest.get_long_list(True), 
-                        self.account_num, self.account_type)
-
-        elif self.status == Trader.ORDER_START:
-            Store.RecordStateTransit('ORDER_START', 'ORDER_WAITING')
-            self.order.process_buy_order(self.subscriber.get_buy_dict())
-            self.order.process_sell_order(self.subscriber.get_sell_dict())
-            self.status = Trader.ORDER_WAITING    
-
-        elif self.status == Trader.ORDER_WAITING:
-            if self.time_manager.is_order_wait_done_time():
-                Store.RecordStateTransit('ORDER_WAITING', 'WAITING')
-                self.unsubscribe()
-                self.status = Trader.WAITING
+            pass
 
 
 if __name__ == '__main__':

@@ -11,3 +11,7 @@ tmp
 .pytest*
 framework_test
 *.log
+.vscode
+*.xlsx
+morning/config/db.py
+auto/auto.py

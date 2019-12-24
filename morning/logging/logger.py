@@ -1,5 +1,6 @@
 import logging
 from multiprocessing import Queue, Process
+import threading
 import builtins
 
 
@@ -19,7 +20,7 @@ def _get_msg_to_string(msg_tuple):
 def _put_msg(loglevel, msg):
     global _log_queue
     if _log_queue:
-        _log_queue.put_nowait((loglevel, '[' + _log_prefix + ']\t' + _get_msg_to_string(msg)))
+        _log_queue.put_nowait((loglevel, '[' + _log_prefix + ', ' + hex(threading.get_ident()) + ']\t' + _get_msg_to_string(msg)))
     else:
         builtins.print(msg, flush=True)
 

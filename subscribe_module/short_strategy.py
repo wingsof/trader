@@ -11,11 +11,11 @@ import stock_current_realtime
 
 from multiprocessing import Process, Queue
 from PyQt5.QtCore import QCoreApplication, QTimer
-
+import db_info
 
 
 class ShortCollector:
-    SUBSCRIBE_PERIOD = 1
+    SUBSCRIBE_PERIOD = 6 # 1 minute
     def __init__(self, q):
         self.heart_beat = QTimer()
         self.queue = q
@@ -24,7 +24,9 @@ class ShortCollector:
         self.current_subscribe_codes = []
         self.last_loop_time = [0, 0]
         self.realtime_subscribers = []
-        self.client = MongoClient('mongodb://192.168.0.22:27017')
+        self.prev_kospi_codes = []
+        self.prev_kosdaq_codes = []
+        self.client = MongoClient(db_info.HOME_MONGO_ADDRESS)
 
     def network_check(self):
         conn = connection.Connection()
@@ -40,16 +42,47 @@ class ShortCollector:
             self.last_loop_time[1] = t.minute
             self.network_check()    
 
-    def time_check(self):
-        #print("Queue Size: ", self.queue.qsize())
+    def get_diff_codes(self):
         codes = []
-        while self.queue.qsize():
-            try:
-                codes = self.queue.get_nowait()
-            except:
-                break
+        cp =  Cp7043(Cp7043.KOSPI)
+        kospi_codes = []
+        cp.request(kospi_codes)
+
+        kosdaq_codes = []
+        cp =  Cp7043(Cp7043.KOSDAQ)
+        cp.request(kosdaq_codes)
+
+        codes.extend(kospi_codes)
+        codes.extend(kosdaq_codes)
+
+        if len(set(kospi_codes).difference(self.prev_kospi_codes)) > 0:
+            print('KOSPI CODE HAS DIFFERENCES')
+            d = {}
+            d['date'] = datetime.now()
+            for i, c in enumerate(kospi_codes):
+                d[str(i)] = c
+            db['KOSPI_BY_TRADED'].insert_one(d)
+            self.prev_kospi_codes = kospi_codes
+
+        if len(set(kosdaq_codes).difference(self.prev_kosdaq_codes)) > 0:
+            print('KOSDAQ CODE HAS DIFFERENCES')
+            d = {}
+            d['date'] = datetime.now()
+            for i, c in enumerate(kosdaq_codes):
+                d[str(i)] = c
+            db['KOSDAQ_BY_TRADED'].insert_one(d)
+            self.prev_kosdaq_codes = kosdaq_codes
+
+        return set(codes)
+
+    def time_check(self):
+        codes = self.get_diff_codes()
 
         self._loop_print()
+        print('SUBSCRIBE COUNT', current_subscribe_count)
+        if current_subscribe_count >= 400:
+            print('SUBSCRIBE COUNT REACH TO MAXIMUM')
+            return
 
         code_diff = set(codes).difference(self.current_subscribe_codes)
         for code in code_diff:
@@ -60,25 +93,31 @@ class ShortCollector:
             self.realtime_subscribers.append(stock_current)
             bidask.subscribe()
             stock_current.subscribe()
+            current_subscribe_count += 2
 
         self.current_subscribe_codes.extend(list(code_diff))
 
 
 class Cp7043:
     MAX_CODE_COUNT = 20
+    KOSPI = 0
+    KOSDAQ = 1
 
-    def __init__(self):
+    def __init__(self, market):
         self.objRq = win32com.client.Dispatch("CpSysDib.CpSvrNew7043")
-        self.objRq.SetInputValue(0, ord('2')) # 코스닥
+        if market == Cp7043.KOSPI:
+            self.objRq.SetInputValue(0, ord('1')) # 코스닥
+        else:
+            self.objRq.SetInputValue(0, ord('2')) # 코스닥
         # 1 값에 값을 넣는 경우, 상승한 종목만 걸러냄
-        #self.objRq.SetInputValue(1, ord('2'))  # 상승()
+        self.objRq.SetInputValue(1, ord('2'))  # 상승()
         self.objRq.SetInputValue(2, ord('1'))  # 당일
         self.objRq.SetInputValue(3, 61)  # 거래대금 상위순
         self.objRq.SetInputValue(4, ord('2'))  # 관리 종목 포함
         self.objRq.SetInputValue(5, ord('0'))  # 거래량 전체
         self.objRq.SetInputValue(6, ord('0'))  # '표시 항목 선택 - '0': 시가대비
         self.objRq.SetInputValue(7, 0)  #  등락율 시작
-        self.objRq.SetInputValue(8, 30)  # 등락율 끝
+        self.objRq.SetInputValue(8, 15)  # 등락율 끝
  
     def rq7043(self, retcode):
         self.objRq.BlockRequest()
@@ -115,51 +154,20 @@ class Cp7043:
                 if len(retCode) >= Cp7043.MAX_CODE_COUNT:
                     print('break')
                     break
-        
  
         return True
 
 
-def start_short_code_collector(q):
-    last_minute = current_minute = datetime.now().minute
-    client = MongoClient('mongodb://192.168.0.22:27017')
-    db = client.stock
-    db['KOSDAQ_BY_TRADED']
-
-    prev_codes = []
-    while True:
-        if last_minute != current_minute:
-            cp =  Cp7043()
-            codes = []
-            cp.request(codes)
-            q.put(codes)
-            last_minute = datetime.now().minute
-
-            if len(set(codes).difference(prev_codes)) > 0:
-                print('CODE HAS DIFFERENCES')
-                d = {}
-                d['date'] = datetime.now()
-                for i, c in enumerate(codes):
-                    d[str(i)] = c
-                db['KOSDAQ_BY_TRADED'].insert_one(d)
-                prev_codes = codes
-        else:
-            time.sleep(1)
-            current_minute = datetime.now().minute
-
-
 if __name__ == '__main__':
-    #time.sleep(60*3)
-
+    print("Start Short Strategy", flush=True)
+    time.sleep(60*3)
+    current_subscribe_count = 0
     conn = connection.Connection()
     while not conn.is_connected():
         time.sleep(5)
     
-    q = Queue()
-    p = Process(target = start_short_code_collector, args=(q,))
-    p.start()
-    print("Short Strategy", flush=True)
-
+    print("Running Start", flush=True)
+    
     app = QCoreApplication(sys.argv)
     sc = ShortCollector(q)
     app.exec()

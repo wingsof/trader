@@ -1,3 +1,6 @@
+import os, sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..' + os.sep + '..')))
+
 import win32com.client
 from utils import time_converter
 from datetime import datetime, timedelta
@@ -67,3 +70,8 @@ def get_min_period_data(code, startdate, enddate):
 
     l, result[len(result):len(result)] = get_period_data_raw(code, pivot, enddate)
     return len(result), result
+
+
+if __name__ == '__main__':
+
+    print(get_day_period_data('A000250', datetime(2019, 12, 20), datetime(2019, 12, 20)))

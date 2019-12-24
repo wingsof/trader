@@ -8,30 +8,12 @@ import signal
 from morning.logging import logger
 
 
-class _RunnerThread(QThread):
-    def __init__(self, running_function):
-        super().__init__()
-        self.running_function = running_function
-
-    def run(self):
-        import platform
-        if platform.system() == 'Windows':
-            pass
-            #import pythoncom
-            #pythoncom.CoInitialize()
-
-        self.running_function()
-
-
 def morning_launcher(allow_interrupt, running_function):
     app = QCoreApplication(sys.argv)
     logger.setup_main_log()
     if allow_interrupt:
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-    #thread = _RunnerThread(running_function)
-    #thread.finished.connect(app.quit)
-    #thread.start()
     running_function()
 
     app.exec()

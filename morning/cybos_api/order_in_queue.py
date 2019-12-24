@@ -7,6 +7,7 @@ import time
 
 from morning.logging import logger
 from morning.cybos_api import connection
+from pywintypes import com_error
 
 
 class OrderInQueue:
@@ -22,8 +23,12 @@ class OrderInQueue:
     def _td5339(self):
         orders = []
         while True:
-            ret = self.obj.BlockRequest()
-            print(ret)
+            try:
+                ret = self.obj.BlockRequest()
+            except com_error:
+                logger.error('TD5339 BlockRequest Error')
+                return []
+
             if self.obj.GetDibStatus() != 0:
                 logger.error('TD5339 failed')
                 return []
@@ -68,6 +73,9 @@ class OrderInQueue:
 
 if __name__ == '__main__':
     from morning.cybos_api.trade_util import TradeUtil
+    from datetime import datetime
     tu = TradeUtil()
     oiq = OrderInQueue(tu.get_account_number(), tu.get_account_type())
-    print(oiq.request())
+    for i in range(100):
+        print(datetime.now(), oiq.request())
+    

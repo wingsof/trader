@@ -14,21 +14,32 @@ class DatabaseTick:
         self.next_elements = None
         self.save_to_excel = False
         self.target_code = ''
-
-    def is_acceptable_target(self, code):
-        return code.startswith('cybos:A')
+        self.data = []
 
     def set_save_to_excel(self, is_save):
         self.save_to_excel = is_save
 
     def set_target(self, target):
-        code = target.split(':')[1]
+        code = target
+        if ':' in target:
+            code = target.split(':')[1]
         self.target_code = code
         stock = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
-        
+
         cursor = stock[code].find({'date': {'$gte':self.from_datetime, '$lte': self.until_datetime}})
         self.data = list(cursor)
-        logger.print(target, 'Length', len(self.data))
+        """
+        i = 0
+        while True:
+            cursor = stock[code].find({'date': {'$gte':self.from_datetime, '$lte': self.until_datetime}}).skip(i * 500).limit(500)
+            self.data.extend(list(cursor))
+            #print(len(self.data))
+            if cursor.count(with_limit_and_skip=True) < 500:
+                break
+            i += 1
+        """
+
+        #logger.print(target, 'Length', len(self.data))
         if len(self.data) > 0 and self.check_whole_data:
             df = pd.DataFrame(self.data)
 
@@ -36,7 +47,10 @@ class DatabaseTick:
                 df.to_excel(code + '_from_db.xlsx')
 
             market = df['20']
-            if len(market[market == 49]) > 10 and len(market[market == 50]) > 100 and len(market[market == 53]) > 10:
+            has_enough_market_type = len(market[market == 49]) > 10 and len(market[market == 50]) > 100 and len(market[market == 53]) > 10
+            start_time = df['3']
+            has_time_scope = len(start_time[start_time < 900]) > 10 and len(start_time[start_time > 1520]) > 10
+            if has_enough_market_type and has_time_scope:
                 pass
             else:
                 self.data = []

@@ -22,13 +22,15 @@ class CybosStockTick:
     CUM_AMOUNT = '10'
     CURRENT_PRICE = '13'
     BUY_OR_SELL = '14'
-    CUM_SELL_VOLUME = '15'
-    CUM_BUY_VOLUME = '16'
+    CUM_SELL_VOLUME_BY_PRICE = '15' # 체결가 방식
+    CUM_BUY_VOLUME_BY_PRICE = '16'
     VOLUME = '17'
     TIME_WITH_SEC = '18'
     MARKET_TYPE_EXP = '19'
-    MARKET_TYPE = '20'
+    MARKET_TYPE = '20' # 장중에 49 ('1') 나오는 경우 VI 발동 2분동안
     OUT_TIME_VOLUME = '21'
+    CUM_SELL_VOLUME = '27'  # 호가 방식
+    CUM_BUY_VOLUME = '28'
 
 
 class CybosStockBidAskTick:
