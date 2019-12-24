@@ -3,6 +3,7 @@
 REQUEST='request'
 RESPONSE='response'
 SUBSCRIBE='subscribe'
+COLLECTOR='collector'
 
 MARKET_STOCK = 'stock'
 
@@ -10,3 +11,8 @@ MARKET_STOCK = 'stock'
 DAY_DATA = 'day_data'
 STOCK_DATA = 'stock_realtime'
 BACK_DATA = 'stock_backdata'
+
+
+CAPABILITY_REQUEST_RESPONSE=1
+CAPABILITY_COLLECT_SUBSCRIBE=2
+CAPABILITY_TRADE=4

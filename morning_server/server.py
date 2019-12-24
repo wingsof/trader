@@ -19,13 +19,24 @@ from morning.config import db
 
 
 app = Flask(__name__)
+collectors = []
 
 
 def datetime_to_intdate(dt):
     return dt.year * 10000 + dt.month * 100 + dt.day
 
 
-def handle_request(socket, header, body):
+def handle_collector(sock, header, body):
+    print('HANDLE COLLECTOR', hex(threading.get_ident()))
+    collectors.append({
+        'socket': sock,
+        'capability': body['capability'],
+        'subscribe_count': 0,
+        'request_pending': False
+    })
+
+
+def handle_request(sock, header, body):
     print('HANDLE REQUEST', hex(threading.get_ident()))
     stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
     code = body['code']
@@ -36,11 +47,11 @@ def handle_request(socket, header, body):
         '$lte': datetime_to_intdate(until_datetime)}}))
     header['type'] = message.RESPONSE
     time.sleep(5)
-    stream_readwriter.write(socket, header, data)
+    stream_readwriter.write(sock, header, data)
     print('HANDLE REQUEST DONE', hex(threading.get_ident()))
 
 
-def deliver_stream(code, socket, header):
+def deliver_stream(code, sock, header):
     # First find whether code is already subscribing
     # Otherwise find subscibe server to start new stream
     stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
@@ -49,20 +60,20 @@ def deliver_stream(code, socket, header):
         '$lte': datetime(2019, 12, 24)}}))
 
     for d in data:
-        stream_readwriter.write(socket, header, d)
+        stream_readwriter.write(sock, header, d)
         time.sleep(1)
 
 
-def handle_subscribe(socket, header, body):
+def handle_subscribe(sock, header, body):
     print('HANDLE SUBSCRIBE', hex(threading.get_ident()))
     code = body['code']
-    gevent.spawn(deliver_stream, code, socket, header)
+    gevent.spawn(deliver_stream, code, sock, header)
 
 
-def handle(socket, address):
+def handle(sock, address):
     print('new connection', hex(threading.get_ident()))
     print('address', address)
-    stream_readwriter.dispatch_message(socket, handle_request, handle_subscribe)
+    stream_readwriter.dispatch_message(sock, handle_collector, handle_request, handle_subscribe)
     
 
 @app.route('/')
