@@ -6,7 +6,7 @@ import pickle
 import gevent
 from gevent.event import Event
 import threading
-
+import socket
 
 READ_PACKET_SIZE=32768
 HEADER_SIZE=8
@@ -83,13 +83,13 @@ def read(sock, full_msg=b'', new_msg=True, header_len=0):
     while True:
         try:
             msg = sock.recv(READ_PACKET_SIZE)
-        except socker.error as e:
+        except socket.error as e:
             print('read socket error', e)
             raise
 
         if len(msg) == 0:
             print('Client disconnected')
-            raise 
+            raise Exception()
 
         #print('receive', len(msg))
         full_msg += msg
@@ -130,11 +130,11 @@ def dispatch_message(sock, collector_handler = None, request_handler=None, subsc
             break
 
         header_type = packet['header']['type']
-        if header_type == message.REQUEST:
+        if header_type == message.REQUEST and request_handler is not None:
             request_handler(sock, packet['header'], packet['body'])
-        elif header_type == message.SUBSCRIBE:
+        elif header_type == message.SUBSCRIBE and subscribe_handler is not None:
             subscribe_handler(sock, packet['header'], packet['body'])
-        elif header_type == message.COLLECTOR:
+        elif header_type == message.COLLECTOR and collector_handler is not None:
             collector_handler(sock, packet['header'], packet['body'])
         else:
             print('Unknown header type', packet['header'])

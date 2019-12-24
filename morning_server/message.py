@@ -1,4 +1,5 @@
-
+CLIENT_SOCKET_PORT = 27019
+SERVER_IP = '192.168.0.22'
 
 REQUEST='request'
 RESPONSE='response'
@@ -11,6 +12,7 @@ MARKET_STOCK = 'stock'
 DAY_DATA = 'day_data'
 STOCK_DATA = 'stock_realtime'
 BACK_DATA = 'stock_backdata'
+COLLECTOR_DATA = 'collector_data'
 
 
 CAPABILITY_REQUEST_RESPONSE=1

@@ -26,18 +26,37 @@ def datetime_to_intdate(dt):
     return dt.year * 10000 + dt.month * 100 + dt.day
 
 
+def find_request_collector():
+    for c in collectors:
+        if c['capability'] | message.CAPABILITY_REQUEST_RESPONSE and not c['request_pending']:
+            return c
+    return None
+
 def handle_collector(sock, header, body):
     print('HANDLE COLLECTOR', hex(threading.get_ident()))
     collectors.append({
         'socket': sock,
         'capability': body['capability'],
         'subscribe_count': 0,
-        'request_pending': False
+        'request_pending': False,
+        'request_socket': None
     })
 
 
 def handle_request(sock, header, body):
     print('HANDLE REQUEST', hex(threading.get_ident()))
+    collector = None
+    while True:
+        collector = find_request_collector()
+        if collector is not None:
+            break
+
+    collector['request_socket'] = sock
+    stream_readwriter.write(collector['socket'], header, body)
+    msg = stream_readwriter.read(collector['socket'])
+    stream_readwriter.write(collector[sock], msg['header'], msg['body'])
+    """
+
     stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
     code = body['code']
     from_datetime = body['from']
@@ -47,6 +66,7 @@ def handle_request(sock, header, body):
         '$lte': datetime_to_intdate(until_datetime)}}))
     header['type'] = message.RESPONSE
     time.sleep(5)
+    """
     stream_readwriter.write(sock, header, data)
     print('HANDLE REQUEST DONE', hex(threading.get_ident()))
 
@@ -81,7 +101,7 @@ def index():
     return 'hello world'
 
 
-server = StreamServer(('127.0.0.1', 27019), handle)
+server = StreamServer((message.SERVER_IP, message.CLIENT_SOCKET_PORT), handle)
 server.start()
 wsgi_server = pywsgi.WSGIServer(('127.0.0.1', 5000), app)
 wsgi_server.serve_forever()
