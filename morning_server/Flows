@@ -1,0 +1,26 @@
+
+
+
+
+
+=============== TODO ==================
+* VBox always turn on except for weekday 5 am ~ 7 am
+* Subscribe model (add a queue to know who is subscribing and return it)
+* Subscribe - stop subscribe when no one is listening
+* Websocket client and Tcp client can be clients
+* Caching data for request using mongodb
+* Simulation
+
+
+=============== DONE ==================
+
+
+
+
+
+============== Consider ===============
+
+
+
+
+============== Message Definition ============
