@@ -13,6 +13,7 @@ import threading
 import stream_readwriter
 import time
 import gevent
+import virtualbox
 
 import message
 from morning.config import db
@@ -20,7 +21,9 @@ from morning.config import db
 
 app = Flask(__name__)
 app.debug = True
+VBOX_CHECK_INTERVAL = 60 # 1 minute
 collectors = []
+subscribe_clients = dict()
 
 
 def datetime_to_intdate(dt):
@@ -107,10 +110,13 @@ def handle_subscribe(sock, header, body):
     gevent.spawn(deliver_stream, code, sock, header)
 
 
+def handle_subscribe_response(sock, header, body):
+    pass
+
 def handle(sock, address):
     print('new connection', hex(threading.get_ident()))
     print('address', address)
-    stream_readwriter.dispatch_message(sock, handle_collector, handle_request, response_handler, handle_subscribe)
+    stream_readwriter.dispatch_message(sock, handle_collector, handle_request, response_handler, handle_subscribe, handle_subscribe_response)
     
 
 @app.route('/')
@@ -118,7 +124,24 @@ def index():
     return 'hello world'
 
 
+def vbox_control():
+    vbox_on = False
+    while True:
+        now = datetime.now()
+        year, month, day = now.year, now.month, now.day
+        is_turn_off_time = datetime(year, month, day, 5) <= now <= datetime(year, month, day, 7)
+        if vbox_on and is_turn_off_time:
+            vbox_on = False
+        elif not vbox_on and not is_turn_off_time:
+            vbox_on = True
+
+
+
+
 server = StreamServer((message.SERVER_IP, message.CLIENT_SOCKET_PORT), handle)
 server.start()
+
+gevent.Greenlet.spawn(vbox_control)
+
 wsgi_server = pywsgi.WSGIServer(('127.0.0.1', 5000), app)
 wsgi_server.serve_forever()

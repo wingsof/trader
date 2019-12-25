@@ -5,6 +5,7 @@ REQUEST='request'
 RESPONSE='response'
 SUBSCRIBE='subscribe'
 COLLECTOR='collector'
+SUBSCRIBE_RESPONSE='sresponse'
 
 MARKET_STOCK = 'stock'
 
