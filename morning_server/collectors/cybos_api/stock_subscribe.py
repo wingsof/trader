@@ -12,8 +12,7 @@ class _CpEvent:
         d = {}
         for i in range(29):
             d[str(i)] = self.obj.GetHeaderValue(i)
-        d['code'] = self.code
-        self.filter_callback(self.sock, [d])
+        self.filter_callback(self.sock, self.code, [d])
 
 
 class _StockRealtime:

@@ -21,13 +21,15 @@ def request_handler(sock, header, body):
         stream_readwriter.write(sock, header, data)
 
 
-def handle_stock_subscribe(sock ,datas):
+def handle_stock_subscribe(sock, code, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.STOCK_DATA)
+    header['code'] = code
     stream_readwriter.write(sock, header, datas)
 
 
-def handle_bidask_subscribe(sock, datas):
+def handle_bidask_subscribe(sock, code, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.BIDASK_DATA)
+    header['code'] = code
     stream_readwriter.write(sock, header, datas)
 
 
@@ -36,8 +38,8 @@ def request_trade_handler(sock, header, body):
 
 
 def subscribe_handler(sock, header, body):
+    code = header['code']
     if header['method'] == message.STOCK_DATA:
-        code = body['code']
         if code in subscribe_stock:
             print('Already subscribe stock', code)
         else:
@@ -45,12 +47,10 @@ def subscribe_handler(sock, header, body):
             subscribe_stock[code].start_subscribe(handle_stock_subscribe)
             print('START Subscribe stock', code)
     elif header['method'] == message.STOP_STOCK_DATA:
-        code = body['code']
         if code in subscribe_stock:
             subscribe_stock[code].stop_subscribe()
             subscribe_stock.pop(code, None)
     elif header['method'] == message.BIDASK_DATA:
-        code = body['code']
         if code in subscribe_bidask:
             print('Already subscribe bidask', code)
         else:
@@ -58,7 +58,6 @@ def subscribe_handler(sock, header, body):
             subscribe_bidask[code].start_subscribe(handle_bidask_subscribe)
             print('START Subscribe bidask', code)
     elif header['method'] == message.STOP_BIDASK_DATA:
-        code = body['code']
         if code in subscribe_bidask:
             subscribe_bidask[code].stop_subscribe()
             subscribe_bidask.pop(code, None)

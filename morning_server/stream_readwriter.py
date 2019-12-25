@@ -28,10 +28,13 @@ class MessageReader(gevent.Greenlet):
         self.clients.pop(msg_id, None)
         return obj
 
-    def subscribe_write(self, header, body, handler):
-        msg_id = header['_id']
-        self.subscribers[msg_id] = handler
-        write(self.sock, header, body)
+    def subscribe_write(self, header, body, code, handler):
+        if code in self.subscribers:
+            print('Already subscribe code', code)
+        else:
+            self.subscribers[code] = handler
+            header['code'] = code
+            write(self.sock, header, body)
 
     def _run(self):
         while True:
@@ -39,13 +42,15 @@ class MessageReader(gevent.Greenlet):
             print('recv threading', threading.get_ident())
             #print('HEADER', rcv['header'])
             msg_id = rcv['header']['_id'] 
+            header_type = rcv['header']['type']
             if msg_id in self.clients:
                 self.clients[msg_id][1] = rcv['body'].copy()
                 print('BODY', rcv['body'])
                 self.clients[msg_id][0].set()
-            elif msg_id in self.subscribers:
+            elif header_type == message.SUBSCRIBE_RESPONSE:
+                code = rcv['header']['code']
                 #print('BODY', rcv['body'])
-                self.subscribers[msg_id](rcv['body'])
+                self.subscribers[code](code, rcv['body'])
 
 
 def create_header(header_type, market_type, method_name, vendor='cybos'):
@@ -64,8 +69,8 @@ def request_stock_day_data(reader, code, from_date, until_date):
 
 def subscribe_stock(reader, code, handler):
     header = create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.STOCK_DATA)
-    body = {'code': code}
-    reader.subscribe_write(header, body, handler)
+    body = dict()
+    reader.subscribe_write(header, body, code, handler)
 
 
 def write(sock, header, body):

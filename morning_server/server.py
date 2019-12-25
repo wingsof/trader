@@ -19,11 +19,13 @@ import message
 from morning.config import db
 
 
+VBOX_CHECK_INTERVAL = 60 # 1 minute
+
 app = Flask(__name__)
 app.debug = True
-VBOX_CHECK_INTERVAL = 60 # 1 minute
+vbox_on = False
 collectors = []
-subscribe_clients = dict()
+subscribe_clients = dict()  # (collector_socket, [subscribe_client_socket, ])
 
 
 def datetime_to_intdate(dt):
@@ -35,6 +37,18 @@ def find_request_collector():
         if c['capability'] | message.CAPABILITY_REQUEST_RESPONSE and not c['request_pending']:
             return c
     return None
+
+
+def find_subscribe_collector():
+    collector = None
+    for c in collectors:
+        if c['capability'] | message.CAPABILITY_COLLECT_SUBSCRIBE and len(c.subscribe_code) < 400:
+            if collector is None:
+                collector = c
+            else:
+                if len(collector.subscribe_code) > len(c.subscribe_code):
+                    collector = c
+    return collector
 
 
 def find_collector_by_id(msg_id):
@@ -49,7 +63,7 @@ def handle_collector(sock, header, body):
     collectors.append({
         'socket': sock,
         'capability': body['capability'],
-        'subscribe_count': 0,
+        'subscribe_code': [],
         'request_pending': False,
         'request_id': None,
         'request_socket': None
@@ -69,9 +83,11 @@ def handle_request(sock, header, body):
         collector = find_request_collector()
         if collector is not None:
             break
+        gevent.sleep()
 
     collector['request_socket'] = sock
     collector['request_id'] = header['_id']
+    collector['request_pending'] = True
     stream_readwriter.write(collector['socket'], header, body)
     
     """
@@ -106,12 +122,25 @@ def deliver_stream(code, sock, header):
 
 def handle_subscribe(sock, header, body):
     print('HANDLE SUBSCRIBE', hex(threading.get_ident()))
-    code = body['code']
-    gevent.spawn(deliver_stream, code, sock, header)
+    code = header['code']
+    if code in subscribe_clients:
+        subscribe_clients[code][1].append(sock)
+    else:
+        collector = find_subscribe_collector(code)
+        if collector is None:
+            pass # TODO: return FULL
+        else:
+            collector['subscribe_code'].append(code)
+            subscribe_clients[code] = (collector['socket'], [sock])
+            stream_readwriter.write(sock, header, body)
 
 
 def handle_subscribe_response(sock, header, body):
-    pass
+    print('HANDLE SUBSCRIBE RESPONSE', hex(threading.get_ident()))
+    code = header['code']
+    if code in subscribe_clients:
+        for s in subscribe_clients[code][1]:
+            stream_readwriter.write(s, header, body)
 
 def handle_trade_response(sock, header, body):
     pass
@@ -124,9 +153,13 @@ def handle_trade_request(sock, header, body):
 def handle(sock, address):
     print('new connection', hex(threading.get_ident()))
     print('address', address)
-    stream_readwriter.dispatch_message(sock, collector_handler=handle_collector, request_handler=handle_request, response_handler=handle_response, 
-                                        subscribe_handler=handle_subscribe, subscribe_response_handler=handle_subscribe_response, 
-                                        request_trade_handler=handle_trade_request, response_trade_handler=handle_trade_response)
+    stream_readwriter.dispatch_message(sock, collector_handler=handle_collector, 
+                                        request_handler=handle_request,
+                                        response_handler=handle_response, 
+                                        subscribe_handler=handle_subscribe,
+                                        subscribe_response_handler=handle_subscribe_response, 
+                                        request_trade_handler=handle_trade_request,
+                                        response_trade_handler=handle_trade_response)
     
 
 @app.route('/')
@@ -151,12 +184,11 @@ def vbox_control():
         gevent.sleep(VBOX_CHECK_INTERVAL)
 
 
-vbox_on = False
 
 server = StreamServer((message.SERVER_IP, message.CLIENT_SOCKET_PORT), handle)
 server.start()
 
-gevent.Greenlet.spawn(vbox_control)
+#gevent.Greenlet.spawn(vbox_control)
 
-wsgi_server = pywsgi.WSGIServer((message.SERVER_IP, 5000), message.CLIENT_WEB_PORT)
+wsgi_server = pywsgi.WSGIServer((message.SERVER_IP, message.CLIENT_WEB_PORT), app)
 wsgi_server.serve_forever()
