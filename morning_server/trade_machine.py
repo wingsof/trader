@@ -1,4 +1,6 @@
 import virtualbox
+import time
+import gevent
 
 
 class _Machine:
@@ -21,8 +23,23 @@ class VBoxControl:
         print('VBOX List', self.vbox_list)
 
     def start_machine(self):
-        pass
+        for m in self.vbox_list:
+            print('START Machine', m)
+            self.vbox_machines.append(_Machine(self.vbox, m))            
+            gevent.sleep(60 * 3)
+
+    def stop_machine(self):
+        for m in self.vbox_machines:
+            print('STOP Machine', m.vm_name)
+            m.stop()
+            gevent.sleep(60 * 3)
 
 
 if __name__ == '__main__':
     vc = VBoxControl()
+
+    vc.start_machine()
+    import time
+    time.sleep(60 * 10)
+
+    vc.stop_machine()
