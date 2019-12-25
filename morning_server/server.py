@@ -56,7 +56,7 @@ def handle_collector(sock, header, body):
     })
 
 
-def response_handler(sock, header, body):
+def handle_response(sock, header, body):
     collector = find_collector_by_id(header['_id'])
     collector['request_pending'] = False
     stream_readwriter.write(collector['request_socket'], header, body)
@@ -113,10 +113,20 @@ def handle_subscribe(sock, header, body):
 def handle_subscribe_response(sock, header, body):
     pass
 
+def handle_trade_response(sock, header, body):
+    pass
+
+
+def handle_trade_request(sock, header, body):
+    pass
+
+
 def handle(sock, address):
     print('new connection', hex(threading.get_ident()))
     print('address', address)
-    stream_readwriter.dispatch_message(sock, handle_collector, handle_request, response_handler, handle_subscribe, handle_subscribe_response)
+    stream_readwriter.dispatch_message(sock, collector_handler=handle_collector, request_handler=handle_request, response_handler=handle_response, 
+                                        subscribe_handler=handle_subscribe, subscribe_response_handler=handle_subscribe_response, 
+                                        request_trade_handler=handle_trade_request, response_trade_handler=handle_trade_response)
     
 
 @app.route('/')
@@ -125,23 +135,28 @@ def index():
 
 
 def vbox_control():
-    vbox_on = False
+    import trade_machine
+    vbox_controller = trade_machine.VBoxControl()
     while True:
         now = datetime.now()
         year, month, day = now.year, now.month, now.day
         is_turn_off_time = datetime(year, month, day, 5) <= now <= datetime(year, month, day, 7)
         if vbox_on and is_turn_off_time:
+            vbox_controller.start_machine()
             vbox_on = False
         elif not vbox_on and not is_turn_off_time:
             vbox_on = True
+            vbox_controller.stop_machine()
+
+        gevent.sleep(VBOX_CHECK_INTERVAL)
 
 
-
+vbox_on = False
 
 server = StreamServer((message.SERVER_IP, message.CLIENT_SOCKET_PORT), handle)
 server.start()
 
 gevent.Greenlet.spawn(vbox_control)
 
-wsgi_server = pywsgi.WSGIServer(('127.0.0.1', 5000), app)
+wsgi_server = pywsgi.WSGIServer((message.SERVER_IP, 5000), message.CLIENT_WEB_PORT)
 wsgi_server.serve_forever()

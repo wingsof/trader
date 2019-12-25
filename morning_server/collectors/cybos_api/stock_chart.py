@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..' 
 import win32com.client
 from utils import time_converter
 from datetime import datetime, timedelta
-from morning.cybos_api.connection import Connection
+from cybos_api import connection
 import time
 
     # stock chart fields
@@ -20,7 +20,7 @@ import time
 def get_period_data_raw(code, start_date, end_date = 0, period_type='m'):
     #print("Get Period data ", start_date, end_date, time_converter.datetime_to_intdate(start_date), time_converter.datetime_to_intdate(end_date))
     data = []
-    conn = Connection()
+    conn = connection.Connection()
     while conn.request_left_count() <= 0:
         print('Request Limit is reached', flush=True)
         time.sleep(1)

@@ -33,7 +33,8 @@ class VBoxControl:
             print('STOP Machine', m.vm_name)
             m.stop()
             gevent.sleep(60 * 3)
-
+            
+        self.vbox_machines.clear()
 
 if __name__ == '__main__':
     vc = VBoxControl()
