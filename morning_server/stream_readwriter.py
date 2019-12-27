@@ -1,12 +1,13 @@
 from gevent import monkey; monkey.patch_all()
 
-import message
 import uuid
 import pickle
 import gevent
 from gevent.event import Event
 import threading
 import socket
+
+from morning_server import message
 
 READ_PACKET_SIZE=32768
 HEADER_SIZE=8
@@ -38,7 +39,11 @@ class MessageReader(gevent.Greenlet):
 
     def _run(self):
         while True:
-            rcv = read(self.sock) 
+            try:
+                rcv = read(self.sock) 
+            except:
+                raise
+                         
             print('recv threading', threading.get_ident())
             #print('HEADER', rcv['header'])
             msg_id = rcv['header']['_id'] 
@@ -63,7 +68,10 @@ def create_header(header_type, market_type, method_name, vendor='cybos'):
 
 def request_stock_day_data(reader, code, from_date, until_date):
     header = create_header(message.REQUEST, message.MARKET_STOCK, message.DAY_DATA)
-    body = {'code': code, 'from': from_date, 'until': until_date}
+    header['code'] = code
+    header['from'] = from_date
+    header['until'] = until_date
+    body = []
     return reader.block_write(header, body)
 
 
@@ -79,9 +87,8 @@ def write(sock, header, body):
     msg = bytes(f"{len(msg):<{HEADER_SIZE}}", 'utf-8') + msg
     try:
         sock.send(msg)
-    except socket.error as e:
-        print('write socket error', e)
-        raise
+    except Exception as e:
+        raise Exception(e.args[0], sock)
 
 
 def read(sock, full_msg=b'', new_msg=True, header_len=0):
@@ -89,12 +96,10 @@ def read(sock, full_msg=b'', new_msg=True, header_len=0):
         try:
             msg = sock.recv(READ_PACKET_SIZE)
         except socket.error as e:
-            print('read socket error', e)
-            raise
+            raise Exception(e.args[0], sock)
 
         if len(msg) == 0:
-            print('Client disconnected')
-            raise Exception()
+            raise Exception('Client disconnected', sock)
 
         #print('receive', len(msg))
         full_msg += msg
@@ -139,7 +144,7 @@ def dispatch_message(sock,
             new_msg = packet['packet_info'][1]
             header_len = packet['packet_info'][2]
         except:
-            break
+            raise
 
         header_type = packet['header']['type']
         if header_type == message.REQUEST and request_handler is not None:

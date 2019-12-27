@@ -17,6 +17,9 @@ import virtualbox
 
 import message
 from morning.config import db
+import handlers.request_pre_handler as request_pre_handler
+import server_util
+from server_util import stream_write
 
 
 VBOX_CHECK_INTERVAL = 60 # 1 minute
@@ -24,123 +27,64 @@ VBOX_CHECK_INTERVAL = 60 # 1 minute
 app = Flask(__name__)
 app.debug = True
 vbox_on = False
-collectors = []
-subscribe_clients = dict()  # (collector_socket, [subscribe_client_socket, ])
-
-
-def datetime_to_intdate(dt):
-    return dt.year * 10000 + dt.month * 100 + dt.day
-
-
-def find_request_collector():
-    for c in collectors:
-        if c['capability'] | message.CAPABILITY_REQUEST_RESPONSE and not c['request_pending']:
-            return c
-    return None
-
-
-def find_subscribe_collector():
-    collector = None
-    for c in collectors:
-        if c['capability'] | message.CAPABILITY_COLLECT_SUBSCRIBE and len(c.subscribe_code) < 400:
-            if collector is None:
-                collector = c
-            else:
-                if len(collector.subscribe_code) > len(c.subscribe_code):
-                    collector = c
-    return collector
-
-
-def find_collector_by_id(msg_id):
-    for c in collectors:
-        if c['request_id'] == msg_id:
-            return c
-    return None
-
+collectors = server_util.CollectorList()
+subscribe_client = server_util.SubscribeClient()
+partial_request = server_util.PartialRequest()
 
 def handle_collector(sock, header, body):
     print('HANDLE COLLECTOR', hex(threading.get_ident()))
-    collectors.append({
-        'socket': sock,
-        'capability': body['capability'],
-        'subscribe_code': [],
-        'request_pending': False,
-        'request_id': None,
-        'request_socket': None
-    })
+    collectors.add_collector(sock, body)
 
 
 def handle_response(sock, header, body):
-    collector = find_collector_by_id(header['_id'])
-    collector['request_pending'] = False
-    stream_readwriter.write(collector['request_socket'], header, body)
+    item = partial_request.get_item(header['_id'])
+    collector = collectors.find_by_id(header['_id'])
+
+    if item is not None:
+        if item.add_body(body, header): # Message completed
+            data = item.get_whole_message()
+            stream_write(collector.request_socket(), header, data, subscribe_client)
+    else:
+        pass # TODO: check another items
+
+    collector.set_pending(False)
 
 
 def handle_request(sock, header, body):
     print('HANDLE REQUEST', hex(threading.get_ident()))
-    collector = None
-    while True:
-        collector = find_request_collector()
-        if collector is not None:
-            break
-        gevent.sleep()
+    data, vacancy = request_pre_handler.handle_request(sock, header, body)
+    if data is None:
+        pass # TODO: not supported pre-handle
+    elif len(vacancy) > 0:
+        partial_request.start_partial_request(header, data, len(vacancy))
+        for v in vacancy:
+            while True:
+                collector = collectors.find_request_collector()
+                if collector is not None:
+                    break
+                gevent.sleep()
 
-    collector['request_socket'] = sock
-    collector['request_id'] = header['_id']
-    collector['request_pending'] = True
-    stream_readwriter.write(collector['socket'], header, body)
-    
-    """
-
-    stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
-    code = body['code']
-    from_datetime = body['from']
-    until_datetime = body['until']
-    data = list(stock_db[code + '_D'].find({'0': {
-        '$gte': datetime_to_intdate(from_datetime),
-        '$lte': datetime_to_intdate(until_datetime)}}))
-    header['type'] = message.RESPONSE
-    time.sleep(5)
-    
-    stream_readwriter.write(sock, header, data)
-    """
+            collector.set_request(sock, header['_id'], True)
+            header['from'] = v[0]
+            header['until'] = v[1]
+            stream_write(collector.sock, header, body, collectors)
+    else:
+        header['type'] = message.RESPONSE
+        stream_write(sock, header, data)
     print('HANDLE REQUEST DONE', hex(threading.get_ident()))
-
-
-def deliver_stream(code, sock, header):
-    # First find whether code is already subscribing
-    # Otherwise find subscibe server to start new stream
-    stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
-    data = list(stock_db[code].find({'date': {
-        '$gte': datetime(2019, 12, 23),
-        '$lte': datetime(2019, 12, 24)}}))
-
-    for d in data:
-        stream_readwriter.write(sock, header, d)
-        time.sleep(1)
 
 
 def handle_subscribe(sock, header, body):
     print('HANDLE SUBSCRIBE', hex(threading.get_ident()))
     code = header['code']
-    if code in subscribe_clients:
-        subscribe_clients[code][1].append(sock)
-    else:
-        collector = find_subscribe_collector(code)
-        if collector is None:
-            pass # TODO: return FULL
-        else:
-            collector['subscribe_code'].append(code)
-            subscribe_clients[code] = (collector['socket'], [sock])
-            stream_readwriter.write(sock, header, body)
+    subscribe_client.add_to_clients(code, sock, collectors)
 
 
 def handle_subscribe_response(sock, header, body):
     print('HANDLE SUBSCRIBE RESPONSE', hex(threading.get_ident()))
     code = header['code']
-    if code in subscribe_clients:
-        for s in subscribe_clients[code][1]:
-            stream_readwriter.write(s, header, body)
+    subscribe_client.send_to_clients(code, header, body)
+
 
 def handle_trade_response(sock, header, body):
     pass
@@ -153,14 +97,19 @@ def handle_trade_request(sock, header, body):
 def handle(sock, address):
     print('new connection', hex(threading.get_ident()))
     print('address', address)
-    stream_readwriter.dispatch_message(sock, collector_handler=handle_collector, 
-                                        request_handler=handle_request,
-                                        response_handler=handle_response, 
-                                        subscribe_handler=handle_subscribe,
-                                        subscribe_response_handler=handle_subscribe_response, 
-                                        request_trade_handler=handle_trade_request,
-                                        response_trade_handler=handle_trade_response)
-    
+    try:
+        stream_readwriter.dispatch_message(sock, collector_handler=handle_collector, 
+                                            request_handler=handle_request,
+                                            response_handler=handle_response, 
+                                            subscribe_handler=handle_subscribe,
+                                            subscribe_response_handler=handle_subscribe_response, 
+                                            request_trade_handler=handle_trade_request,
+                                            response_trade_handler=handle_trade_response)
+    except Exception as e:
+        print('Dispatch exception', e)
+        collectors.handle_disconnect(e.args[1])
+        subscribe_client.handle_disconnect(e.args[1])
+        
 
 @app.route('/')
 def index():
@@ -168,6 +117,7 @@ def index():
 
 
 def vbox_control():
+    global vbox_on
     import trade_machine
     vbox_controller = trade_machine.VBoxControl()
     while True:
