@@ -35,7 +35,7 @@ class _Collector:
         return self.request['pending']
 
     def request_socket(self):
-        return self.request(['socket'])
+        return self.request['socket']
 
     def subscribe_count(self):
         return len(self.subscribe_code)
