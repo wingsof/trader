@@ -1,16 +1,15 @@
 from gevent import monkey; monkey.patch_all()
 
 import sys, os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.join(*(['..' + os.sep] * 2)))))
 
 import socket
 import gevent
-
-import message
-import stream_readwriter
 import time
-from cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection
 from PyQt5.QtCore import QCoreApplication
+
+from morning_server import message, stream_readwriter
+from morning_server.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection
 
 
 def handle_request(sock, header, body):
