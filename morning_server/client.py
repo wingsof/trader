@@ -31,6 +31,6 @@ stream_readwriter.subscribe_stock(message_reader, 'A005930', subscribe_handler)
 while True:
     #stream_readwriter.request_stock_day_data(sock, 'A005930', date(2019, 12, 20), date(2019, 12, 20)) 
     print('send threading', threading.get_ident())
-    print(stream_readwriter.request_stock_day_data(message_reader, 'A005930', date(2019, 12, 1), date(2019, 12, 24)))
+    print('LEN', len(stream_readwriter.request_stock_minute_data(message_reader, 'A005930', date(2019, 12, 2), date(2019, 12, 2))))
     print('send done', threading.get_ident())
-    gevent.sleep(10)
+    gevent.sleep(5)
