@@ -9,7 +9,7 @@ import time
 from PyQt5.QtCore import QCoreApplication
 
 from morning_server import message, stream_readwriter
-from morning_server.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection
+from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection
 
 
 def handle_request(sock, header, body):
