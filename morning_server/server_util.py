@@ -186,7 +186,7 @@ class PartialRequest:
         self.client = dict()
 
     def start_partial_request(self, header, data, count):
-        self.client[header['_id']] = Partial(header, data, count)
+        self.client[header['_id']] = _Partial(header, data, count)
 
     def get_item(self, msg_id):
         if msg_id in self.client:

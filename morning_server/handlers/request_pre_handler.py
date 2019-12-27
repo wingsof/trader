@@ -63,6 +63,7 @@ def _get_data_from_db(code, from_date, until_date, db_suffix):
     working_days = get_working_days(from_date, until_date)
 
     empties = _check_empty_date(days, working_days)
+    print('DB DATA', db_data, 'EMPTIES', empties)
     return db_data, empties
 
 
