@@ -17,7 +17,7 @@ import virtualbox
 
 import message
 from morning.config import db
-import handlers.request_pre_handler as request_pre_handler
+from morning_server.handlers import request_pre_handler as request_pre_handler
 import server_util
 from server_util import stream_write
 
