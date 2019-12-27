@@ -28,7 +28,7 @@ sock.connect(server_address)
 #stream_readwriter.subscribe_stock(sock, 'A005930')
 message_reader = stream_readwriter.MessageReader(sock)
 message_reader.start()
-stream_readwriter.subscribe_stock(message_reader, 'A005930', subscribe_handler)
+#stream_readwriter.subscribe_stock(message_reader, 'A005930', subscribe_handler)
 while True:
     #stream_readwriter.request_stock_day_data(sock, 'A005930', date(2019, 12, 20), date(2019, 12, 20)) 
     print('send threading', threading.get_ident())

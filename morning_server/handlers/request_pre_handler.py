@@ -66,7 +66,7 @@ def _get_data_from_db(code, from_date, until_date, db_suffix):
     return db_data, empties
 
 
-def handle_reuqest_pre(sock, header, body):
+def pre_handle_reuqest(sock, header, body):
     method = header['method']
     if method == message.DAY_DATA:
         from_date = header['from']

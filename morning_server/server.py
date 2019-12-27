@@ -52,7 +52,7 @@ def handle_response(sock, header, body):
 
 def handle_request(sock, header, body):
     print('HANDLE REQUEST', hex(threading.get_ident()))
-    data, vacancy = request_pre_handler.handle_request(sock, header, body)
+    data, vacancy = request_pre_handler.pre_handle_request(sock, header, body)
     if data is None:
         pass # TODO: not supported pre-handle
     elif len(vacancy) > 0:
