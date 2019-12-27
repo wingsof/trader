@@ -8,11 +8,11 @@ from morning.config import db
 from utils import time_converter
 
 
-def _check_empty_date(days, working_days):
+def _check_empty_date(days, vacancy_days, working_days):
     check_array = [None] * (len(working_days) + 1)
     # insert one more None to interate until the end
     for i, w in enumerate(working_days):
-        if w not in days:
+        if w not in days and w not in vacancy_days:
             check_array[i] = w
     empty_from = None
     empty_until = None
@@ -49,7 +49,6 @@ def sort_db_data(db_data, db_suffix):
 
 
 def _get_data_from_db(code, from_date, until_date, db_suffix):
-    # TODO: if collectors' length of response data is 0, then save it to DB for performance
     from_date = from_date if from_date.__class__.__name__ == 'date' else from_date.date()
     until_date = until_date if until_date.__class__.__name__ == 'date' else until_date.date()
     from_date = _correct_date(from_date)
@@ -61,8 +60,9 @@ def _get_data_from_db(code, from_date, until_date, db_suffix):
     days = [time_converter.intdate_to_datetime(d['0']).date() for d in db_data]
     days = list(dict.fromkeys(days))
     working_days = get_working_days(from_date, until_date)
-
-    empties = _check_empty_date(days, working_days)
+    vacancy_data = list(stock_db[code + '_V'].find({'0': {'$gte':time_converter.datetime_to_intdate(from_date), '$lte': time_converter.datetime_to_intdate(until_date)}}))
+    vacancy_days = [time_converter.intdate_to_datetime(d['0']).date() for d in vacancy_data]
+    empties = _check_empty_date(days, vacancy_days, working_days)
     print('DB DATA', db_data, 'EMPTIES', empties)
     return db_data, empties
 

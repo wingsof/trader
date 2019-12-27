@@ -15,7 +15,13 @@ from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bi
 def handle_request(sock, header, body):
     print('request_handler')
     if header['method'] == message.DAY_DATA:
+        print('Query:', header['code'], header['from'], header['until'])
         _, data = stock_chart.get_day_period_data(header['code'], header['from'], header['until'])
+        header['type'] = message.RESPONSE
+        stream_readwriter.write(sock, header, data)
+    elif header['method'] == message.MINUTE_DATA:
+        print('Query:', header['code'], header['from'], header['until'])
+        _, data = stock_chart.get_min_period_data(header['code'], header['from'], header['until'])
         header['type'] = message.RESPONSE
         stream_readwriter.write(sock, header, data)
 

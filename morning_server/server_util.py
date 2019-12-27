@@ -1,10 +1,11 @@
 from morning_server import stream_readwriter
 from morning_server import message
+from morning.config import db
+from utils import time_converter
 
-
-def datetime_to_intdate(dt):
-    return dt.year * 10000 + dt.month * 100 + dt.day
-
+from pymongo import MongoClient
+import gevent
+from datetime import timedelta
 
 def stream_write(sock, header, body, manager = None):
     try:
@@ -72,6 +73,14 @@ class CollectorList:
             # TODO: Notify collector disconnected events to clients
             self.collectors.remove(collector)
 
+    def get_available_request_collector(self):
+        while True:
+            collector = self.find_request_collector()
+            if collector is not None:
+                break
+            gevent.sleep()
+        return collector
+
     def find_by_id(self, msg_id):
         for c in self.collectors:
             if c.request_id() == msg_id:
@@ -107,7 +116,7 @@ class SubscribeClient:
     def send_to_clients(self, code, header, body):
         if self.code_in_clients(code):
             for s in self.clients[code][1]:
-                stream_write(s, self, header, body, self)
+                stream_write(s, header, body, self)
 
     def handle_disconnect(self, sock):
         print('HANDLE DISCONNECT: SubscribeClient')
@@ -141,7 +150,6 @@ class SubscribeClient:
 class _Partial:
     def __init__(self, header, db_data, count):
         self.header = header
-        self.data_type = header['method']
         self.count = count
         self.data = []
         self.db_data = db_data
@@ -150,8 +158,20 @@ class _Partial:
         self.data.append(body)
 
         if len(body) == 0:
+            stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
+            from_date = header['from']
+            until_date = header['until']
+            while from_date <= until_date:
+                stock_db[header['code'] + '_V'].insert_one({'0': time_converter.datetime_to_intdate(from_date)})
+                from_date += timedelta(days=1)
             print('RECORD DATA to DB as EMPTY', header['method'], header['code'], header['from'], header['until'])
         else:
+            stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
+            if header['method'] == message.DAY_DATA:
+                stock_db[header['code'] + '_D'].insert_many(body)
+            elif header['method'] == message.MINUTE_DATA:
+                stock_db[header['code'] + '_M'].insert_many(body)
+            
             print('RECORD DATA to DB', header['method'], header['code'], header['from'], header['until'])
 
         return len(self.data) == self.count

@@ -1,30 +1,40 @@
 import pytest
 
 from morning_server.handlers import request_pre_handler
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 
 def test_check_empty_date():
     days = [date(2019, 3, 4)]
     working = [date(2019, 3, 4)]
-    assert len(request_pre_handler._check_empty_date(days, working)) == 0
+    assert len(request_pre_handler._check_empty_date(days, [], working)) == 0
 
     days = []
     working = []
-    assert len(request_pre_handler._check_empty_date(days, working)) == 0
+    assert len(request_pre_handler._check_empty_date(days, [], working)) == 0
 
     days = [date(2019, 3, 4)]
     working = [date(2019, 3, 4), date(2019, 3, 5), date(2019, 3, 6)]
-    assert request_pre_handler._check_empty_date(days, working) == [(date(2019, 3, 5), date(2019, 3, 6))]
+    assert request_pre_handler._check_empty_date(days, [], working) == [(date(2019, 3, 5), date(2019, 3, 6))]
 
     days = [date(2019, 3, 5)]
     working = [date(2019, 3, 4), date(2019, 3, 5), date(2019, 3, 6)]
-    assert request_pre_handler._check_empty_date(days, working)  == [(date(2019, 3, 4), date(2019, 3, 4)), (date(2019, 3, 6), date(2019, 3, 6))]
+    assert request_pre_handler._check_empty_date(days, [], working)  == [(date(2019, 3, 4), date(2019, 3, 4)), (date(2019, 3, 6), date(2019, 3, 6))]
 
     days = [date(2019, 3, 6)]
     working = [date(2019, 3, 4), date(2019, 3, 5), date(2019, 3, 6)]
-    assert request_pre_handler._check_empty_date(days, working) == [(date(2019, 3, 4), date(2019, 3, 5))]
+    assert request_pre_handler._check_empty_date(days, [], working) == [(date(2019, 3, 4), date(2019, 3, 5))]
 
+def test_check_empty_date_with_vacancy():
+    days = [date(2019, 3, 4)]
+    vacancy_days = [date(2019, 3, 5)]
+    working = [date(2019, 3, 4), date(2019, 3, 5), date(2019, 3, 6)]
+    assert request_pre_handler._check_empty_date(days, vacancy_days, working) == [(date(2019, 3, 6), date(2019, 3, 6))]
+
+    days = [date(2019, 3, 5)]
+    working = [date(2019, 3, 3), date(2019, 3, 4), date(2019, 3, 5), date(2019, 3, 6)]
+    vacancy_days = [date(2019, 3, 4)]
+    assert request_pre_handler._check_empty_date(days, vacancy_days, working)  == [(date(2019, 3, 3), date(2019, 3, 3)), (date(2019, 3, 6), date(2019, 3, 6))]
 
 def test_correct_date():
     assert request_pre_handler._correct_date(date(2019, 12, 30), datetime(2019, 12, 27, 12)) == date(2019, 12, 26)

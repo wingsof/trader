@@ -40,10 +40,10 @@ class MessageReader(gevent.Greenlet):
     def _run(self):
         while True:
             try:
-                rcv = read(self.sock) 
+                rcv = read(self.sock)
             except:
                 raise
-                         
+
             print('recv threading', threading.get_ident())
             #print('HEADER', rcv['header'])
             msg_id = rcv['header']['_id'] 

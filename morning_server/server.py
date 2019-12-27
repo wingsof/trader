@@ -31,6 +31,7 @@ collectors = server_util.CollectorList()
 subscribe_client = server_util.SubscribeClient()
 partial_request = server_util.PartialRequest()
 
+
 def handle_collector(sock, header, body):
     print('HANDLE COLLECTOR', hex(threading.get_ident()))
     collectors.add_collector(sock, body)
@@ -45,7 +46,7 @@ def handle_response(sock, header, body):
             data = item.get_whole_message()
             stream_write(collector.request_socket(), header, data, subscribe_client)
     else:
-        pass # TODO: check another items
+        stream_write(collector.request_socket(), header, body, subscribe_client)
 
     collector.set_pending(False)
 
@@ -54,15 +55,13 @@ def handle_request(sock, header, body):
     print('HANDLE REQUEST', hex(threading.get_ident()))
     data, vacancy = request_pre_handler.pre_handle_request(sock, header, body)
     if data is None:
-        pass # TODO: not supported pre-handle
+        collector = collectors.get_available_request_collector()
+        collector.set_request(sock, header['_id'], True)
+        stream_write(collector.sock, header, body, collectors)
     elif len(vacancy) > 0:
         partial_request.start_partial_request(header, data, len(vacancy))
         for v in vacancy:
-            while True:
-                collector = collectors.find_request_collector()
-                if collector is not None:
-                    break
-                gevent.sleep()
+            collector = collectors.get_available_request_collector()
 
             collector.set_request(sock, header['_id'], True)
             header['from'] = v[0]
