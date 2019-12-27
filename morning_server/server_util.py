@@ -119,7 +119,7 @@ class SubscribeClient:
                     v[1].remove(sock)
                     break
 
-    def add_to_clients(self, code, sock, header, collectors):
+    def add_to_clients(self, code, sock, header, body, collectors):
         if self.code_in_clients(code):
             found = False
             for s in self.clients[code][1]:

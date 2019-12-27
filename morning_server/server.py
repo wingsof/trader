@@ -77,7 +77,7 @@ def handle_request(sock, header, body):
 def handle_subscribe(sock, header, body):
     print('HANDLE SUBSCRIBE', hex(threading.get_ident()))
     code = header['code']
-    subscribe_client.add_to_clients(code, sock, header, collectors)
+    subscribe_client.add_to_clients(code, sock, header, body, collectors)
 
 
 def handle_subscribe_response(sock, header, body):
