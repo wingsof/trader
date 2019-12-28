@@ -22,10 +22,9 @@ def handle_request(sock, header, body):
         _, data = stock_chart.get_min_period_data(header['code'], header['from'], header['until'])
         stream_readwriter.write(sock, header, data)
     elif header['method'] == message.CODE_DATA:
-        header['type'] = message.RESPONSE
         if header['market_type'] == message.KOSPI:
             stream_readwriter.write(sock, header, stock_code.get_kospi_company_code_list())
-        elif header['market_type'] == message.KOSPI:
+        elif header['market_type'] == message.KOSDAQ:
             stream_readwriter.write(sock, header, stock_code.get_kosdaq_company_code_list())
 
 
