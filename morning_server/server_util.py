@@ -19,8 +19,8 @@ def stream_write(sock, header, body, manager = None):
 
 
 class _Collector:
-    def __init__(self, container, sock, capability):
-        self.container = container
+    def __init__(self, index, sock, capability):
+        self.index = index
         self.sock = sock
         self.capability = capability
         self.subscribe_code = []
@@ -32,6 +32,9 @@ class _Collector:
             'periods': [],
             'data': [],
             'count': 0}
+
+    def __repr__(self):
+        return 'latest_procee_time:' + str(self.latest_request_process_time) + '\t' + str(self.request)
 
     def request_id(self):
         return self.request['id']
@@ -46,9 +49,7 @@ class _Collector:
         return len(self.subscribe_code)
 
     def set_pending(self, is_pending):
-        self.container.semaphore.acquire()
         self.request['pending'] = is_pending
-        self.container.semaphore.release()
 
     def append_subscribe_code(self, code):
         self.subscribe_code.append(code)
@@ -56,16 +57,16 @@ class _Collector:
     def set_request(self, sock, msg_id, is_pending):
         self.request['socket'] = sock
         self.request['id'] = msg_id
-        self.request['pending'] = is_pending
+        self.set_pending(is_pending)
 
 
 class CollectorList:
     def __init__(self):
         self.collectors = []
-        self.semaphore = Semaphore()
+        self.collector_index = 0
 
     def add_collector(self, sock, body):
-        self.collectors.append(_Collector(self, sock, body['capability']))
+        self.collectors.append(_Collector(self.collector_index, sock, body['capability']))
 
     def handle_disconnect(self, sock):
         print('HANDLE DISCONNECT: CollectorList')
@@ -96,18 +97,18 @@ class CollectorList:
 
     def find_request_collector(self):
         available_collectors = []
-        self.semaphore.acquire()
         for c in self.collectors:
             if c.capability | message.CAPABILITY_REQUEST_RESPONSE and not c.request_pending():
                 available_collectors.append(c)
+        print('Available Collector Count', len(available_collectors))
+        for c in self.collectors:
+            print(c)
             
         if len(available_collectors) == 0:
-            self.semaphore.release()
             return None
         
         available_collectors = sorted(available_collectors, key=lambda x: x.latest_request_process_time)
         available_collectors[0].latest_request_process_time = datetime.now()
-        self.semaphore.release()
         return available_collectors[0]
 
     def find_subscribe_collector(self):
