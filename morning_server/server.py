@@ -52,7 +52,7 @@ def handle_response(sock, header, body):
 
 
 def handle_request(sock, header, body):
-    print('HANDLE REQUEST', hex(threading.get_ident()))
+    #print('HANDLE REQUEST', hex(threading.get_ident()))
     data, vacancy = request_pre_handler.pre_handle_request(sock, header, body)
     if data is None:
         collector = collectors.get_available_request_collector()
@@ -70,17 +70,17 @@ def handle_request(sock, header, body):
     else:
         header['type'] = message.RESPONSE
         stream_write(sock, header, data)
-    print('HANDLE REQUEST DONE', hex(threading.get_ident()))
+    #print('HANDLE REQUEST DONE', hex(threading.get_ident()))
 
 
 def handle_subscribe(sock, header, body):
-    print('HANDLE SUBSCRIBE', hex(threading.get_ident()))
+    #print('HANDLE SUBSCRIBE', hex(threading.get_ident()))
     code = header['code']
     subscribe_client.add_to_clients(code, sock, header, body, collectors)
 
 
 def handle_subscribe_response(sock, header, body):
-    print('HANDLE SUBSCRIBE RESPONSE', hex(threading.get_ident()))
+    #print('HANDLE SUBSCRIBE RESPONSE', hex(threading.get_ident()))
     code = header['code']
     subscribe_client.send_to_clients(code, header, body)
 
