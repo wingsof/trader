@@ -46,7 +46,7 @@ class _Collector:
         return len(self.subscribe_code)
 
     def set_pending(self, is_pending):
-        self.container.semaphore.lock()
+        self.container.semaphore.acquire()
         self.request['pending'] = is_pending
         self.container.semaphore.release()
 
