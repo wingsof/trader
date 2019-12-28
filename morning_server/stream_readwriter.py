@@ -43,8 +43,8 @@ class MessageReader(gevent.Greenlet):
                 rcv = read(self.sock)
             except:
                 raise
-
-            print('recv threading', threading.get_ident())
+            
+            #print('recv threading', threading.get_ident())
             #print('HEADER', rcv['header'])
             msg_id = rcv['header']['_id'] 
             header_type = rcv['header']['type']

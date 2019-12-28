@@ -5,7 +5,7 @@ from utils import time_converter
 
 from pymongo import MongoClient
 import gevent
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 def stream_write(sock, header, body, manager = None):
     try:
@@ -21,6 +21,7 @@ class _Collector:
         self.sock = sock
         self.capability = capability
         self.subscribe_code = []
+        self.latest_request_process_time = datetime.now()
         self.request = {
             'pending': False,
             'id': None,
@@ -88,10 +89,17 @@ class CollectorList:
         return None
 
     def find_request_collector(self):
+        available_collectors = []
         for c in self.collectors:
             if c.capability | message.CAPABILITY_REQUEST_RESPONSE and not c.request_pending():
-                return c
-        return None
+                available_collectors.append(c)
+            
+        if len(available_collectors) == 0:
+            return None
+        
+        available_collectors = sorted(available_collectors, key=lambda x: x.latest_request_process_time)
+        available_collectors[0].latest_request_process_time = datetime.now()
+        return available_collectors[0]
 
     def find_subscribe_collector(self):
         collector = None
