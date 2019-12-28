@@ -9,21 +9,25 @@ import time
 from PyQt5.QtCore import QCoreApplication
 
 from morning_server import message, stream_readwriter
-from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection
+from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code
 
 
 def handle_request(sock, header, body):
-    print('REQUEST')
+    print('REQUEST', header)
+    header['type'] = message.RESPONSE
     if header['method'] == message.DAY_DATA:
-        print('Query:', header['code'], header['from'], header['until'])
         _, data = stock_chart.get_day_period_data(header['code'], header['from'], header['until'])
-        header['type'] = message.RESPONSE
         stream_readwriter.write(sock, header, data)
     elif header['method'] == message.MINUTE_DATA:
-        print('Query:', header['code'], header['from'], header['until'])
         _, data = stock_chart.get_min_period_data(header['code'], header['from'], header['until'])
-        header['type'] = message.RESPONSE
         stream_readwriter.write(sock, header, data)
+    elif header['method'] == message.CODE_DATA:
+        header['type'] = message.RESPONSE
+        if header['market_type'] == message.KOSPI:
+            stream_readwriter.write(sock, header, stock_code.get_kospi_company_code_list())
+        elif header['market_type'] == message.KOSPI:
+            stream_readwriter.write(sock, header, stock_code.get_kosdaq_company_code_list())
+
 
 
 def callback_stock_subscribe(sock, code, datas):

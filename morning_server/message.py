@@ -19,6 +19,7 @@ MARKET_STOCK = 'stock'
 # Method
 DAY_DATA = 'day_data'
 MINUTE_DATA = 'minute_data'
+CODE_DATA = 'code_data'
 
 STOCK_DATA = 'stock_realtime'
 BIDASK_DATA = 'bidask_realtime'
@@ -31,3 +32,8 @@ COLLECTOR_DATA = 'collector_data'
 CAPABILITY_REQUEST_RESPONSE=1
 CAPABILITY_COLLECT_SUBSCRIBE=2
 CAPABILITY_TRADE=4
+
+
+# CODE_DATA market_type
+KOSPI = 1
+KOSDAQ = 2
