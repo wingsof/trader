@@ -94,6 +94,7 @@ if __name__ == '__main__':
         print('Retry connecting to CP Server')
         gevent.sleep(5)
 
+    print('Connected')
     subscribe_stock = dict()
     subscribe_bidask = dict()
 

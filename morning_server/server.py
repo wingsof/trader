@@ -38,6 +38,7 @@ def handle_collector(sock, header, body):
 
 
 def handle_response(sock, header, body):
+    print('HANDLE RESPONSE', header)
     item = partial_request.get_item(header['_id'])
     collector = collectors.find_by_id(header['_id'])
 
@@ -45,14 +46,17 @@ def handle_response(sock, header, body):
         if item.add_body(body, header): # Message completed
             data = item.get_whole_message()
             stream_write(collector.request_socket(), header, data, subscribe_client)
+            partial_request.pop_item(header['_id'])
     else:
         stream_write(collector.request_socket(), header, body, subscribe_client)
 
     collector.set_pending(False)
+    print('HANDLE RESPONSE DONE')
+
 
 
 def handle_request(sock, header, body):
-    #print('HANDLE REQUEST', hex(threading.get_ident()))
+    print('HANDLE REQUEST', header)
     data, vacancy = request_pre_handler.pre_handle_request(sock, header, body)
     if data is None:
         collector = collectors.get_available_request_collector()
@@ -62,7 +66,7 @@ def handle_request(sock, header, body):
         partial_request.start_partial_request(header, data, len(vacancy))
         for v in vacancy:
             collector = collectors.get_available_request_collector()
-
+            # TODO: create separate header ID
             collector.set_request(sock, header['_id'], True)
             header['from'] = v[0]
             header['until'] = v[1]
@@ -70,7 +74,7 @@ def handle_request(sock, header, body):
     else:
         header['type'] = message.RESPONSE
         stream_write(sock, header, data)
-    #print('HANDLE REQUEST DONE', hex(threading.get_ident()))
+    print('HANDLE REQUEST DONE')
 
 
 def handle_subscribe(sock, header, body):
