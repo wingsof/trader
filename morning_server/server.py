@@ -38,7 +38,7 @@ def handle_collector(sock, header, body):
 
 
 def handle_response(sock, header, body):
-    print('HANDLE RESPONSE', header)
+    #print('HANDLE RESPONSE', header)
     item = partial_request.get_item(header['_id'])
     collector = collectors.find_by_id(header['_id'])
 
@@ -51,12 +51,12 @@ def handle_response(sock, header, body):
         stream_write(collector.request_socket(), header, body, subscribe_client)
 
     collector.set_pending(False)
-    print('HANDLE RESPONSE DONE')
+    #print('HANDLE RESPONSE DONE')
 
 
 
 def handle_request(sock, header, body):
-    print('HANDLE REQUEST', header)
+    #print('HANDLE REQUEST', header)
     data, vacancy = request_pre_handler.pre_handle_request(sock, header, body)
     if data is None:
         collector = collectors.get_available_request_collector()
@@ -74,7 +74,7 @@ def handle_request(sock, header, body):
     else:
         header['type'] = message.RESPONSE
         stream_write(sock, header, data)
-    print('HANDLE REQUEST DONE')
+    #print('HANDLE REQUEST DONE')
 
 
 def handle_subscribe(sock, header, body):

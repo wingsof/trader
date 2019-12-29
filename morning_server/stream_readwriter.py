@@ -43,7 +43,7 @@ class MessageReader(gevent.Greenlet):
                 rcv = read(self.sock)
             except:
                 raise
-            
+
             #print('recv threading', threading.get_ident())
             #print('HEADER', rcv['header'])
             msg_id = rcv['header']['_id'] 
@@ -63,7 +63,7 @@ def create_header(header_type, market_type, method_name, vendor='cybos'):
             'market': market_type,
             'method': method_name,
             'vendor': vendor,
-            '_id': str(uuid.uuid4().fields[-1])[:5]}
+            '_id': str(uuid.uuid4())}
 
 
 def write(sock, header, body):

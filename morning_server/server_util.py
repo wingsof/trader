@@ -29,8 +29,6 @@ class _Collector:
             'pending': False,
             'id': None,
             'socket': None,
-            'periods': [],
-            'data': [],
             'count': 0}
 
     def __repr__(self):
@@ -49,8 +47,10 @@ class _Collector:
         return len(self.subscribe_code)
 
     def set_pending(self, is_pending):
-        print('set_pending', is_pending)
+        #print('set_pending', is_pending)
         self.request['pending'] = is_pending
+        if not is_pending:
+            self.request['id'] = None
 
     def append_subscribe_code(self, code):
         self.subscribe_code.append(code)
@@ -83,7 +83,6 @@ class CollectorList:
             self.collectors.remove(collector)
 
     def get_available_request_collector(self):
-        print('get_available_request_collector')
         while True:
             collector = self.find_request_collector()
             if collector is not None:
@@ -98,18 +97,10 @@ class CollectorList:
         return None
 
     def find_request_collector(self):
-        print('find_request_collector')
         available_collectors = []
         for c in self.collectors:
             if c.capability | message.CAPABILITY_REQUEST_RESPONSE and not c.request_pending():
                 available_collectors.append(c)
-        
-        if len(available_collectors) != 3:
-            print('Available Collector Count', len(available_collectors))
-            for c in self.collectors:
-                print(c)
-            import sys
-            sys.exit(1)
 
         if len(available_collectors) == 0:
             return None
