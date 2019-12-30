@@ -31,7 +31,7 @@ sock.connect(server_address)
 message_reader = stream_readwriter.MessageReader(sock)
 message_reader.start()
 
-kosdaq_code = stock_api.request_stock_code(message_reader, message.KOSDAQ)
+kospi_code = stock_api.request_stock_code(message_reader, message.KOSPI)
 
 df = pd.DataFrame(columns=['date', 'code', 'profit', 'highest_time', 'yesterday_rank'])
 
@@ -42,7 +42,7 @@ while from_date <= until_date:
 
     yesterday = holidays.get_yesterday(from_date)
     yesterday_datas = []
-    for code in kosdaq_code:
+    for code in kospi_code:
         yesterday_data = stock_api.request_stock_day_data(message_reader, code, yesterday, yesterday)
         if len(yesterday_data) == 0:
             print('NO YESTERDAY DATA', code, from_date)
@@ -76,4 +76,4 @@ while from_date <= until_date:
         df.loc[df['code'] == y['code'], 'yesterday_rank'] = i + 1
     from_date += timedelta(days=1)
 
-df.to_excel('kosdaq_yesterday_amount_rank.xlsx')
+df.to_excel('kospi_yesterday_amount_rank.xlsx')

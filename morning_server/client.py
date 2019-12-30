@@ -28,6 +28,7 @@ sock.connect(server_address)
 
 message_reader = stream_readwriter.MessageReader(sock)
 message_reader.start()
+print(stock_api.request_stock_code(message_reader, message.KOSDAQ))
 stock_api.subscribe_stock(message_reader, 'A005930', subscribe_handler)
 while True:
     #stream_readwriter.request_stock_day_data(sock, 'A005930', date(2019, 12, 20), date(2019, 12, 20)) 
