@@ -7,6 +7,7 @@ import mainwidget
 from morning_server import message, stream_readwriter
 import socket
 import gevent
+import data_handler
 
 
 def mainloop(app):
@@ -23,12 +24,12 @@ if __name__ == '__main__':
     server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
     sock.connect(server_address)
 
-    message_reader = stream_readwriter.MessageReader(sock)
-    message_reader.start()
+    data_handler.message_reader = stream_readwriter.MessageReader(sock)
+    data_handler.message_reader.start()
 
     app = QApplication(sys.argv)
     w = mainwidget.MainWidget()
-    app.installEventFilter(w.action)
+    #app.installEventFilter(w.action)
     w.show()
-
-    gevent.joinall([gevent.spawn(mainloop, app)])
+    app.exec()
+    #gevent.joinall([gevent.spawn(mainloop, app)])
