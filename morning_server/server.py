@@ -128,11 +128,11 @@ def vbox_control():
         year, month, day = now.year, now.month, now.day
         is_turn_off_time = datetime(year, month, day, 5) <= now <= datetime(year, month, day, 7)
         if vbox_on and is_turn_off_time:
-            vbox_controller.start_machine()
+            vbox_controller.stop_machine()
             vbox_on = False
         elif not vbox_on and not is_turn_off_time:
             vbox_on = True
-            vbox_controller.stop_machine()
+            vbox_controller.start_machine()
 
         gevent.sleep(VBOX_CHECK_INTERVAL)
 
@@ -141,7 +141,7 @@ def vbox_control():
 server = StreamServer((message.SERVER_IP, message.CLIENT_SOCKET_PORT), handle)
 server.start()
 
-#gevent.Greenlet.spawn(vbox_control)
+gevent.Greenlet.spawn(vbox_control)
 
 wsgi_server = pywsgi.WSGIServer((message.SERVER_IP, message.CLIENT_WEB_PORT), app)
 wsgi_server.serve_forever()
