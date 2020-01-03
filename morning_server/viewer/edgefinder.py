@@ -26,30 +26,6 @@ class EdgeFinder:
         distance_from_mean = s.mean() - s
         return distance_from_mean + s.mean()
 
-    def _find_trend(self, x, indexes, prominences, is_upper):
-        if not is_upper and indexes.shape[0] < 2:
-            return None, None
-        elif is_upper and indexes.shape[0] < 2:
-            return None, None
-        
-        short_trend = x[indexes[-1]] - x[indexes[-2]] > 0
-
-        for i, v1 in enumerate(reversed(indexes)):
-            for v2 in reversed(indexes[:indexes.shape[0] - 1 - i]):
-                found = True
-                for c in indexes:
-                    if v1 == c or v2 == c: continue
-                    x1, x2, y1, y2, cx, cy = v1, v2, x[v1], x[v2], c, x[c]
-                    result = (y1 - y2) * cx + (x2 - x1) * cy + x1 * y2 - x2 * y1
-
-                    if (is_upper and result < 0) or (not is_upper and result > 0):
-                        found = False
-                        break
-                
-                if found:
-                    return short_trend, x[v1] - x[v2] > 0
-        return short_trend, False
-
     def _calculate(self, x):
         peaks, _ = find_peaks(x, distance=10)
         prominences = peak_prominences(x, peaks)[0]
@@ -58,23 +34,91 @@ class EdgeFinder:
         prominences = np.extract(prominences > x.mean() * 0.002, prominences)
         return peaks, prominences
 
-    def get_peaks(self, is_top):
+    def get_peaks(self, is_top, _with_prominence = False):
         peaks_data = []
         if not is_top:
             prices = self._get_reversed(self.moving_average)
         else:
             prices = self.moving_average
-        peaks, _ = self._calculate(prices)
+        peaks, prominence = self._calculate(prices)
         for p in peaks:
             peaks_data.append((self.date_array[p], self.moving_average[p]))
+
+        if _with_prominence:
+            return peaks, prominence
         return peaks_data
+
+    def _get_short_trend(self, peaks):
+        trend = []
+        if len(peaks) >= 2:
+            trend.append((self.date_array[peaks[-1]], self.moving_average[peaks[-1]],
+                          self.date_array[peaks[-2]], self.moving_average[peaks[-2]]))
+        return trend
+
+    def _find_max_index(self, peaks):
+        max_price = 0
+        max_index = -1
+        for p in peaks:
+            if self.moving_average[p] > max_price:
+                max_price = self.moving_average[p]
+                max_index = p
+        return max_index
+
+    def _find_min_index(self, peaks):
+        min_price = -1
+        min_index = -1
+        for p in peaks:
+            if min_price == -1:
+                min_price = self.moving_average[p]
+
+            if self.moving_average[p] < min_price:
+                min_price = self.moving_average[p]
+                min_index = p
+        return min_index
+
+    def _get_right_indexes(self, peaks, start_index):
+        right_peaks = []
+        for p in peaks:
+            if p > start_index:
+                right_peaks.append(p)
+        return right_peaks
+
+    def _get_long_trend(self, peaks, is_top):
+        start_index = -1
+        if is_top:
+            start_index = self._find_max_index(peaks)
+        else:
+            start_index = self._find_min_index(peaks)
+
+        indexes = self._get_right_indexes(peaks, is_top)
+        for p in indexes:
+            found = True
+            for i in peaks:
+                if i != p and i != start_index:
+                    x1, x2, y1, y2, cx, cy = start_index, p, self.moving_average[start_index], self.moving_average[p], i, self.moving_average[i]
+                    result = (y1 - y2) * cx + (x2 - x1) * cy + x1 * y2 - x2 * y1
+                    if (is_top and result < 0) or (not is_top and resut > 0):
+                        found = False
+                        break
+            if found:
+                return (self.date_array[start_index], self.moving_average[start_index],
+                        self.date_array[p], self.moving_average[p]) 
+        return None
+            
+    def find_trend(self):
+        short_trends = []
+        long_trends = []
+        top_peaks, _ = self.get_peaks(True, True)
+        bottom_peaks, _ = self.get_peaks(False, True)
+        short_trends.extend(self._get_short_trend(top_peaks))
+        short_trends.extend(self._get_short_trend(bottom_peaks))
         
-    def get_trend(self):
-        reverse_prices = self._get_reversed(self.moving_average)
-        peaks_top, prominences_top = self._calculate(self.moving_average)
-        peaks_bottom, prominences_bottom = self._calculate(reverse_prices)
+        top_long = self._get_long_trend(top_peaks, True)
+        bottom_long = self._get_long_trend(bottom_peaks, False) 
 
-        trend_top = self._find_trend(self.moving_average, peaks_top, prominences_top, True)
-        trend_bottom = self._find_trend(self.moving_average, peaks_bottom, prominences_bottom, False)
+        if top_long is not None:
+            long_trends.append(top_long)
+        if bottom_long is not None:
+            long_trends.append(bottom_long)
 
-        return peaks_top, peaks_bottom, trend_top, trend_bottom
+        return short_trends, long_trends

@@ -8,8 +8,12 @@ from utils import time_converter
 from morning_server.viewer import figure
 import numpy as np
 from morning_server.viewer import edgefinder
+from morning_server.viewer import code_chooser
+import random
+
 
 message_reader = None
+
 
 class DataHandler(QObject):
     NEW_DATA = 0
@@ -28,6 +32,7 @@ class DataHandler(QObject):
         self.average_data = []
         self.up_to = None
         self.price_range = [0, 0]
+        self.edges = []
 
     def get_figure(self):
         return self.figure
@@ -38,6 +43,7 @@ class DataHandler(QObject):
         self.average_data.clear()
         self.moving_average.clear()
         self.price_range = [0, 0]
+        self.edges.clear()
 
     def calc_moving_average(self, yesterday_min, today_min):
         data = np.array([(self.convert_to_timestamp(ym['0'], ym['time']), ym['close_price']) for ym in yesterday_min]) 
@@ -71,9 +77,10 @@ class DataHandler(QObject):
         ef = edgefinder.EdgeFinder(up_to_moving_average)
         peaks_top = ef.get_peaks(True)
         peaks_bottom = ef.get_peaks(False)
+        short_trends, long_trends = ef.find_trend()
         summary = {'today': datetime.combine(self.today, time()), 'yesterday': datetime.combine(self.yesterday, time()),
                     'price_min': self.price_range[0], 'price_max': self.price_range[1], 'volume_max': volume_max, 'volume_average': self.volume_average,
-                    'data': up_to_data, 'moving_average': up_to_moving_average, 'peak_top': peaks_top, 'peak_bottom': peaks_bottom}
+                    'data': up_to_data, 'moving_average': up_to_moving_average, 'peak_top': peaks_top, 'peak_bottom': peaks_bottom, 'short_trend': short_trends, 'long_trend': long_trends}
 
         self.figure.set_display_data(summary)
 
@@ -122,6 +129,11 @@ class DataHandler(QObject):
             self.today_min_data_c.append(dt.cybos_stock_day_tick_convert(tm))
 
         self.calc_moving_average(self.yesterday_min_data_c, self.today_min_data_c)
+
+        ef = edgefinder.EdgeFinder(self.moving_average)
+        self.edges.extend(ef.get_peaks(True))
+        self.edges.extend(ef.get_peaks(False))
+        ef = sorted(ef, key=lambda x: x[0])
 
         yesterday_average = self.create_average_data(yesterday, self.yesterday_min_data_c)
         today_average = self.create_average_data(target_date, self.today_min_data_c)
@@ -181,24 +193,26 @@ class DataHandler(QObject):
     @pyqtSlot(str, datetime)
     def info_changed(self, code, d):
         if holidays.is_holidays(d):
-            # TODO: displaying Popup
-            print('Holiday')
-            return
+            from PyQt5.QtWidgets import QMessageBox
+            QMessageBox.warning(self.get_figure(), 'Not available', 'Holiday')
         if self.current_code == code and self.current_dt == d:
             return
+
         self.current_code = code
         self.current_dt = d
         if len(code) == 0:
-            # TODO: Pick one randomly
-            pass
-        else:
-            self.load_data(code, d)
+            codes = code_chooser.get_candidate_code(message.KOSDAQ, holidays.get_yesterday(d), message_reader)
+            self.current_code = random.choice(codes)
+
+        if len(self.current_code) > 0:
+            self.load_data(self.current_code, d)
         
 
     @pyqtSlot()
     def check_next(self):
-        # TODO: Step1: Show datas until PM 12:00
-        #       Step2: Show datas until find peak (up to today)
-        pass
-
-
+        ts = self.up_to.timestamp() * 1000
+        for e in self.edges:
+            if e[0] > ts:
+                self.up_to = datetime.datetime.fromtimestamp(e[0] /1000.0 + 600) # 10 minute
+                self.set_figure_data(self.up_to, False)
+                break
