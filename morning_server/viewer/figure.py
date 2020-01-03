@@ -27,8 +27,8 @@ class PriceFigure:
         self.top_edge_series = QScatterSeries()
         self.bottom_edge_series = QScatterSeries()
 
-        self.short_trend_series = QScatterSeries()
-        self.long_trend_series = QScatterSeries()
+        self.short_trend_series = QLineSeries()
+        self.long_trend_series = QLineSeries()
 
         self.chart_view.chart().addSeries(self.candle_stick_series)
         self.chart_view.chart().addSeries(self.moving_average_series)
