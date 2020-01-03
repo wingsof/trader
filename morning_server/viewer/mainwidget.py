@@ -20,6 +20,7 @@ class MainWidget(QWidget):
 
         self.menu.info_changed.connect(self.handler.info_changed)
         self.menu.check_next.connect(self.handler.check_next)
+        self.menu.next_code.connect(self.handler.next_code)
         self.layout.addWidget(self.menu, 0, 0)
         self.layout.addWidget(self.figure, 1, 0)
         self.setLayout(self.layout)

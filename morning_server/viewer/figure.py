@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QGridLayout, QWidget
-from PyQt5.QtGui import QPainter, QColor, QBrush
+from PyQt5.QtGui import QPainter, QColor, QBrush, QPen
 from PyQt5.QtCore import QTimer, QDateTime, QDate, QTime, Qt
 from PyQt5.QtChart import QChart, QLineSeries, QCandlestickSeries, QChartView, QDateTimeAxis, QValueAxis, QCandlestickSet, QScatterSeries
 from datetime import time, datetime, timedelta
@@ -27,27 +27,42 @@ class PriceFigure:
         self.top_edge_series = QScatterSeries()
         self.bottom_edge_series = QScatterSeries()
 
-        self.short_trend_series = QLineSeries()
-        self.long_trend_series = QLineSeries()
+        self.trend_lines = []
+        self.short_top_trend_series = QLineSeries()
+        self.short_bottom_trend_series = QLineSeries()
+        self.long_top_trend_series = QLineSeries()
+        self.long_bottom_trend_series = QLineSeries()
+        self.trend_lines.append(self.short_top_trend_series)
+        self.trend_lines.append(self.short_bottom_trend_series)
+        self.trend_lines.append(self.long_top_trend_series)
+        self.trend_lines.append(self.long_bottom_trend_series)
 
         self.chart_view.chart().addSeries(self.candle_stick_series)
         self.chart_view.chart().addSeries(self.moving_average_series)
         self.chart_view.chart().addSeries(self.top_edge_series)
         self.chart_view.chart().addSeries(self.bottom_edge_series)
-        self.chart_view.chart().addSeries(self.short_trend_series)
-        self.chart_view.chart().addSeries(self.long_trend_series)
+        self.chart_view.chart().addSeries(self.short_top_trend_series)
+        self.chart_view.chart().addSeries(self.long_top_trend_series)
+        self.chart_view.chart().addSeries(self.short_bottom_trend_series)
+        self.chart_view.chart().addSeries(self.long_bottom_trend_series)
 
         self.chart_view.chart().addAxis(self.price_time_axis, Qt.AlignBottom)
         self.chart_view.chart().addAxis(self.price_axis, Qt.AlignLeft)
         self.chart_view.chart().legend().hide()
         self.chart_view.setRenderHint(QPainter.Antialiasing)
         self.set_marker_color()
+        self.set_trend_line_pen()
     
+    def set_trend_line_pen(self):
+        brushes = [QBrush(QColor(255, 0, 0, 90)), QBrush(QColor(0, 0, 255, 90)), QBrush(QColor(205, 56, 47, 255)), QBrush(QColor(0, 153, 213, 255))]
+        for i, tl in enumerate(self.trend_lines):
+            tl.setPen(QPen(brushes[i], 4, Qt.DotLine))
+
     def set_marker_color(self):
         self.top_edge_series.setPen(Qt.black)
-        self.top_edge_series.setBrush(QBrush(Qt.magenta))
+        self.top_edge_series.setBrush(QBrush(QColor(255, 0, 255, 90)))
         self.bottom_edge_series.setPen(Qt.black)
-        self.bottom_edge_series.setBrush(QBrush(Qt.yellow))
+        self.bottom_edge_series.setBrush(QBrush(QColor(0, 255, 255, 90)))
 
     def set_datetime(self, d):
         self.chart_datetime = d
@@ -70,10 +85,14 @@ class PriceFigure:
         self.top_edge_series.attachAxis(self.price_axis)
         self.bottom_edge_series.attachAxis(self.price_time_axis)
         self.bottom_edge_series.attachAxis(self.price_axis)
-        self.short_trend_series.attachAxis(self.price_time_axis)
-        self.short_trend_series.attachAxis(self.price_axis)
-        self.long_trend_series.attachAxis(self.price_time_axis)
-        self.long_trend_series.attachAxis(self.price_axis)
+        self.short_top_trend_series.attachAxis(self.price_time_axis)
+        self.short_top_trend_series.attachAxis(self.price_axis)
+        self.long_top_trend_series.attachAxis(self.price_time_axis)
+        self.long_top_trend_series.attachAxis(self.price_axis)
+        self.short_bottom_trend_series.attachAxis(self.price_time_axis)
+        self.short_bottom_trend_series.attachAxis(self.price_axis)
+        self.long_bottom_trend_series.attachAxis(self.price_time_axis)
+        self.long_bottom_trend_series.attachAxis(self.price_axis)
 
     def in_datetime_range(self, q):
         return self.datetime_range[0] < q < self.datetime_range[1]
@@ -83,8 +102,10 @@ class PriceFigure:
         self.moving_average_series.clear()
         self.top_edge_series.clear()
         self.bottom_edge_series.clear()
-        self.short_trend_series.clear()
-        self.long_trend_series.clear()
+        self.short_top_trend_series.clear()
+        self.long_top_trend_series.clear()
+        self.short_bottom_trend_series.clear()
+        self.long_bottom_trend_series.clear()
 
     def get_chart_view(self):
         return self.chart_view
@@ -110,27 +131,50 @@ class PriceFigure:
         if self.in_datetime_range(q):
             self.bottom_edge_series.append(q, price)
 
-    def add_short_trend(self, q, price, draw_horizontal=False):
+    def add_short_top_trend(self, q, price, draw_horizontal=False):
         if self.in_datetime_range(q):
             if draw_horizontal:
-                self.short_trend_series.append(q, price)
+                self.short_top_trend_series.append(q, price)
                 if self.name == 'yesterday':
-                    self.short_trend_series.append(self.datetime_range[1], price)
+                    self.short_top_trend_series.append(self.datetime_range[1], price)
                 else:
-                    self.short_trend_series.append(self.datetime_range[0], price)
+                    self.short_top_trend_series.append(self.datetime_range[0], price)
             else:
-                self.short_trend_series.append(q, price)
+                self.short_top_trend_series.append(q, price)
 
-    def add_long_trend(self, q, price, draw_horizontal=False):
+    def add_long_top_trend(self, q, price, draw_horizontal=False):
         if self.in_datetime_range(q):
             if draw_horizontal:
-                self.long_trend_series.append(q, price)
+                self.long_top_trend_series.append(q, price)
                 if self.name == 'yesterday':
-                    self.long_trend_series.append(self.datetime_range[1], price)
+                    self.long_top_trend_series.append(self.datetime_range[1], price)
                 else:
-                    self.long_trend_series.append(self.datetime_range[0], price)
+                    self.long_top_trend_series.append(self.datetime_range[0], price)
             else:
-                self.long_trend_series.append(q, price)
+                self.long_top_trend_series.append(q, price)
+
+    def add_short_bottom_trend(self, q, price, draw_horizontal=False):
+        if self.in_datetime_range(q):
+            if draw_horizontal:
+                self.short_bottom_trend_series.append(q, price)
+                if self.name == 'yesterday':
+                    self.short_bottom_trend_series.append(self.datetime_range[1], price)
+                else:
+                    self.short_bottom_trend_series.append(self.datetime_range[0], price)
+            else:
+                self.short_bottom_trend_series.append(q, price)
+
+    def add_long_bottom_trend(self, q, price, draw_horizontal=False):
+        if self.in_datetime_range(q):
+            if draw_horizontal:
+                self.long_bottom_trend_series.append(q, price)
+                if self.name == 'yesterday':
+                    self.long_bottom_trend_series.append(self.datetime_range[1], price)
+                else:
+                    self.long_bottom_trend_series.append(self.datetime_range[0], price)
+            else:
+                self.long_bottom_trend_series.append(q, price)
+
 
 
 class VolumeFigure:
@@ -210,6 +254,9 @@ class Figure(QWidget):
         self.layout.addWidget(self.yesterday_volume_chart.get_chart_view(), 1, 0)
         self.layout.addWidget(self.today_volume_chart.get_chart_view(), 1, 1)
         self.setLayout(self.layout)
+        for c in self.charts:
+            c.attach()
+
 
     def clear_chart_data(self):
         for c in self.charts:
@@ -253,21 +300,33 @@ class Figure(QWidget):
         self.yesterday_chart.add_top_edge(q, price)
         self.today_chart.add_top_edge(q, price)
 
-    def add_short_trend(self, line_points):
-        self.yesterday_chart.add_short_trend(line_points[0], line_points[1])
-        self.today_chart.add_short_trend(line_points[0], line_points[1])
-        self.yesterday_chart.add_short_trend(line_points[2], line_points[3])
-        self.today_chart.add_short_trend(line_points[2], line_points[3])
+    def add_short_top_trend(self, q1, price1, q2, price2):
+        self.yesterday_chart.add_short_top_trend(q1, price1)
+        self.today_chart.add_short_top_trend(q1, price1)
+        self.yesterday_chart.add_short_top_trend(q2, price2)
+        self.today_chart.add_short_top_trend(q2, price2)
 
-    def add_long_trend(self, line_points):
-        self.yesterday_chart.add_long_trend(line_points[0], line_points[1])
-        self.today_chart.add_long_trend(line_points[0], line_points[1])
-        self.yesterday_chart.add_long_trend(line_points[2], line_points[3])
-        self.today_chart.add_long_trend(line_points[2], line_points[3])
+    def add_short_bottom_trend(self, q1, price1, q2, price2):
+        self.yesterday_chart.add_short_bottom_trend(q1, price1)
+        self.today_chart.add_short_bottom_trend(q1, price1)
+        self.yesterday_chart.add_short_bottom_trend(q2, price2)
+        self.today_chart.add_short_bottom_trend(q2, price2)
 
-    def set_display_data(self, summary, refresh=True):
+    def add_long_top_trend(self, q1, price1, q2, price2):
+        self.yesterday_chart.add_long_top_trend(q1, price1)
+        self.today_chart.add_long_top_trend(q1, price1)
+        self.yesterday_chart.add_long_top_trend(q2, price2)
+        self.today_chart.add_long_top_trend(q2, price2)
+
+    def add_long_bottom_trend(self, q1, price1, q2, price2):
+        self.yesterday_chart.add_long_bottom_trend(q1, price1)
+        self.today_chart.add_long_bottom_trend(q1, price1)
+        self.yesterday_chart.add_long_bottom_trend(q2, price2)
+        self.today_chart.add_long_bottom_trend(q2, price2)
+    
+    def set_display_data(self, summary):
         self.clear_chart_data()
-        print(summary['yesterday'], summary['today'])
+        #print(summary['yesterday'], summary['today'])
         self.set_chart_date(summary['yesterday'], summary['today'])
         self.set_volume_max(max(summary['volume_max'], summary['volume_average']))
         self.set_volume_average(summary['volume_average'])
@@ -282,19 +341,21 @@ class Figure(QWidget):
             self.add_moving_average(d[0], d[1])
 
         for te in summary['peak_top']:
-            print('top', te)
+            #print('top', te)
             self.add_top_edge(te[0], te[1])
         
         for be in summary['peak_bottom']:
-            print('bottom', te)
+            #print('bottom', te)
             self.add_bottom_edge(be[0], be[1])
 
-        for st in summary['short_trend']:
-            self.add_short_trend(st)
-            
-        for lt in summary['long_trend']:
-            self.add_long_trend(lt)    
-
+        st = summary['short_trend']
+        self.add_short_top_trend(st[0][0], st[0][1], st[0][2], st[0][3])
+        self.add_short_bottom_trend(st[1][0], st[1][1], st[1][2], st[1][3])
+        lt = summary['long_trend']
+        self.add_long_top_trend(lt[0][0], lt[0][1], lt[0][2], lt[0][3])
+        self.add_long_bottom_trend(lt[1][0], lt[1][1], lt[1][2], lt[1][3])
+        """    
         if refresh:
             for c in self.charts:
                 c.attach()
+        """

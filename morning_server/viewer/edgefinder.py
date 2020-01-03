@@ -51,8 +51,8 @@ class EdgeFinder:
     def _get_short_trend(self, peaks):
         trend = []
         if len(peaks) >= 2:
-            trend.append((self.date_array[peaks[-1]], self.moving_average[peaks[-1]],
-                          self.date_array[peaks[-2]], self.moving_average[peaks[-2]]))
+            trend.append((self.date_array[peaks[-2]], self.moving_average[peaks[-2]],
+                          self.date_array[peaks[-1]], self.moving_average[peaks[-1]]))
         return trend
 
     def _find_max_index(self, peaks):
@@ -90,14 +90,14 @@ class EdgeFinder:
         else:
             start_index = self._find_min_index(peaks)
 
-        indexes = self._get_right_indexes(peaks, is_top)
+        indexes = self._get_right_indexes(peaks, start_index)
         for p in indexes:
             found = True
             for i in peaks:
                 if i != p and i != start_index:
                     x1, x2, y1, y2, cx, cy = start_index, p, self.moving_average[start_index], self.moving_average[p], i, self.moving_average[i]
                     result = (y1 - y2) * cx + (x2 - x1) * cy + x1 * y2 - x2 * y1
-                    if (is_top and result < 0) or (not is_top and resut > 0):
+                    if (is_top and result > 0) or (not is_top and result < 0):
                         found = False
                         break
             if found:

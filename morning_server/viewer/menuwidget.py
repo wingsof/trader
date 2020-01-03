@@ -20,6 +20,7 @@ class DatePick(QDialog):
 class MenuWidget(QWidget):
     info_changed = pyqtSignal(str, datetime)
     check_next = pyqtSignal()
+    next_code = pyqtSignal()
 
     def __init__(self):
         super(MenuWidget, self).__init__()
@@ -42,11 +43,6 @@ class MenuWidget(QWidget):
         pick.exec()
 
     @pyqtSlot()
-    def set_next_day(self):
-        self.now = self.now.addDays(1)
-        self.update_date()
-
-    @pyqtSlot()
     def send_info(self):
         code = str(self.code_input.text())
         dt = datetime(self.now.year(), self.now.month(), self.now.day())
@@ -67,8 +63,8 @@ class MenuWidget(QWidget):
         self.graph_next_button = QPushButton('Check Next')
         self.graph_next_button.clicked.connect(self.check_next)
 
-        self.next_day = QPushButton('Next day')
-        self.next_day.clicked.connect(self.set_next_day)
+        self.next_day = QPushButton('Next Code')
+        self.next_day.clicked.connect(self.next_code)
 
         self.layout.addWidget(self.code_label)
         self.layout.addWidget(self.code_input)

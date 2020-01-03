@@ -9,6 +9,7 @@ from morning_server.viewer import figure
 import numpy as np
 from morning_server.viewer import edgefinder
 from morning_server.viewer import code_chooser
+from morning_server import message
 import random
 
 
@@ -33,6 +34,7 @@ class DataHandler(QObject):
         self.up_to = None
         self.price_range = [0, 0]
         self.edges = []
+        self.codes = []
 
     def get_figure(self):
         return self.figure
@@ -78,8 +80,16 @@ class DataHandler(QObject):
         peaks_top = ef.get_peaks(True)
         peaks_bottom = ef.get_peaks(False)
         short_trends, long_trends = ef.find_trend()
-        print('short trend', short_trends)
-        print('long trend', long_trends)
+        def convert_from_timestamp(t):
+            return datetime.fromtimestamp(t /1000.0) # 10 minute
+        for st in short_trends:
+            pass
+            #print('short', convert_from_timestamp(st[0]), convert_from_timestamp(st[2]))
+
+        for lt in long_trends:
+            pass
+            #print('long', convert_from_timestamp(lt[0]), convert_from_timestamp(lt[2]))
+
         summary = {'today': datetime.combine(self.today, time()), 'yesterday': datetime.combine(self.yesterday, time()),
                     'price_min': self.price_range[0], 'price_max': self.price_range[1], 'volume_max': volume_max, 'volume_average': self.volume_average,
                     'data': up_to_data, 'moving_average': up_to_moving_average, 'peak_top': peaks_top, 'peak_bottom': peaks_bottom, 'short_trend': short_trends, 'long_trend': long_trends}
@@ -203,8 +213,8 @@ class DataHandler(QObject):
         self.current_code = code
         self.current_dt = d
         if len(code) == 0:
-            codes = code_chooser.get_candidate_code(message.KOSDAQ, holidays.get_yesterday(d), message_reader)
-            self.current_code = random.choice(codes)
+            self.codes = code_chooser.get_candidate_code(message.KOSDAQ, holidays.get_yesterday(d), message_reader)
+            self.current_code = random.choice(self.codes)
 
         if len(self.current_code) > 0:
             self.load_data(self.current_code, d)
@@ -215,6 +225,13 @@ class DataHandler(QObject):
         ts = self.up_to.timestamp() * 1000
         for e in self.edges:
             if e[0] > ts:
-                self.up_to = datetime.datetime.fromtimestamp(e[0] /1000.0 + 600) # 10 minute
-                self.set_figure_data(self.up_to, False)
+                self.up_to = datetime.fromtimestamp(e[0] /1000.0 + 600) # 10 minute
+                self.set_figure_data(self.up_to)
                 break
+
+    @pyqtSlot()
+    def next_code(self):
+        if len(self.codes) > 0:
+            self.current_code = random.choice(self.codes)
+            if len(self.current_code) > 0:
+                self.load_data(self.current_code, self.current_dt)
