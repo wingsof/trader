@@ -78,6 +78,8 @@ class DataHandler(QObject):
         peaks_top = ef.get_peaks(True)
         peaks_bottom = ef.get_peaks(False)
         short_trends, long_trends = ef.find_trend()
+        print('short trend', short_trends)
+        print('long trend', long_trends)
         summary = {'today': datetime.combine(self.today, time()), 'yesterday': datetime.combine(self.yesterday, time()),
                     'price_min': self.price_range[0], 'price_max': self.price_range[1], 'volume_max': volume_max, 'volume_average': self.volume_average,
                     'data': up_to_data, 'moving_average': up_to_moving_average, 'peak_top': peaks_top, 'peak_bottom': peaks_bottom, 'short_trend': short_trends, 'long_trend': long_trends}
