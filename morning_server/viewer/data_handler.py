@@ -133,7 +133,7 @@ class DataHandler(QObject):
         ef = edgefinder.EdgeFinder(self.moving_average)
         self.edges.extend(ef.get_peaks(True))
         self.edges.extend(ef.get_peaks(False))
-        ef = sorted(ef, key=lambda x: x[0])
+        self.edges = sorted(self.edges, key=lambda x: x[0])
 
         yesterday_average = self.create_average_data(yesterday, self.yesterday_min_data_c)
         today_average = self.create_average_data(target_date, self.today_min_data_c)
