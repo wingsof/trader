@@ -103,7 +103,8 @@ class EdgeFinder:
             if found:
                 return (self.date_array[start_index], self.moving_average[start_index],
                         self.date_array[p], self.moving_average[p]) 
-        return None
+        return (self.date_array[start_index], self.moving_average[start_index],
+                        self.date_array[-1], self.moving_average[-1])
             
     def find_trend(self):
         short_trends = []
