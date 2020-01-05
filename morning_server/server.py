@@ -59,10 +59,12 @@ def handle_request(sock, header, body):
     #print('HANDLE REQUEST', header)
     data, vacancy = request_pre_handler.pre_handle_request(sock, header, body)
     if data is None:
+        print('HEADER', header)
         collector = collectors.get_available_request_collector()
         collector.set_request(sock, header['_id'], True)
         stream_write(collector.sock, header, body, collectors)
     elif len(vacancy) > 0:
+        print('HEADER(to collector)', header)
         partial_request.start_partial_request(header, data, len(vacancy))
         for v in vacancy:
             collector = collectors.get_available_request_collector()
@@ -72,6 +74,7 @@ def handle_request(sock, header, body):
             header['until'] = v[1]
             stream_write(collector.sock, header, body, collectors)
     else:
+        print('HEADER(cached)', header)
         header['type'] = message.RESPONSE
         stream_write(sock, header, data)
     #print('HANDLE REQUEST DONE')

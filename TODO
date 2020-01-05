@@ -1,6 +1,18 @@
 Progressing
 --------------------
-
+* Peak Database
+    * code, from_date, until_date
+    * peak
+        * type
+        * time_elapsed
+        * position
+        * type_position
+        * gap: [left, right]
+        * type_gap: [left, right]
+        * price
+        * profit
+        * type_profit
+* 가격의 왜곡을 알 수 있을까? 예를 들어 거래량에 비해 가격이 안올랐다던지 아니면 반대 상황
 * 시장 주도주의 정의는?
 * 종목을 늘렸을 때, 수익 비교 - 차이없음
 * 장 마감 전까지 Sell signal 안오는 경우 다음 날 손익 통계? - 주기적 실제 데이터 기반으로 검토
