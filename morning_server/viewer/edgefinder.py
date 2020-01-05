@@ -58,15 +58,21 @@ class EdgeFinder:
     def _find_max_index(self, peaks):
         max_price = 0
         max_index = -1
+        
         for p in peaks:
             if self.moving_average[p] > max_price:
                 max_price = self.moving_average[p]
                 max_index = p
+        
+        if len(peaks) > 2 and max_index == peaks[-1]:
+            return self._find_max_index(peaks[:-1])
+
         return max_index
 
     def _find_min_index(self, peaks):
         min_price = -1
         min_index = -1
+
         for p in peaks:
             if min_price == -1:
                 min_price = self.moving_average[p]
@@ -74,6 +80,9 @@ class EdgeFinder:
             if self.moving_average[p] < min_price:
                 min_price = self.moving_average[p]
                 min_index = p
+        
+        if len(peaks) > 2 and min_index == peaks[-1]:
+            return self._find_min_index(peaks[:-1])
         return min_index
 
     def _get_right_indexes(self, peaks, start_index):
@@ -84,6 +93,9 @@ class EdgeFinder:
         return right_peaks
 
     def _get_long_trend(self, peaks, is_top):
+        if len(peaks) < 2:
+            return None
+
         start_index = -1
         if is_top:
             start_index = self._find_max_index(peaks)
@@ -117,9 +129,7 @@ class EdgeFinder:
         top_long = self._get_long_trend(top_peaks, True)
         bottom_long = self._get_long_trend(bottom_peaks, False) 
 
-        if top_long is not None:
-            long_trends.append(top_long)
-        if bottom_long is not None:
-            long_trends.append(bottom_long)
+        long_trends.append(top_long)
+        long_trends.append(bottom_long)
 
         return short_trends, long_trends

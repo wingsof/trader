@@ -120,7 +120,7 @@ class PriceFigure:
 
     def set_price_range(self, price_min, price_max):
         self.price_axis.setRange(price_min, price_max)
-        tick_count = int(math.ceil((price_max - price_min) / price_min * 100.))
+        tick_count = int(math.ceil((price_max - price_min) / price_min * 100. / 2.0))
         self.price_axis.setTickCount(tick_count if tick_count + 1> 2 else 2)
     
     def add_top_edge(self, q, price):
@@ -205,6 +205,7 @@ class VolumeFigure:
 
     def clear_series_data(self):
         self.volume_series.clear()
+        self.volume_average_series.clear()
 
     def set_volume_average(self, vol):
         self.volume_average_series.append(self.datetime_range[0], vol)
@@ -300,29 +301,38 @@ class Figure(QWidget):
         self.yesterday_chart.add_top_edge(q, price)
         self.today_chart.add_top_edge(q, price)
 
+    def is_different_days(self, q1, q2):
+        t1 = datetime.fromtimestamp(q1 /1000.0)
+        t2 = datetime.fromtimestamp(q2 /1000.0)
+        return t1.day != t2.day
+
     def add_short_top_trend(self, q1, price1, q2, price2):
-        self.yesterday_chart.add_short_top_trend(q1, price1)
-        self.today_chart.add_short_top_trend(q1, price1)
-        self.yesterday_chart.add_short_top_trend(q2, price2)
-        self.today_chart.add_short_top_trend(q2, price2)
+        draw_horizontal = self.is_different_days(q1, q2)
+        self.yesterday_chart.add_short_top_trend(q1, price1, draw_horizontal)
+        self.today_chart.add_short_top_trend(q1, price1, draw_horizontal)
+        self.yesterday_chart.add_short_top_trend(q2, price2, draw_horizontal)
+        self.today_chart.add_short_top_trend(q2, price2, draw_horizontal)
 
     def add_short_bottom_trend(self, q1, price1, q2, price2):
-        self.yesterday_chart.add_short_bottom_trend(q1, price1)
-        self.today_chart.add_short_bottom_trend(q1, price1)
-        self.yesterday_chart.add_short_bottom_trend(q2, price2)
-        self.today_chart.add_short_bottom_trend(q2, price2)
+        draw_horizontal = self.is_different_days(q1, q2)
+        self.yesterday_chart.add_short_bottom_trend(q1, price1, draw_horizontal)
+        self.today_chart.add_short_bottom_trend(q1, price1, draw_horizontal)
+        self.yesterday_chart.add_short_bottom_trend(q2, price2, draw_horizontal)
+        self.today_chart.add_short_bottom_trend(q2, price2, draw_horizontal)
 
     def add_long_top_trend(self, q1, price1, q2, price2):
-        self.yesterday_chart.add_long_top_trend(q1, price1)
-        self.today_chart.add_long_top_trend(q1, price1)
-        self.yesterday_chart.add_long_top_trend(q2, price2)
-        self.today_chart.add_long_top_trend(q2, price2)
+        draw_horizontal = self.is_different_days(q1, q2)
+        self.yesterday_chart.add_long_top_trend(q1, price1, draw_horizontal)
+        self.today_chart.add_long_top_trend(q1, price1, draw_horizontal)
+        self.yesterday_chart.add_long_top_trend(q2, price2, draw_horizontal)
+        self.today_chart.add_long_top_trend(q2, price2, draw_horizontal)
 
     def add_long_bottom_trend(self, q1, price1, q2, price2):
-        self.yesterday_chart.add_long_bottom_trend(q1, price1)
-        self.today_chart.add_long_bottom_trend(q1, price1)
-        self.yesterday_chart.add_long_bottom_trend(q2, price2)
-        self.today_chart.add_long_bottom_trend(q2, price2)
+        draw_horizontal = self.is_different_days(q1, q2)
+        self.yesterday_chart.add_long_bottom_trend(q1, price1, draw_horizontal)
+        self.today_chart.add_long_bottom_trend(q1, price1, draw_horizontal)
+        self.yesterday_chart.add_long_bottom_trend(q2, price2, draw_horizontal)
+        self.today_chart.add_long_bottom_trend(q2, price2, draw_horizontal)
     
     def set_display_data(self, summary):
         self.clear_chart_data()
@@ -348,12 +358,19 @@ class Figure(QWidget):
             #print('bottom', te)
             self.add_bottom_edge(be[0], be[1])
 
-        st = summary['short_trend']
-        self.add_short_top_trend(st[0][0], st[0][1], st[0][2], st[0][3])
-        self.add_short_bottom_trend(st[1][0], st[1][1], st[1][2], st[1][3])
-        lt = summary['long_trend']
-        self.add_long_top_trend(lt[0][0], lt[0][1], lt[0][2], lt[0][3])
-        self.add_long_bottom_trend(lt[1][0], lt[1][1], lt[1][2], lt[1][3])
+        if 'short_trend' in summary:
+            st = summary['short_trend']
+            if len(st) > 0:
+                self.add_short_top_trend(st[0][0], st[0][1], st[0][2], st[0][3])
+            if len(st) > 1:
+                self.add_short_bottom_trend(st[1][0], st[1][1], st[1][2], st[1][3])
+        
+        if 'long_trend' in summary:
+            lt = summary['long_trend']
+            if lt[0] is not None:
+                self.add_long_top_trend(lt[0][0], lt[0][1], lt[0][2], lt[0][3])
+            if lt[1] is not None:
+                self.add_long_bottom_trend(lt[1][0], lt[1][1], lt[1][2], lt[1][3])
         """    
         if refresh:
             for c in self.charts:

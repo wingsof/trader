@@ -76,34 +76,47 @@ class DataHandler(QObject):
             else:
                 up_to_moving_average.append(ma)
 
+        summary = {'today': datetime.combine(self.today, time()), 'yesterday': datetime.combine(self.yesterday, time()),
+                    'price_min': self.price_range[0], 'price_max': self.price_range[1], 'volume_max': volume_max, 'volume_average': self.volume_average,
+                    'data': up_to_data, 'moving_average': up_to_moving_average}
         ef = edgefinder.EdgeFinder(up_to_moving_average)
         peaks_top = ef.get_peaks(True)
         peaks_bottom = ef.get_peaks(False)
         short_trends, long_trends = ef.find_trend()
+
         def convert_from_timestamp(t):
             return datetime.fromtimestamp(t /1000.0) # 10 minute
-        for st in short_trends:
-            pass
-            #print('short', convert_from_timestamp(st[0]), convert_from_timestamp(st[2]))
+        
+        if len(peaks_top) > 0:
+            summary['peak_top'] = peaks_top
+        
+        if len(peaks_bottom) > 0:
+            summary['peak_bottom'] = peaks_bottom
 
-        for lt in long_trends:
-            pass
-            #print('long', convert_from_timestamp(lt[0]), convert_from_timestamp(lt[2]))
+        if len(short_trends) > 0:
+            summary['short_trend'] = short_trends
+            for st in short_trends:
+                if st is not None:
+                    print('short', convert_from_timestamp(st[0]), convert_from_timestamp(st[2]))
 
-        summary = {'today': datetime.combine(self.today, time()), 'yesterday': datetime.combine(self.yesterday, time()),
-                    'price_min': self.price_range[0], 'price_max': self.price_range[1], 'volume_max': volume_max, 'volume_average': self.volume_average,
-                    'data': up_to_data, 'moving_average': up_to_moving_average, 'peak_top': peaks_top, 'peak_bottom': peaks_bottom, 'short_trend': short_trends, 'long_trend': long_trends}
+        if len(long_trends) > 0:
+            summary['long_trend'] = long_trends
+            for lt in long_trends:
+                if lt is not None:
+                    print('long', convert_from_timestamp(lt[0]), convert_from_timestamp(lt[2]))
 
         self.figure.set_display_data(summary)
 
 
     def load_data(self, code, target_date):
         yesterday = holidays.get_yesterday(target_date)
+        print('target_date', target_date, 'yesterday', yesterday)
         yesterday_min_data = stock_api.request_stock_minute_data(message_reader, code, yesterday, yesterday)
         if len(yesterday_min_data) <= 10:
             print('NO or LESS YESTERDAY MIN DATA', code, yesterday)
             return
         today_min_data = stock_api.request_stock_minute_data(message_reader, code, target_date, target_date)
+
         if len(today_min_data) <= 10:
             print('NO or LESS TODAY MIN DATA', code, target_date)
             return
@@ -233,5 +246,6 @@ class DataHandler(QObject):
     def next_code(self):
         if len(self.codes) > 0:
             self.current_code = random.choice(self.codes)
+            print('Current Code', self.current_code)
             if len(self.current_code) > 0:
                 self.load_data(self.current_code, self.current_dt)
