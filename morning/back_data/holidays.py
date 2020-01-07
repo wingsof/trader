@@ -37,6 +37,16 @@ def get_yesterday(today):
 
     return yesterday
 
+
+def get_tomorrow(today):
+    today = today if today.__class__.__name__ == 'date' else today.date()
+    tomorrow = today + timedelta(days=1)
+    while is_holidays(tomorrow):
+        tomorrow += timedelta(days=1)
+
+    return tomorrow
+
+
 def get_working_days(from_date, until_date):
     from_date = from_date if from_date.__class__.__name__ == 'date' else from_date.date()
     until_date = until_date if until_date.__class__.__name__ == 'date' else until_date.date()
