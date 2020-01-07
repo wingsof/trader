@@ -8,7 +8,7 @@ def request_stock_day_data(reader, code, from_date, until_date, method=message.D
     header['from'] = from_date
     header['until'] = until_date
     body = []
-    print(header)
+    #print(header)
     return reader.block_write(header, body)
 
 
