@@ -105,22 +105,30 @@ def create_peak_information(c):
     price_average = get_average_min_data(price_array)
     peaks_top = get_peaks(price_average, date_array, True)
     peaks_bottom = get_peaks(price_average, date_array, False)
+    # Connect yesterday min data 
 
     peak_data = {'code': c['code'],
                 'from_date': c['date'],
                 'until_date': c['until'],
                 'peak': []}
     peak_data['peak'].append({'type': 0, 'time': date_array[0], 'volume': 0,
-                    'price': c['yesterday_close']})
+                    'price': c['yesterday_close'], 'height_order': 0})
+    peaks_info = []
     for pt in peaks_top:
-        peak_data['peak'].append({'type': 1, 'time': date_array[pt], 
+        peaks_info.append({'type': 1, 'time': date_array[pt], 
                                 'volume': volume_array[pt], 'price': price_array[pt]})
 
     for pb in peaks_bottom:
-        peak_data['peak'].append({'type': 2, 'time': date_array[pb], 
+        peaks_info.append({'type': 2, 'time': date_array[pb], 
                                 'volume': volume_array[pb], 'price': price_array[pb]})
+
+    peaks_by_price_info = sorted(peaks_info, key=lambda x: x['price'])
+    for i, pbpi in enumerate(peaks_by_price_info):
+        pbpi['height_order'] = i + 1
+    peaks_by_time_info = sorted(peaks_by_price_info, key=lambda x: x['time'])
+    peak_data['peak'].extend(peaks_by_time_info)
     peak_data['peak'].append({'type': 3, 'time': date_array[-1], 'volume': volume_array[-1],
-                            'price': price_array[-1]})
+                            'price': price_array[-1], 'height_order': 0})
     store_peak_information(peak_data)
 
 
