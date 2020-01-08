@@ -23,6 +23,8 @@ from morning.pipeline.converter import dt
 from utils import time_converter
 from morning.config import db
 
+import price_comapre_plot
+
 
 def connect_min_data(today_min, tomorrow_min):
     price_array = np.array([])
@@ -116,7 +118,7 @@ def connect_peaks(c, price_average, price_array, date_array, volume_array, pts, 
     return peak_data
  
 
-def get_nearest_peak(peak_data, start_time, until_time):
+def get_nearest_peak(peak_data, start_time, until_time, full_data):
     # Find yesterday close and today first peak and which peak first?
     duration_m = until_time - start_time
     peak_db_data = peak_db_plus if peak_data['start_profit'] > 0 else peak_db_minus
@@ -150,6 +152,8 @@ def get_nearest_peak(peak_data, start_time, until_time):
 
     if len(matched_data) > 0:
         print('MATCHED RESULT', peak_data['code'], start_time, until_time, len(matched_data))
+        price_comapre_plot.save(message_reader, peak_data['code'], full_data, start_time, until_time, matched_data)
+        print('PLOT DONE')
         #print(pdd['code'], pdd['from_date'], height_pattern)
         #print(peak_data['code'], peak_data['from_date'], data_height_pattern)
         #print('Current Peak Data', peak_data)
@@ -166,10 +170,8 @@ def find_match_peak(c):
         peaks_bottom = get_peaks(until_now_data, False)
         if len(peaks_bottom) >= 2: # Initial Setting
             da = date_array[:i+1]
-            if c['code'] == 'A037950':
-                print(c['today_min_data'])
             peak_data = connect_peaks(c, until_now_data, price_array[:i+1], da, volume_array[:i+1], peaks_top, peaks_bottom, i)
-            get_nearest_peak(peak_data, da[0], da[-1])
+            get_nearest_peak(peak_data, da[0], da[-1], (price_array, date_array, volume_array))
                              
 
 def get_past_avg_numbers(code, data):
@@ -249,6 +251,7 @@ while from_date <= until_date:
     candidates = []
 
     for code in market_code:
+        
         past_data = stock_api.request_stock_day_data(message_reader, code, from_date - timedelta(days=MAVG*2), from_date)
         if MAVG * 2 * 0.6 > len(past_data):
             #print('PAST DATA too short', len(past_data), code)
