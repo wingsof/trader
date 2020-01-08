@@ -4,14 +4,14 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, time
 import gevent
 import socket
 import sys
-import time
 import threading
 import pandas as pd
 import numpy as np
+from pymongo import MongoClient
 from scipy.signal import find_peaks, peak_prominences
 
 from morning_server import message
@@ -20,6 +20,21 @@ from morning_server import stream_readwriter
 from morning.back_data import holidays
 from morning.pipeline.converter import dt
 from utils import time_converter
+from morning.config import db
+
+
+
+def store_peak_information(peak_info):
+    peak_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
+    db_data = list(peak_db['peak_info'].find({
+                                    'code': peak_info['code'],
+                                    'from_date': datetime.combine(peak_info['from_date'], time(0))}))
+    peak_info['from_date'] = datetime.combine(peak_info['from_date'], time(0))
+    peak_info['until_date'] = datetime.combine(peak_info['until_date'], time(0))
+    if len(db_data) == 0:
+        peak_db['peak_info'].insert_one(peak_info)
+    else:
+        print('found in DB', peak_info['code'])
 
 
 def get_reversed(s):
@@ -37,16 +52,12 @@ def calculate(x):
 
 
 def get_peaks(avg_data, date_array, is_top):
-    peaks_data = []
     if not is_top:
         prices = get_reversed(avg_data)
     else:
         prices = avg_data
-    peaks, prominence = calculate(prices)
-    for p in peaks:
-        peaks_data.append((date_array[p], avg_data[p]))
-
-    return peaks_data
+    peaks, _ = calculate(prices)
+    return peaks
 
 
 def get_average_min_data(prices):
@@ -61,11 +72,11 @@ def get_average_min_data(prices):
     return avg_array
 
 
-def create_peak_information(c):
-    today_min = c['today_min_data']
-    tomorrow_min = c['tomorrow_min_data']
+def connect_min_data(today_min, tomorrow_min):
     price_array = np.array([])
     date_array = []
+    volume_array = []
+    current_volume = 0
 
     for tm in today_min:
         hlc = (tm['highest_price'] + tm['lowest_price'] + tm['close_price']) / 3
@@ -73,6 +84,8 @@ def create_peak_information(c):
         record_time = time_converter.intdate_to_datetime(tm['0'])
         record_time = record_time.replace(hour=int(tm['time'] / 100), minute=int(tm['time'] % 100))
         date_array.append(record_time)
+        current_volume += tm['volume']
+        volume_array.append(current_volume)
 
     for tomm in tomorrow_min:
         hlc = (tomm['highest_price'] + tomm['lowest_price'] + tomm['close_price']) / 3
@@ -80,6 +93,14 @@ def create_peak_information(c):
         record_time = time_converter.intdate_to_datetime(tomm['0'])
         record_time = record_time.replace(hour=int(tomm['time'] / 100), minute=int(tomm['time'] % 100))
         date_array.append(record_time)
+        current_volume += tomm['volume']
+        volume_array.append(current_volume)
+
+    return price_array, date_array, volume_array
+
+
+def create_peak_information(c):
+    price_array, date_array, volume_array = connect_min_data(c['today_min_data'], c['tomorrow_min_data'])
 
     price_average = get_average_min_data(price_array)
     peaks_top = get_peaks(price_average, date_array, True)
@@ -89,13 +110,18 @@ def create_peak_information(c):
                 'from_date': c['date'],
                 'until_date': c['until'],
                 'peak': []}
-    peak_data['peak'].append({'type': 0, 'time_elapsed': 0,
-                    'position': 0, 'type_position': 0,
-                    'gap': [0, 0],
-                    'type_gap': [0,0],
-                    'price': c['yesterday_close'],
-                    'profit': [],
-                    'type_profit': []})
+    peak_data['peak'].append({'type': 0, 'time': date_array[0], 'volume': 0,
+                    'price': c['yesterday_close']})
+    for pt in peaks_top:
+        peak_data['peak'].append({'type': 1, 'time': date_array[pt], 
+                                'volume': volume_array[pt], 'price': price_array[pt]})
+
+    for pb in peaks_bottom:
+        peak_data['peak'].append({'type': 2, 'time': date_array[pb], 
+                                'volume': volume_array[pb], 'price': price_array[pb]})
+    peak_data['peak'].append({'type': 3, 'time': date_array[-1], 'volume': volume_array[-1],
+                            'price': price_array[-1]})
+    store_peak_information(peak_data)
 
 
 def get_today_profit_statistics(min_data, yesterday_close):
@@ -153,8 +179,8 @@ message_reader.start()
 market_code = stock_api.request_stock_code(message_reader, message.KOSDAQ)
 
 
-from_date = date(2019, 10, 1)
-until_date = date(2019, 10, 3)
+from_date = date(2018, 1, 1)
+until_date = date(2019, 12, 31)
 
 while from_date <= until_date:
     if holidays.is_holidays(from_date):
@@ -165,7 +191,6 @@ while from_date <= until_date:
     tomorrow = holidays.get_tomorrow(from_date)
     candidates = []
 
-    market_code = market_code[:30]
     for code in market_code:
         today_min_data = stock_api.request_stock_minute_data(message_reader, code, from_date, from_date)
         if len(today_min_data) == 0:
@@ -225,7 +250,8 @@ while from_date <= until_date:
         average_profit += c['today_profit_avg']
         create_peak_information(c)
 
-    print(from_date, 'candidate count', len(final_candidates), 
-            'profit mean', average_profit / len(final_candidates))
+    if len(final_candidates):
+        print(from_date, 'candidate count', len(final_candidates), 
+                'profit mean', average_profit / len(final_candidates))
 
     from_date += timedelta(days=1)
