@@ -1,20 +1,7 @@
-Progressing
---------------------
-* Peak Database
-    * code, from_date, until_date
-    * peak
-        * type
-        * time_elapsed
-        * position
-        * type_position
-        * gap: [left, right]
-        * type_gap: [left, right]
-        * price
-        * profit
-        * type_profit
-* 가격의 왜곡을 알 수 있을까? 예를 들어 거래량에 비해 가격이 안올랐다던지 아니면 반대 상황
+* 가격과 Volume 의 비대칭 찾기
+    * 가격의 왜곡을 알 수 있을까? 예를 들어 거래량에 비해 가격이 안올랐다던지 아니면 반대 상황
+* 매수세가 높은 종목 중 가장 싼 거 사서 내일 팔기
 * 시장 주도주의 정의는?
-* 종목을 늘렸을 때, 수익 비교 - 차이없음
 * 장 마감 전까지 Sell signal 안오는 경우 다음 날 손익 통계? - 주기적 실제 데이터 기반으로 검토
 * 수익률 특정 %로 고정했을 때, 승률 (BUY 이후, 고점이 몇인지 기록하면 통계 알 수 있을 듯)
 * https://towardsdatascience.com/backtesting-trading-strategies-less-sorcery-and-more-statistics-on-your-side-241ac41d18b0

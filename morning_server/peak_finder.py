@@ -141,7 +141,13 @@ def get_nearest_peak(peak_data, start_time, until_time, full_data):
     data_height_pattern = [pd['height_order'] for pd in peak_data['peak'][1:]]
     data_volume_pattern = [pd['volume_order'] for pd in peak_data['peak'][1:]]
 
+    peak_profit_gap = np.array([])
+    start_price = peak_data['peak'][0]['price']
+    for p in peak_data['peak'][1:]:
+        peak_profit_gap = np.append(peak_profit_gap, np.array([(p['price'] - start_price) / start_price * 100.]))
+
     matched_data = []
+
     # First phase: cut by duration
     for pdd in peak_db_data:
         peak_up_to_duration = [] 
@@ -178,12 +184,19 @@ def get_nearest_peak(peak_data, start_time, until_time, full_data):
         if volume_diff != data_volume_pattern:
             continue
 
+        data_peak_profit_gap = np.array([])
+        start_price = peak_up_to_duration[0]['price']
+        for p in peak_up_to_duration[1:]:
+            data_peak_profit_gap = np.append(data_peak_profit_gap, np.array([(p['price'] - start_price) / start_price * 100.]))        
+        pdd['price_gap'] = data_peak_profit_gap
         matched_data.append(pdd)
 
     if len(matched_data) > 0:
-        print('MATCHED RESULT', peak_data['code'], 'peaks count', len(peak_data['peak']), until_time, len(matched_data))
         save_matched_data = []
         for md in matched_data:
+            if np.linalg.norm(md['price_gap'] - peak_profit_gap) > 1:
+                continue
+
             if peak_data['code'] in saved_data:
                 if md['code'] in saved_data[peak_data['code']]:
                     continue
@@ -193,6 +206,8 @@ def get_nearest_peak(peak_data, start_time, until_time, full_data):
             else:
                 saved_data[peak_data['code']] = [md['code']]
                 save_matched_data.append(md)
+
+        print('MATCHED RESULT', peak_data['code'], 'peaks count', len(peak_data['peak']), until_time, 'matched', len(matched_data), 'final', len(save_matched_data))
         if len(save_matched_data) > 0:
             price_comapre_plot.save(message_reader, peak_data, full_data, start_time, until_time, save_matched_data)
 
@@ -205,7 +220,7 @@ def find_match_peak(c):
         until_now_data = price_average[:i+1]
         peaks_top = get_peaks(until_now_data, True)
         peaks_bottom = get_peaks(until_now_data, False)
-        if len(peaks_top) + len(peaks_bottom) >= 6: # Initial Setting
+        if len(peaks_top) + len(peaks_bottom) >= 4: # Initial Setting
             da = date_array[:i+1]
             peak_data = connect_peaks(c, until_now_data, price_array[:i+1], da, volume_array[:i+1], peaks_top, peaks_bottom, i)
             if peak_data is not None:
