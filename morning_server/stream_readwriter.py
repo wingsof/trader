@@ -70,8 +70,16 @@ def write(sock, header, body):
     msg = {'header': header, 'body': body}
     msg = pickle.dumps(msg)
     msg = bytes(f"{len(msg):<{HEADER_SIZE}}", 'utf-8') + msg
+    total_len = len(msg)
     try:
-        sock.send(msg)
+        while True:
+            sent = sock.send(msg)
+            total_len -= sent
+            if total_len == 0:
+                break
+            else:
+                msg = msg[sent:]
+
     except Exception as e:
         raise Exception(e.args[0], sock)
 
