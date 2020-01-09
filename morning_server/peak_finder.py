@@ -90,6 +90,10 @@ def get_average_min_data(prices):
 
 
 def connect_peaks(c, price_average, price_array, date_array, volume_array, pts, pbs, i):
+    # Assert len(pbs) is not 0
+    if len(pts) == 0 and len(pbs) == 0:
+        return None
+
     peak_data = {'code': c['code'], 'from_date': c['date'],
                 'until_date': c['until'], 'start_profit': 0, 'peak': []}
     peak_data['peak'].append({'type': 0, 'time': date_array[0], 'volume': 0,
@@ -108,6 +112,16 @@ def connect_peaks(c, price_average, price_array, date_array, volume_array, pts, 
     for i, pbpi in enumerate(peaks_by_price_info):
         pbpi['height_order'] = i + 1
     peaks_by_time_info = sorted(peaks_by_price_info, key=lambda x: x['time'])
+
+    current_volume = 0
+    for pbti in peaks_by_time_info:
+        pbti['volume_diff'] = pbti['volume'] - current_volume
+        current_volume = pbti['volume']
+
+    peaks_by_volume_info = sorted(peaks_by_time_info, key=lambda x: x['volume_diff'])
+    for i, pbvi in enumerate(peaks_by_volume_info):
+        pbvi['volume_order'] = i + 1
+
     peak_data['peak'].extend(peaks_by_time_info)
     if len(peaks_by_time_info) > 0:
         start_peak_price = peaks_by_time_info[0]['price']
@@ -115,6 +129,7 @@ def connect_peaks(c, price_average, price_array, date_array, volume_array, pts, 
         if peak_data['start_profit'] > 30:
             print('Strange Profit', start_peak_price, c['yesterday_close'], c['code'], c['date'])
             print('price array', price_array)
+    #print(peak_data)
     return peak_data
  
 
@@ -124,6 +139,7 @@ def get_nearest_peak(peak_data, start_time, until_time, full_data):
     peak_db_data = peak_db_plus if peak_data['start_profit'] > 0 else peak_db_minus
     data_peak_pattern = [pd['type'] for pd in peak_data['peak']]
     data_height_pattern = [pd['height_order'] for pd in peak_data['peak'][1:]]
+    data_volume_pattern = [pd['volume_order'] for pd in peak_data['peak'][1:]]
 
     matched_data = []
     # First phase: cut by duration
@@ -140,6 +156,7 @@ def get_nearest_peak(peak_data, start_time, until_time, full_data):
         if peak_pattern != data_peak_pattern:
             continue
 
+        # Convert [7, 3, 4, 5] -> [4, 1, 2, 3]
         height_pattern = [pud['height_order'] for pud in peak_up_to_duration[1:]]
         hp_with_index = [[v, i] for i, v in enumerate(height_pattern)]
         hp_with_index = sorted(hp_with_index, key=lambda x: x[0])
@@ -148,16 +165,36 @@ def get_nearest_peak(peak_data, start_time, until_time, full_data):
         if height_pattern != data_height_pattern:
             continue
 
+        current_volume = 0
+        volume_diff = []
+        for pud in peak_up_to_duration[1:]:
+            volume_diff.append(pud['volume'] - current_volume)
+            current_volume = pud['volume']
+        vd_with_index = [[v, i] for i, v in enumerate(volume_diff)]
+        vd_with_index = sorted(vd_with_index, key=lambda x: x[0])
+        for i, vwi in enumerate(vd_with_index):
+            volume_diff[vwi[1]] = i + 1
+
+        if volume_diff != data_volume_pattern:
+            continue
+
         matched_data.append(pdd)
 
     if len(matched_data) > 0:
-        print('MATCHED RESULT', peak_data['code'], start_time, until_time, len(matched_data))
-        price_comapre_plot.save(message_reader, peak_data['code'], full_data, start_time, until_time, matched_data)
-        print('PLOT DONE')
-        #print(pdd['code'], pdd['from_date'], height_pattern)
-        #print(peak_data['code'], peak_data['from_date'], data_height_pattern)
-        #print('Current Peak Data', peak_data)
-        #print('In DB Matched', pdd)
+        print('MATCHED RESULT', peak_data['code'], 'peaks count', len(peak_data['peak']), until_time, len(matched_data))
+        save_matched_data = []
+        for md in matched_data:
+            if peak_data['code'] in saved_data:
+                if md['code'] in saved_data[peak_data['code']]:
+                    continue
+                else:
+                    saved_data[peak_data['code']].append(md['code'])
+                    save_matched_data.append(md)
+            else:
+                saved_data[peak_data['code']] = [md['code']]
+                save_matched_data.append(md)
+        if len(save_matched_data) > 0:
+            price_comapre_plot.save(message_reader, peak_data, full_data, start_time, until_time, save_matched_data)
 
 
 def find_match_peak(c):
@@ -168,10 +205,11 @@ def find_match_peak(c):
         until_now_data = price_average[:i+1]
         peaks_top = get_peaks(until_now_data, True)
         peaks_bottom = get_peaks(until_now_data, False)
-        if len(peaks_bottom) >= 2: # Initial Setting
+        if len(peaks_top) + len(peaks_bottom) >= 6: # Initial Setting
             da = date_array[:i+1]
             peak_data = connect_peaks(c, until_now_data, price_array[:i+1], da, volume_array[:i+1], peaks_top, peaks_bottom, i)
-            get_nearest_peak(peak_data, da[0], da[-1], (price_array, date_array, volume_array))
+            if peak_data is not None:
+                get_nearest_peak(peak_data, da[0], da[-1], (price_array, date_array, volume_array, price_average))
                              
 
 def get_past_avg_numbers(code, data):
@@ -231,6 +269,8 @@ for pdd in peak_db_data:
         peak_db_plus.append(pdd)
     else:
         peak_db_minus.append(pdd)
+
+saved_data = dict()
 print('DONE READ PEAK DB')
 
 if len(peak_db_data) == 0:

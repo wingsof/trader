@@ -56,7 +56,7 @@ def handle_response(sock, header, body):
 
 
 def handle_request(sock, header, body):
-    #print('HANDLE REQUEST', header)
+    print('HANDLE REQUEST', header)
     data, vacancy = request_pre_handler.pre_handle_request(sock, header, body)
     if data is None:
         print('HEADER', header)
@@ -77,7 +77,7 @@ def handle_request(sock, header, body):
         print('HEADER(cached)', header)
         header['type'] = message.RESPONSE
         stream_write(sock, header, data)
-    #print('HANDLE REQUEST DONE')
+    print('HANDLE REQUEST DONE')
 
 
 def handle_subscribe(sock, header, body):
@@ -144,7 +144,7 @@ def vbox_control():
 server = StreamServer((message.SERVER_IP, message.CLIENT_SOCKET_PORT), handle)
 server.start()
 
-gevent.Greenlet.spawn(vbox_control)
+#gevent.Greenlet.spawn(vbox_control)
 
 wsgi_server = pywsgi.WSGIServer((message.SERVER_IP, message.CLIENT_WEB_PORT), app)
 wsgi_server.serve_forever()
