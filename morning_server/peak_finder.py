@@ -220,7 +220,7 @@ def find_match_peak(c):
         until_now_data = price_average[:i+1]
         peaks_top = get_peaks(until_now_data, True)
         peaks_bottom = get_peaks(until_now_data, False)
-        if len(peaks_top) + len(peaks_bottom) >= 4: # Initial Setting
+        if len(peaks_top) + len(peaks_bottom) >= 3: # Initial Setting
             da = date_array[:i+1]
             peak_data = connect_peaks(c, until_now_data, price_array[:i+1], da, volume_array[:i+1], peaks_top, peaks_bottom, i)
             if peak_data is not None:
