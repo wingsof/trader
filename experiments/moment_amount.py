@@ -35,7 +35,7 @@ message_reader.start()
 market_code = stock_api.request_stock_code(message_reader, message.KOSDAQ)
 
 from_date = date(2019, 1, 1)
-until_date = date(2020, 1, 1)
+until_date = date(2019, 6, 1)
 record_from, record_until = from_date, until_date
 
 # find moment over 1% profit 
