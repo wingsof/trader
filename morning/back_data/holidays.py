@@ -6,9 +6,9 @@ import os
 
 _holidays = []
 
-def read_holiday_excel():
+def read_holiday_excel(directory='morning' + os.sep + 'back_data' + os.sep + 'holiday_data'):
     global _holidays
-    directory = 'morning' + os.sep + 'back_data' + os.sep + 'holiday_data'
+
     for subdir, _, files in os.walk(directory):
         for file in files:
             df = pd.read_excel(subdir + os.sep + file)
