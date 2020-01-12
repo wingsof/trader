@@ -54,12 +54,12 @@ sock.connect(server_address)
 message_reader = stream_readwriter.MessageReader(sock)
 message_reader.start()
 
-market_code = stock_api.request_stock_code(message_reader, message.KOSDAQ)
+market_code = stock_api.request_stock_code(message_reader, message.KOSPI)
 
 from_date = date(2018, 1, 2)
 until_date = date(2020, 1, 7)
 
-check_new_highest = True
+check_new_highest = False 
 long_codes = {}
 trades = []
 # {'buy_date', 'buy_price', 'buy_date', 'profit'}
@@ -72,7 +72,7 @@ while from_date <= until_date:
 
     candidates = []
 
-    for code in market_code:
+    for i, code in enumerate(market_code):
         past_data = stock_api.request_stock_day_data(message_reader, code, from_date - timedelta(days=MAVG*2), from_date)
         if MAVG * 2 * 0.6 > len(past_data):
             #print('PAST DATA too short', len(past_data), code)
@@ -83,26 +83,24 @@ while from_date <= until_date:
         past_data = past_data_c[:-1]
 
         if code in long_codes:
-            long_codes[code]['profit'].append((today_data['close_price'] - long_codes[code]['buy_price']) / long_codes[code]['buy_price'] * 100.)
-            if len(long_codes[code]['profit']) >= MAVG or today_data['moving_average'] > today_data['close_price']:
+            profit = (today_data['close_price'] - long_codes[code]['buy_price']) / long_codes[code]['buy_price'] * 100.
+            long_codes[code]['profit'].append(profit)
+            if today_data['moving_average'] > today_data['close_price'] or profit < -5.:
                 trades.append({'code': code,
                                 'buy_date': long_codes[code]['buy_date'],
                                 'sell_date': from_date,
                                 'buy_price': long_codes[code]['buy_price'],
                                 'sell_price': today_data['close_price'],
-                                'profit': long_codes[code]['profit']})
+                                'profit': long_codes[code]['profit'],
+                                'trade_profit': profit})
                 long_codes.pop(code, None)
         else:
             if (past_data[-1]['moving_average'] < past_data[-1]['close_price'] and
                 today_data['moving_average'] < today_data['close_price'] and
                 past_data[-2]['moving_average'] > past_data[-2]['close_price']):
-                if check_new_highest:
-                    if today_data['close_price'] >= max([pd['close_price'] for pd in past_data[-(MAVG):]]):
-                        candidates.append({'yesterday_amount': past_data[-1]['amount'], 'code': code,
-                                            'today_close_price': today_data['close_price']})
-                else:
-                    candidates.append({'yesterday_amount': past_data[-1]['amount'], 'code': code,
-                                        'today_close_price': today_data['close_price']})
+                candidates.append({'yesterday_amount': past_data[-1]['amount'], 'code': code,
+                                    'today_close_price': today_data['close_price']})
+        print(f'{i+1}/{len(market_code)}', end='\r')
 
     candidates = sorted(candidates, key=lambda x: x['yesterday_amount'], reverse=True)
     candidates = candidates[:10]
@@ -116,20 +114,19 @@ while holidays.is_holidays(from_date):
 
 for k, v in long_codes.items():
     today_data = stock_api.request_stock_day_data(message_reader, k, from_date, from_date)
-    if len(today_data) == 1:
+    if len(today_data) >= 1:
         today_data = today_data[0]
-        v['profit'].append((today_data['5'] - v['buy_price']) / v['buy_price'] * 100.)
+        profit = (today_data['5'] - v['buy_price']) / v['buy_price'] * 100.
+        v['profit'].append(profit)
         trades.append({'code': k,
                         'buy_date': v['buy_date'],
                         'sell_date': from_date,
                         'buy_price': v['buy_price'],
                         'sell_price': today_data['5'],
-                        'profit': v['profit']})
+                        'profit': v['profit'],
+                        'trade_profit': profit})
     else:
         print('today data wrong', from_date, k)
 
 df = pd.DataFrame(trades)
-if check_new_highest:
-    df.to_excel('moving_average_trade_highest.xlsx')
-else:
-    df.to_excel('moving_average_trade.xlsx')
+df.to_excel('moving_average_trade_cut_5_20_avg_kospi.xlsx')
