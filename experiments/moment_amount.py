@@ -35,7 +35,7 @@ message_reader.start()
 market_code = stock_api.request_stock_code(message_reader, message.KOSDAQ)
 
 from_date = date(2019, 1, 1)
-until_date = date(2019, 6, 1)
+until_date = date(2019, 2, 1)
 record_from, record_until = from_date, until_date
 
 # find moment over 1% profit 
@@ -51,17 +51,19 @@ while from_date <= until_date:
     yesterday = holidays.get_yesterday(from_date)
     candidates = []
 
-    for code in market_code:
+    for i, code in enumerate(market_code):
         past_data = stock_api.request_stock_day_data(message_reader, code, yesterday, yesterday)
+        print('GET DAY DATA', f'{i+1}/{len(market_code)}', end='\r')
         if len(past_data) == 0:
             continue
         past_data = past_data[0]
         candidates.append({'code': code, 'yesterday_amount': past_data['7']})
-
+        
     candidates = sorted(candidates, key=lambda x: x['yesterday_amount'], reverse=True)
     candidates = candidates[:150]
-
-    for c in candidates:
+    print('')
+    for i, c in enumerate(candidates):
+        print('Process Minute DATA', f'{i+1}/{len(candidates)}', end='\r')
         today_min_data = stock_api.request_stock_minute_data(message_reader, c['code'], from_date, from_date)
         if len(today_min_data) <= 300:
             continue
@@ -102,4 +104,4 @@ for k, v in moments.items():
                             'time': vv['time'], 'profit': vv['profit'], 'cum_rate': vv['cum_rate']})
 
 df = pd.DataFrame(final_data)
-df.to_excel('moments_' + record_from.strftime('%Y%m%d_') + record_until.strftime('%Y%m%d') + '.xlsx')
+df.to_excel('moment2_' + record_from.strftime('%Y%m%d_') + record_until.strftime('%Y%m%d') + '.xlsx')

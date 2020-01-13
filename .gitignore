@@ -15,3 +15,4 @@ framework_test
 *.xlsx
 morning/config/db.py
 auto/auto.py
+LG_DeepLearning_lecture_Jupyter
