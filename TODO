@@ -1,7 +1,10 @@
+* { "_id" : ObjectId("5e1d4d4413c5db0eaf3a3a75"), "plus" : true, "type" : [ 0, 2, 1, 2 ], "height" : [ 4, 3, 1, 2 ], "mean" : 1.0854936749389237, "count" : 45, "good" : 35, "bad" : 10 }
+    * 변수는 count 가 몇개 이상, good의 percentage, 언제 팔 것인가? (1) 
+    * try: mean 이 1.0 넘고, mean 보다 cv가 더 작은 것, 산 경우 다음 top peak 기다리고, 해당 peak 에서 mean 이 1 이상인 경우 hold, 이하인 경우 sell, pattern 안나오는 경우 2번째 peak 에 판다
+
+
 * 항상 평균에 회귀한다는 가정아래, 할 수 있는 테스팅은?
     * 평균 이전 x일 거래량을 금일 특정 시간에 돌파시?
-    * 가격 밴드. 20일 평균선에서 위 아래로 2 std 로 긋고, 가격이 위 아래로 돌파시 밴드 안으로 들어온다는 가정
-        * https://pandas.pydata.org/pandas-docs/stable/user_guide/visualization.html
 
 * KOSDAQ Bull을 기록 필요
 
@@ -10,6 +13,7 @@
         * 예: B(2), T(3), B(1) 의 경우 다음 T가 보통 T3 보다 낮을 거라고 당연시
         * 예: B(1), T(3), B(2) 의 경우 현재가가 T(3)을 넘는 경우 다음 T(4)가 나올것
         * 위의 예외 case 를 보면, 분명 영향을 미치는 다른 변수를 발견할 수 있지 않을까?
+        * 예외 case를 본다고 해결되지 않음, 평균 분산 기반으로 해석하는 수 밖에 없음
 
 * 눌리는 경우 2
     * bottom edge 가 발생하고 최저점 일 때(마이너스), 이전 top edge 돌파하는 경우
@@ -116,6 +120,9 @@ Done
 * Strategy 에서 그래프 뽑아내기
 * BID / ASK 호가 이동하는 속도로 판단하는 알고리즘 - 결국 가격 이동?
 * 20일 선 거래 짜기 - Done
+* x 일 최고점을 돌파할 시, 다음일들의 수익률(1달)
+* 가격 밴드. 20일 평균선에서 위 아래로 2 std 로 긋고, 가격이 위 아래로 돌파시 밴드 안으로 들어온다는 가정
+        * https://pandas.pydata.org/pandas-docs/stable/user_guide/visualization.html
 
 No important
 * 코스피 200 종목 동일하게 추세로 선물 거래는?
@@ -123,4 +130,4 @@ No important
     * 신고가 터지고(몇 일까지 확인?), 3분봉으로 확인, 다음 3개 분봉 이후부터 신고가일 때의 close 돌파 확인 시 매수
         * 다음 3개 분봉 후 이미 급상승일 경우는 포기
     * 손절가는 금일 최저점 or 3% 이하, 매도는 매도 속도 급상승
-* x 일 최고점을 돌파할 시, 다음일들의 수익률(1달)
+

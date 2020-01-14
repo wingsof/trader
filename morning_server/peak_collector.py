@@ -110,11 +110,15 @@ def create_peak_information(c):
     peak_data = {'code': c['code'],
                 'from_date': c['date'],
                 'until_date': c['until'],
-                'start_profit': 0,
+                'yesterday_close': c['yesterday_close'],
                 'peak': []}
-    peak_data['peak'].append({'type': 0, 'time': date_array[0], 'volume': 0,
-                    'price': c['yesterday_close'], 'height_order': 0})
+
     peaks_info = []
+    peaks_info.append({'type': 0, 'time': date_array[0], 'volume': volume_array[0],
+                    'price': price_array[0]})
+    peaks_info.append({'type': 3, 'time': date_array[-1], 'volume': volume_array[-1],
+                            'price': price_array[-1]})
+
     for pt in peaks_top:
         peaks_info.append({'type': 1, 'time': date_array[pt], 
                                 'volume': volume_array[pt], 'price': price_array[pt]})
@@ -126,14 +130,9 @@ def create_peak_information(c):
     peaks_by_price_info = sorted(peaks_info, key=lambda x: x['price'])
     for i, pbpi in enumerate(peaks_by_price_info):
         pbpi['height_order'] = i + 1
+
     peaks_by_time_info = sorted(peaks_by_price_info, key=lambda x: x['time'])
     peak_data['peak'].extend(peaks_by_time_info)
-    if len(peaks_by_time_info) > 0:
-        start_peak_price = peaks_by_time_info[0]['price']
-        peak_data['start_profit'] = (start_peak_price - c['yesterday_close']) / c['yesterday_close'] * 100
-
-    peak_data['peak'].append({'type': 3, 'time': date_array[-1], 'volume': volume_array[-1],
-                            'price': price_array[-1], 'height_order': 0})
 
     store_peak_information(peak_data)
 

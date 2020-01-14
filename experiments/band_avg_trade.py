@@ -88,7 +88,7 @@ while from_date <= until_date:
         if code in long_codes:
             profit = (today_data['close_price'] - long_codes[code]['buy_price']) / long_codes[code]['buy_price'] * 100.
             long_codes[code]['profit'].append(profit)
-            if today_data['ma_20_upper_band'] < today_data['close_price']:
+            if today_data['ma_20_upper_band'] < today_data['close_price'] or profit <= -10.:
                 trades.append({'code': code,
                                 'buy_date': long_codes[code]['buy_date'],
                                 'sell_date': from_date,
@@ -131,4 +131,4 @@ for k, v in long_codes.items():
         print('today data wrong', from_date, k)
 
 df = pd.DataFrame(trades)
-df.to_excel('moving_average_band_20_kosdaq.xlsx')
+df.to_excel('moving_average_band_20_kosdaq_10_cut.xlsx')
