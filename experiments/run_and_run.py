@@ -34,9 +34,7 @@ message_reader.start()
 
 market_code = stock_api.request_stock_code(message_reader, message.KOSDAQ)
 
-from_date = date(2019, 1, 1)
-until_date = date(2020, 1, 1)
-record_from, record_until = from_date, until_date
+
 
 # run and run
 # before x min determine what buy (speed, amount, < 5%)
@@ -97,35 +95,40 @@ def start_trade_simulation(final_candidates, t, d):
 
         if not is_done:
             results.append({'code': fc['code'], 'buy': buy_price, 'sell': fc['data'][-1]['close_price'], 'time': fc['data'][-1]['time']})
-            print(fc['code'], d, 'buy', buy_price, 'sell', fc['data'][-1]['close_price'])
+            #print(fc['code'], d, 'buy', buy_price, 'sell', fc['data'][-1]['close_price'])
 
 
-while from_date <= until_date:
-    if holidays.is_holidays(from_date):
-        from_date += timedelta(days=1)
-        continue
+determine_time = [904]#, 910, 915, 920, 930, 940, 950]
 
-    print('RUN', from_date)
-    time_start = 900
-    determine_time = 904
-    candidates = []
-
-    for i, code in enumerate(market_code):
-        today_min_data = stock_api.request_stock_minute_data(message_reader, code, from_date, from_date)
-        if len(today_min_data) == 0:
+for det in determine_time:
+    print(det)
+    from_date = date(2019, 12, 1)
+    until_date = date(2019, 12, 2)
+    record_from, record_until = from_date, until_date
+    while from_date <= until_date:
+        if holidays.is_holidays(from_date):
+            from_date += timedelta(days=1)
             continue
-        today_min_data_c = []
-        for tm in today_min_data:
-            today_min_data_c.append(dt.cybos_stock_day_tick_convert(tm))
-        candidates.append({'code': code, 'data': today_min_data_c, 'start_price': today_min_data_c[0]['start_price']})
-        print(f'Collect {i}/{len(market_code)}', end='\r')
 
-    print('Start Best Candidates')
-    best_candidates = find_best(candidates, determine_time)
-    final_candidates = best_candidates[:5]
-    start_trade_simulation(final_candidates, determine_time, from_date)
-    
-    from_date += timedelta(days=1)
+        #print('RUN', from_date)
+        candidates = []
 
-df = pd.DataFrame(results)
-df.to_excel('run_and_run_' + record_from.strftime('%Y%m%d_') + record_until.strftime('%Y%m%d') + '.xlsx')
+        for i, code in enumerate(market_code):
+            today_min_data = stock_api.request_stock_minute_data(message_reader, code, from_date, from_date)
+            if len(today_min_data) == 0:
+                continue
+            today_min_data_c = []
+            for tm in today_min_data:
+                today_min_data_c.append(dt.cybos_stock_day_tick_convert(tm))
+            candidates.append({'code': code, 'data': today_min_data_c, 'start_price': today_min_data_c[0]['start_price']})
+            #print(f'Collect {i}/{len(market_code)}', end='\r')
+
+        print('Start Best Candidates')
+        best_candidates = find_best(candidates, det)
+        final_candidates = best_candidates[:5]
+        start_trade_simulation(final_candidates, det, from_date)
+        
+        from_date += timedelta(days=1)
+    print(det, np.array([(d['sell'] - d['buy']) / d['buy'] * 100 for d in results]).mean())
+    results.clear()
+        
