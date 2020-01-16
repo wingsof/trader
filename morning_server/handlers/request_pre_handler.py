@@ -56,6 +56,7 @@ def _get_data_from_db(code, from_date, until_date, db_suffix):
 
     stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
     db_data = list(stock_db[code + db_suffix].find({'0': {'$gte':time_converter.datetime_to_intdate(from_date), '$lte': time_converter.datetime_to_intdate(until_date)}}))
+    print(code + db_suffix, time_converter.datetime_to_intdate(from_date), time_converter.datetime_to_intdate(until_date))
     db_data = sort_db_data(db_data, db_suffix)
     days = [time_converter.intdate_to_datetime(d['0']).date() for d in db_data]
     days = list(dict.fromkeys(days))

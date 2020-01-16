@@ -26,7 +26,7 @@ class VBoxControl:
         for m in self.vbox_list:
             print('START Machine', m)
             self.vbox_machines.append(_Machine(self.vbox, m))            
-            gevent.sleep(60 * 3)
+            gevent.sleep(60 * 5)
 
     def stop_machine(self):
         for m in self.vbox_machines:
