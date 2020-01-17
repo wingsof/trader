@@ -61,7 +61,7 @@ def convert_data_readable(code, past_data):
 
 if TEST_MODE:
     from_date = date(2018, 11, 1)
-    until_date = date(2020, 2, 5)
+    until_date = date(2020, 1, 5)
 else:
     from_date = date(2019, 1, 1)
     until_date = date(2020, 1, 1)
@@ -79,8 +79,8 @@ message_reader.start()
 
 market_code = stock_api.request_stock_code(message_reader, message.KOSDAQ)
 if TEST_MODE:
-    #market_code = ['A168330']
-    market_code = ['A099410', 'A061040', 'A047310', 'A053660', 'A027050', 'A089970', 'A032685', 'A010240', 'A017890', 'A168330']
+    market_code = ['A048470']
+    #market_code = ['A099410', 'A061040', 'A047310', 'A053660', 'A027050', 'A089970', 'A032685', 'A010240', 'A017890', 'A168330', 'A048470']
 
 code_dict = dict()
 records = []
@@ -164,9 +164,11 @@ while from_date <= until_date:
 
         if code_dict[code].state == LONG:
             over_profit = (today_data['close_price'] - today_data['start_price']) / today_data['start_price'] * 100 > 5
+            tail_step = (today_data['highest_price'] - today_data['lowest_price']) / 10
+            #long_tail_bull = today_data['close_price'] > today_data['start_price'] and (today_data['close_price'] - today_data['lowest_price']) / tail_step < 4.
             is_under_mavg = today_data['moving_average'] > today_data['close_price']
             #mprint(from_date, code, 'LONG', over_profit, 'UNDER_AVG', is_under_mavg)
-            if over_profit or is_under_mavg:
+            if over_profit or is_under_mavg:# or long_tail_bull:  # long tail profit dropped from 0.96 to 0.7
                 profit = (today_data['close_price'] - code_dict[code].buy_price) / code_dict[code].buy_price * 100
                 mprint('\t', from_date, code, 'SELL', today_data['close_price'], profit, 'over_profit', over_profit, 'under_mavg', is_under_mavg, today_data['moving_average'], today_data['close_price'])
                 records.append({
