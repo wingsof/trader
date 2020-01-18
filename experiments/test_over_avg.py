@@ -34,9 +34,12 @@ t4_2 = t4_df[t4_df['sell_date'] == datetime(2019, 4, 5)]
 assert(len(t4_1) == 1)
 assert(len(t4_2) == 1)
 
-t5_df = df[df['code'] == 'A048470']
-t5_1 = t5_df[t5_df['buy_date'] == datetime(2019, 9, 16)]
-t5_2 = t5_df[t5_df['sell_date'] == datetime(2019, 9, 23)]
-assert(len(t5_1) == 1)
-assert(len(t5_2) == 1)
+# Holding (long tail)
+#t5_df = df[df['code'] == 'A048470'] 
+#t5_1 = t5_df[t5_df['buy_date'] == datetime(2019, 9, 16)]
+#t5_2 = t5_df[t5_df['sell_date'] == datetime(2019, 9, 23)]
+#assert(len(t5_1) == 1)
+#assert(len(t5_2) == 1)
+
+
 print('Success')
