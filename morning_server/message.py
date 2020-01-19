@@ -20,6 +20,8 @@ MARKET_STOCK = 'stock'
 DAY_DATA = 'day_data'
 MINUTE_DATA = 'minute_data'
 CODE_DATA = 'code_data'
+GET_LONG_LIST = 'long_list'
+ORDER_STOCK = "order_stock"
 
 STOCK_DATA = 'stock_realtime'
 BIDASK_DATA = 'bidask_realtime'

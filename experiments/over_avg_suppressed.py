@@ -72,7 +72,7 @@ if TEST_MODE:
     from_date = date(2019, 10, 1)
     until_date = date(2019, 11, 30)
 else:
-    from_date = date(2019, 1, 1)
+    from_date = date(2018, 1, 1)
     until_date = date(2020, 1, 1)
 
 MAVG=20
@@ -118,7 +118,16 @@ def get_today_min_data(code, from_date):
 
 
 for code in market_code:
-    code_dict[code] = CodeInfo(state=NONE, cut=0, buy_price=0, sell_price=0, buy_date=None, sell_date=None, over_days=0)
+    code_dict[code] = CodeInfo(state=NONE, cut=0,
+                                buy_price=0, sell_price=0,
+                                buy_date=None, sell_date=None,
+                                cross_close_highest=0,
+                                cross_highest_highest=0,
+                                cross_average_amount=0,
+                                today_close=0, today_highest=0,
+                                average_amount=0, inst_average=0,
+                                prev_highest=[-1,None],
+                                over_days=0)
 
 trades = []
 
@@ -126,7 +135,29 @@ trades = []
 def reset(c):
     c.state = NONE
     c.over_days = 0
+    c.cross_close_highest = 0
+    c.cross_highest_highest = 0
+    c.today_close = 0
+    c.today_highest = 0
+    c.average_amount = 0
+    c.inst_average = 0
+    c.over_days=0
 
+
+def set_prev_highest(code, from_date):
+    past_data = stock_api.request_stock_day_data(message_reader, code, from_date - timedelta(days=365), from_date - timedelta(days=1))
+    if 365 * 0.6 > len(past_data):
+        print('PAST DATA too short', len(past_data), code)
+        code_dict[code].prev_highest[0] = 0
+        return
+    past_data_c = convert_data_readable(code, past_data)
+    for data in past_data_c:
+        if data['moving_average'] < data['close_price']:
+            if data['highest_price'] > code_dict[code].prev_highest[0]:
+                code_dict[code].prev_highest[0] = data['highest_price']
+                code_dict[code].prev_highest[1] = time_converter.intdate_to_datetime(data['0']).date()
+    if code_dict[code].prev_highest[0] == -1:
+        code_dict[code].prev_highest[0] = 0
 
 while from_date <= until_date:
     if holidays.is_holidays(from_date):
@@ -136,6 +167,10 @@ while from_date <= until_date:
     yesterday = holidays.get_yesterday(from_date)
 
     for i, code in enumerate(market_code):
+        if code_dict[code].prev_highest[0] == -1:
+            print('get_past_data', code)
+            set_prev_highest(code, from_date)
+
         past_data = stock_api.request_stock_day_data(message_reader, code, from_date - timedelta(days=MAVG*2), from_date)
         if MAVG * 2 * 0.6 > len(past_data):
             mprint('PAST DATA too short', len(past_data), code)
@@ -157,22 +192,45 @@ while from_date <= until_date:
                         past_data[-3]['moving_average'] > past_data[-3]['close_price'])
         increase_candle = (past_data[-2]['start_price'] < past_data[-2]['close_price'] and past_data[-1]['start_price'] < past_data[-1]['close_price'])
         average_amount = np.array([past_data[-1]['amount'], past_data[-2]['amount']]).mean()
-        day_before_yesterday_over_bull = (past_data[-2]['close_price'] - past_data[-3]['close_price']) / past_data[-3]['close_price'] * 100 > 20
-        yesterday_over_bull = (past_data[-1]['close_price'] - past_data[-2]['close_price']) / past_data[-2]['close_price'] * 100 > 20
+        day_before_yesterday_over_bull = (past_data[-2]['close_price'] - past_data[-3]['close_price']) / past_data[-3]['close_price'] * 100
+        yesterday_over_bull = (past_data[-1]['close_price'] - past_data[-2]['close_price']) / past_data[-2]['close_price'] * 100
+
+        day_before_yesterday_over_bull_h = (past_data[-2]['highest_price'] - past_data[-3]['close_price']) / past_data[-3]['close_price'] * 100
+        yesterday_over_bull_h = (past_data[-1]['highest_price'] - past_data[-2]['close_price']) / past_data[-2]['close_price'] * 100
         #mprint(from_date, code, 'AVG', is_over_mavg, 'CANDLE', increase_candle)
         mprint(from_date, 'CLOSE', today_data['close_price'])
-        if code_dict[code].state == NONE and is_over_mavg and increase_candle and not day_before_yesterday_over_bull and not yesterday_over_bull:
+        inst_average = np.array([
+            past_data[-2]['institution_buy_volume'] * past_data[-2]['start_price'],
+            past_data[-1]['institution_buy_volume'] * past_data[-1]['start_price']
+            ]).mean()
+        
+        if today_data['moving_average'] < today_data['close_price']:
+            if today_data['highest_price'] > code_dict[code].prev_highest[0]:
+                code_dict[code].prev_highest[0] = today_data['highest_price']
+                code_dict[code].prev_highest[1] = from_date
+
+        if (code_dict[code].state == NONE and 
+                            is_over_mavg and 
+                            increase_candle and 
+                            not (day_before_yesterday_over_bull > 20) and
+                            not yesterday_over_bull > 20):
             code_dict[code].state = OVER_AVG
             code_dict[code].cut = max([past_data[-2]['highest_price'], past_data[-1]['highest_price']])
+            code_dict[code].cross_close_highest = max([day_before_yesterday_over_bull, yesterday_over_bull])
+            code_dict[code].cross_highest_highest = max([day_before_yesterday_over_bull_h, yesterday_over_bull_h])
+            code_dict[code].average_amount = average_amount
+            code_dict[code].inst_average = inst_average
             mprint(from_date, code, 'OVER_AVG')
 
         if code_dict[code].state == OVER_AVG:
             today_increase = today_data['close_price'] >= today_data['start_price']
             is_under_mavg = today_data['moving_average'] > today_data['close_price']
             over_days = code_dict[code].over_days > 5
-            today_over_bull = (today_data['highest_price'] - yesterday_close) / yesterday_close * 100. > 20
+            today_over_bull_h = (today_data['highest_price'] - yesterday_close) / yesterday_close * 100.
+            today_over_bull = (today_data['close_price'] - yesterday_close) / yesterday_close * 100.
+            is_new_highest = (from_date - code_dict[code].prev_highest[1]).days <= code_dict[code].over_days + 2
             #mprint(from_date, code, 'OVER_AVG', 'TODAY_INCREASE', today_increase, 'UNDER_AVG', is_under_mavg, 'CLOSE OVER CUT', today_data['close_price'] > code_dict[code].cut)
-            if is_under_mavg or over_days or today_over_bull:
+            if is_under_mavg or over_days or today_over_bull_h >= 10 or not is_new_highest:
                 reset(code_dict[code])
             elif not today_increase:
                 if today_data['highest_price'] > code_dict[code].cut:
@@ -184,6 +242,8 @@ while from_date <= until_date:
                     code_dict[code].state = LONG
                     code_dict[code].buy_price = today_data['close_price']
                     code_dict[code].buy_date = from_date
+                    code_dict[code].today_close = today_over_bull
+                    code_dict[code].today_highest = today_over_bull_h
                     mprint('\t', from_date, code, 'BUY', today_data['close_price'])
                 code_dict[code].over_days += 1
         elif code_dict[code].state == LONG:
@@ -206,6 +266,14 @@ while from_date <= until_date:
                     'buy_date': code_dict[code].buy_date,
                     'sell_date': from_date,
                     'profit': profit,
+                    'cross_close_highest': code_dict[code].cross_close_highest,
+                    'cross_highest_highest': code_dict[code].cross_highest_highest,
+                    'today_close': code_dict[code].today_close,
+                    'today_highest': code_dict[code].today_highest,
+                    'average_amount': code_dict[code].average_amount,
+                    'inst_average': code_dict[code].inst_average,
+                    'prev_highest_days': (from_date - code_dict[code].prev_highest[1]).days,
+                    'over_days': code_dict[code].over_days,
                 })
                 mprint('\t', from_date, code, 'SELL', sell_price, profit)
                 reset(code_dict[code])

@@ -10,6 +10,9 @@ from PyQt5.QtCore import QCoreApplication
 
 from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code
+from morning_server.collectors.cybos_api import trade_util, long_manifest_6033
+
+TRADE_CAPABILITY = False
 
 
 def handle_request(sock, header, body):
@@ -42,7 +45,13 @@ def callback_bidask_subscribe(sock, code, datas):
 
 
 def handle_trade_request(sock, header, body):
-    pass
+    header['type'] = message.RESPONSE_TRADE
+    if header['method'] == message.GET_LONG_LIST:
+        lm = long_manifest_6033.LongManifest(account.get_account_number(), account.get_account_type())
+
+        
+    elif header['method'] == message.ORDER_STOCK:
+        pass
 
 
 def handle_subscribe(sock, header, body):
@@ -87,7 +96,6 @@ def dispatch_message(sock):
 
 
 if __name__ == '__main__':
-    # TODO: CpUtil 
     app = QCoreApplication([])
     conn = connection.Connection()
     while not conn.is_connected():
@@ -104,11 +112,16 @@ if __name__ == '__main__':
     # TODO: try, except and retry?
     sock.connect(server_address)
     header = stream_readwriter.create_header(message.COLLECTOR, message.MARKET_STOCK, message.COLLECTOR_DATA)
-    body = {'capability': message.CAPABILITY_REQUEST_RESPONSE | message.CAPABILITY_COLLECT_SUBSCRIBE}
+
+    if TRADE_CAPABILITY:
+        body = {'capability': message.CAPABILITY_REQUEST_RESPONSE | message.CAPABILITY_COLLECT_SUBSCRIBE | message.CAPABILITY_TRADE}
+    else:
+        body = {'capability': message.CAPABILITY_REQUEST_RESPONSE | message.CAPABILITY_COLLECT_SUBSCRIBE}
     stream_readwriter.write(sock, header, body)
 
     if body['capability'] | message.CAPABILITY_TRADE:
         # TODO: start subscribe, cpconclusion
-        pass
+        account = trade_util.TradeUtil()
+        
     
     gevent.joinall([gevent.spawn(dispatch_message, sock), gevent.spawn(mainloop, app)])
