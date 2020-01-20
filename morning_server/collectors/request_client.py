@@ -13,7 +13,7 @@ from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bi
 from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order
 
 
-TRADE_CAPABILITY = False
+TRADE_CAPABILITY = True
 
 
 def handle_request(sock, header, body):
@@ -57,10 +57,11 @@ def get_order_subscriber(sock):
 
 
 def handle_trade_request(sock, header, body):
+    print('TRADE REQUEST', header)
     header['type'] = message.RESPONSE_TRADE
     if header['method'] == message.GET_LONG_LIST:
         lm = long_manifest_6033.LongManifest(account.get_account_number(), account.get_account_type())
-        stream_readwriter.write(sock, header, lm)
+        stream_readwriter.write(sock, header, lm.get_long_list())
     elif header['method'] == message.ORDER_STOCK:
         code = header['code']
         quantity = header['quantity']

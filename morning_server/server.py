@@ -97,9 +97,10 @@ def handle_trade_response(sock, header, body):
     collector.set_pending(False)
 
 def handle_trade_request(sock, header, body):
+    print('HANDLE TRADE REQUEST', header)
     collector = collectors.get_available_trade_collector()
     collector.set_request(sock, header['_id'], True)
-    stream_write(sock, header, body, collectors)
+    stream_write(collector.sock, header, body, collectors)
 
 def handle_trade_subscribe_response(sock, header, body):
     pass
