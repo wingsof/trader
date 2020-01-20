@@ -146,11 +146,10 @@ if __name__ == '__main__':
     subscribe_bidask = dict()
     order_subscribe = []
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
-    
     while True:
         try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
             sock.connect(server_address)
             print('Connected to apiserver')
             break
