@@ -165,8 +165,7 @@ if __name__ == '__main__':
         body = {'capability': message.CAPABILITY_REQUEST_RESPONSE | message.CAPABILITY_COLLECT_SUBSCRIBE}
     stream_readwriter.write(sock, header, body)
 
-    if body['capability'] | message.CAPABILITY_TRADE:
-        # TODO: start subscribe, cpconclusion
+    if body['capability'] & message.CAPABILITY_TRADE:
         account = trade_util.TradeUtil()
         order_subscriber = None
         print('HAS TRADE CAPABILITY')
