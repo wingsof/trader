@@ -27,3 +27,10 @@ def request_stock_code(reader, market_type):
     header['market_type'] = market_type
     body = []
     return reader.block_write(header, body)
+
+
+def request_long_list(reader):
+    header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.GET_LONG_LIST)
+    body = []
+    return reader.block_write(header, body)
+

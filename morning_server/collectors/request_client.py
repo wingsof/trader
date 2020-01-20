@@ -10,7 +10,8 @@ from PyQt5.QtCore import QCoreApplication
 
 from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code
-from morning_server.collectors.cybos_api import trade_util, long_manifest_6033
+from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order
+
 
 TRADE_CAPABILITY = False
 
@@ -31,7 +32,6 @@ def handle_request(sock, header, body):
             stream_readwriter.write(sock, header, stock_code.get_kosdaq_company_code_list())
 
 
-
 def callback_stock_subscribe(sock, code, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.STOCK_DATA)
     header['code'] = code
@@ -44,14 +44,52 @@ def callback_bidask_subscribe(sock, code, datas):
     stream_readwriter.write(sock, header, datas)
 
 
+def callback_trade_subscribe(sock, result):
+    header = stream_readwriter.create_header(message.TRADE_SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.TRADE_DATA)
+    header['code'] = result['code']
+    stream_readwriter.write(sock, header, result)
+
+
+def get_order_subscriber(sock):
+    if order_subscriber is None:
+        order_subscriber = order.Order(sock, account.get_account_number(), account.get_account_type(), callback_trade_subscribe)
+    return order_subscriber
+
+
 def handle_trade_request(sock, header, body):
     header['type'] = message.RESPONSE_TRADE
     if header['method'] == message.GET_LONG_LIST:
         lm = long_manifest_6033.LongManifest(account.get_account_number(), account.get_account_type())
-
-        
+        stream_readwriter.write(sock, header, lm)
     elif header['method'] == message.ORDER_STOCK:
-        pass
+        code = header['code']
+        quantity = header['quantity']
+        price = header['price']
+        is_buy = header['trade_type'] == message.ORDER_BUY
+        status, msg = get_order_subscriber(sock).process(code, quantity, account.get_account_number(), account.get_account_type(), price, is_buy)
+        result = {'status': status, 'msg': msg}
+        stream_readwriter.write(sock, header, result)
+    elif header['method'] == message.MODIFY_ORDER:
+        modify_order_obj = modify_order.ModifyOrder(account.get_account_number(), account.get_account_type())
+        order_num = header['order_number']
+        code = header['code']
+        price = header['price']
+        new_order_num = modify_order_obj.modify_order(order_num, code, 0, price)
+        result = {'order_number': new_order_num}
+        stream_readwriter.write(sock, header, result)
+    elif header['method'] == message.SUBSCRIBE_ORDER:
+        get_order_subscriber(sock)
+        resut = {'result': True}
+        stream_readwriter.write(sock, header, result)
+        print('START ORDER SUBSCRIBE')
+    elif header['method'] == message.CANCEL_ORDER:
+        cancel_order_obj = cancel_order.CancelOrder(account.get_account_number(), account.get_account_type())
+        order_num = header['order_number']
+        code = header['code']
+        amount = header['amount']
+        result = cancel_order_obj.cancel_order(order_num, code, amount)
+        result = {'result': result}
+        stream_readwriter.write(sock, header, result)
 
 
 def handle_subscribe(sock, header, body):
@@ -105,6 +143,7 @@ if __name__ == '__main__':
     print('Connected')
     subscribe_stock = dict()
     subscribe_bidask = dict()
+    order_subscribe = []
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
@@ -114,7 +153,7 @@ if __name__ == '__main__':
     header = stream_readwriter.create_header(message.COLLECTOR, message.MARKET_STOCK, message.COLLECTOR_DATA)
 
     if TRADE_CAPABILITY:
-        body = {'capability': message.CAPABILITY_REQUEST_RESPONSE | message.CAPABILITY_COLLECT_SUBSCRIBE | message.CAPABILITY_TRADE}
+        body = {'capability': message.CAPABILITY_COLLECT_SUBSCRIBE | message.CAPABILITY_TRADE}
     else:
         body = {'capability': message.CAPABILITY_REQUEST_RESPONSE | message.CAPABILITY_COLLECT_SUBSCRIBE}
     stream_readwriter.write(sock, header, body)
@@ -122,6 +161,7 @@ if __name__ == '__main__':
     if body['capability'] | message.CAPABILITY_TRADE:
         # TODO: start subscribe, cpconclusion
         account = trade_util.TradeUtil()
-        
+        order_subscriber = None
+        print('HAS TRADE CAPABILITY')
     
     gevent.joinall([gevent.spawn(dispatch_message, sock), gevent.spawn(mainloop, app)])

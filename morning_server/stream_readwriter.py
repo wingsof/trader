@@ -125,7 +125,8 @@ def dispatch_message(sock,
                     subscribe_handler=None, 
                     subscribe_response_handler=None,
                     request_trade_handler=None,
-                    response_trade_handler=None):
+                    response_trade_handler=None,
+                    subscribe_trade_response_handler=None):
     full_msg = b''
     new_msg = True
     header_len = 0
@@ -154,6 +155,8 @@ def dispatch_message(sock,
             request_trade_handler(sock, packet['header'], packet['body'])
         elif header_type == message.RESPONSE_TRADE and response_trade_handler is not None:
             response_trade_handler(sock, packet['header'], packet['body'])
+        elif header_type == message.TRADE_SUBSCRIBE_RESPONSE and subscribe_trade_response_handler is not None:
+            subscribe_trade_response_handler(sock, packet['header'], packet['body'])
         else:
             print('Unknown header type', packet['header'])
             

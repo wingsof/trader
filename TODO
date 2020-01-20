@@ -1,6 +1,13 @@
+win32clipboard.OpenClipboard()
+win32clipboard.EmptyClipboard()
+win32clipboard.SetClipboardText('testing 123')
+win32clipboard.CloseClipboard()
+
 * LONG LIST 받아오기
 * TRADE Client 기능 추가
 * 전날 거래량 500위 + LONG LIST까지 Subscribe 시작 Client
+    * 전날 거래량 할 필요없이 조건 충족하는 종목 + 매수 종목만 subscribe
+* 거래 테스트 Client
 * Server 로그
     * 일단 유지하고 File Log 차후 변경
 * 1분당 -4% 변동성 있을 시 매도, 당일 시작가에서 25% 이상일 경우 매도

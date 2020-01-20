@@ -228,9 +228,8 @@ while from_date <= until_date:
             over_days = code_dict[code].over_days > 5
             today_over_bull_h = (today_data['highest_price'] - yesterday_close) / yesterday_close * 100.
             today_over_bull = (today_data['close_price'] - yesterday_close) / yesterday_close * 100.
-            is_new_highest = (from_date - code_dict[code].prev_highest[1]).days <= code_dict[code].over_days + 2
             #mprint(from_date, code, 'OVER_AVG', 'TODAY_INCREASE', today_increase, 'UNDER_AVG', is_under_mavg, 'CLOSE OVER CUT', today_data['close_price'] > code_dict[code].cut)
-            if is_under_mavg or over_days or today_over_bull_h >= 10 or not is_new_highest:
+            if is_under_mavg or over_days or today_over_bull_h >= 10:
                 reset(code_dict[code])
             elif not today_increase:
                 if today_data['highest_price'] > code_dict[code].cut:

@@ -91,14 +91,18 @@ def handle_subscribe_response(sock, header, body):
     code = header['code']
     subscribe_client.send_to_clients(code, header, body)
 
-
 def handle_trade_response(sock, header, body):
-    pass
-
+    collector = collectors.find_by_id(header['_id'])
+    stream_write(collector.request_socket(), header, body, subscribe_client)
+    collector.set_pending(False)
 
 def handle_trade_request(sock, header, body):
-    pass
+    collector = collectors.get_available_trade_collector()
+    collector.set_request(sock, header['_id'], True)
+    stream_write(sock, header, body, collectors)
 
+def handle_trade_subscribe_response(sock, header, body):
+    pass
 
 def handle(sock, address):
     print('new connection', hex(threading.get_ident()))
@@ -110,7 +114,8 @@ def handle(sock, address):
                                             subscribe_handler=handle_subscribe,
                                             subscribe_response_handler=handle_subscribe_response, 
                                             request_trade_handler=handle_trade_request,
-                                            response_trade_handler=handle_trade_response)
+                                            response_trade_handler=handle_trade_response,
+                                            subscribe_trade_response_handler=handle_trade_subscribe_response)
     except Exception as e:
         print('Dispatch exception', e)
         collectors.handle_disconnect(e.args[1])

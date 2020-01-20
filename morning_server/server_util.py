@@ -32,7 +32,7 @@ class _Collector:
             'count': 0}
 
     def __repr__(self):
-        return 'latest_procee_time:' + str(self.latest_request_process_time) + '\t' + str(self.request)
+        return 'latest_process_time:' + str(self.latest_request_process_time) + '\t' + str(self.request)
 
     def request_id(self):
         return self.request['id']
@@ -82,6 +82,14 @@ class CollectorList:
             # TODO: Notify collector disconnected events to clients
             self.collectors.remove(collector)
 
+    def get_available_trade_collector(self):
+        while True:
+            collector = self.find_trade_collector()
+            if collector is not None:
+                break
+            gevent.sleep()
+        return collector
+
     def get_available_request_collector(self):
         while True:
             collector = self.find_request_collector()
@@ -118,6 +126,15 @@ class CollectorList:
                 else:
                     if len(collector['subscribe_code']) > len(c['subscribe_code']):
                         collector = c
+        return collector
+
+    def find_trade_collector(self):
+        collector = None
+        for c in self.collectors:
+            if c.capability | message.CAPABILITY_TRADE and not c.request_pending():
+                collector = c
+                break
+
         return collector
 
 

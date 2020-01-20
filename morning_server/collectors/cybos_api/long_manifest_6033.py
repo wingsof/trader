@@ -3,7 +3,7 @@ import win32com.client
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from utils.store import Store
+#from utils.store import Store
 
 class LongManifest:
     def __init__(self, account_num, account_type):
@@ -18,7 +18,7 @@ class LongManifest:
         self.stock_obj.BlockRequest()
         return self.stock_obj.GetHeaderValue(7)
 
-    def get_long_list(self, store=False):
+    def get_long_list(self):
         self.stock_obj = win32com.client.Dispatch('CpTrade.CpTd6033')
         self.stock_obj.SetInputValue(0, self.account_num)
         self.stock_obj.SetInputValue(1, self.account_type)
@@ -37,8 +37,6 @@ class LongManifest:
                  'sell_available': sell_available, 'price': price,
                  'all_price': all_price}
             long_list.append(d)
-            if store:
-                Store.RecordLongManifest(d.copy())
 
         return long_list
 
