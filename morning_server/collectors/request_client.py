@@ -50,6 +50,7 @@ def callback_trade_subscribe(sock, result):
 
 
 def get_order_subscriber(sock):
+    global order_subscriber
     if order_subscriber is None:
         order_subscriber = order.Order(sock, account.get_account_number(), account.get_account_type(), callback_trade_subscribe)
     return order_subscriber

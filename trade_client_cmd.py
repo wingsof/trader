@@ -38,7 +38,7 @@ def consumer():
     message_reader = stream_readwriter.MessageReader(sock)
     message_reader.start()
 
-    stock_api.subscribe_trade(display_trade_result)
+    stock_api.subscribe_trade(message_reader, display_trade_result)
     while True:
         val = q.get(True)
         command = val.decode('ascii').rstrip()
