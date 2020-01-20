@@ -41,8 +41,8 @@ class Order:
         self.conn = connection.Connection()
         self.listener = listener
         self.realtime_order = win32com.client.Dispatch('DsCbo1.CpConclusion')
-        handler = win32com.client.WithEvents(self.sock, self.realtime_order, _OrderRealtime)
-        handler.set_params(self.realtime_order, listener)
+        handler = win32com.client.WithEvents(self.realtime_order, _OrderRealtime)
+        handler.set_params(self.sock, self.realtime_order, listener)
         self.realtime_order.Subscribe()
   
     def stop(self):
