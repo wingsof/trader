@@ -150,13 +150,22 @@ VK_CODE = {'backspace':0x08,
            '`':0xC0}
 
 def send_special_key(code):
-    win32api.keybd_event(VK_CODE['shift'], 0, 0, 0)
-    time.sleep(0.1)  
+    win32api.keybd_event(VK_CODE['left_shift'], 0, 0, 0)
+    time.sleep(0.5)  
     win32api.keybd_event(code, 0, 0, 0)
-    time.sleep(0.1)
+    time.sleep(0.5)
+    win32api.keybd_event(VK_CODE['left_shift'], 0, win32con.KEYEVENTF_KEYUP, 0)
+    time.sleep(0.5)
     win32api.keybd_event(code, 0, win32con.KEYEVENTF_KEYUP, 0)
-    time.sleep(0.1)
-    win32api.keybd_event(VK_CODE['shift'], 0, win32con.KEYEVENTF_KEYUP, 0)
+
+def send_paste_key():
+    win32api.keybd_event(VK_CODE['left_control'], 0, 0, 0)
+    time.sleep(0.5)  
+    win32api.keybd_event(VK_CODE['v'], 0, 0, 0)
+    time.sleep(0.5)
+    win32api.keybd_event(VK_CODE['left_control'], 0, win32con.KEYEVENTF_KEYUP, 0)
+    time.sleep(0.5)
+    win32api.keybd_event(VK_CODE['v'], 0, win32con.KEYEVENTF_KEYUP, 0)
 
 
 def send_key(code):

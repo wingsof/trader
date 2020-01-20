@@ -11,7 +11,7 @@ title = ''
 def enumHandler(h, lParam):
     global hwnd
     if win32gui.IsWindowVisible(h):
-        print(win32gui.GetWindowText(h))
+        #print(win32gui.GetWindowText(h))
         if title in win32gui.GetWindowText(h):
             hwnd = h
             print("Found window handle: {}".format(h))
@@ -24,7 +24,7 @@ class WinDep:
         self.window_width = r - l
         self.window_height = b - t
         self.capture_time = datetime.datetime.now()
-        print("Window Size: %dx%d" % (self.window_width, self.window_height))
+        #print("Window Size: %dx%d" % (self.window_width, self.window_height))
         win32gui.SetForegroundWindow(hwnd)
         win32gui.ShowWindow(hwnd, 1)
 

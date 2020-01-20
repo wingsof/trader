@@ -73,7 +73,7 @@ if TEST_MODE:
     until_date = date(2019, 11, 30)
 else:
     from_date = date(2018, 1, 1)
-    until_date = date(2020, 1, 1)
+    until_date = date(2019, 1, 1)
 
 MAVG=20
 
@@ -127,6 +127,7 @@ for code in market_code:
                                 today_close=0, today_highest=0,
                                 average_amount=0, inst_average=0,
                                 prev_highest=[-1,None],
+                                prev_highest_days=0,
                                 over_days=0)
 
 trades = []
@@ -220,6 +221,8 @@ while from_date <= until_date:
             code_dict[code].cross_highest_highest = max([day_before_yesterday_over_bull_h, yesterday_over_bull_h])
             code_dict[code].average_amount = average_amount
             code_dict[code].inst_average = inst_average
+            from_prev_highest = (from_date - code_dict[code].prev_highest[1]).days
+            code_dict[code].prev_highest_days = 0 if from_prev_highest <= 3 else from_prev_highest
             mprint(from_date, code, 'OVER_AVG')
 
         if code_dict[code].state == OVER_AVG:
@@ -271,7 +274,7 @@ while from_date <= until_date:
                     'today_highest': code_dict[code].today_highest,
                     'average_amount': code_dict[code].average_amount,
                     'inst_average': code_dict[code].inst_average,
-                    'prev_highest_days': (from_date - code_dict[code].prev_highest[1]).days,
+                    'prev_highest_days': code_dict[code].prev_highest_days,
                     'over_days': code_dict[code].over_days,
                 })
                 mprint('\t', from_date, code, 'SELL', sell_price, profit)
