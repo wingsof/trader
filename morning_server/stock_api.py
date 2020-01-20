@@ -34,3 +34,16 @@ def request_long_list(reader):
     body = []
     return reader.block_write(header, body)
 
+
+def order_stock(reader, code, price, quantity, is_buy):
+    header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.ORDER_STOCK)
+    header['code'] = code
+    header['price'] = price
+    header['quantity'] = quantity
+    header['trade_type'] = message.ORDER_BUY if is_buy else message.ORDER_SELL
+    return reader.block_write(header, body)
+
+def subscribe_trade(reader, handler):
+    header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.TRADE_DATA)
+    body = []
+    reader.subscribe_trade_write(header, body, handler)

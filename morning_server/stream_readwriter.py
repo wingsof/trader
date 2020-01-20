@@ -19,6 +19,7 @@ class MessageReader(gevent.Greenlet):
         self.sock = sock
         self.clients = dict()
         self.subscribers = dict()
+        self.trade_subscriber = None
 
     def block_write(self, header, body):
         msg_id = header['_id']
@@ -36,6 +37,11 @@ class MessageReader(gevent.Greenlet):
             self.subscribers[code] = handler
             header['code'] = code
             write(self.sock, header, body)
+
+    def subscribe_trade_write(self, header, body, handler):
+        # multiple listener?
+        self.trade_subscriber = handler
+        write(self.sock, header, body)
 
     def _run(self):
         while True:
@@ -56,7 +62,9 @@ class MessageReader(gevent.Greenlet):
                 code = rcv['header']['code']
                 #print('BODY', rcv['body'])
                 self.subscribers[code](code, rcv['body'])
-
+            elif handler_type == message.TRADE_SUBSCRIBE_RESPONSE:
+                if self.trade_subscriber is not None:
+                    self.trade_subscriber(rcv['body'])
 
 def create_header(header_type, market_type, method_name, vendor='cybos'):
     return {'type': header_type, 

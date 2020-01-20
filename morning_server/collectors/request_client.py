@@ -46,7 +46,6 @@ def callback_bidask_subscribe(sock, code, datas):
 
 def callback_trade_subscribe(sock, result):
     header = stream_readwriter.create_header(message.TRADE_SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.TRADE_DATA)
-    header['code'] = result['code']
     stream_readwriter.write(sock, header, result)
 
 
@@ -78,10 +77,10 @@ def handle_trade_request(sock, header, body):
         new_order_num = modify_order_obj.modify_order(order_num, code, 0, price)
         result = {'order_number': new_order_num}
         stream_readwriter.write(sock, header, result)
-    elif header['method'] == message.SUBSCRIBE_ORDER:
+    elif header['method'] == message.TRADE_DATA:
         get_order_subscriber(sock)
-        resut = {'result': True}
-        stream_readwriter.write(sock, header, result)
+        #resut = {'result': True}
+        #stream_readwriter.write(sock, header, result)
         print('START ORDER SUBSCRIBE')
     elif header['method'] == message.CANCEL_ORDER:
         cancel_order_obj = cancel_order.CancelOrder(account.get_account_number(), account.get_account_type())

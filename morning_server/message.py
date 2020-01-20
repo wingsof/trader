@@ -25,7 +25,6 @@ GET_LONG_LIST = 'long_list'
 ORDER_STOCK = 'order_stock'
 MODIFY_ORDER = 'modify_order'
 CANCEL_ORDER = 'cancel_order'
-SUBSCRIBE_ORDER = "subscribe_order"
 
 STOCK_DATA = 'stock_realtime'
 BIDASK_DATA = 'bidask_realtime'
