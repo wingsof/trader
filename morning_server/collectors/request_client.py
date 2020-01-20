@@ -148,8 +148,15 @@ if __name__ == '__main__':
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
     
-    # TODO: try, except and retry?
-    sock.connect(server_address)
+    while True:
+        try:
+            sock.connect(server_address)
+            print('Connected to apiserver')
+            break
+        except socket.error:
+            print('Retrying connect to apiserver')
+            gevent.sleep(1)
+
     header = stream_readwriter.create_header(message.COLLECTOR, message.MARKET_STOCK, message.COLLECTOR_DATA)
 
     if TRADE_CAPABILITY:
