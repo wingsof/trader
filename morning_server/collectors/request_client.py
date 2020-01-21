@@ -79,8 +79,8 @@ def handle_trade_request(sock, header, body):
         stream_readwriter.write(sock, header, result)
     elif header['method'] == message.TRADE_DATA:
         get_order_subscriber(sock)
-        #resut = {'result': True}
-        #stream_readwriter.write(sock, header, result)
+        result = {'result': True}
+        stream_readwriter.write(sock, header, result)
         rlogger.info('START ORDER SUBSCRIBE')
     elif header['method'] == message.CANCEL_ORDER:
         cancel_order_obj = cancel_order.CancelOrder(account.get_account_number(), account.get_account_type())
