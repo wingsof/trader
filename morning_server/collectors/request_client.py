@@ -11,13 +11,12 @@ from PyQt5.QtCore import QCoreApplication
 from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code
 from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order
-
-
-TRADE_CAPABILITY = True
+from configs import client_info
+from utils import rlogger
 
 
 def handle_request(sock, header, body):
-    print('REQUEST', header)
+    rlogger.info('REQUEST', header)
     header['type'] = message.RESPONSE
     if header['method'] == message.DAY_DATA:
         _, data = stock_chart.get_day_period_data(header['code'], header['from'], header['until'])
@@ -57,7 +56,7 @@ def get_order_subscriber(sock):
 
 
 def handle_trade_request(sock, header, body):
-    print('TRADE REQUEST', header)
+    rlogger.info('TRADE REQUEST', header)
     header['type'] = message.RESPONSE_TRADE
     if header['method'] == message.GET_LONG_LIST:
         lm = long_manifest_6033.LongManifest(account.get_account_number(), account.get_account_type())
@@ -82,7 +81,7 @@ def handle_trade_request(sock, header, body):
         get_order_subscriber(sock)
         #resut = {'result': True}
         #stream_readwriter.write(sock, header, result)
-        print('START ORDER SUBSCRIBE')
+        rlogger.info('START ORDER SUBSCRIBE')
     elif header['method'] == message.CANCEL_ORDER:
         cancel_order_obj = cancel_order.CancelOrder(account.get_account_number(), account.get_account_type())
         order_num = header['order_number']
@@ -97,22 +96,22 @@ def handle_subscribe(sock, header, body):
     code = header['code']
     if header['method'] == message.STOCK_DATA:
         if code in subscribe_stock:
-            print('Already subscribe stock', code)
+            rlogger.info('Already subscribe stock', code)
         else:
             subscribe_stock[code] = stock_subscribe.StockSubscribe(sock, code)
             subscribe_stock[code].start_subscribe(callback_stock_subscribe)
-            print('START Subscribe stock', code)
+            rlogger.info('START Subscribe stock', code)
     elif header['method'] == message.STOP_STOCK_DATA:
         if code in subscribe_stock:
             subscribe_stock[code].stop_subscribe()
             subscribe_stock.pop(code, None)
     elif header['method'] == message.BIDASK_DATA:
         if code in subscribe_bidask:
-            print('Already subscribe bidask', code)
+            rlogger.info('Already subscribe bidask', code)
         else:
             subscribe_bidask[code] = bidask_subscribe.BidAskSubscribe(sock, code)
             subscribe_bidask[code].start_subscribe(callback_bidask_subscribe)
-            print('START Subscribe bidask', code)
+            rlogger.info('START Subscribe bidask', code)
     elif header['method'] == message.STOP_BIDASK_DATA:
         if code in subscribe_bidask:
             subscribe_bidask[code].stop_subscribe()
@@ -138,10 +137,10 @@ if __name__ == '__main__':
     app = QCoreApplication([])
     conn = connection.Connection()
     while not conn.is_connected():
-        print('Retry connecting to CP Server')
+        rlogger.info('Retry connecting to CP Server')
         gevent.sleep(5)
 
-    print('Connected')
+    rlogger.info('Connected')
     subscribe_stock = dict()
     subscribe_bidask = dict()
     order_subscribe = []
@@ -151,15 +150,15 @@ if __name__ == '__main__':
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
             sock.connect(server_address)
-            print('Connected to apiserver')
+            rlogger.info('Connected to apiserver')
             break
         except socket.error:
-            print('Retrying connect to apiserver')
+            rlogger.info('Retrying connect to apiserver')
             gevent.sleep(1)
 
     header = stream_readwriter.create_header(message.COLLECTOR, message.MARKET_STOCK, message.COLLECTOR_DATA)
 
-    if TRADE_CAPABILITY:
+    if client_info.get_client_capability() | message.CAPABILITY_TRADE:
         body = {'capability': message.CAPABILITY_COLLECT_SUBSCRIBE | message.CAPABILITY_TRADE}
     else:
         body = {'capability': message.CAPABILITY_REQUEST_RESPONSE | message.CAPABILITY_COLLECT_SUBSCRIBE}
@@ -168,6 +167,6 @@ if __name__ == '__main__':
     if body['capability'] & message.CAPABILITY_TRADE:
         account = trade_util.TradeUtil()
         order_subscriber = None
-        print('HAS TRADE CAPABILITY')
+        rlogger.info('HAS TRADE CAPABILITY')
     
     gevent.joinall([gevent.spawn(dispatch_message, sock), gevent.spawn(mainloop, app)])
