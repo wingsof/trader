@@ -210,11 +210,17 @@ while from_date <= until_date:
                 code_dict[code].prev_highest[0] = today_data['highest_price']
                 code_dict[code].prev_highest[1] = from_date
 
+        from_prev_highest = (from_date - code_dict[code].prev_highest[1]).days
+        prev_highest = 0 if from_prev_highest <= 3 else from_prev_highest
+
         if (code_dict[code].state == NONE and 
                             is_over_mavg and 
                             increase_candle and 
                             not (day_before_yesterday_over_bull > 20) and
-                            not yesterday_over_bull > 20):
+                            not yesterday_over_bull > 20 and
+                            prev_highest !=0 and
+                            (prev_highest <= 35 and average_amount > 200000000) and
+                            (prev_highest >= 240 and average_amount < 360000000)):
             code_dict[code].state = OVER_AVG
             code_dict[code].cut = max([past_data[-2]['highest_price'], past_data[-1]['highest_price']])
             code_dict[code].cross_close_highest = max([day_before_yesterday_over_bull, yesterday_over_bull])

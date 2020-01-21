@@ -25,7 +25,7 @@ def _setup_log(use_console_out=True):
 
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-    socket_handler = logging.handlers.SocketHandler('localhost',
+    socket_handler = logging.handlers.SocketHandler(client_info.get_server_ip(),
                         logging.handlers.DEFAULT_TCP_LOGGING_PORT)
     socket_handler.setFormatter(formatter)
     logg.addHandler(socket_handler)

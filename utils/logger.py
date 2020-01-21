@@ -22,7 +22,7 @@ def _setup_log():
     stream_handler.setFormatter(formatter)
     logg.addHandler(stream_handler)
 
-    filename = 'logs/morning_server.log'
+    filename = 'logs' + os.sep + 'morning_server.log'
     try:
         filename = os.environ['MORNING_PATH'] + os.sep + filename
         if not os.path.exists(os.environ['MORNING_PATH'] + os.sep + 'logs'):

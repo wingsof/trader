@@ -4,6 +4,7 @@ import logging.handlers
 import socketserver
 import struct
 import os
+from configs import client_info
 
 
 class LogRecordStreamHandler(socketserver.StreamRequestHandler):
@@ -55,7 +56,7 @@ class LogRecordSocketReceiver(socketserver.ThreadingTCPServer):
 
     allow_reuse_address = True
 
-    def __init__(self, host='localhost',
+    def __init__(self, host=client_info.get_server_ip(),
                  port=logging.handlers.DEFAULT_TCP_LOGGING_PORT,
                  handler=LogRecordStreamHandler):
         socketserver.ThreadingTCPServer.__init__(self, (host, port), handler)
@@ -75,7 +76,7 @@ class LogRecordSocketReceiver(socketserver.ThreadingTCPServer):
             abort = self.abort
 
 def start_log_server():
-    filename = 'logs/log_client.log'
+    filename = 'logs' + os.sep + 'log_client.log'
     try:
         filename = os.environ['MORNING_PATH'] + os.sep + filename
         if not os.path.exists(os.environ['MORNING_PATH'] + os.sep + 'logs'):
