@@ -142,14 +142,23 @@ class SubscribeClient:
     def __init__(self):
         # Key: code, Values: (collector_socket, [subscribe_client_socket, ])
         self.clients = dict()
+        self.trade_clients = []
 
     def code_in_clients(self, code):
         return code in self.clients
+
+    def add_trade_to_clients(self, sock):
+        if sock not in self.trade_clients:
+            self.trade_clients.append(sock)
 
     def send_to_clients(self, code, header, body):
         if self.code_in_clients(code):
             for s in self.clients[code][1]:
                 stream_write(s, header, body, self)
+
+    def send_trade_to_client(self, header, body):
+        for s in self.trade_clients:
+            stream_write(s, header, body, self)
 
     def handle_disconnect(self, sock):
         logger.warning('HANDLE DISCONNECT: SubscribeClient')
@@ -160,6 +169,8 @@ class SubscribeClient:
                     logger.warning('Client Removed')
                     v[1].remove(sock)
                     break
+        if sock in self.trade_clients:
+            self.trade_clients.remove(sock)
 
     def add_to_clients(self, code, sock, header, body, collectors):
         if self.code_in_clients(code):
