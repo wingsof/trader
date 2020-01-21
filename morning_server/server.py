@@ -40,7 +40,7 @@ def handle_collector(sock, header, body):
 
 
 def handle_response(sock, header, body):
-    logger.info('HANDLE RESPONSE %s', header))
+    logger.info('HANDLE RESPONSE %s', header)
     item = partial_request.get_item(header['_id'])
     collector = collectors.find_by_id(header['_id'])
 
