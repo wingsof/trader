@@ -62,7 +62,7 @@ class MessageReader(gevent.Greenlet):
                 code = rcv['header']['code']
                 #print('BODY', rcv['body'])
                 self.subscribers[code](code, rcv['body'])
-            elif handler_type == message.TRADE_SUBSCRIBE_RESPONSE:
+            elif header_type == message.TRADE_SUBSCRIBE_RESPONSE:
                 if self.trade_subscriber is not None:
                     self.trade_subscriber(rcv['body'])
 
