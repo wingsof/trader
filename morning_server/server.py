@@ -14,12 +14,14 @@ import stream_readwriter
 import time
 import gevent
 import virtualbox
+from multiprocessing import Process
 
 import message
 from morning.config import db
 from morning_server.handlers import request_pre_handler as request_pre_handler
 import server_util
 from server_util import stream_write
+from utils import logger_server
 
 
 VBOX_CHECK_INTERVAL = 60 # 1 minute
@@ -146,6 +148,8 @@ def vbox_control():
         gevent.sleep(VBOX_CHECK_INTERVAL)
 
 
+log_server = Process(target=logger_server.start_log_server)
+log_server.start()
 
 server = StreamServer((message.SERVER_IP, message.CLIENT_SOCKET_PORT), handle)
 server.start()
@@ -154,3 +158,5 @@ server.start()
 
 wsgi_server = pywsgi.WSGIServer((message.SERVER_IP, message.CLIENT_WEB_PORT), app)
 wsgi_server.serve_forever()
+
+log_server.join()

@@ -48,6 +48,7 @@ def consumer():
             print(stock_api.request_long_list(message_reader))
         elif command.startswith('buy') or command.startswith('sell'):
             buy_detail = command.split(',')
+            print(buy_detail)
             if len(buy_detail) != 4:
                 print('buy|sell,code,price,quantity')
             else:

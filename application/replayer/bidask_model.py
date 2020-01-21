@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt, QAbstractTableModel, QDate, pyqtSlot, pyqtSignal
 from pymongo import MongoClient
 import time_converter
-import unit, config
+import unit
 from datetime import timedelta, datetime
 import pandas as pd
 import market_model, playable_market_model

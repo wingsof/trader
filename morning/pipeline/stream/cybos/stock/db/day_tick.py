@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from morning.config import db
+from configs import db
 from morning.logging import logger
 import pandas as pd
 from morning.cybos_api import stock_chart

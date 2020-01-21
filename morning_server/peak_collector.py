@@ -20,7 +20,7 @@ from morning_server import stream_readwriter
 from morning.back_data import holidays
 from morning.pipeline.converter import dt
 from utils import time_converter
-from morning.config import db
+from configs import db
 
 
 

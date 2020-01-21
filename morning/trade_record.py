@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 from datetime import datetime
-from morning.config import db
+from configs import db
 
 _called_from_test = False
 

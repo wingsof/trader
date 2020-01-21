@@ -1,7 +1,7 @@
 from datetime import datetime
 import pandas as pd
 from pymongo import MongoClient
-from morning.config import db
+from configs import db
 from utils import time_converter
 
 class DayProfitCompareAccount:

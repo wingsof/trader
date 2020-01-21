@@ -90,5 +90,3 @@ class WinDep:
 if __name__ == '__main__':
     win = WinDep()
     win.capture().save('capture.png')
-
-

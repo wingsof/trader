@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, date
 from pymongo import MongoClient
 
 from morning.pipeline.chooser.chooser import Chooser
-from morning.config import db
+from configs import db
 from morning.back_data.fetch_stock_data import get_day_period_data
 from morning.back_data.holidays import is_holidays, get_yesterday
 

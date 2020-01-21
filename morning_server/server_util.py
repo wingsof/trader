@@ -1,12 +1,11 @@
 from morning_server import stream_readwriter
 from morning_server import message
-from morning.config import db
+from configs import db
 from utils import time_converter
 
 from pymongo import MongoClient
 import gevent
 from datetime import timedelta, datetime
-from gevent.lock import Semaphore
 
 
 def stream_write(sock, header, body, manager = None):

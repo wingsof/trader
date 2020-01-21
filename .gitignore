@@ -16,3 +16,4 @@ framework_test
 morning/config/db.py
 auto/auto.py
 LG_DeepLearning_lecture_Jupyter
+configs/client_info.json

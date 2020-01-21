@@ -73,7 +73,7 @@ if TEST_MODE:
     until_date = date(2019, 11, 30)
 else:
     from_date = date(2018, 1, 1)
-    until_date = date(2019, 1, 1)
+    until_date = date(2020, 1, 1)
 
 MAVG=20
 

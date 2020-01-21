@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 from morning.back_data.holidays import is_holidays, get_working_days
-from morning.config import db
+from configs import db
 from utils import time_converter
 from datetime import date, timedelta, datetime
 

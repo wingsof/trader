@@ -4,7 +4,7 @@ from datetime import date, timedelta, datetime
 from morning_server import message
 from morning.back_data import fetch_stock_data
 from morning.back_data.holidays import is_holidays, get_working_days, get_yesterday
-from morning.config import db
+from configs import db
 from utils import time_converter
 
 

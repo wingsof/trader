@@ -41,6 +41,7 @@ def order_stock(reader, code, price, quantity, is_buy):
     header['price'] = price
     header['quantity'] = quantity
     header['trade_type'] = message.ORDER_BUY if is_buy else message.ORDER_SELL
+    body = []
     return reader.block_write(header, body)
 
 def subscribe_trade(reader, handler):
