@@ -100,7 +100,7 @@ def handle_trade_response(sock, header, body):
 def handle_trade_request(sock, header, body):
     logger.info('HANDLE TRADE REQUEST %s', header)
     collector = collectors.get_available_trade_collector()
-    collector.set_request(sock, header['_id'], True)
+    #collector.set_request(sock, header['_id'], True)
     stream_write(collector.sock, header, body, collectors)
 
 def handle_trade_subscribe_response(sock, header, body):
