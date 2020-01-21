@@ -35,12 +35,12 @@ partial_request = server_util.PartialRequest()
 
 
 def handle_collector(sock, header, body):
-    logger.info('HANDLE COLLECTOR ' + hex(threading.get_ident()))
+    logger.info('HANDLE COLLECTOR %s', hex(threading.get_ident()))
     collectors.add_collector(sock, body)
 
 
 def handle_response(sock, header, body):
-    logger.info('HANDLE RESPONSE ' + str(header))
+    logger.info('HANDLE RESPONSE %s', header))
     item = partial_request.get_item(header['_id'])
     collector = collectors.find_by_id(header['_id'])
 
@@ -56,9 +56,8 @@ def handle_response(sock, header, body):
     logger.info('HANDLE RESPONSE DONE')
 
 
-
 def handle_request(sock, header, body):
-    logger.info('HANDLE REQUEST ' + str(header))
+    logger.info('HANDLE REQUEST %s', header)
     data, vacancy = request_pre_handler.pre_handle_request(sock, header, body)
     if data is None:
         logger.info('HEADER ' +str(header))
@@ -76,20 +75,20 @@ def handle_request(sock, header, body):
             header['until'] = v[1]
             stream_write(collector.sock, header, body, collectors)
     else:
-        logger.info('HEADER(cached) ' + str(header))
+        logger.info('HEADER(cached) %s', header)
         header['type'] = message.RESPONSE
         stream_write(sock, header, data)
     logger.info('HANDLE REQUEST DONE')
 
 
 def handle_subscribe(sock, header, body):
-    logger.info('HANDLE SUBSCRIBE ' + hex(threading.get_ident()))
+    logger.info('HANDLE SUBSCRIBE %s', hex(threading.get_ident()))
     code = header['code']
     subscribe_client.add_to_clients(code, sock, header, body, collectors)
 
 
 def handle_subscribe_response(sock, header, body):
-    logger.info('HANDLE SUBSCRIBE RESPONSE ' + hex(threading.get_ident()))
+    logger.info('HANDLE SUBSCRIBE RESPONSE %s', hex(threading.get_ident()))
     code = header['code']
     subscribe_client.send_to_clients(code, header, body)
 
@@ -99,7 +98,7 @@ def handle_trade_response(sock, header, body):
     collector.set_pending(False)
 
 def handle_trade_request(sock, header, body):
-    logger.info('HANDLE TRADE REQUEST ' + str(header))
+    logger.info('HANDLE TRADE REQUEST %s', header)
     collector = collectors.get_available_trade_collector()
     collector.set_request(sock, header['_id'], True)
     stream_write(collector.sock, header, body, collectors)

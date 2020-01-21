@@ -131,7 +131,7 @@ class CollectorList:
     def find_trade_collector(self):
         collector = None
         for c in self.collectors:
-            if c.capability | message.CAPABILITY_TRADE and not c.request_pending():
+            if c.capability & message.CAPABILITY_TRADE and not c.request_pending():
                 collector = c
                 break
 
