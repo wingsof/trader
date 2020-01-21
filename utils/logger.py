@@ -7,7 +7,7 @@ import logging.handlers
 
 def except_hook(exc_type, exc_value, traceback):
     if issubclass(exc_type, KeyboardInterrupt):
-        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        sys.__excepthook__(exc_type, exc_value, traceback)
         return
 
     _logger.error('Logging an uncaught exception', exc_info=(exc_type, exc_value, traceback))

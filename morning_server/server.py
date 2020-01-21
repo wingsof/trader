@@ -35,12 +35,12 @@ partial_request = server_util.PartialRequest()
 
 
 def handle_collector(sock, header, body):
-    logger.info('HANDLE COLLECTOR', hex(threading.get_ident()))
+    logger.info('HANDLE COLLECTOR ' + hex(threading.get_ident()))
     collectors.add_collector(sock, body)
 
 
 def handle_response(sock, header, body):
-    #print('HANDLE RESPONSE', header)
+    logger.info('HANDLE RESPONSE ' + str(header))
     item = partial_request.get_item(header['_id'])
     collector = collectors.find_by_id(header['_id'])
 
@@ -53,20 +53,20 @@ def handle_response(sock, header, body):
         stream_write(collector.request_socket(), header, body, subscribe_client)
 
     collector.set_pending(False)
-    #print('HANDLE RESPONSE DONE')
+    logger.info('HANDLE RESPONSE DONE')
 
 
 
 def handle_request(sock, header, body):
-    logger.info('HANDLE REQUEST', header)
+    logger.info('HANDLE REQUEST ' + str(header))
     data, vacancy = request_pre_handler.pre_handle_request(sock, header, body)
     if data is None:
-        logger.info('HEADER', header)
+        logger.info('HEADER ' +str(header))
         collector = collectors.get_available_request_collector()
         collector.set_request(sock, header['_id'], True)
         stream_write(collector.sock, header, body, collectors)
     elif len(vacancy) > 0:
-        logger.info('HEADER(to collector)', header)
+        logger.info('HEADER(to collector) ' + str(header))
         partial_request.start_partial_request(header, data, len(vacancy))
         for v in vacancy:
             collector = collectors.get_available_request_collector()
@@ -76,20 +76,20 @@ def handle_request(sock, header, body):
             header['until'] = v[1]
             stream_write(collector.sock, header, body, collectors)
     else:
-        logger.info('HEADER(cached)', header)
+        logger.info('HEADER(cached) ' + str(header))
         header['type'] = message.RESPONSE
         stream_write(sock, header, data)
     logger.info('HANDLE REQUEST DONE')
 
 
 def handle_subscribe(sock, header, body):
-    #print('HANDLE SUBSCRIBE', hex(threading.get_ident()))
+    logger.info('HANDLE SUBSCRIBE ' + hex(threading.get_ident()))
     code = header['code']
     subscribe_client.add_to_clients(code, sock, header, body, collectors)
 
 
 def handle_subscribe_response(sock, header, body):
-    #print('HANDLE SUBSCRIBE RESPONSE', hex(threading.get_ident()))
+    logger.info('HANDLE SUBSCRIBE RESPONSE ' + hex(threading.get_ident()))
     code = header['code']
     subscribe_client.send_to_clients(code, header, body)
 
@@ -99,7 +99,7 @@ def handle_trade_response(sock, header, body):
     collector.set_pending(False)
 
 def handle_trade_request(sock, header, body):
-    logger.info('HANDLE TRADE REQUEST', header)
+    logger.info('HANDLE TRADE REQUEST ' + str(header))
     collector = collectors.get_available_trade_collector()
     collector.set_request(sock, header['_id'], True)
     stream_write(collector.sock, header, body, collectors)
@@ -108,8 +108,7 @@ def handle_trade_subscribe_response(sock, header, body):
     pass
 
 def handle(sock, address):
-    logger.info('new connection', hex(threading.get_ident()))
-    logger.info('address', address)
+    logger.info('new connection, address ' + str(address))
     try:
         stream_readwriter.dispatch_message(sock, collector_handler=handle_collector, 
                                             request_handler=handle_request,
@@ -120,7 +119,7 @@ def handle(sock, address):
                                             response_trade_handler=handle_trade_response,
                                             subscribe_trade_response_handler=handle_trade_subscribe_response)
     except Exception as e:
-        logger.warning('Dispatch exception', e)
+        logger.warning('Dispatch exception ' + str(e))
         collectors.handle_disconnect(e.args[1])
         subscribe_client.handle_disconnect(e.args[1])
         

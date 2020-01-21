@@ -6,13 +6,14 @@ from utils import time_converter
 from pymongo import MongoClient
 import gevent
 from datetime import timedelta, datetime
+from utils import logger
 
 
 def stream_write(sock, header, body, manager = None):
     try:
         stream_readwriter.write(sock, header, body)
     except Exception as e:
-        print('Stream write error', e)
+        logger.error('Stream write error ' + str(e))
         if manager is not None:
             manager.handle_disconnect(e.args[1])
 
@@ -69,11 +70,11 @@ class CollectorList:
         self.collectors.append(_Collector(self.collector_index, sock, body['capability']))
 
     def handle_disconnect(self, sock):
-        print('HANDLE DISCONNECT: CollectorList')
+        logger.warning('HANDLE DISCONNECT: CollectorList')
         collector = None
         for c in self.collectors:
             if c.sock == sock:
-                print('Collector Removed')
+                logger.warning('Collector Removed')
                 collector = c
                 break
 
@@ -151,12 +152,12 @@ class SubscribeClient:
                 stream_write(s, header, body, self)
 
     def handle_disconnect(self, sock):
-        print('HANDLE DISCONNECT: SubscribeClient')
+        logger.warning('HANDLE DISCONNECT: SubscribeClient')
         for v in self.clients.values():
             for s in v[1]:
                 if s == sock:
                     # Assume that sock is not duplicated in a code
-                    print('Client Removed')
+                    logger.warning('Client Removed')
                     v[1].remove(sock)
                     break
 

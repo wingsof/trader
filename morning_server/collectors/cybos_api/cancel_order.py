@@ -6,6 +6,7 @@ import win32com.client
 import gevent
 
 from morning_server.collectors.cybos_api import connection
+from utils import rlogger
 
 class CancelOrder:
     def __init__(self, account_num, account_type):
@@ -15,7 +16,7 @@ class CancelOrder:
         self.conn = connection.Connection()
 
     def cancel_order(self, order_number, code, amount):
-        print('Cancel Order', order_number, code, amount)
+        rlogger.info('Cancel Order ' + str(order_number) + ' ' + code + ' ' + str(amount))
         self.obj.SetInputValue(1, order_number)
         self.obj.SetInputValue(2, self.account_num)
         self.obj.SetInputValue(3, self.account_type)
@@ -31,11 +32,11 @@ class CancelOrder:
                     gevent.sleep(self.conn.get_remain_time() / 1000)
                 continue
             else:
-                print('TD0314 Cancel Order Failed')
+                rlogger.error('TD0314 Cancel Order Failed')
                 return
             
         if self.obj.GetDibStatus() != 0:
-            print('TD0314 Cancel Order Status Error', self.obj.GetDibMsg1())
+            rlogger.error('TD0314 Cancel Order Status Error ' + str(self.obj.GetDibMsg1()))
             return False
 
         return True

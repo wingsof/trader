@@ -16,7 +16,7 @@ from utils import rlogger
 
 
 def handle_request(sock, header, body):
-    rlogger.info('REQUEST', header)
+    rlogger.info('REQUEST ' + str(header))
     header['type'] = message.RESPONSE
     if header['method'] == message.DAY_DATA:
         _, data = stock_chart.get_day_period_data(header['code'], header['from'], header['until'])
@@ -56,7 +56,7 @@ def get_order_subscriber(sock):
 
 
 def handle_trade_request(sock, header, body):
-    rlogger.info('TRADE REQUEST', header)
+    rlogger.info('TRADE REQUEST ' + str(header))
     header['type'] = message.RESPONSE_TRADE
     if header['method'] == message.GET_LONG_LIST:
         lm = long_manifest_6033.LongManifest(account.get_account_number(), account.get_account_type())
@@ -96,22 +96,22 @@ def handle_subscribe(sock, header, body):
     code = header['code']
     if header['method'] == message.STOCK_DATA:
         if code in subscribe_stock:
-            rlogger.info('Already subscribe stock', code)
+            rlogger.info('Already subscribe stock ' + code)
         else:
             subscribe_stock[code] = stock_subscribe.StockSubscribe(sock, code)
             subscribe_stock[code].start_subscribe(callback_stock_subscribe)
-            rlogger.info('START Subscribe stock', code)
+            rlogger.info('START Subscribe stock' + code)
     elif header['method'] == message.STOP_STOCK_DATA:
         if code in subscribe_stock:
             subscribe_stock[code].stop_subscribe()
             subscribe_stock.pop(code, None)
     elif header['method'] == message.BIDASK_DATA:
         if code in subscribe_bidask:
-            rlogger.info('Already subscribe bidask', code)
+            rlogger.info('Already subscribe bidask ' + code)
         else:
             subscribe_bidask[code] = bidask_subscribe.BidAskSubscribe(sock, code)
             subscribe_bidask[code].start_subscribe(callback_bidask_subscribe)
-            rlogger.info('START Subscribe bidask', code)
+            rlogger.info('START Subscribe bidask ' + code)
     elif header['method'] == message.STOP_BIDASK_DATA:
         if code in subscribe_bidask:
             subscribe_bidask[code].stop_subscribe()
@@ -140,7 +140,7 @@ if __name__ == '__main__':
         rlogger.info('Retry connecting to CP Server')
         gevent.sleep(5)
 
-    rlogger.info('Connected')
+    rlogger.info('Connected to CP Server')
     subscribe_stock = dict()
     subscribe_bidask = dict()
     order_subscribe = []

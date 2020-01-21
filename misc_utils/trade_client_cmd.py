@@ -1,8 +1,12 @@
 #!/usr/bin/env python
-
 from gevent import monkey
 monkey.patch_all()
 monkey.patch_sys(stdin=True, stdout=False, stderr=False)
+
+
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from gevent.fileobject import FileObject
 import gevent
 from gevent.queue import Queue

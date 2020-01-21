@@ -2,6 +2,7 @@ import win32com.client
 import gevent
 
 from morning_server.collectors.cybos_api import connection
+from utils import rlogger
 
 
 class ModifyOrder:
@@ -28,11 +29,11 @@ class ModifyOrder:
                     gevent.sleep(self.conn.get_remain_time() / 1000)
                 continue
             else:
-                print('TD0313 Modify Order Failed')
+                rlogger.errro('TD0313 Modify Order Failed')
                 return
         
         if self.obj.GetDibStatus() != 0:
-            print('TD0313 Modify Order Status Error', self.obj.GetDibMsg1())
+            rlogger.error('TD0313 Modify Order Status Error ' + self.obj.GetDibMsg1())
             return 0
         
         return self.obj.GetHeaderValue(7) # 새로운 주문 번호

@@ -5,9 +5,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..' 
 import win32com.client
 import time
 
-from morning.logging import logger
 from morning.cybos_api import connection
 from pywintypes import com_error
+from utils import rlogger
 
 
 class OrderInQueue:
@@ -26,14 +26,14 @@ class OrderInQueue:
             try:
                 ret = self.obj.BlockRequest()
             except com_error:
-                logger.error('TD5339 BlockRequest Error')
+                rlogger.error('TD5339 BlockRequest Error')
                 return []
 
             if self.obj.GetDibStatus() != 0:
-                logger.error('TD5339 failed')
+                rlogger.error('TD5339 failed')
                 return []
             elif ret == 2 or ret == 3:
-                logger.error('TD5339 communication failed')
+                rlogger.error('TD5339 communication failed')
                 return []
 
             while ret == 4:
@@ -59,7 +59,7 @@ class OrderInQueue:
                 order['credit_date'] = self.obj.GetDataValue(17, i) # 대출일
                 order['flag_describe'] = self.obj.GetDataValue(19, i) # 주문호가구분코드 내용
                 order['flag'] = self.obj.GetDataValue(21, i)    # 주문호가구분코드
-                logger.print('ORDER IN QUEUE', order)
+                rlogger.info('ORDER IN QUEUE ' + str(order))
                 orders.append(order)
             if self.obj.Continue == False:
                 break
