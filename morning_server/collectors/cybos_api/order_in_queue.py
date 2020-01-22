@@ -44,6 +44,7 @@ class OrderInQueue:
             
             count = self.obj.GetHeaderValue(5)
 
+            rlogger.info('ORDER IN QUEUE COUNT: %d', count)
             for i in range(count):
                 order = dict()
                 order['number'] = self.obj.GetDataValue(1, i)
