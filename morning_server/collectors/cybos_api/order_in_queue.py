@@ -22,6 +22,7 @@ class OrderInQueue:
 
     def _td5339(self):
         orders = []
+        rlogger.info('START REQUEST TD5339 ORDER IN QUEUE')        
         while True:
             try:
                 ret = self.obj.BlockRequest()
@@ -63,7 +64,7 @@ class OrderInQueue:
                 orders.append(order)
             if self.obj.Continue == False:
                 break
-        
+            rlogger.info('TD5339 ORDER IN QUEUE %s', orders)        
         return orders
 
 
