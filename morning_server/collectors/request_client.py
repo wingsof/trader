@@ -10,7 +10,7 @@ from PyQt5.QtCore import QCoreApplication
 
 from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code
-from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order
+from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue
 from configs import client_info
 from utils import rlogger
 
@@ -91,7 +91,10 @@ def handle_trade_request(sock, header, body):
         result = cancel_order_obj.cancel_order(order_num, code, amount)
         result = {'result': result}
         stream_readwriter.write(sock, header, result)
-
+    elif header['method'] == message.ORDER_IN_QUEUE:
+        order_queue = order_in_queue.OrderInQueue(account.get_account_number(), account.get_account_type())
+        result = order_queue.request()
+        stream_readwriter.write(sock, header, result)
 
 def handle_subscribe(sock, header, body):
     code = header['code']

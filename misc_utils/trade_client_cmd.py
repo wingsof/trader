@@ -69,7 +69,7 @@ def consumer():
                 quantity = int(buy_detail[3])
                 result = stock_api.order_stock(message_reader, code, price, quantity, is_buy)
                 print(result)
-        elif command_startswith('modify'):
+        elif command.startswith('modify'):
             modify_detail = command.split(',')
             if len(modify_detail) != 4:
                 print('modify,order_num,code,price')
@@ -79,7 +79,7 @@ def consumer():
                 price = int(modify_detail[3])
                 result = stock_api.modify_order(message_reader, order_num, code, price)
                 print(result)
-        elif command_startswith('cancel'):
+        elif command.startswith('cancel'):
             cancel_detail = command.split(',')
             if len(cancel_detail) != 4:
                 print('cancel,order_num,code,amount')
@@ -89,6 +89,8 @@ def consumer():
                 amount = int(cancel_detail[3])
                 result = stock_api.cancel_order(message_reader, order_num, code, amount)
                 print(result)
+        elif command.startswith('queue'):
+            print(stock_api.request_order_in_queue(message_reader))
 
 
 def main():

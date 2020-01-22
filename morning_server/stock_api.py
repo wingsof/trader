@@ -64,3 +64,8 @@ def cancel_order(reader, order_num: int, code, amount): # quantity
     header['amount'] = amount
     body = []
     return reader.block_write(header, body)
+
+def request_order_in_queue(reader):
+    header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.ORDER_IN_QUEUE)
+    body = []
+    return reader.block_write(header, body)

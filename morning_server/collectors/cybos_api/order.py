@@ -33,7 +33,7 @@ class _OrderRealtime:
             'total_quantity': total_quantity
         }
         rlogger.info('ORDER EVENT %s', result)
-        self.callback(self.sock, resut.copy())
+        self.callback(self.sock, result.copy())
 
 
 class Order:
