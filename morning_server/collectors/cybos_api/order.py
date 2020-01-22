@@ -45,6 +45,7 @@ class Order:
         handler = win32com.client.WithEvents(self.realtime_order, _OrderRealtime)
         handler.set_params(self.sock, self.realtime_order, listener)
         self.realtime_order.Subscribe()
+        rlogger.info('START Listening CpConclusion')
   
     def stop(self):
         self.realtime_order.Unsubscribe()
