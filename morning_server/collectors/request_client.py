@@ -159,7 +159,7 @@ if __name__ == '__main__':
 
     header = stream_readwriter.create_header(message.COLLECTOR, message.MARKET_STOCK, message.COLLECTOR_DATA)
 
-    if client_info.get_client_capability() | message.CAPABILITY_TRADE:
+    if client_info.get_client_capability() & message.CAPABILITY_TRADE:
         body = {'capability': message.CAPABILITY_COLLECT_SUBSCRIBE | message.CAPABILITY_TRADE}
     else:
         body = {'capability': message.CAPABILITY_REQUEST_RESPONSE | message.CAPABILITY_COLLECT_SUBSCRIBE}
