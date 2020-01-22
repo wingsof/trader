@@ -19,7 +19,7 @@ def _setup_log(use_console_out=True):
     logg.setLevel(logging.INFO)
 
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    stream_handler = logging.StreamHandler()
+    stream_handler = logging.StreamHandler(sys.stderr)
     stream_handler.setFormatter(formatter)
     logg.addHandler(stream_handler)
 
