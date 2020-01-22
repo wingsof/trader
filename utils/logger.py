@@ -15,7 +15,7 @@ def except_hook(exc_type, exc_value, traceback):
 
 def _setup_log():
     logg = logging.getLogger('morning')
-    logg.setLevel(logging.INFO)
+    logg.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     stream_handler = logging.StreamHandler()
