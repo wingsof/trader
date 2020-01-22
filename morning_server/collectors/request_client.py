@@ -78,6 +78,7 @@ def handle_trade_request(sock, header, body):
         result = {'order_number': new_order_num}
         stream_readwriter.write(sock, header, result)
     elif header['method'] == message.TRADE_DATA:
+        #TODO: handle multiple clients
         get_order_subscriber(sock)
         result = {'result': True}
         stream_readwriter.write(sock, header, result)

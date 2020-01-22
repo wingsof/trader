@@ -68,6 +68,27 @@ def consumer():
                 price = int(buy_detail[2])
                 quantity = int(buy_detail[3])
                 result = stock_api.order_stock(message_reader, code, price, quantity, is_buy)
+                print(result)
+        elif command_startswith('modify'):
+            modify_detail = command.split(',')
+            if len(modify_detail) != 4:
+                print('modify,order_num,code,price')
+            else:
+                order_num = int(modify_detail[1])
+                code = modify_detail[2]
+                price = int(modify_detail[3])
+                result = stock_api.modify_order(message_reader, order_num, code, price)
+                print(result)
+        elif command_startswith('cancel'):
+            cancel_detail = command.split(',')
+            if len(cancel_detail) != 4:
+                print('cancel,order_num,code,amount')
+            else:
+                order_num = int(cancel_detail[1])
+                code = cancel_detail[2]
+                amount = int(cancel_detail[3])
+                result = stock_api.cancel_order(message_reader, order_num, code, amount)
+                print(result)
 
 
 def main():

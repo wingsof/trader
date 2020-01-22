@@ -48,3 +48,19 @@ def subscribe_trade(reader, handler):
     header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.TRADE_DATA)
     body = []
     reader.subscribe_trade_write(header, body, handler)
+
+def modify_order(reader, order_num: int, code, price):
+    header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.MODIFY_ORDER)
+    header['code'] = code
+    header['order_number'] = order_num
+    header['price'] = price
+    body = []
+    return reader.block_write(header, body)
+
+def cancel_order(reader, order_num: int, code, amount): # quantity
+    header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.CANCEL_ORDER)
+    header['code'] = code
+    header['order_number'] = order_num
+    header['amount'] = amount
+    body = []
+    return reader.block_write(header, body)

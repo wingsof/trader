@@ -6,10 +6,10 @@ from utils import rlogger
 
 
 class _OrderRealtime:
-    def set_params(self, sock, obj, order_obj):
+    def set_params(self, sock, obj, listener):
         self.sock = sock
         self.obj = obj
-        self.order_obj = order_obj
+        self.callback = listener
 
     def OnReceived(self):
         flag = self.obj.GetHeaderValue(14)    # string flag '1': 체결, '2': 확인, '3': 거부, '4':접수
@@ -32,8 +32,8 @@ class _OrderRealtime:
             'order_type': order_type,
             'total_quantity': total_quantity
         }
-
-        self.order_obj.order_event(self.sock, result.copy())
+        rlogger.info('ORDER EVENT %s', result)
+        self.callback(self.sock, resut.copy())
 
 
 class Order:

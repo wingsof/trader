@@ -210,8 +210,9 @@ while from_date <= until_date:
                 code_dict[code].prev_highest[0] = today_data['highest_price']
                 code_dict[code].prev_highest[1] = from_date
 
-        from_prev_highest = (from_date - code_dict[code].prev_highest[1]).days
-        prev_highest = 0 if from_prev_highest <= 3 else from_prev_highest
+        if code_dict[code].prev_highest[1] is not None:
+            from_prev_highest = (from_date - code_dict[code].prev_highest[1]).days
+            prev_highest = 0 if from_prev_highest <= 3 else from_prev_highest
 
         if (code_dict[code].state == NONE and 
                             is_over_mavg and 
