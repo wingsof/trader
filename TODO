@@ -1,8 +1,6 @@
-* LONG LIST 받아오기
 * TRADE Client 기능 추가
 * 전날 거래량 500위 + LONG LIST까지 Subscribe 시작 Client
     * 전날 거래량 할 필요없이 조건 충족하는 종목 + 매수 종목만 subscribe
-* 거래 테스트 Client
 * 1분당 -4% 변동성 있을 시 매도, 당일 시작가에서 25% 이상일 경우 매도
 
 
@@ -178,6 +176,8 @@ Done
 * x 일 최고점을 돌파할 시, 다음일들의 수익률(1달)
 * 가격 밴드. 20일 평균선에서 위 아래로 2 std 로 긋고, 가격이 위 아래로 돌파시 밴드 안으로 들어온다는 가정
         * https://pandas.pydata.org/pandas-docs/stable/user_guide/visualization.html
+* 거래 테스트 Client
+* LONG LIST 받아오기 
 
 No important
 * 코스피 200 종목 동일하게 추세로 선물 거래는?

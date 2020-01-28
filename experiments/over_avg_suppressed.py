@@ -69,8 +69,8 @@ def convert_data_readable(code, past_data):
 
 
 if TEST_MODE:
-    from_date = date(2019, 10, 1)
-    until_date = date(2019, 11, 30)
+    from_date = date(2018, 1, 1)
+    until_date = date(2018, 3, 1)
 else:
     from_date = date(2018, 1, 1)
     until_date = date(2020, 1, 1)
@@ -88,7 +88,7 @@ message_reader.start()
 
 market_code = stock_api.request_stock_code(message_reader, message.KOSDAQ)
 if TEST_MODE:
-    market_code = ['A246720']
+    market_code = ['A046210']
     #market_code = ['A099410', 'A061040', 'A047310', 'A053660', 'A027050', 'A089970', 'A032685', 'A010240', 'A017890', 'A168330', 'A048470']
 
 code_dict = dict()
@@ -214,14 +214,17 @@ while from_date <= until_date:
             from_prev_highest = (from_date - code_dict[code].prev_highest[1]).days
             prev_highest = 0 if from_prev_highest <= 3 else from_prev_highest
 
+        mprint(from_date, 'CLOSE', today_data['close_price'],
+                'OVER MAVG', is_over_mavg, 'INCREASE CANDLE', increase_candle, 'DAY BEFORE PROFIT', day_before_yesterday_over_bull, 
+                'YESTERDAY PROFIT', yesterday_over_bull, 'PREV HIGHEST', prev_highest, 'AVERAGE AMOUNT', average_amount, (prev_highest <= 35 and average_amount > 200000000))
         if (code_dict[code].state == NONE and 
                             is_over_mavg and 
                             increase_candle and 
                             not (day_before_yesterday_over_bull > 20) and
                             not yesterday_over_bull > 20 and
                             prev_highest !=0 and
-                            (prev_highest <= 35 and average_amount > 200000000) and
-                            (prev_highest >= 240 and average_amount < 360000000)):
+                            ((prev_highest <= 35 and average_amount > 200000000) or 
+                            (prev_highest >= 240 and average_amount < 360000000))):
             code_dict[code].state = OVER_AVG
             code_dict[code].cut = max([past_data[-2]['highest_price'], past_data[-1]['highest_price']])
             code_dict[code].cross_close_highest = max([day_before_yesterday_over_bull, yesterday_over_bull])

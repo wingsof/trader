@@ -10,7 +10,7 @@ from PyQt5.QtCore import QCoreApplication
 
 from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code
-from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue
+from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance
 from configs import client_info
 from utils import rlogger
 
@@ -61,6 +61,9 @@ def handle_trade_request(sock, header, body):
     if header['method'] == message.GET_LONG_LIST:
         lm = long_manifest_6033.LongManifest(account.get_account_number(), account.get_account_type())
         stream_readwriter.write(sock, header, lm.get_long_list())
+    elif header['method'] == message.BALANCE:
+        account_balance = balance.get_balance(account.get_account_number(), account.get_account_type())
+        stream_readwriter.write(sock, header, {'balance': account_balance})
     elif header['method'] == message.ORDER_STOCK:
         code = header['code']
         quantity = header['quantity']

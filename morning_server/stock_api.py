@@ -69,3 +69,8 @@ def request_order_in_queue(reader):
     header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.ORDER_IN_QUEUE)
     body = []
     return reader.block_write(header, body)
+
+def get_balance(reader):
+    header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.BALANCE)
+    body = []
+    return reader.block_write(header, body)

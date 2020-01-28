@@ -26,6 +26,7 @@ ORDER_STOCK = 'order_stock'
 MODIFY_ORDER = 'modify_order'
 CANCEL_ORDER = 'cancel_order'
 ORDER_IN_QUEUE = 'order_queue'
+BALANCE = 'balance'
 
 STOCK_DATA = 'stock_realtime'
 BIDASK_DATA = 'bidask_realtime'

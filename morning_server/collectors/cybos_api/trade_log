@@ -1,0 +1,41 @@
+CANCEL
+
+2020-01-22 10:24:20,831 - wwwlife - INFO - TRADE REQUEST {'type': 'request_trade', 'market': 'stock', 'method': 'cancel_order', 'vendor': 'cybos', '_id': '7f5be3dc-a645-4920-879b-57642919aada', 'code': 'A005930', 'order_number': 98639, 'amount': 1}
+2020-01-22 10:24:20,838 - wwwlife - INFO - Cancel Order 98639 A005930 1
+2020-01-22 10:24:20,948 - wwwlife - INFO - ORDER EVENT {'flag': '4', 'code': 'A005930', 'order_number': 99788, 'quantity': 1, 'price': 0, 'order_type': '2', 'total_quantity': 0}
+2020-01-22 10:24:20,952 - wwwlife - INFO - ORDER EVENT {'flag': '2', 'code': 'A005930', 'order_number': 99788, 'quantity': 1, 'price': 0, 'order_type': '2', 'total_quantity': 0}
+
+
+RESULT
+buy,A005930,61100,1
+['buy', 'A005930', '61100', '1']
+{'status': 0, 'msg': '10766 매수주문이 접수되었습니다.(ordss.cststkord)'}
+BUY
+{'flag': '4', 'code': 'A005930', 'order_number': 111684, 'quantity': 1, 'price': 61100, 'order_type': '2', 'total_quantity': 0}
+queue
+queue
+QUEUE
+[{'number': 111684, 'prev': 0, 'code': 'A005930', 'name': '삼성전자', 'desc': '거래소현금매수', 'quantity': 1, 'price': 61100, 'traded_quantity': 0, 'credit_type': '현금', 'edit_available_quantity': 1, 'is_buy': '2', 'credit_date': '', 'flag_describe': '지정가', 'flag': '01'}]
+
+CANCEL
+
+cancel,111684,A005930,1
+{'result': True}
+{'flag': '4', 'code': 'A005930', 'order_number': 112343, 'quantity': 1, 'price': 0, 'order_type': '2', 'total_quantity': 0}
+{'flag': '2', 'code': 'A005930', 'order_number': 112343, 'quantity': 1, 'price': 0, 'order_type': '2', 'total_quantity': 0}
+
+
+MODIFY
+buy,A005930,61100,1
+['buy', 'A005930', '61100', '1']
+{'status': 0, 'msg': '10766 매수주문이 접수되었습니다.(ordss.cststkord)'}
+{'flag': '4', 'code': 'A005930', 'order_number': 113480, 'quantity': 1, 'price': 61100, 'order_type': '2', 'total_quantity': 0}
+modify
+modify
+modify,order_num,code,price
+modify,113480,A005930,61200
+modify,113480,A005930,61200
+{'order_number': 113628}
+{'flag': '4', 'code': 'A005930', 'order_number': 113628, 'quantity': 1, 'price': 61200, 'order_type': '2', 'total_quantity': 0}
+{'flag': '2', 'code': 'A005930', 'order_number': 113628, 'quantity': 1, 'price': 61200, 'order_type': '2', 'total_quantity': 0}
+
