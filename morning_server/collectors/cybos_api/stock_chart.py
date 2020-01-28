@@ -23,7 +23,7 @@ def get_period_data_raw(code, start_date, end_date = 0, period_type='m'):
     data = []
     conn = connection.Connection()
     while conn.request_left_count() <= 0:
-        rlogger.info('Request Limit is reached', flush=True)
+        rlogger.info('Request Limit is reached')
         time.sleep(1)
 
     chart_obj= win32com.client.Dispatch("CpSysDib.StockChart")
