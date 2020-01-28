@@ -107,7 +107,7 @@ class CollectorList:
     def find_request_collector(self):
         available_collectors = []
         for c in self.collectors:
-            if c.capability | message.CAPABILITY_REQUEST_RESPONSE and not c.request_pending():
+            if c.capability & message.CAPABILITY_REQUEST_RESPONSE and not c.request_pending():
                 available_collectors.append(c)
 
         if len(available_collectors) == 0:
@@ -120,7 +120,7 @@ class CollectorList:
     def find_subscribe_collector(self):
         collector = None
         for c in self.collectors:
-            if c.capability | message.CAPABILITY_COLLECT_SUBSCRIBE and c.subscribe_count() < 400:
+            if c.capability & message.CAPABILITY_COLLECT_SUBSCRIBE and c.subscribe_count() < 400:
                 if collector is None:
                     collector = c
                 else:

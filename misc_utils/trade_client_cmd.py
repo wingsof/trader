@@ -91,6 +91,8 @@ def consumer():
                 print(result)
         elif command.startswith('queue'):
             print(stock_api.request_order_in_queue(message_reader))
+        elif command.startswith('balance'):
+            print(stock_api.get_balance(message_reader)['balance'])
 
 
 def main():
