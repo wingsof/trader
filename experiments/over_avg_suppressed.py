@@ -70,7 +70,7 @@ def convert_data_readable(code, past_data):
 
 if TEST_MODE:
     from_date = date(2018, 1, 1)
-    until_date = date(2018, 3, 1)
+    until_date = date(2018, 5, 30)
 else:
     from_date = date(2018, 1, 1)
     until_date = date(2020, 1, 1)
@@ -88,7 +88,7 @@ message_reader.start()
 
 market_code = stock_api.request_stock_code(message_reader, message.KOSDAQ)
 if TEST_MODE:
-    market_code = ['A046210']
+    market_code = ['A017250']
     #market_code = ['A099410', 'A061040', 'A047310', 'A053660', 'A027050', 'A089970', 'A032685', 'A010240', 'A017890', 'A168330', 'A048470']
 
 code_dict = dict()

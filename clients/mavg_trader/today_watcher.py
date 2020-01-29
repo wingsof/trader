@@ -6,23 +6,18 @@ from morning_server import message
 from morning.pipeline.converter import dt
 from clients.mavg_trader import trade_account
 from clients.mavg_trader import tick_data
+from clients.mavg_trader import trader_env
 
 today_traders = []
 
-
 class TodayTrader:
-    LONG=1
-    OVER_AVG=2
-
     def __init__(self, code, code_info, today, position):
         self.code = code
         self.code_info = code_info
         self.today = today
         self.position = position
-        self.start_time = 0
         self.open_price = 0
-        self.close_time = datetime(today.year, today.month, today.day)
-        self.simulation = False
+        self.close_time = datetime(today.year, today.month, today.day, trader_env.CLOSE_HOUR, trader_env.CLOSE_MINUTE)
         self.today_data = []
         self.highest_price = 0
         self.buy_zone = False
@@ -30,6 +25,8 @@ class TodayTrader:
         self.sell_trace = False
         self.trade_done = False
         self.tick_data = None
+
+        self.simulation = False
         # temporary for testing
         self.simulation = True
 
@@ -48,8 +45,8 @@ class TodayTrader:
         elif data is None:
             today_increase = self.today_data[-1]['close_price'] >= self.open_price
             today_over_bull = (self.highest_price - self.code_info.yesterday_data['close_price']) / self.code_info.yesterday_data['close_price'] * 100 >= 10
-            over_cut = self.today_data[-1]['close_price'] > self.code_info.cut
-            print(self.code, today_increase, today_over_bull, over_cut)
+            over_cut = self.today_data[-1]['close_price'] >= self.code_info.cut
+            #print(self.code, today_increase, today_over_bull, over_cut, self.code_info.cut, self.today_data[-1]['close_price'])
             if today_increase and not today_over_bull and over_cut:
                 self.buy_zone = True
         else:
@@ -86,36 +83,29 @@ class TodayTrader:
     def process_minute(self, data):
         if self.trade_done:
             return
-        print('process minute', data)
+
         if data is None:
             pass
-        elif self.start_time == 0:
-            self.start_time = data['time']
-            if self.start_time / 100 >= 10:
-                self.close_time = self.close_time.replace(hour=16, minute=20)
-            else:
-                self.close_time = self.close_time.replace(hour=15, minute=20)
+        elif self.open_price == 0:
             self.open_price = data['start_price']
 
-        if self.position == TodayTrader.OVER_AVG:
+        if self.position == trader_env.STATE_OVER_AVG:
             self.process_buy(data)
         else:
             self.process_sell(data)
 
     def tick_handler(self, code, datas):
-        # running entry for real data
         if self.tick_data is None:
             self.tick_data = tick_data.TickData(self.today)
         self.tick_data.add_tick_data(datas, self.process_minute)
-        #print('Receive Tick Data', datas)
     
     def close_check(self):
         while True:
             print('CLOSE_CHECK', self.close_time, datetime.now())
-            if self.start_time != 0 and self.close_time <= datetime.now():
-                print('inner CLOSE_CHECK', self.close_time, datetime.now())
+            if self.close_time <= datetime.now():
                 break
             elif self.tick_data is not None:
+                # below will prevent not to stay longer when no tick data for a while
                 self.tick_data.create_minute_data(self.process_minute)
             gevent.sleep(5)
         self.process_minute(None) 
@@ -132,32 +122,15 @@ class TodayTrader:
         self.process_minute(None)
         self.process_minute(self.data[-1])
 
-def add_over_avg(reader, code, code_info, today, is_simulation):
+
+def add_watcher(reader, code, code_info, today, state, is_simulation):
     tt = None
     if not is_simulation:
-        tt = TodayTrader(code, code_info, today, TodayTrader.OVER_AVG)
+        tt = TodayTrader(code, code_info, today, state)
         stock_api.subscribe_stock(reader, code, tt.tick_handler)
         tt.start_timer()
     else:
-        tt = TodayTrader(code, code_info, today, TodayTrader.OVER_AVG)
-        today_data = stock_api.request_stock_minute_data(reader, code, today, today)
-        today_min_data = []
-        for td in today_data:
-            today_min_data.append(dt.cybos_stock_day_tick_convert(td))
-        tt.set_simulation_data(today_min_data)
-        tt.start()
-
-    today_traders.append(tt)
-
-
-def add_long(reader, code, code_info, today, is_simulation):
-    tt = None
-    if not is_simulation:
-        tt = TodayTrader(code, code_info, today, TodayTrader.LONG)
-        stock_api.subscribe_stock(reader, code, tt.tick_handler)
-        tt.start_timer()
-    else:
-        tt = TodayTrader(code, code_info, today, TodayTrader.LONG)
+        tt = TodayTrader(code, code_info, today, state)
         today_data = stock_api.request_stock_minute_data(reader, code, today, today)
         today_min_data = []
         for td in today_data:

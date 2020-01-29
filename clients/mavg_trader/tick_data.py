@@ -1,13 +1,14 @@
 from datetime import datetime, time, timedelta
 
 from morning.pipeline.converter import dt
+from clients.mavg_trader import trader_env
 
 
 class TickData:
     def __init__(self, today):
         self.today = today
-        self.close_time = datetime(today.year, today.month, today.day)
-        self.start_time = datetime(today.year, today.month, today.day)
+        self.close_time = datetime(today.year, today.month, today.day, trader_env.CLOSE_HOUR, trader_env.CLOSE_MINUTE)
+        self.start_time = datetime(today.year, today.month, today.day, trader_env.OPEN_HOUR, trader_env.OPEN_MINUTE)
         self.in_market_data = []
 
     def add_tick_data(self, datas, minute_handler):
@@ -26,16 +27,9 @@ class TickData:
         second = int(data['time_with_sec'] % 100)
         data['date'] = datetime.combine(self.today, time(hour, min, second))
 
-        if data['market_type'] == dt.MarketType.IN_MARKET and self.start_time.hour == 0:
-            self.start_time = self.start_time.replace(hour=hour, minute=min, second=second)
-            self.close_time = self.close_time.replace(hour=15, minute=20)
-        elif data['market_type'] != dt.MarketType.IN_MARKET and self.start_time.hour == 0:
-            return
-
         if (data['market_type'] == dt.MarketType.IN_MARKET or
                 (data['market_type'] == dt.MarketType.PRE_MARKET_EXP and
                     self.start_time <= data['date'] <= self.close_time)):
-            print(data)
             self.in_market_data.append(data)
         self.create_minute_data(minute_handler)
 
@@ -49,7 +43,6 @@ class TickData:
             'start_price': open_price,
             'highest_price': max_price}
         handler(min_data)
-        print('MIN DATA------------------------', min_data)
 
     def create_minute_data(self, handler):
         cut_index = -1

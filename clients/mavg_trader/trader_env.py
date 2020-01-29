@@ -1,0 +1,28 @@
+from datetime import date
+
+
+MAVG = 20
+
+OPEN_HOUR = 9
+OPEN_MINUTE = 0
+CLOSE_HOUR = 15
+CLOSE_MINUTE = 20
+
+# Possible combination
+# 1. RUNNING_SIMULATION = True, USE_FAKE_ACCOUNT = True
+# 2. RUNNING_SIMULATION = False, USE_FAKE_ACCOUNT = True
+# 3. RUNNING_SIMULATION = False, USE_FAKE_ACCOUNT = False
+
+RUNNING_SIMULATION = True
+
+# it will be set True automatically when RUNNING_SIMULATION is True
+USE_FAKE_ACCOUNT = False  
+
+RUNNING_FROM = date(2018, 1, 2)
+RUNNING_UNTIL = date(2019, 12, 31)
+
+CODES = []
+
+STATE_NONE = 0
+STATE_OVER_AVG = 1
+STATE_LONG = 2
