@@ -44,9 +44,16 @@ class MessageReader(gevent.Greenlet):
         write(self.sock, header, body)
 
     def _run(self):
+        full_msg = b''
+        new_msg = True
+        header_len = 0
+
         while True:
             try:
-                rcv = read(self.sock)
+                rcv = read(self.sock, full_msg, new_msg, header_len)
+                full_msg = rcv['packet_info'][0]
+                new_msg = rcv['packet_info'][1]
+                header_len = rcv['packet_info'][2]
             except:
                 raise
 
@@ -94,16 +101,19 @@ def write(sock, header, body):
 
 def read(sock, full_msg=b'', new_msg=True, header_len=0):
     while True:
-        try:
-            msg = sock.recv(READ_PACKET_SIZE)
-        except socket.error as e:
-            raise Exception(e.args[0], sock)
+        if new_msg and len(full_msg) >= HEADER_SIZE:
+            pass
+        else:
+            try:
+                msg = sock.recv(READ_PACKET_SIZE)
+            except socket.error as e:
+                raise Exception(e.args[0], sock)
 
-        if len(msg) == 0:
-            raise Exception('Client disconnected', sock)
+            if len(msg) == 0:
+                raise Exception('Client disconnected', sock)
 
-        #print('receive', len(msg))
-        full_msg += msg
+            #print('receive', len(msg))
+            full_msg += msg
 
         if new_msg:
             if len(full_msg) < HEADER_SIZE:

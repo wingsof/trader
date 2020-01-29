@@ -32,7 +32,7 @@ from morning.config import db
 from clients.mavg_trader import today_watcher, trade_account
 
 
-SIMULATION = True
+SIMULATION = False
 MAVG = 20
 NONE = 0
 OVER_AVG = 1
@@ -108,7 +108,9 @@ def get_long_list(reader, code_dict, today):
     if not SIMULATION: 
         # list of dict {code, name, quantity, sell_available, price, all_price} price is buy price
         long_list = stock_api.request_long_list(reader)
+        print('LONG LIST', len(long_list))
         for l in long_list:
+            print('LONG', l['code'], l['price'], l['sell_available'])
             code_dict[l['code']] = CodeInfo(state=LONG, buy_price=l['price'], sell_available=l['sell_available'], yesterday_data=None, today_date=today, cut=0)
     else:
         for k, v in trade_account.TradeAccount.GetAccount().get_long_list().items():
@@ -234,8 +236,10 @@ if __name__ == '__main__':
         trade_account.TradeAccount.GetAccount()
 
     if SIMULATION:
-        from_date = date(2019, 1, 3)
-        until_date = date(2019, 3, 10)
+        from_date = date(2018, 1, 1)
+        until_date = date(2019, 12, 30)
+        #from_date = date(2019, 1, 1)
+        #until_date = date(2019, 3, 1)
         while from_date <= until_date:
             if holidays.is_holidays(from_date):
                 from_date += timedelta(days=1)
@@ -250,4 +254,7 @@ if __name__ == '__main__':
         message_reader.join()
 
     if SIMULATION:
+        import pandas as pd
         print(str(trade_account.TradeAccount.GetAccount()))
+        df = pd.DataFrame(trade_account.TradeAccount.GetAccount().get_trade_list())
+        df.to_excel('mavg_trader.xlsx')

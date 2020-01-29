@@ -124,7 +124,7 @@ class CollectorList:
                 if collector is None:
                     collector = c
                 else:
-                    if len(collector['subscribe_code']) > len(c['subscribe_code']):
+                    if collector.subscribe_count() > c.subscribe_count():
                         collector = c
         return collector
 
@@ -153,6 +153,8 @@ class SubscribeClient:
 
     def send_to_clients(self, code, header, body):
         if self.code_in_clients(code):
+            #logger.info('Subscribe socket count %d', len(self.clients[code][1]))
+            # STOP subscribe when client sock len is zero
             for s in self.clients[code][1]:
                 stream_write(s, header, body, self)
 
@@ -166,9 +168,8 @@ class SubscribeClient:
             for s in v[1]:
                 if s == sock:
                     # Assume that sock is not duplicated in a code
-                    logger.warning('Client Removed')
                     v[1].remove(sock)
-                    break
+                    #break
         if sock in self.trade_clients:
             self.trade_clients.remove(sock)
 
@@ -184,10 +185,12 @@ class SubscribeClient:
         else:
             collector = collectors.find_subscribe_collector()
             if collector is None:
-                pass # TODO return FULL
+                logger.error('NO AVAILABLE Subscribe collector')
+                # TODO return FULL
             else:
                 collector.append_subscribe_code(code)
                 self.clients[code] = (collector.sock, [sock])
+                logger.info('ADD NEW SUBSCRIBE %s', code)
                 stream_write(collector.sock, header, body, collectors)
 
 

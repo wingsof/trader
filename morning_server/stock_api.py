@@ -44,10 +44,12 @@ def order_stock(reader, code, price, quantity, is_buy):
     body = []
     return reader.block_write(header, body)
 
+
 def subscribe_trade(reader, handler):
     header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.TRADE_DATA)
     body = []
     reader.subscribe_trade_write(header, body, handler)
+
 
 def modify_order(reader, order_num: int, code, price):
     header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.MODIFY_ORDER)
@@ -57,6 +59,7 @@ def modify_order(reader, order_num: int, code, price):
     body = []
     return reader.block_write(header, body)
 
+
 def cancel_order(reader, order_num: int, code, amount): # quantity
     header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.CANCEL_ORDER)
     header['code'] = code
@@ -65,10 +68,12 @@ def cancel_order(reader, order_num: int, code, amount): # quantity
     body = []
     return reader.block_write(header, body)
 
+
 def request_order_in_queue(reader):
     header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.ORDER_IN_QUEUE)
     body = []
     return reader.block_write(header, body)
+
 
 def get_balance(reader):
     header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.BALANCE)

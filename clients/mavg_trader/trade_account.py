@@ -33,7 +33,7 @@ class TradeAccount:
         invest = self.balance / 10
         quantity = invest / minute_data['close_price']
         if int(quantity) < 1:
-            print('Failed to trade', inest, balance)
+            print('Failed to trade', invest, self.balance)
             return
         self.balance = self.balance - (minute_data['close_price'] * int(quantity))
         self.long_list[code] = {'price': minute_data['close_price'], 'sell_available': int(quantity), 'buy_date': today}
@@ -42,6 +42,7 @@ class TradeAccount:
         amount = minute_data['close_price'] * self.long_list[code]['sell_available']
         self.balance += amount
         trade_data = self.long_list[code]
+        trade_data['code'] = code
         trade_data['sell_price'] = minute_data['close_price']
         trade_data['sell_date'] = today
         trade_data['profit'] = (minute_data['close_price'] - trade_data['price']) / trade_data['price'] * 100
@@ -50,6 +51,9 @@ class TradeAccount:
 
     def get_long_list(self):
         return self.long_list
+    
+    def get_trade_list(self):
+        return self.trade_list
 
     def __str__(self):
         return 'LONG LIST\n' + str(self.long_list) + '\nTRADE LIST\n' + str(self.trade_list)

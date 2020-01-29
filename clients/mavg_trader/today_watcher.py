@@ -1,9 +1,11 @@
-from datetime import datetime
+from datetime import datetime, date, time
+import gevent
 
 from morning_server import stock_api
 from morning_server import message
 from morning.pipeline.converter import dt
 from clients.mavg_trader import trade_account
+from clients.mavg_trader import tick_data
 
 today_traders = []
 
@@ -27,6 +29,9 @@ class TodayTrader:
         self.sell_zone = False
         self.sell_trace = False
         self.trade_done = False
+        self.tick_data = None
+        # temporary for testing
+        self.simulation = True
 
     def set_simulation_data(self, data):
         self.simulation = True
@@ -81,15 +86,15 @@ class TodayTrader:
     def process_minute(self, data):
         if self.trade_done:
             return
-
+        print('process minute', data)
         if data is None:
             pass
         elif self.start_time == 0:
             self.start_time = data['time']
             if self.start_time / 100 >= 10:
-                self.close_time.replace(hour=16, minute=20)
+                self.close_time = self.close_time.replace(hour=16, minute=20)
             else:
-                self.close_time.replace(hour=15, minute=20)
+                self.close_time = self.close_time.replace(hour=15, minute=20)
             self.open_price = data['start_price']
 
         if self.position == TodayTrader.OVER_AVG:
@@ -97,9 +102,26 @@ class TodayTrader:
         else:
             self.process_sell(data)
 
-    def tick_handler(self, code, data):
+    def tick_handler(self, code, datas):
         # running entry for real data
-        pass
+        if self.tick_data is None:
+            self.tick_data = tick_data.TickData(self.today)
+        self.tick_data.add_tick_data(datas, self.process_minute)
+        #print('Receive Tick Data', datas)
+    
+    def close_check(self):
+        while True:
+            print('CLOSE_CHECK', self.close_time, datetime.now())
+            if self.start_time != 0 and self.close_time <= datetime.now():
+                print('inner CLOSE_CHECK', self.close_time, datetime.now())
+                break
+            elif self.tick_data is not None:
+                self.tick_data.create_minute_data(self.process_minute)
+            gevent.sleep(5)
+        self.process_minute(None) 
+
+    def start_timer(self):
+        gevent.spawn(self.close_check)
 
     def start(self):
         # running entry for simulation
@@ -115,6 +137,7 @@ def add_over_avg(reader, code, code_info, today, is_simulation):
     if not is_simulation:
         tt = TodayTrader(code, code_info, today, TodayTrader.OVER_AVG)
         stock_api.subscribe_stock(reader, code, tt.tick_handler)
+        tt.start_timer()
     else:
         tt = TodayTrader(code, code_info, today, TodayTrader.OVER_AVG)
         today_data = stock_api.request_stock_minute_data(reader, code, today, today)
@@ -132,6 +155,7 @@ def add_long(reader, code, code_info, today, is_simulation):
     if not is_simulation:
         tt = TodayTrader(code, code_info, today, TodayTrader.LONG)
         stock_api.subscribe_stock(reader, code, tt.tick_handler)
+        tt.start_timer()
     else:
         tt = TodayTrader(code, code_info, today, TodayTrader.LONG)
         today_data = stock_api.request_stock_minute_data(reader, code, today, today)
