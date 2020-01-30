@@ -119,7 +119,7 @@ def start_today_trading(reader, market_code, today):
 
     candidate_over_avg = []
     for progress, code in enumerate(market_code):
-        #print('over avg', today, f'{progress+1}/{len(market_code)}', end='\r')
+        print('over avg', today, f'{progress+1}/{len(market_code)}', end='\r')
         past_data = get_past_data(reader, code, yesterday - timedelta(days=trader_env.MAVG*3), yesterday)
         if len(past_data) == 0:
             continue
@@ -128,8 +128,8 @@ def start_today_trading(reader, market_code, today):
 
         if code in code_dict:
             code_dict[code].yesterday_data = yesterday_data
+            #print(yesterday_data['moving_average'], yesterday_data['close_price']) 
             continue
-        #print(yesterday_data['moving_average'], yesterday_data['close_price']) 
         if yesterday_data['moving_average'] < yesterday_data['close_price']:
             candidate_over_avg.append(code)
             code_dict[code] = CodeInfo(state=trader_env.STATE_NONE, buy_price=0, sell_available=0,
@@ -169,7 +169,7 @@ def start_today_trading(reader, market_code, today):
         amount_array = [code_dict[code].cross_data[0]['amount'], code_dict[code].cross_data[1]['amount']]
         average_amount = np.array(amount_array).mean()
         if days_from_highest != 0:
-            if ((days_from_highest <= 25 and average_amount >  200000000) or
+            if ((days_from_highest <= 15 and average_amount >  200000000) or
                     (days_from_highest >= 200 and average_amount < 360000000)):
                 highest_check_data.append(code)
 

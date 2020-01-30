@@ -35,6 +35,9 @@ class TodayTrader:
         self.data = data
 
     def process_buy(self, data):
+        if data is None and len(self.today_data) == 0:
+            return
+
         if self.buy_zone:
             if self.simulation:
                 trade_account.TradeAccount.GetAccount().buy_stock_by_minute_data(self.code, data, self.today)
@@ -55,29 +58,32 @@ class TodayTrader:
                 self.highest_price = data['highest_price']
 
     def process_sell(self, data):
+        if data is None and len(self.today_data) == 0:
+            return
+
         if self.sell_zone:
             if self.simulation:
                 trade_account.TradeAccount.GetAccount().sell_stock_by_minute_data(self.code, data, self.today)
             else:
-                trade_account.TradeAccount.GetAccount().sell_stock(self.code)
+                trade_account.TradeAccount.GetAccount().sell_stock(self.code, self.code_info.sell_available)
             self.trade_done = True
             print('================SELL', self.code, self.today)
         elif data is None:
             if self.sell_trace:
                 self.sell_zone = True
         else:
+            is_above_mavg = self.code_info.yesterday_data['moving_average'] < data['close_price']
+
             if self.sell_trace:
-                if (data['close_price'] - data['highest_price']) / data['highest_price'] * 100. < -4:
+                if (data['close_price'] - data['highest_price']) / data['highest_price'] * 100. < -4 or not is_above_mavg:
                     self.sell_zone = True
             else:
                 today_profit = (data['close_price'] - self.code_info.yesterday_data['close_price']) / self.code_info.yesterday_data['close_price'] * 100
                 current_profit = (data['close_price'] - self.open_price) / self.open_price * 100
-                is_above_mavg = self.code_info.yesterday_data['moving_average'] < data['close_price']
-                if today_profit > 25:
+                #print('SELL candidate', today_profit, current_profit, is_above_mavg)
+                if today_profit > 25 or not is_above_mavg:
                     self.sell_zone = True
                 elif abs(current_profit) > 9:
-                    self.sell_trace = True
-                elif not is_above_mavg:
                     self.sell_trace = True
 
     def process_minute(self, data):
@@ -135,6 +141,7 @@ def add_watcher(reader, code, code_info, today, state, is_simulation):
         today_min_data = []
         for td in today_data:
             today_min_data.append(dt.cybos_stock_day_tick_convert(td))
+        #print('data len', len(today_min_data))
         tt.set_simulation_data(today_min_data)
         tt.start()
 
