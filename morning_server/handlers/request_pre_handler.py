@@ -28,7 +28,7 @@ def _check_empty_date(days, vacancy_days, working_days):
     return empty_periods
 
 
-def _correct_date(d, now = datetime.now()):
+def _correct_date(d, now):
     if d > now.date():
         d = now.date()
 
@@ -51,8 +51,9 @@ def sort_db_data(db_data, db_suffix):
 def _get_data_from_db(code, from_date, until_date, db_suffix):
     from_date = from_date if from_date.__class__.__name__ == 'date' else from_date.date()
     until_date = until_date if until_date.__class__.__name__ == 'date' else until_date.date()
-    from_date = _correct_date(from_date)
-    until_date = _correct_date(until_date)
+    now = datetime.now()
+    from_date = _correct_date(from_date, now)
+    until_date = _correct_date(until_date, now)
 
     stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
     db_data = list(stock_db[code + db_suffix].find({'0': {'$gte':time_converter.datetime_to_intdate(from_date), '$lte': time_converter.datetime_to_intdate(until_date)}}))
