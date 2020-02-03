@@ -134,6 +134,13 @@ def consumer():
             else:
                 code = req_detail[1]
                 print(stock_api.request_stock_day_data(message_reader, code, date(2020,1,31), date(2020,1,31)))
+        elif command.startswith('abroad'):
+            abroad_detail = command.split(',')
+            if len(abroad_detail) != 2:
+                print('abroad,code')
+            else:
+                code = abroad_detail[1]
+                print(stock_api.request_abroad_data(message_reader, code, message.PERIOD_DAY, 30))
 
 def main():
     gevent.signal(signal.SIGQUIT, gevent.kill)
