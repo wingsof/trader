@@ -206,18 +206,20 @@ class _Partial:
 
         if len(body) == 0:
             stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
+            code = db.tr_code(header['code'])
             from_date = header['from']
             until_date = header['until']
             while from_date <= until_date:
-                stock_db[header['code'] + '_V'].insert_one({'0': time_converter.datetime_to_intdate(from_date)})
+                stock_db[code] + '_V'].insert_one({'0': time_converter.datetime_to_intdate(from_date)})
                 from_date += timedelta(days=1)
             #print('RECORD DATA to DB as EMPTY', header['method'], header['code'], header['from'], header['until'])
         else:
             stock_db = MongoClient(db.HOME_MONGO_ADDRESS)['stock']
+            code = db.tr_code(header['code'])
             if header['method'] == message.DAY_DATA:
-                stock_db[header['code'] + '_D'].insert_many(body)
+                stock_db[code + '_D'].insert_many(body)
             elif header['method'] == message.MINUTE_DATA:
-                stock_db[header['code'] + '_M'].insert_many(body)
+                stock_db[code + '_M'].insert_many(body)
             
             #print('RECORD DATA to DB', header['method'], header['code'], header['from'], header['until'])
 

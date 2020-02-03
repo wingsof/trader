@@ -12,6 +12,7 @@ import gevent
 from gevent.queue import Queue
 import sys
 import signal
+from datetime import datetime, date
 
 import socket
 from morning_server import message
@@ -31,11 +32,19 @@ def producer():
 
 
 def display_trade_result(result):
-    print(result)
+    print('TRADE', result)
 
 
-def display_subject_data(data):
-    print(data)
+def display_subject_data(code, data):
+    print('SUBJECT', code, data)
+
+
+def display_bidask_data(code, data):
+    print('BIDASK', code, data)
+
+
+def display_stock_data(code, data):
+    print('STOCK', code, data)
 
 
 def consumer():
@@ -104,6 +113,27 @@ def consumer():
             else:
                 code = subject_detail[1]
                 stock_api.subscribe_stock_subject(message_reader, code, display_subject_data)
+        elif command.startswith('bidask'):
+            bidask_detail = command.split(',')
+            if len(bidask_detail) != 2:
+                print('bidask,code')
+            else:
+                code = bidask_detail[1]
+                stock_api.subscribe_stock_bidask(message_reader, code, display_bidask_data)
+        elif command.startswith('stock'):
+            stock_detail = command.split(',')
+            if len(stock_detail) != 2:
+                print('stock,code')
+            else:
+                code = stock_detail[1]
+                stock_api.subscribe_stock(message_reader, code, display_stock_data)
+        elif command.startswith('req'):
+            req_detail = command.split(',')
+            if len(req_detail) != 2:
+                print('req,code')
+            else:
+                code = req_detail[1]
+                print(stock_api.request_stock_day_data(message_reader, code, date(2020,1,31), date(2020,1,31)))
 
 def main():
     gevent.signal(signal.SIGQUIT, gevent.kill)

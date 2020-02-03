@@ -74,12 +74,12 @@ def pre_handle_request(sock, header, body):
     if method == message.DAY_DATA:
         from_date = header['from']
         until_date = header['until']
-        code = header['code']
+        code = db.tr_code(header['code'])
         return _get_data_from_db(code, from_date, until_date, '_D')
     elif method == message.MINUTE_DATA:
         from_date = header['from']
         until_date = header['until']
-        code = header['code']
+        code = db.tr_code(header['code'])
         return _get_data_from_db(code, from_date, until_date, '_M')
 
     return None, None

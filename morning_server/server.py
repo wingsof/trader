@@ -143,6 +143,7 @@ def vbox_control():
         is_turn_off_time = datetime(year, month, day, 5) <= now <= datetime(year, month, day, 7)
         if vbox_on and is_turn_off_time:
             vbox_controller.stop_machine()
+            #TODO: reset collectors
             vbox_on = False
         elif not vbox_on and not is_turn_off_time:
             vbox_on = True
