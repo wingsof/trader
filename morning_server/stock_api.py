@@ -12,6 +12,15 @@ def request_stock_day_data(reader, code, from_date, until_date, method=message.D
     return reader.block_write(header, body)
 
 
+def request_abroad_data(reader, code, period_type, count):
+    header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.ABROAD_DATA)
+    header['code'] = code
+    header['period_type'] = period_type
+    header['count'] = count
+    body = []
+    return reader.block_write(header, body)
+
+
 def request_stock_minute_data(reader, code, from_date, until_date):
     return request_stock_day_data(reader, code, from_date, until_date, message.MINUTE_DATA)
 

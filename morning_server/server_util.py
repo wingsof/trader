@@ -210,7 +210,7 @@ class _Partial:
             from_date = header['from']
             until_date = header['until']
             while from_date <= until_date:
-                stock_db[code] + '_V'].insert_one({'0': time_converter.datetime_to_intdate(from_date)})
+                stock_db[code + '_V'].insert_one({'0': time_converter.datetime_to_intdate(from_date)})
                 from_date += timedelta(days=1)
             #print('RECORD DATA to DB as EMPTY', header['method'], header['code'], header['from'], header['until'])
         else:

@@ -9,7 +9,7 @@ import time
 from PyQt5.QtCore import QCoreApplication
 
 from morning_server import message, stream_readwriter
-from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code
+from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code, abroad_chart
 from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance, trade_subject
 from configs import client_info
 from utils import rlogger
@@ -23,6 +23,9 @@ def handle_request(sock, header, body):
         stream_readwriter.write(sock, header, data)
     elif header['method'] == message.MINUTE_DATA:
         _, data = stock_chart.get_min_period_data(header['code'], header['from'], header['until'])
+        stream_readwriter.write(sock, header, data)
+    elif header['method'] == message.ABROAD_DATA:
+        _, data = abroad_chart.get_period_data(header['code'], header['period_type'], header['count'])
         stream_readwriter.write(sock, header, data)
     elif header['method'] == message.CODE_DATA:
         if header['market_type'] == message.KOSPI:

@@ -20,6 +20,7 @@ MARKET_STOCK = 'stock'
 # Method
 DAY_DATA = 'day_data'
 MINUTE_DATA = 'minute_data'
+ABROAD_DATA = 'abroad_data'
 CODE_DATA = 'code_data'
 GET_LONG_LIST = 'long_list'
 ORDER_STOCK = 'order_stock'
@@ -42,6 +43,10 @@ STOP_SUBJECT_DATA = 'subject_stop_realtime'
 # Suffix for subscribe
 BIDASK_SUFFIX = '_BA'
 SUBJECT_SUFFIX = '_S'
+
+PERIOD_DAY = 'D'
+PERIOD_WEEK = 'W'
+PERIOD_MONTH = 'M'
 
 # Capability
 CAPABILITY_REQUEST_RESPONSE=1
