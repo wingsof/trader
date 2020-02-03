@@ -18,7 +18,7 @@ class _CpEvent:
 
 class _WorldRealtime:
     def __init__(self, code):
-        self.obj = win32com.client.Dispatch("DsCbo1.StockIndexIS")
+        self.obj = win32com.client.Dispatch("SpSysDib.WorldCur")
         self.code = code
 
     def subscribe(self, sock, filter_callback):

@@ -47,6 +47,10 @@ def display_stock_data(code, data):
     print('STOCK', code, data)
 
 
+def display_world_data(code, data):
+    print('WORLD', code, data)
+
+
 def consumer():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
@@ -142,7 +146,16 @@ def consumer():
                 code = abroad_detail[1]
                 print(stock_api.request_abroad_data(message_reader, code, message.PERIOD_DAY, 30))
         elif command.startswith('uscode'):
-            print(stock_api.request_us_stock_code(message_reader, message.USTYPE_ALL))
+            #print(stock_api.request_us_stock_code(message_reader, message.USTYPE_ALL))
+            print(len(stock_api.request_us_stock_code(message_reader, message.USTYPE_ALL)))
+        elif command.startswith('world'):
+            world_detail = command.split(',')
+            if len(world_detail) != 2:
+                print('world,code')
+            else:
+                code = world_detail[1]
+                stock_api.subscribe_world(message_reader, code, display_world_data)
+
 
 def main():
     gevent.signal(signal.SIGQUIT, gevent.kill)
