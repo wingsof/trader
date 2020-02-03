@@ -158,7 +158,7 @@ log_server.start()
 server = StreamServer((message.SERVER_IP, message.CLIENT_SOCKET_PORT), handle)
 server.start()
 
-gevent.Greenlet.spawn(vbox_control)
+#gevent.Greenlet.spawn(vbox_control)
 
 wsgi_server = pywsgi.WSGIServer((message.SERVER_IP, message.CLIENT_WEB_PORT), app)
 wsgi_server.serve_forever()

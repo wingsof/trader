@@ -141,6 +141,8 @@ def consumer():
             else:
                 code = abroad_detail[1]
                 print(stock_api.request_abroad_data(message_reader, code, message.PERIOD_DAY, 30))
+        elif command.startswith('uscode'):
+            print(stock_api.request_us_stock_code(message_reader, message.USTYPE_ALL))
 
 def main():
     gevent.signal(signal.SIGQUIT, gevent.kill)
