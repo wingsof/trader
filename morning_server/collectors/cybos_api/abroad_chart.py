@@ -18,7 +18,7 @@ def get_period_data(code, period_type, count):
 
     chart_obj= win32com.client.Dispatch("Dscbo1.CpSvr8300")
     chart_obj.SetInputValue(0, code)
-    chart_obj.SetInputValue(1, period_type)
+    chart_obj.SetInputValue(1, ord(period_type))
 
     chart_obj.SetInputValue(3, count)
     chart_obj.BlockRequest()
