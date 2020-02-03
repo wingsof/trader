@@ -10,7 +10,7 @@ from PyQt5.QtCore import QCoreApplication
 
 from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code, abroad_chart
-from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance, trade_subject
+from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance, trade_subject, world_subscribe
 from configs import client_info
 from utils import rlogger
 
@@ -49,6 +49,12 @@ def callback_bidask_subscribe(sock, code, datas):
 def callback_subject_subscribe(sock, code, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.SUBJECT_DATA)
     header['code'] = code + message.SUBJECT_SUFFIX
+    stream_readwriter.write(sock, header, datas)
+
+
+def callback_world_subscribe(sock, code, datas):
+    header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.WORLD_DATA)
+    header['code'] = code + message.WORLD_SUFFIX
     stream_readwriter.write(sock, header, datas)
 
 
@@ -137,6 +143,22 @@ def handle_subscribe(sock, header, body):
         if code in subscribe_bidask:
             subscribe_bidask[code].stop_subscribe()
             subscribe_bidask.pop(code, None)
+    elif header['method'] == message.WORLD_DATA:
+        codes = code.split('_')
+        if len(codes) != 2:
+            rlogger.info('Invalid World code ' + code)
+        else:
+            code = codes[0]
+            if code in subscribe_world:
+                rlogger.info('Already subscribe world ' + code)
+            else:
+                subscribe_world[code] = world_subscribe.WorldSubscribe(sock, code)
+                subscribe_world[code].start_subscribe(callback_world_subscribe)
+                rlogger.info('START Subscribe world ' + code)
+    elif header['method'] == message.STOP_WORLD_DATA:
+        if code in subscribe_world:
+            subscribe_world[code].stop_subscribe()
+            subscribe_world.pop(code, None)
     elif header['method'] == message.SUBJECT_DATA:
         codes = code.split('_')
         if len(codes) != 2:
@@ -146,14 +168,13 @@ def handle_subscribe(sock, header, body):
             if code in subscribe_subject:
                 rlogger.info('Already subscribe subject ' + code)
             else:
-                    code = codes[0]
-                    subscribe_subject[code] = trade_subject.TradeSubject(sock, code)
-                    subscribe_subject[code].start_subscribe(callback_subject_subscribe)
-                    rlogger.info('START Subscribe subject ' + code)
+                subscribe_subject[code] = trade_subject.TradeSubject(sock, code)
+                subscribe_subject[code].start_subscribe(callback_subject_subscribe)
+                rlogger.info('START Subscribe subject ' + code)
     elif header['method'] == message.STOP_SUBJECT_DATA:
         if code in subscribe_subject:
             subscribe_subject[code].stop_subscribe()
-            subscribe_subject[code].pop(code, None)
+            subscribe_subject.pop(code, None)
         
 
 def mainloop(app):
@@ -182,6 +203,7 @@ if __name__ == '__main__':
     subscribe_stock = dict()
     subscribe_bidask = dict()
     subscribe_subject = dict()
+    subscribe_world = dict()
     order_subscribe = []
 
     while True:

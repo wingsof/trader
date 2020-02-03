@@ -31,8 +31,10 @@ BALANCE = 'balance'
 
 STOCK_DATA = 'stock_realtime'
 BIDASK_DATA = 'bidask_realtime'
+WORLD_DATA = 'world_realtime'
 STOP_STOCK_DATA = 'stock_stop_realtime'
 STOP_BIDASK_DATA = 'bidask_stop_realtime'
+STOP_WORLD_DATA = 'world_stop_realtime'
 BACK_DATA = 'stock_backdata'
 COLLECTOR_DATA = 'collector_data'
 TRADE_DATA = 'trade_realtime'
@@ -43,6 +45,7 @@ STOP_SUBJECT_DATA = 'subject_stop_realtime'
 # Suffix for subscribe
 BIDASK_SUFFIX = '_BA'
 SUBJECT_SUFFIX = '_S'
+WORLD_SUFFIX = '_W'
 
 PERIOD_DAY = 'D'
 PERIOD_WEEK = 'W'
