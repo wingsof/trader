@@ -77,7 +77,8 @@ def get_industry_name(code):
 
 def get_us_code(ustype):
     obj = win32com.client.Dispatch("CpUtil.CpUsCode")
-    return obj.GetUsCodeList(ustype)
+    result = obj.GetUsCodeList(ustype)
+    return result
 
 
 if __name__ == '__main__':
@@ -91,6 +92,8 @@ if __name__ == '__main__':
     codes = get_kosdaq_code_list()
     for code in codes:
         print(code, get_industry_name(code), code_to_name(code), is_company_stock(code))
+    print("US CODE ALL", get_us_code(1))
+    print('TYPE', type(get_us_code(1)))
     """
     print("Left", conn.request_left_count())
     print("KOSPI ", get_kospi_code_list())
@@ -98,7 +101,6 @@ if __name__ == '__main__':
     print("Left", conn.request_left_count())
     print("GroupName", get_industry_name('A032640'))
 
-    print("US CODE ALL", get_us_code())
     country_code = get_country_code()
     for code in country_code:
         print(code, get_us_name(code))
