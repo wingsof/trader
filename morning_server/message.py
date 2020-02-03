@@ -22,6 +22,7 @@ DAY_DATA = 'day_data'
 MINUTE_DATA = 'minute_data'
 ABROAD_DATA = 'abroad_data'
 CODE_DATA = 'code_data'
+US_CODE_DATA = 'uscode_data'
 GET_LONG_LIST = 'long_list'
 ORDER_STOCK = 'order_stock'
 MODIFY_ORDER = 'modify_order'
@@ -47,6 +48,7 @@ BIDASK_SUFFIX = '_BA'
 SUBJECT_SUFFIX = '_S'
 WORLD_SUFFIX = '_W'
 
+# Period Type for abroad
 PERIOD_DAY = 'D'
 PERIOD_WEEK = 'W'
 PERIOD_MONTH = 'M'
@@ -63,3 +65,12 @@ ORDER_SELL = 1
 # CODE_DATA market_type
 KOSPI = 1
 KOSDAQ = 2
+
+# US Code Type
+USTYPE_ALL=1
+USTYPE_COUNTY=2
+USTYPE_UPJONG=3
+USTYPE_JONGMOK=4
+USTYPE_DR=5
+USTYPE_RAW=6
+USTYPE_EXCHANGE=7

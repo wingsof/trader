@@ -75,9 +75,9 @@ def get_industry_name(code):
     return obj.GetIndustryName(obj.GetStockIndustryCode(code))
 
 
-def get_us_code():
+def get_us_code(ustype):
     obj = win32com.client.Dispatch("CpUtil.CpUsCode")
-    return obj.GetUsCodeList(1)
+    return obj.GetUsCodeList(ustype)
 
 
 if __name__ == '__main__':

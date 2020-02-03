@@ -52,6 +52,13 @@ def request_stock_code(reader, market_type):
     return reader.block_write(header, body)
 
 
+def request_us_stock_code(reader, us_type):
+    header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.USCODE_DATA)
+    header['us_type'] = us_type
+    body = []
+    return reader.block_write(header, body)
+
+
 def request_long_list(reader):
     header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.GET_LONG_LIST)
     body = []
