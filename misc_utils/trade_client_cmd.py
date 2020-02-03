@@ -34,6 +34,10 @@ def display_trade_result(result):
     print(result)
 
 
+def display_subject_data(data):
+    print(data)
+
+
 def consumer():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
@@ -93,7 +97,13 @@ def consumer():
             print(stock_api.request_order_in_queue(message_reader))
         elif command.startswith('balance'):
             print(stock_api.get_balance(message_reader)['balance'])
-
+        elif command.startswith('subject'):
+            subject_detail = command.split(',')
+            if len(subject_detail) != 2:
+                print('subject,code')
+            else:
+                code = subject_detail[1]
+                stock_api.subscribe_stock_subject(message_reader, code, display_subject_data)
 
 def main():
     gevent.signal(signal.SIGQUIT, gevent.kill)

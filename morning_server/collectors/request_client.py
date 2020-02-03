@@ -39,13 +39,13 @@ def callback_stock_subscribe(sock, code, datas):
 
 def callback_bidask_subscribe(sock, code, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.BIDASK_DATA)
-    header['code'] = code
+    header['code'] = code + message.BIDASK_SUFFIX
     stream_readwriter.write(sock, header, datas)
 
 
 def callback_subject_subscribe(sock, code, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.SUBJECT_DATA)
-    header['code'] = code
+    header['code'] = code + message.SUBJECT_SUFFIX
     stream_readwriter.write(sock, header, datas)
 
 
@@ -119,23 +119,34 @@ def handle_subscribe(sock, header, body):
             subscribe_stock[code].stop_subscribe()
             subscribe_stock.pop(code, None)
     elif header['method'] == message.BIDASK_DATA:
-        if code in subscribe_bidask:
-            rlogger.info('Already subscribe bidask ' + code)
+        codes = code.split('_')
+        if len(codes) != 2:
+            rlogger.info('Invalid subject code ' + code)
         else:
-            subscribe_bidask[code] = bidask_subscribe.BidAskSubscribe(sock, code)
-            subscribe_bidask[code].start_subscribe(callback_bidask_subscribe)
-            rlogger.info('START Subscribe bidask ' + code)
+            code = codes[0]
+            if code in subscribe_bidask:
+                rlogger.info('Already subscribe bidask ' + code)
+            else:
+                subscribe_bidask[code] = bidask_subscribe.BidAskSubscribe(sock, code)
+                subscribe_bidask[code].start_subscribe(callback_bidask_subscribe)
+                rlogger.info('START Subscribe bidask ' + code)
     elif header['method'] == message.STOP_BIDASK_DATA:
         if code in subscribe_bidask:
             subscribe_bidask[code].stop_subscribe()
             subscribe_bidask.pop(code, None)
     elif header['method'] == message.SUBJECT_DATA:
-        if code in subscribe_subject:
-            rlogger.info('Already subscribe subject ' + code)
+        codes = code.split('_')
+        if len(codes) != 2:
+            rlogger.info('Invalid subject code ' + code)
         else:
-            subscribe_subject[code] = trade_subject.TradeSubject(sock, code)
-            subscribe_subject[code].start_subscribe(callback_subject_subscribe)
-            rlogger.info('START Subscribe subject ' + code)
+            code = codes[0]
+            if code in subscribe_subject:
+                rlogger.info('Already subscribe subject ' + code)
+            else:
+                    code = codes[0]
+                    subscribe_subject[code] = trade_subject.TradeSubject(sock, code)
+                    subscribe_subject[code].start_subscribe(callback_subject_subscribe)
+                    rlogger.info('START Subscribe subject ' + code)
     elif header['method'] == message.STOP_SUBJECT_DATA:
         if code in subscribe_subject:
             subscribe_subject[code].stop_subscribe()

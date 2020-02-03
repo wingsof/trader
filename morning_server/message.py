@@ -38,6 +38,11 @@ TRADE_DATA = 'trade_realtime'
 SUBJECT_DATA = 'subject_realtim'
 STOP_SUBJECT_DATA = 'subject_stop_realtime'
 
+
+# Suffix for subscribe
+BIDASK_SUFFIX = '_BA'
+SUBJECT_SUFFIX = '_S'
+
 # Capability
 CAPABILITY_REQUEST_RESPONSE=1
 CAPABILITY_COLLECT_SUBSCRIBE=2

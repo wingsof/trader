@@ -25,12 +25,14 @@ def subscribe_stock(reader, code, handler):
 def subscribe_stock_bidask(reader, code, handler):
     header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.BIDASK_DATA)
     body = []
+    code += message.BIDASK_SUFFIX
     reader.subscribe_write(header, body, code, handler)
 
 
 def subscribe_stock_subject(reader, code, handler):
     header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.SUBJECT_DATA)
     body = []
+    code += message.SUBJECT_SUFFIX
     reader.subscribe_write(header, body, code, handler)
 
 
