@@ -28,6 +28,12 @@ def subscribe_stock_bidask(reader, code, handler):
     reader.subscribe_write(header, body, code, handler)
 
 
+def subscribe_stock_subject(reader, code, handler):
+    header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.SUBJECT_DATA)
+    body = []
+    reader.subscribe_write(header, body, code, handler)
+
+
 def request_stock_code(reader, market_type):
     header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.CODE_DATA)
     header['market_type'] = market_type

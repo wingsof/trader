@@ -10,7 +10,7 @@ from PyQt5.QtCore import QCoreApplication
 
 from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code
-from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance
+from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance, trade_subject
 from configs import client_info
 from utils import rlogger
 
@@ -39,6 +39,12 @@ def callback_stock_subscribe(sock, code, datas):
 
 def callback_bidask_subscribe(sock, code, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.BIDASK_DATA)
+    header['code'] = code
+    stream_readwriter.write(sock, header, datas)
+
+
+def callback_subject_subscribe(sock, code, datas):
+    header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.SUBJECT_DATA)
     header['code'] = code
     stream_readwriter.write(sock, header, datas)
 
@@ -123,6 +129,17 @@ def handle_subscribe(sock, header, body):
         if code in subscribe_bidask:
             subscribe_bidask[code].stop_subscribe()
             subscribe_bidask.pop(code, None)
+    elif header['method'] == message.SUBJECT_DATA:
+        if code in subscribe_subject:
+            rlogger.info('Already subscribe subject ' + code)
+        else:
+            subscribe_subject[code] = trade_subject.TradeSubject(sock, code)
+            subscribe_subject[code].start_subscribe(callback_subject_subscribe)
+            rlogger.info('START Subscribe subject ' + code)
+    elif header['method'] == message.STOP_SUBJECT_DATA:
+        if code in subscribe_subject:
+            subscribe_subject[code].stop_subscribe()
+            subscribe_subject[code].pop(code, None)
         
 
 def mainloop(app):
@@ -150,6 +167,7 @@ if __name__ == '__main__':
     rlogger.info('Connected to CP Server')
     subscribe_stock = dict()
     subscribe_bidask = dict()
+    subscribe_subject = dict()
     order_subscribe = []
 
     while True:

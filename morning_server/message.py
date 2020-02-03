@@ -35,6 +35,8 @@ STOP_BIDASK_DATA = 'bidask_stop_realtime'
 BACK_DATA = 'stock_backdata'
 COLLECTOR_DATA = 'collector_data'
 TRADE_DATA = 'trade_realtime'
+SUBJECT_DATA = 'subject_realtim'
+STOP_SUBJECT_DATA = 'subject_stop_realtime'
 
 # Capability
 CAPABILITY_REQUEST_RESPONSE=1

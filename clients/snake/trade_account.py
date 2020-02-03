@@ -2,7 +2,7 @@ from datetime import datetime
 import gevent
 
 from morning_server import stock_api
-from clients.mavg_trader import trader_env
+from clients.snake import trader_env
 from morning.pipeline.converter import dt
 
 
@@ -141,19 +141,17 @@ class TradeAccount:
     def sell_stock(self, quantity, code):
         self.trade_list.append(ProcessOrder(self.message_reader, code, False, quantity)) 
 
-    def buy_stock_by_minute_data(self, code, minute_data, today, code_info):
+    def buy_stock_by_minute_data(self, code, minute_data, today, loss_cut):
         invest = self.get_balance() / 10
-        quantity = invest / minute_data['close_price']
+        #quantity = invest / minute_data['close_price']
+        quantity = 1
         if int(quantity) < 1:
             print('Failed to trade', invest, self.get_balance())
             return
-        self.set_balance(self.get_balance() - (minute_data['close_price'] * int(quantity)))
+        #self.set_balance(self.get_balance() - (minute_data['close_price'] * int(quantity)))
         self.long_list[code] = {'price': minute_data['close_price'],
                                 'sell_available': int(quantity),
-                                'buy_date': today,
-                                'from_highest': code_info.from_highest,
-                                'average_amount': code_info.average_amount,
-                                'buy_date_profit': code_info.buy_date_profit}
+                                'buy_date': today, 'loss_cut': loss_cut}
 
     def sell_stock_by_minute_data(self, code, minute_data, today):
         amount = minute_data['close_price'] * self.long_list[code]['sell_available']

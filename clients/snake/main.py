@@ -29,7 +29,7 @@ from morning_server import message
 from morning.pipeline.converter import dt
 from utils import time_converter
 from morning.config import db
-from clients.mavg_trader import today_watcher, trade_account, trader_env
+from clients.snake import today_watcher, trade_account, trader_env
 
 
 class CodeInfo:
@@ -85,6 +85,39 @@ def find_first_cross_data(past_data):
     return not_over, over_datas
 
 
+def find_previous_cross_highest(past_data):
+    index = -1
+    for i, p in enumerate(past_data):
+        if p['moving_average'] > p['close_price']:
+            index = i
+            break
+    if index == -1:
+        print('1')
+        return 0, 0
+
+    before_cross_data = past_data[index:]
+    index = -1
+    for i, p in enumerate(before_cross_data):
+        if p['moving_average'] < p['close_price']:
+            index = i
+            break
+
+    if index == -1:
+        print('2')
+        return 0, 0
+
+    prices = []
+    previous_cross_data = before_cross_data[index:]
+    for p in previous_cross_data:
+        if p['moving_average'] < p['close_price']:
+            prices.append(p['close_price'])
+
+    if len(prices) == 0:
+        print('3')
+        return 0, 0
+    return max(prices), np.array(prices).mean()
+
+
 def find_highest(past_data):
     index = -1
     price = 0
@@ -107,7 +140,7 @@ def get_long_list(reader, code_dict, today):
             code_dict[l['code']] = CodeInfo(state=trader_env.STATE_LONG, buy_price=l['price'], sell_available=l['sell_available'], yesterday_data=None, today_date=today, cut=0)
     else:
         for k, v in trade_account.TradeAccount.GetAccount().get_long_list().items():
-            code_dict[k] = CodeInfo(state=trader_env.STATE_LONG, buy_price=v['price'], sell_available=v['sell_available'], yesterday_data=None, today_date=today, cut=0)
+            code_dict[k] = CodeInfo(state=trader_env.STATE_LONG, buy_price=v['price'], sell_available=v['sell_available'], yesterday_data=None, today_date=today, cut=0, loss_cut=v['loss_cut'])
 
 
 def start_today_trading(reader, market_code, today):
@@ -134,18 +167,18 @@ def start_today_trading(reader, market_code, today):
             candidate_over_avg.append(code)
             code_dict[code] = CodeInfo(state=trader_env.STATE_NONE, buy_price=0, sell_available=0,
                                         yesterday_data=yesterday_data, past_data=None, cut=0,
-                                        from_highest=0, average_amount=0, buy_date_profit=0,
-                                        cross_data=None, before_cross_data=None, mavg_data=past_data)
+                                        cross_data=None, before_cross_data=None, mavg_data=past_data, loss_cut=0)
+
     print('')
     candidate_cross_data = []
     for progress, code in enumerate(candidate_over_avg):
         not_cross, cross_data = find_first_cross_data(code_dict[code].mavg_data[-1::-1])
-        if 2 <= len(cross_data) <= 7:
+        if 2 <= len(cross_data) <= 10:
             increase_candle = cross_data[0]['start_price'] < cross_data[0]['close_price'] and cross_data[1]['start_price'] < cross_data[1]['close_price'] 
             if increase_candle:
                 code_dict[code].cross_data = cross_data
                 code_dict[code].before_cross_data = not_cross
-                code_dict[code].cut = max([cross_data[0]['highest_price'], cross_data[1]['highest_price']])
+                #code_dict[code].cut = max([cross_data[0]['highest_price'], cross_data[1]['highest_price']])
                 candidate_cross_data.append(code)
 
 
@@ -159,28 +192,8 @@ def start_today_trading(reader, market_code, today):
         code_dict[code].past_data = past_data_c
     #print('\nget past data done')
 
-
-    highest_check_data = []
-    for progress, code in enumerate(candidate_cross_data):
-        days_from_highest = find_highest(code_dict[code].past_data[-1::-1])
-        #print(days_from_highest, len(code_dict[code].cross_data))
-        if days_from_highest < len(code_dict[code].cross_data):
-            days_from_highest = 0
-
-        amount_array = [code_dict[code].cross_data[0]['amount'], code_dict[code].cross_data[1]['amount']]
-        average_amount = np.array(amount_array).mean()
-        code_dict[code].from_highest = days_from_highest
-        code_dict[code].average_amount = average_amount
-        if days_from_highest != 0:
-            if ((days_from_highest <= 15 and average_amount >  200000000) or
-                    (days_from_highest >= 200 and average_amount < 360000000)):
-                highest_check_data.append(code)
-
-        #print(days_from_highest, average_amount)
-
-
     over_profit_check_data = []
-    for progress, code in enumerate(highest_check_data):
+    for progress, code in enumerate(candidate_cross_data):
         over_profit_array = [code_dict[code].before_cross_data['close_price'], code_dict[code].cross_data[0]['close_price'], code_dict[code].cross_data[1]['close_price']]
         if ((over_profit_array[2] - over_profit_array[1]) / over_profit_array[1] * 100 < 20 and
                 (over_profit_array[1] - over_profit_array[0]) / over_profit_array[0]  * 100 < 20):
@@ -196,13 +209,16 @@ def start_today_trading(reader, market_code, today):
                 break
 
         if passed:
-            over_days_profit_check_data.append(code)
-            for i in range(2, len(cross_data)):
-                if cross_data[i]['close_price'] < cross_data[i-1]['close_price']:
-                    if cross_data[i]['highest_price'] > code_dict[code].cut:
-                        code_dict[code].cut = cross_data[i]['highest_price']
+            cut, loss_cut = find_previous_cross_highest(code_dict[code].past_data[-1::-1])
+            if cut == 0 or loss_cut == 0:
+                print('cut / loss_cut zero', code)
+                continue
 
-    print(today, 'over avg', len(candidate_over_avg), '\tcross over', len(candidate_cross_data), '\thighest', len(highest_check_data), '\tover profit', len(over_profit_check_data), '\tover days', len(over_days_profit_check_data))
+            over_days_profit_check_data.append(code)
+            code_dict[code].cut = cut
+            code_dict[code].loss_cut = loss_cut
+
+    print(today, 'over avg', len(candidate_over_avg), '\tcross over', len(candidate_cross_data), '\tover profit', len(over_profit_check_data), '\tover days', len(over_days_profit_check_data))
     for code in over_days_profit_check_data:
         code_dict[code].state = trader_env.STATE_OVER_AVG
 
@@ -244,4 +260,4 @@ if __name__ == '__main__':
     if trader_env.RUNNING_SIMULATION:
         import pandas as pd
         df = pd.DataFrame(trade_account.TradeAccount.GetAccount().get_trade_list())
-        df.to_excel('mavg_trader.xlsx')
+        df.to_excel('mavg_snake.xlsx')

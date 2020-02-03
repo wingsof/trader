@@ -4,9 +4,9 @@ import gevent
 from morning_server import stock_api
 from morning_server import message
 from morning.pipeline.converter import dt
-from clients.mavg_trader import trade_account
-from clients.mavg_trader import tick_data
-from clients.mavg_trader import trader_env
+from clients.snake import trade_account
+from clients.snake import tick_data
+from clients.snake import trader_env
 
 today_traders = []
 
@@ -40,8 +40,7 @@ class TodayTrader:
 
         if self.buy_zone:
             if self.simulation:
-                self.code_info.buy_date_profit = (data['close_price'] - self.open_price) / self.open_price * 100
-                trade_account.TradeAccount.GetAccount().buy_stock_by_minute_data(self.code, data, self.today, self.code_info)
+                trade_account.TradeAccount.GetAccount().buy_stock_by_minute_data(self.code, data, self.today, self.code_info.loss_cut)
             else:
                 trade_account.TradeAccount.GetAccount().buy_stock(self.code)
             print('================BUY', self.code, self.today)
@@ -70,22 +69,12 @@ class TodayTrader:
             self.trade_done = True
             print('================SELL', self.code, self.today)
         elif data is None:
-            if self.sell_trace:
-                self.sell_zone = True
+            pass
         else:
-            is_above_mavg = self.code_info.yesterday_data['moving_average'] < data['close_price']
-
-            if self.sell_trace:
-                if (data['close_price'] - data['highest_price']) / data['highest_price'] * 100. < -4 or not is_above_mavg:
-                    self.sell_zone = True
-            else:
-                today_profit = (data['close_price'] - self.code_info.yesterday_data['close_price']) / self.code_info.yesterday_data['close_price'] * 100
-                current_profit = (data['close_price'] - self.open_price) / self.open_price * 100
-                #print('SELL candidate', today_profit, current_profit, is_above_mavg)
-                if today_profit > 25 or not is_above_mavg:
-                    self.sell_zone = True
-                elif abs(current_profit) > 9:
-                    self.sell_trace = True
+            today_profit = (data['close_price'] - self.code_info.yesterday_data['close_price']) / self.code_info.yesterday_data['close_price'] * 100
+            #print('SELL candidate', today_profit, current_profit, is_above_mavg)
+            if today_profit > 25 or data['close_price'] < self.code_info.loss_cut:
+                self.sell_zone = True
 
     def process_minute(self, data):
         if self.trade_done:
