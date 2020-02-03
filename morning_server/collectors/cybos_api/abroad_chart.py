@@ -16,7 +16,7 @@ def get_period_data(code, period_type, count):
         rlogger.info('Request Limit is reached')
         time.sleep(1)
 
-    chart_obj= win32com.client.Dispatch("CpDib.CpSvr8300")
+    chart_obj= win32com.client.Dispatch("Dscbo1.CpSvr8300")
     chart_obj.SetInputValue(0, code)
     chart_obj.SetInputValue(1, period_type)
 
