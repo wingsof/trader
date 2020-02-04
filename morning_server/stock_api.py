@@ -76,7 +76,7 @@ def request_us_stock_code(reader, us_type):
 def request_investor_data(reader, code, max_count):
     header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.INVESTOR_DATA)
     header['code'] = code
-    hedaer['max_count'] = max_count
+    header['max_count'] = max_count
     body = []
     return reader.block_write(header, body)
 

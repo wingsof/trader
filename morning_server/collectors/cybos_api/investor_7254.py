@@ -45,5 +45,5 @@ def check_investor_trend(code, max_count):
                 continue_request = False
                 break
 
-    datas = sorted(datas, key=lambda x: x['0'], reverse=True)
+    datas = sorted(datas, key=lambda x: x['0'])
     return datas
