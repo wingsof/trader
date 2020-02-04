@@ -5,6 +5,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import win32com.client
 from datetime import datetime, timedelta
 from utils import time_converter
+from cybos_api import connection
 
 
 def check_investor_trend(code):

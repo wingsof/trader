@@ -176,7 +176,7 @@ class SubscribeClient:
         #TODO:stop subscribe when no client and decrement counts
         for k, v in self.clients.items():
             if len(v[1]) == 0:
-
+                pass 
 
 
     def add_to_clients(self, code, sock, header, body, collectors):

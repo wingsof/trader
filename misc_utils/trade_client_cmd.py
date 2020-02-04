@@ -155,6 +155,13 @@ def consumer():
             else:
                 code = world_detail[1]
                 stock_api.subscribe_world(message_reader, code, display_world_data)
+        elif command.startswith('investor'):
+            inv_detail = command.split(',')
+            if len(inv_detail) != 2:
+                print('investor,code')
+            else:
+                code = inv_detail[1]
+                print(stock_api.request_investor_data(message_reader, code))
 
 
 def main():
