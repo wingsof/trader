@@ -1,4 +1,6 @@
 import win32com.client
+import gevent
+from utils import rlogger
 
 
 # get_remain_time return as milliseconds
@@ -22,6 +24,11 @@ class Connection:
 
     def is_connected(self):
         return self.obj.IsConnect
+
+    def wait_until_available(self):
+        while self.request_left_count() <= 0:
+            rlogger.info('Request Limit is reached')
+            gevent.sleep(1)
 
 
 if __name__ == '__main__':

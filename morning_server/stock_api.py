@@ -52,6 +52,13 @@ def subscribe_world(reader, code, handler):
     reader.subscribe_write(header, body, code, handler)
 
 
+def subscribe_index(reader, code, handler):
+    header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.INDEX_DATA)
+    body = []
+    code += message.INDEX_SUFFIX
+    reader.subscribe_write(header, body, code, handler)
+
+
 def request_stock_code(reader, market_type):
     header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.CODE_DATA)
     header['market_type'] = market_type
@@ -62,6 +69,13 @@ def request_stock_code(reader, market_type):
 def request_us_stock_code(reader, us_type):
     header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.USCODE_DATA)
     header['us_type'] = us_type
+    body = []
+    return reader.block_write(header, body)
+
+
+def request_investor_data(reader, code):
+    header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.INVESTOR_DATA)
+    header['code'] = code
     body = []
     return reader.block_write(header, body)
 

@@ -5,7 +5,7 @@ import win32com.client
 from utils import time_converter
 from datetime import datetime, timedelta
 from cybos_api import connection
-import time
+import gevent
 from utils import rlogger
 
     # stock chart fields
@@ -22,9 +22,7 @@ def get_period_data_raw(code, start_date, end_date = 0, period_type='m'):
     #print("Get Period data ", start_date, end_date, time_converter.datetime_to_intdate(start_date), time_converter.datetime_to_intdate(end_date))
     data = []
     conn = connection.Connection()
-    while conn.request_left_count() <= 0:
-        rlogger.info('Request Limit is reached')
-        time.sleep(1)
+    conn.wait_until_available()
 
     chart_obj= win32com.client.Dispatch("CpSysDib.StockChart")
     chart_obj.SetInputValue(0, code)

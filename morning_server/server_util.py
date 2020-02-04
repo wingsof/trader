@@ -173,6 +173,12 @@ class SubscribeClient:
         if sock in self.trade_clients:
             self.trade_clients.remove(sock)
 
+        #TODO:stop subscribe when no client and decrement counts
+        for k, v in self.clients.items():
+            if len(v[1]) == 0:
+
+
+
     def add_to_clients(self, code, sock, header, body, collectors):
         if self.code_in_clients(code):
             found = False

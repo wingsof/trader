@@ -1,0 +1,9 @@
+Find codes which can get 4% within 3 days
+Evaluate success percentage
+
+code select
+ * yesterday cum buy is bigger than cum sel
+ * recent 5days 20 mavg slope is positive
+ * no big changes within 20 days (under <= 7)
+ * not far from 20 mavg and yesterday close price
+ * kiwoom and mirae sell is bigger than buy
