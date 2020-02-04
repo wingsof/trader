@@ -36,7 +36,7 @@ def handle_request(sock, header, body):
         data = stock_code.get_us_code(header['us_type'])
         stream_readwriter.write(sock, header, data)
     elif header['method'] == message.INVESTOR_DATA:
-        data = investor_7254.check_investor_trend(header['code'])
+        data = investor_7254.check_investor_trend(header['code'], header['max_count'])
         stream_readwriter.write(sock, header, data)
 
 
