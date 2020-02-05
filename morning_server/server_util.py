@@ -226,6 +226,8 @@ class _Partial:
                 stock_db[code + '_D'].insert_many(body)
             elif header['method'] == message.MINUTE_DATA:
                 stock_db[code + '_M'].insert_many(body)
+            elif header['method'] == message.INVESTOR_DATA:
+                stock_db[code + '_INVESTOR'].insert_many(body)
             
             #print('RECORD DATA to DB', header['method'], header['code'], header['from'], header['until'])
 
