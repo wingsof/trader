@@ -8,6 +8,7 @@ from utils import time_converter
 from cybos_api import connection
 
 
+# Caution: Only for 1 year search is available when set date manually
 def check_investor_trend(code, start_date, end_date):
     conn = connection.Connection()
     obj = win32com.client.Dispatch('CpSysDib.CpSvr7254')
@@ -34,7 +35,7 @@ def check_investor_trend(code, start_date, end_date):
             for j in range(19):
                 d[str(j)] = obj.GetDataValue(j, i)
             
-            if prev != None and prev['0'] < d['0']:
+            if prev != None and prev['0'] <= d['0']:
                 continue_request = False
                 break
             

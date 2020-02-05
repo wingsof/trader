@@ -161,7 +161,7 @@ def consumer():
                 print('investor,code')
             else:
                 code = inv_detail[1]
-                print(stock_api.request_investor_data(message_reader, code, 10))
+                print(stock_api.request_investor_data(message_reader, code, date(2020,1,31), date(2020,1,31)))
 
 
 def main():

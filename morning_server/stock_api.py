@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from morning_server import stream_readwriter
 from morning_server import message
 
@@ -12,6 +14,11 @@ def request_stock_day_data(reader, code, from_date, until_date, method=message.D
 
 
 def request_investor_data(reader, code, from_date, until_date):
+    now = datetime.now().date()
+    if now - from_date > timedelta(days=365):
+        print('over before one year data is not available')
+        return []
+
     header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.INVESTOR_DATA)
     header['code'] = code
     header['from'] = from_date
