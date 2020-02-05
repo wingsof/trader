@@ -110,7 +110,7 @@ def evaluate_meet_goal(reader, candidates, today):
     all_count = 0
     meet_count = 0
     cut_count = 0
-    print('candidates', candidates, today)
+    #print('candidates', candidates, today)
     for code in candidates:
         future_data = get_past_data(reader, code, today, today + timedelta(days=15))
         if len(future_data) < 3:
