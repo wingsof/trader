@@ -8,7 +8,15 @@ def request_stock_day_data(reader, code, from_date, until_date, method=message.D
     header['from'] = from_date
     header['until'] = until_date
     body = []
-    #print(header)
+    return reader.block_write(header, body)
+
+
+def request_investor_data(reader, code, from_date, until_date):
+    header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.INVESTOR_DATA)
+    header['code'] = code
+    header['from'] = from_date
+    header['until'] = until_date
+    body = []
     return reader.block_write(header, body)
 
 
@@ -69,14 +77,6 @@ def request_stock_code(reader, market_type):
 def request_us_stock_code(reader, us_type):
     header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.USCODE_DATA)
     header['us_type'] = us_type
-    body = []
-    return reader.block_write(header, body)
-
-
-def request_investor_data(reader, code, max_count):
-    header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.INVESTOR_DATA)
-    header['code'] = code
-    header['max_count'] = max_count
     body = []
     return reader.block_write(header, body)
 

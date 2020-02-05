@@ -47,6 +47,8 @@ from morning.pipeline.converter import dt
 from utils import time_converter
 from morning.config import db
 
+from clients.hwani82 import code_chooser
+
 
 MAVG=20
 GOAL_PROFIT=4
@@ -82,11 +84,10 @@ def convert_data_readable(code, past_data):
     return converted_data
 
 
-def start_today_trading(reader, market_code, today):
+def start_today_trading(reader, market_code, today, choosers):
     code_dict = dict()
     yesterday = holidays.get_yesterday(today)
 
-    candidates = []
     for progress, code in enumerate(market_code):
         print('collect past data', today, f'{progress+1}/{len(market_code)}', end='\r')
         past_data = get_past_data(reader, code, yesterday - timedelta(days=MAVG*3), yesterday)
@@ -96,13 +97,20 @@ def start_today_trading(reader, market_code, today):
         yesterday_data = past_data[-1]
         code_dict[code] = {'past_data': past_data}
     print('')
-    return candidates
+    for c in choosers:
+        new_code_dict = dict()
+        result = c(reader, today, code_dict)
+        for r in result:
+            new_code_dict[r] = code_dict[r]
+        code_dict = new_code_dict
+    return list(code_dict.keys())
 
 
 def evaluate_meet_goal(reader, candidates, today):
     all_count = 0
     meet_count = 0
     cut_count = 0
+    print('candidates', candidates, today)
     for code in candidates:
         future_data = get_past_data(reader, code, today, today + timedelta(days=15))
         if len(future_data) < 3:
@@ -128,16 +136,22 @@ if __name__ == '__main__':
     message_reader = stream_readwriter.MessageReader(sock)
     message_reader.start()
     market_code = stock_api.request_stock_code(message_reader, message.KOSDAQ)
+    #market_code = ['A090430']
     average = []
     hold_average = []
     cut_average = []
     from_date = date(2019, 11, 1)
     until_date = date(2020, 1, 15)
+    choosers = [code_chooser.negative_individual_investor]
+
     while from_date <= until_date:
         if holidays.is_holidays(from_date):
             from_date += timedelta(days=1)
             continue
-        candidates = start_today_trading(message_reader, market_code, from_date)
+        candidates = start_today_trading(message_reader, market_code, from_date, choosers)
+        if len(candidates) == 0:
+            print(from_date, 'NO CANDIDATES')
+            continue
         cut, meet, all_count = evaluate_meet_goal(message_reader, candidates, from_date)
         percentage = int(meet/all_count*100)
         hold_percentage = int((all_count - cut - meet) / all_count * 100)
@@ -147,5 +161,7 @@ if __name__ == '__main__':
         hold_average.append(hold_percentage)
         cut_average.append(cut_percentage)
         from_date += timedelta(days=1)
-    print('summary', np.array(average).mean(), 'hold:', np.array(hold_average).mean(), 'cut:', np.array(cut_average).mean())
+    print('-' * 100)
+    print('summary succeess', np.array(average).mean(), 'hold:', np.array(hold_average).mean(), 'cut:', np.array(cut_average).mean())
     print('average std', np.array(average).std(), 'hold std', np.array(hold_average).std(), 'cut std', np.array(cut_average).std())
+    print('-' * 100)

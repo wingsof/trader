@@ -81,5 +81,10 @@ def pre_handle_request(sock, header, body):
         until_date = header['until']
         code = db.tr_code(header['code'])
         return _get_data_from_db(code, from_date, until_date, '_M')
+    elif method == message.INVESTOR_DATA:
+        from_date = header['from']
+        until_date = header['until']
+        code = db.tr_code(header['code'])
+        return _get_data_from_db(code, from_date, until_date, '_INVESTOR')
 
     return None, None

@@ -8,11 +8,13 @@ from utils import time_converter
 from cybos_api import connection
 
 
-def check_investor_trend(code, max_count):
+def check_investor_trend(code, start_date, end_date):
     conn = connection.Connection()
     obj = win32com.client.Dispatch('CpSysDib.CpSvr7254')
     obj.SetInputValue(0, code)
-    obj.SetInputValue(1, 6)
+    obj.SetInputValue(1, 0)
+    obj.SetInputValue(2, time_converter.datetime_to_intdate(start_date))
+    obj.SetInputValue(3, time_converter.datetime_to_intdate(end_date))
     obj.SetInputValue(4, ord('0'))
     obj.SetInputValue(5, 0)
     obj.SetInputValue(6, ord('1'))
@@ -40,10 +42,6 @@ def check_investor_trend(code, max_count):
                 continue_request = False
             prev = d
             datas.append(d)
-
-            if len(datas) >= max_count:
-                continue_request = False
-                break
 
     datas = sorted(datas, key=lambda x: x['0'])
     return datas
