@@ -28,7 +28,7 @@ from clients.high_risk import code_chooser
 
 MAVG=20
 GOAL_PROFIT=1.3
-CUT_PROFIT=-0.7
+CUT_PROFIT=-1.0
 
 
 def get_past_data(reader, code, from_date, until_date):
@@ -38,28 +38,21 @@ def get_past_data(reader, code, from_date, until_date):
 
 def start_today_trading(reader, market_code, today, choosers):
     code_dict = dict()
-    yesterday_close = dict()
     yesterday = holidays.get_yesterday(today)
 
     by_amounts = []
     for progress, code in enumerate(market_code):
         print('collect past data', today, f'{progress+1}/{len(market_code)}', end='\r')
-        past_data = get_past_data(reader, code, yesterday, yesterday)
-        if len(past_data) == 0:
+
+        yesterday_data = stock_api.request_stock_day_data(reader, code, yesterday, yesterday)
+        if len(yesterday_data) != 1:
             continue
-        past_data = past_data[0]
-        yesterday_close[code] = past_data['5']
-        by_amounts.append({'code': code, 'amount': past_data['7']})
-    print('')
-    by_amounts = sorted(by_amounts, key=lambda x: x['amount'], reverse=True)
-    candidates = [d['code'] for d in by_amounts[:300]]
+        elif yesterday_data[0]['5'] < 900:
+            continue
 
-    for progress, code in enumerate(candidates):
-        print('collect min data', today, f'{progress+1}/{len(candidates)}', end='\r')
-        code_dict[code] = {'code': code, 'past_min_data': [], 'today_min_data': None, 'time': 0, 'yesterday_close': yesterday_close[code]}
-        min_req_from = today - timedelta(days=20)
+        code_dict[code] = {'code': code, 'past_min_data': [], 'today_min_data': None, 'time': 0, 'yesterday_close': yesterday_data[0]['5'], 'today_gap': 0, 'until_now_profit': 0}
+        min_req_from = today - timedelta(days=10)
         min_req_until = today
-
         while min_req_from <= min_req_until:
             if holidays.is_holidays(min_req_from):
                 min_req_from += timedelta(days=1)
@@ -72,8 +65,15 @@ def start_today_trading(reader, market_code, today, choosers):
                     min_data_c.append(dt.cybos_stock_day_tick_convert(md))
                 code_dict[code]['past_min_data'].append(min_data_c)
             min_req_from += timedelta(days=1)
-        code_dict[code]['today_min_data'] = code_dict[code]['past_min_data'][-1]
-        code_dict[code]['past_min_data'] = code_dict[code]['past_min_data'][:-1]
+
+        if len(code_dict[code]['past_min_data']) > 5:
+            code_dict[code]['today_min_data'] = code_dict[code]['past_min_data'][-1]
+            code_dict[code]['today_gap'] = (code_dict[code]['today_min_data'][0]['start_price'] - code_dict[code]['yesterday_close']) / code_dict[code]['yesterday_close'] * 100
+            code_dict[code]['past_min_data'] = code_dict[code]['past_min_data'][:-1]
+        else:
+            #print('not enough data', code)
+            code_dict.pop(code, None)
+
     print('')
 
     for c in choosers:
@@ -91,6 +91,8 @@ def evaluate_meet_goal(reader, candidates):
     all_count = 0
     meet_count = 0
     cut_count = 0
+    loss_codes = []
+    success_codes = []
     for code, c in candidates.items():
         data = c['today_min_data']
         all_count += 1
@@ -104,11 +106,15 @@ def evaluate_meet_goal(reader, candidates):
                 highest_profit = (d['highest_price'] - start_price) / start_price * 100
                 if CUT_PROFIT >= lowest_profit:
                     cut_count += 1
+                    loss_codes.append({'code': code, 'time': c['time'], 'amount': c['amount'],
+                        'today_gap': c['today_gap'], 'until_now_profit': c['until_now_profit']})
                     break
                 elif GOAL_PROFIT <= highest_profit:
+                    success_codes.append({'code': code, 'time': c['time'],
+                        'amount': c['amount'], 'today_gap': c['today_gap'], 'until_now_profit': c['until_now_profit']})
                     meet_count += 1
                     break
-    return cut_count, meet_count, all_count
+    return cut_count, meet_count, all_count, loss_codes, success_codes
 
 
 if __name__ == '__main__':
@@ -118,12 +124,12 @@ if __name__ == '__main__':
     message_reader = stream_readwriter.MessageReader(sock)
     message_reader.start()
     market_code = stock_api.request_stock_code(message_reader, message.KOSDAQ)
-    #market_code = ['A090430']
+    #market_code = ['A051490']
     average = []
     hold_average = []
     cut_average = []
-    from_date = date(2019, 11, 1)
-    until_date = date(2020, 1, 15)
+    from_date = date(2020, 1, 1)
+    until_date = date(2020, 2, 5)
     choosers = [code_chooser.same_time_over_volume]
 
     while from_date <= until_date:
@@ -133,12 +139,20 @@ if __name__ == '__main__':
         candidates = start_today_trading(message_reader, market_code, from_date, choosers)
         if len(candidates) == 0:
             print(from_date, 'NO CANDIDATES')
+            from_date += timedelta(days=1)
             continue
-        cut, meet, all_count = evaluate_meet_goal(message_reader, candidates)
+        cut, meet, all_count, loss_codes, success_codes = evaluate_meet_goal(message_reader, candidates)
         percentage = int(meet/all_count*100)
         hold_percentage = int((all_count - cut - meet) / all_count * 100)
         cut_percentage = int(cut/all_count*100)
         print(from_date, f"{meet}/{all_count} per:{percentage}, hold:{hold_percentage}, cut:{cut_percentage}")
+        print('-' * 30, 'loss', '-' * 30)
+        for lc in loss_codes:
+            print(lc['code'], 'time', lc['time'], 'amount', lc['amount'], 'gap', lc['today_gap'], 'until_now', lc['until_now_profit'])
+        print('-' * 30, 'success', '-' * 30)
+        for lc in success_codes:
+            print(lc['code'], 'time', lc['time'], 'amount', lc['amount'], 'gap', lc['today_gap'], 'until_now', lc['until_now_profit'])
+        print('-' * 30, 'success', '-' * 30)
         average.append(percentage)
         hold_average.append(hold_percentage)
         cut_average.append(cut_percentage)

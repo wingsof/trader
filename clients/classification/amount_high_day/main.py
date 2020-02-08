@@ -1,15 +1,8 @@
-"""
-    1. search past data and set status of each code
-    2. get long list and set status of each code status
-    3. start subscribe for selected codes
-    4. Do trades according to rules
-"""
-
 from gevent import monkey; monkey.patch_all()
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 2))))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 3))))
 
 from datetime import date, timedelta, datetime
 import gevent
@@ -51,8 +44,9 @@ if __name__ == '__main__':
     message_reader = stream_readwriter.MessageReader(sock)
     message_reader.start()
     market_code = stock_api.request_stock_code(message_reader, message.KOSDAQ)
-    search_from = date(2019, 1, 2)
-    search_until = date(2019, 3, 30)
+    search_from = date(2019, 12, 1)
+    from_date = search_from
+    search_until = date(2020, 2, 6)
 
     result = []
     while search_from <= search_until:
@@ -62,13 +56,12 @@ if __name__ == '__main__':
 
         for progress, code in enumerate(market_code):
             print(search_from, f'{progress+1}/{len(market_code)}', end='\r')
-            past_data = get_data(message_reader, code, search_from)
-            if past_data is None:
+            data = get_data(message_reader, code, search_from)
+            if data is None:
                 continue
-            risk = (past_data['highest_price'] - past_data['start_price']) / past_data['start_price'] * 100
-            if risk >= 10:
-                result.append({'code': code, 'risk': risk, 'date': search_from, 'amount': past_data['amount']})
+            if data['amount'] >= 30000000000:
+                result.append({'code': code, 'date': search_from, 'amount': data['amount']})
         print('')
         search_from += timedelta(days=1)
     df = pd.DataFrame(result)
-    df.to_excel('ten_within_day.xlsx')
+    df.to_excel(sys.argv[0] + '_' + from_date.strftime('%Y%m%d') + '_' + search_until.strftime('%Y%m%d') + '.xlsx')

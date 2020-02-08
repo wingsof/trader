@@ -193,6 +193,7 @@ def start_today_trading(reader, market_code, today):
     #print('\nget past data done')
 
     over_profit_check_data = []
+    # when cross mavg, check whether over profit(> 20%)
     for progress, code in enumerate(candidate_cross_data):
         over_profit_array = [code_dict[code].before_cross_data['close_price'], code_dict[code].cross_data[0]['close_price'], code_dict[code].cross_data[1]['close_price']]
         if ((over_profit_array[2] - over_profit_array[1]) / over_profit_array[1] * 100 < 20 and
