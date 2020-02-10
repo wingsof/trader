@@ -7,6 +7,7 @@ import socket
 import gevent
 import time
 from PyQt5.QtWidgets import QApplication
+from PyQt5.QAxContainer import QAxWidget
 
 from morning_server import message, stream_readwriter
 from configs import client_info
