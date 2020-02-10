@@ -4,21 +4,21 @@ from morning_server.collectors.kiwoom_api import base_api
 def request(ax_obj, msg_id, code, from_date, until_date, amount_by_volume=True):
     if code.startswith('A'):
         code = code[1:]
-    base_api.set_input_value('종목코드', code)
-    base_api.set_input_value('시작일자', str(time_converter.datetime_to_intdate(from_date)))
-    base_api.set_input_value('종료일자', str(time_converter.datetime_to_intdate(until_date)))
+    base_api.set_input_value(ax_obj, '종목코드', code)
+    base_api.set_input_value(ax_obj, '시작일자', str(time_converter.datetime_to_intdate(from_date)))
+    base_api.set_input_value(ax_obj, '종료일자', str(time_converter.datetime_to_intdate(until_date)))
 
     #'1': money, '2':volume
     amount_volume_money = '2' if amount_by_volume else '1'
-    base_api.set_input_value('금액수량구분', amount_volume_money)
+    base_api.set_input_value(ax_obj, '금액수량구분', amount_volume_money)
 
     #'0': sum, '1': buy, '2': sell
-    base_api.set_input_value('매매구분', '0')
+    base_api.set_input_value(ax_obj, '매매구분', '0')
     
     # unit: '1000': divide by 1000, '1': no divider
-    base_api.set_input_value('단위구분', '1')
+    base_api.set_input_value(ax_obj, '단위구분', '1')
 
-    base_api.comm_rq_data(msg_id, 'opt10061')
+    base_api.comm_rq_data(ax_obj, msg_id, 'opt10061')
 
 
 def get_data(ax_obj, rqname, trcode):
