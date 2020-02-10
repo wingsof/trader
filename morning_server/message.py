@@ -3,6 +3,11 @@ CLIENT_SOCKET_PORT = 27019
 CLIENT_WEB_PORT = 5000
 SERVER_IP = '192.168.0.22'
 
+
+# Vendor
+CYBOS = 'cybos'
+KIWOOM = 'kiwoom'
+
 # Type
 REQUEST='request'
 RESPONSE='response'
@@ -24,6 +29,7 @@ ABROAD_DATA = 'abroad_data'
 CODE_DATA = 'code_data'
 USCODE_DATA = 'uscode_data'
 INVESTOR_DATA = 'investor_data'
+INVESTOR_ACCUMULATE_DATA = 'investor_accumulate_data'
 
 GET_LONG_LIST = 'long_list'
 ORDER_STOCK = 'order_stock'

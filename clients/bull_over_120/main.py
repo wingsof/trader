@@ -28,12 +28,14 @@ from clients.hwani82 import code_chooser
 
 MAVG=120
 
-BULL_PROFIT = 5
+BULL_PROFIT = 10
+BUY_PROFIT = 20
 code_dict = dict()
 STATE_UNKNOWN = -1
 STATE_NONE = 0
 STATE_BULL = 1
-STATE_BOUGHT = 2
+STATE_UNDER_LINE = 2
+STATE_BOUGHT = 3
 report = []
 
 def get_past_data(reader, code, from_date, until_date):
@@ -76,7 +78,7 @@ def convert_data_readable(code, past_data):
     return converted_data, converted_list
 
 
-def start_today_trading(reader, market_code, today):
+def start_today_trading(reader, market_code, today, bull_profit, buy_profit):
     today_d = time_converter.datetime_to_intdate(today)
 
     for code in market_code:
@@ -96,16 +98,17 @@ def start_today_trading(reader, market_code, today):
                 continue
 
 
-        bull_profit = (data['close_price'] - data['yesterday_close']) / data['yesterday_close'] * 100
+        profit = (data['close_price'] - data['yesterday_close']) / data['yesterday_close'] * 100
 
-        code_dict[code]['today_bull'] = bull_profit
+        code_dict[code]['today_bull'] = profit
         code_dict[code]['mvg'] = data['moving_average']
         over_avg = data['start_price'] > data['moving_average'] and data['close_price'] > data['moving_average']
 
         if code_dict[code]['state'] == STATE_NONE:
+            code_dict[code]['under_line_count'] = 0
             bull_distance = (today - code_dict[code]['last_bull_date']).days if code_dict[code]['last_bull_date'] is not None else 0
-            if bull_profit >= BULL_PROFIT:
-                if bull_profit >= 20 and over_avg and data['amount'] >= 30000000000 and bull_distance > 10:
+            if profit >= bull_profit:
+                if profit >= buy_profit and over_avg and data['amount'] >= 30000000000 and bull_distance > 10:
                     code_dict[code]['buy_price'] = data['start_price']
                     code_dict[code]['amount'] = data['amount']
                     code_dict[code]['state'] = STATE_BULL
@@ -115,7 +118,7 @@ def start_today_trading(reader, market_code, today):
                     code_dict[code]['last_bull_date'] = today
         elif code_dict[code]['state'] == STATE_BULL:
             distance = (today - code_dict[code]['setdate']).days
-            again_bull = bull_profit >= BULL_PROFIT and data['amount'] >= 30000000000 and data['amount'] > code_dict[code]['amount']
+            again_bull = profit >= bull_profit and data['amount'] >= 30000000000 and data['amount'] > code_dict[code]['amount']
             if distance > 6 and again_bull and data['close_price'] > code_dict[code]['highest']:
                 #print('again', data['start_price'])
                 code_dict[code]['buy_price'] = data['start_price']
@@ -123,21 +126,32 @@ def start_today_trading(reader, market_code, today):
                 code_dict[code]['setdate'] = today
                 code_dict[code]['highest'] = data['highest_price']
             elif data['lowest_price'] <= code_dict[code]['buy_price']:
-                code_dict[code]['state'] = STATE_BOUGHT
-                code_dict[code]['buy_date'] = today
+                code_dict[code]['state'] = STATE_UNDER_LINE
+                #code_dict[code]['buy_date'] = today
 
             if data['highest_price'] > code_dict[code]['highest']:
                 code_dict[code]['highest'] = data['highest_price']
+        elif code_dict[code]['state'] == STATE_UNDER_LINE:
+            #if code_dict[code]['buy_price'] < data['start_price'] and code_dict[code]['buy_price'] < data['close_price']:
+            if code_dict[code]['buy_price'] > data['start_price'] and code_dict[code]['buy_price'] < data['highest_price']:
+                #code_dict[code]['buy_price'] = data['close_price']
+                code_dict[code]['buy_date'] = today
+                code_dict[code]['state'] = STATE_BOUGHT
+            else:
+                code_dict[code]['under_line_count'] += 1
+
+            if code_dict[code]['under_line_count'] > 30:
+                code_dict[code]['state'] = STATE_NONE
 
 
 def set_first_over_mavg(reader, market_code, search_from, search_until):
     for progress, code in enumerate(market_code):
-        print('collect past data', f'{progress+1}/{len(market_code)}', end='\r')
+        #print('collect past data', f'{progress+1}/{len(market_code)}', end='\r')
         past_data = get_past_data(reader, code, search_from - timedelta(days=MAVG*2), search_until + timedelta(days=90))
         past_data, data_list = convert_data_readable(code, past_data)
         code_dict[code]['data'] = past_data
         code_dict[code]['data_list'] = data_list
-    print('')
+    #print('')
 
 
 def evaluate_meet_goal(reader, today):
@@ -185,31 +199,51 @@ if __name__ == '__main__':
     market_code = stock_api.request_stock_code(message_reader, message.KOSDAQ)
     #market_code = ['A044960', 'A010660']
     #market_code = ['A010660']
+    bull_profit = [5,10,15,20,25]
+    buy_profit = [5,10,15,20,25]
 
-    meet_count = 0
-    cut_count = 0
-    from_date = date(2018, 1, 1)
-    until_date = date(2019, 10, 15)
     for code in market_code:
         code_dict[code] = {'state': STATE_UNKNOWN, 'data': None, 'data_list': None, 'today_bull': 0, 'mvg': 0,
-                            'buy_date': None,
-                            'buy_price': 0, 'amount': 0, 'set_date': None, 'highest': 0, 'last_bull_date': None}
+                            'buy_date': None, 'buy_price': 0, 'amount': 0, 'set_date': None,
+                            'highest': 0, 'last_bull_date': None, 'under_line_count': 0}
 
+    from_date = date(2018, 1, 1)
+    until_date = date(2019, 10, 15)
     set_first_over_mavg(message_reader, market_code, from_date, until_date)
-    while from_date <= until_date:
-        if holidays.is_holidays(from_date):
-            from_date += timedelta(days=1)
-            continue
-        start_today_trading(message_reader, market_code, from_date)
-        meet, cut = evaluate_meet_goal(message_reader, from_date)
-        cut_count += cut
-        meet_count += meet
-        #print(from_date, f"cut: {cut}, meet: {meet}, state:{code_dict['A010660']['state']}, bull:{code_dict['A010660']['today_bull']}, mvg:{code_dict['A010660']['mvg']}")
-        #print(from_date, f"cut: {cut}, meet: {meet}, state:{code_dict['A044960']['state']}, bull:{code_dict['A044960']['today_bull']}, mvg:{code_dict['A044960']['mvg']}")
-        print(from_date, f"cut: {cut}, meet: {meet}")
-        from_date += timedelta(days=1)
-    print('-' * 100)
-    print('summary succeess', meet_count, 'cut:', cut_count)
-    print('-' * 100)
-    df = pd.DataFrame(report)
-    df.to_excel('bull_over_120.xlsx')
+
+    for bf in bull_profit:
+        for buyf in buy_profit:
+            meet_count = 0
+            cut_count = 0
+            from_d = from_date
+            until_d = until_date
+
+            for code in market_code:
+                code_dict[code]['state'] = STATE_UNKNOWN
+                code_dict[code]['today_bull'] = 0
+                code_dict[code]['mvg'] = 0
+                code_dict[code]['buy_date'] = None
+                code_dict[code]['buy_price'] = 0
+                code_dict[code]['amount'] = 0
+                code_dict[code]['set_date'] = None
+                code_dict[code]['highest'] = 0
+                code_dict[code]['last_bull_date'] = None
+                code_dict[code]['under_line_count'] = 0
+
+            while from_d <= until_d:
+                if holidays.is_holidays(from_d):
+                    from_d += timedelta(days=1)
+                    continue
+                start_today_trading(message_reader, market_code, from_d, bf, buyf)
+                meet, cut = evaluate_meet_goal(message_reader, from_d)
+                cut_count += cut
+                meet_count += meet
+                #print(from_date, f"cut: {cut}, meet: {meet}, state:{code_dict['A010660']['state']}, bull:{code_dict['A010660']['today_bull']}, mvg:{code_dict['A010660']['mvg']}")
+                #print(from_date, f"cut: {cut}, meet: {meet}, state:{code_dict['A044960']['state']}, bull:{code_dict['A044960']['today_bull']}, mvg:{code_dict['A044960']['mvg']}")
+                #print(from_d, f"cut: {cut}, meet: {meet}")
+                from_d += timedelta(days=1)
+            #print('-' * 100)
+            print(bf, buyf, 'summary succeess', meet_count, 'cut:', cut_count,"{0:.2f}".format(meet_count / (meet_count+cut_count) * 100))
+    #print('-' * 100)
+    #df = pd.DataFrame(report)
+    #df.to_excel('bull_over_120.xlsx')

@@ -19,10 +19,10 @@ def stream_write(sock, header, body, manager = None):
 
 
 class _Collector:
-    def __init__(self, index, sock, capability):
-        self.index = index
+    def __init__(self, sock, capability, vendor):
         self.sock = sock
         self.capability = capability
+        self.vendor = vendor
         self.subscribe_code = []
         self.latest_request_process_time = datetime.now()
         self.request = {
@@ -46,6 +46,9 @@ class _Collector:
     def subscribe_count(self):
         return len(self.subscribe_code)
 
+    def get_vendor(self):
+        return self.vendor
+
     def set_pending(self, is_pending):
         #print('set_pending', is_pending)
         self.request['pending'] = is_pending
@@ -64,10 +67,9 @@ class _Collector:
 class CollectorList:
     def __init__(self):
         self.collectors = []
-        self.collector_index = 0
 
-    def add_collector(self, sock, body):
-        self.collectors.append(_Collector(self.collector_index, sock, body['capability']))
+    def add_collector(self, sock, header, body):
+        self.collectors.append(_Collector(sock, body['capability'], header['vendor']))
 
     def handle_disconnect(self, sock):
         logger.warning('HANDLE DISCONNECT: CollectorList')
@@ -90,9 +92,9 @@ class CollectorList:
             gevent.sleep()
         return collector
 
-    def get_available_request_collector(self):
+    def get_available_request_collector(self, vendor=message.CYBOS):
         while True:
-            collector = self.find_request_collector()
+            collector = self.find_request_collector(vendor)
             if collector is not None:
                 break
             gevent.sleep()
@@ -104,9 +106,17 @@ class CollectorList:
                 return c
         return None
 
-    def find_request_collector(self):
-        available_collectors = []
+    def get_vendor_collector(self, vendor):
+        collectors = []
         for c in self.collectors:
+            if c.get_vendor() == vendor:
+                collectors.append(c)
+        return collectors
+
+    def find_request_collector(self, vendor):
+        available_collectors = []
+        collectors = self.get_vendor_collector(vendor)
+        for c in collectors:
             if c.capability & message.CAPABILITY_REQUEST_RESPONSE and not c.request_pending():
                 available_collectors.append(c)
 

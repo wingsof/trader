@@ -138,3 +138,12 @@ def get_balance(reader):
     header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.BALANCE)
     body = []
     return reader.block_write(header, body)
+
+
+def request_investor_accumulate_data(code, from_date, until_date):
+    header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.INVESTOR_ACCUMULATE_DATA, message.KIWOOM)
+    header['code'] = code
+    header['from'] = from_date
+    header['until'] = until_date
+    body = []
+    return reader.block_write(header, body)

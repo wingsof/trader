@@ -36,7 +36,7 @@ partial_request = server_util.PartialRequest()
 
 def handle_collector(sock, header, body):
     logger.info('HANDLE COLLECTOR %s', hex(threading.get_ident()))
-    collectors.add_collector(sock, body)
+    collectors.add_collector(sock, header, body)
 
 
 def handle_response(sock, header, body):
@@ -56,8 +56,7 @@ def handle_response(sock, header, body):
     logger.info('HANDLE RESPONSE DONE')
 
 
-def handle_request(sock, header, body):
-    logger.info('HANDLE REQUEST %s', header)
+def handle_request_cybos(sock, header, body):
     data, vacancy = request_pre_handler.pre_handle_request(sock, header, body)
     if data is None:
         logger.info('HEADER ' +str(header))
@@ -78,6 +77,21 @@ def handle_request(sock, header, body):
         logger.info('HEADER(cached) %s', header)
         header['type'] = message.RESPONSE
         stream_write(sock, header, data)
+
+
+def handle_request_kiwoom(sock, header, body):
+    collector = collectors.get_available_request_collector(message.KIWOOM)
+    collector.set_request(sock, header['_id'], True)
+    stream_write(collector.sock, header, body, collectors)
+
+
+def handle_request(sock, header, body):
+    logger.info('HANDLE REQUEST %s', header)
+    if header['vendor'] == message.CYBOS:
+        handle_request_cybos(sock, header, body)
+    elif header['vendor'] == message.KIWOOM:
+        handle_request_kiwoom(sock, header, body)
+
     logger.info('HANDLE REQUEST DONE')
 
 
