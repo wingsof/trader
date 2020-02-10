@@ -1,3 +1,5 @@
+from utils import time_converter
+
 from morning_server.collectors.kiwoom_api import base_api
 
 
