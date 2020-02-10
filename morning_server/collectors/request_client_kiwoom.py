@@ -55,16 +55,6 @@ def event_connect(err_code):
     if err_code == 0:
         rlogger.info('Connected to KIWOOM Server')
         ax_obj.OnReceiveTrData.connect(receive_trdata)
-        while True:
-            try:
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                server_address = (client_info.get_server_ip(), message.CLIENT_SOCKET_PORT)
-                sock.connect(server_address)
-                rlogger.info('Connected to apiserver')
-                break
-            except socket.error:
-                rlogger.info('Retrying connect to apiserver')
-                gevent.sleep(1)
         header = stream_readwriter.create_header(message.COLLECTOR, message.MARKET_STOCK, message.COLLECTOR_DATA, message.KIWOOM)
         body = {'capability': message.CAPABILITY_REQUEST_RESPONSE}
         stream_readwriter.write(sock, header, body)
@@ -76,6 +66,17 @@ if __name__ == '__main__':
 
     ax_obj = QAxWidget("KHOPENAPI.KHOpenAPICtrl.1")
     ax_obj.OnEventConnect.connect(event_connect)
+    while True:
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server_address = (client_info.get_server_ip(), message.CLIENT_SOCKET_PORT)
+            sock.connect(server_address)
+            rlogger.info('Connected to apiserver')
+            break
+        except socket.error:
+            rlogger.info('Retrying connect to apiserver')
+            gevent.sleep(1)
+
 
     ret = ax_obj.dynamicCall('CommConnect()')
     
