@@ -28,7 +28,7 @@ def get_data(ax_obj, rqname, trcode):
     data_list = []
     field_names = ['개인투자자', '외국인투자자', '기관계', '금융투자', '보험', '투신', '기타금융', '은행', '연기금등', '사모펀드', '국가', '기타법인', '내외국인']
     field_eng_names = ['individual', 'foreigner', 'organization', 'finance_invest', 'insurance', 'collective_invest', 'etc_invest', 'bank', 'pension', 'private_equity', 'national_organization', 'etc_organization', 'foreginer_in_korea']
-    for i in data_count:
+    for i in range(data_count):
         data = {}
         for j, field_name in enumerate(field_names):
             value = base_api.comm_get_data(ax_obj, rqname, trcode, i, field_name)
