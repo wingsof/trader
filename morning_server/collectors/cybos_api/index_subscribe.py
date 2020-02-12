@@ -12,7 +12,7 @@ class _CpEvent:
     def OnReceived(self):
         d = {}
         for i in range(8):
-            d[str(i)] = self.client.GetHeaderValue(i)
+            d[str(i)] = self.obj.GetHeaderValue(i)
         d['date'] = datetime.now()
         self.filter_callback(self.sock, self.code, [d])
 
