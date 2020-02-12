@@ -150,6 +150,7 @@ def get_code(code):
 
 
 def handle_subscribe(sock, header, body):
+    rlogger.info('HANDLE SUBSCRIBE ' + str(header))
     code = get_code(header['code'])
     if len(code) == 0:
         rlogger.warning('EMPTY CODE %s', header)

@@ -4,10 +4,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..' 
 
 import win32com.client
 import gevent
-
-from morning_server.collectors.cybos_api import connection
-from utils import rlogger
-
+from datetime import datetime
 
 class _CpEvent:
     def set_params(self, obj, sock, filter_callback):
