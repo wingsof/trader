@@ -24,6 +24,8 @@ MARKET_STOCK = 'stock'
 
 # Method
 DAY_DATA = 'day_data'
+TODAY_MINUTE_DATA = 'today_data'
+TODAY_TICK_DATA = 'today_data'
 MINUTE_DATA = 'minute_data'
 ABROAD_DATA = 'abroad_data'
 CODE_DATA = 'code_data'

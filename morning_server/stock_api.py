@@ -13,6 +13,18 @@ def request_stock_day_data(reader, code, from_date, until_date, method=message.D
     return reader.block_write(header, body)
 
 
+def request_stock_today_data(reader, code, method=message.TODAY_MINITE_DATA):
+    header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, method)
+    header['code'] = code
+    header['from'] = from_date
+    header['until'] = until_date
+    body = []
+    return reader.block_write(header, body)
+
+
+def request_stock_today_tick_data(reader, code):
+    return request_stock_today_tick_data(reader, code, message.TODAY_TICK_DATA)
+
 def request_investor_data(reader, code, from_date, until_date):
     now = datetime.now().date()
     if now - from_date > timedelta(days=365):

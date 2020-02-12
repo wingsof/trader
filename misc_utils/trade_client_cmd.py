@@ -70,6 +70,18 @@ def consumer():
 
         if command == 'long':
             print(stock_api.request_long_list(message_reader))
+        elif command.startswith('todaym'):
+            todaym_detail = command.split(',')
+            if len(todaym_detail) != 2:
+                print('todaym,code')
+            else:
+                result = stock_api.request_stock_today_data(todaym_detail[1])
+        elif command.startswith('todayt'):
+            todaym_detail = command.split(',')
+            if len(todaym_detail) != 2:
+                print('todayt,code')
+            else:
+                result = stock_api.request_stock_today_tick_data(todaym_detail[1])
         elif command.startswith('buy') or command.startswith('sell'):
             buy_detail = command.split(',')
             print(buy_detail)
