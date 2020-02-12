@@ -32,14 +32,13 @@ def get_today_data_raw(code, period_type='m'):
             d[str(j)] = chart_obj.GetDataValue(j, i)
         data.append(d)
 
-    print('GET TODAY', data)
-    return len(data), reversed(data)
+    return data
 
 
 def get_today_min_data(code):
-    result_len, result = get_today_data_raw(code)
-    return result_len, list(result)
+    result = get_today_data_raw(code)
+    return len(result), result
 
 def get_today_tick_data(code):
-    result_len, result = get_today_data_raw(code, 'T')
-    return result_len, list(result)
+    result = get_today_data_raw(code, 'T')
+    return len(result), result

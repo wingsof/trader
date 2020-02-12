@@ -76,12 +76,14 @@ def consumer():
                 print('todaym,code')
             else:
                 result = stock_api.request_stock_today_data(message_reader, todaym_detail[1])
+                print(result)
         elif command.startswith('todayt'):
             todaym_detail = command.split(',')
             if len(todaym_detail) != 2:
                 print('todayt,code')
             else:
                 result = stock_api.request_stock_today_tick_data(message_reader, todaym_detail[1])
+                print(result)
         elif command.startswith('buy') or command.startswith('sell'):
             buy_detail = command.split(',')
             print(buy_detail)
