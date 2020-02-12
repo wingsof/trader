@@ -10,7 +10,7 @@ from PyQt5.QtCore import QCoreApplication
 
 from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code, abroad_chart, investor_7254
-from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance, trade_subject, world_subscribe, index_subscribe
+from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance, trade_subject, world_subscribe, index_subscribe, stock_alarm
 from configs import client_info
 from utils import rlogger
 
@@ -75,11 +75,24 @@ def callback_index_subscribe(sock, code, datas):
     stream_readwriter.write(sock, header, datas)
 
 
+def callback_alarm_subscribe(sock, datas):
+    header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.ALARM_DATA)
+    header['code'] = 'STOCK_ALARM'
+    stream_readwriter.write(sock, header, datas)
+
+
 def get_order_subscriber(sock):
     global order_subscriber
     if order_subscriber is None:
         order_subscriber = order.Order(sock, account.get_account_number(), account.get_account_type(), callback_trade_subscribe)
     return order_subscriber
+
+
+def get_alarm_subscriber(sock):
+    global subscribe_alarm
+    if subscribe_alarm is None:
+        subscribe_alarm = stock_alarm.StockAlarm(stock)
+    return subscribe_alarm
 
 
 def handle_trade_request(sock, header, body):
@@ -197,7 +210,10 @@ def handle_subscribe(sock, header, body):
         if code in subscribe_index:
             subscribe_index[code].stop_subscribe()
             subscribe_index.pop(code, None)
-        
+    elif header['method'] == message.ALARM_DATA:
+        s = get_alarm_subscriber(sock) 
+        s.start_subscribe(callback_alarm_subscribe)
+
 
 def mainloop(app):
     while True:
@@ -227,7 +243,7 @@ if __name__ == '__main__':
     subscribe_subject = dict()
     subscribe_world = dict()
     subscribe_index = dict()
-    order_subscribe = []
+    subscribe_alarm = None
 
     while True:
         try:
