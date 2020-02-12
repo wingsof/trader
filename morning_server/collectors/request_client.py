@@ -91,7 +91,7 @@ def get_order_subscriber(sock):
 def get_alarm_subscriber(sock):
     global subscribe_alarm
     if subscribe_alarm is None:
-        subscribe_alarm = stock_alarm.StockAlarm(stock)
+        subscribe_alarm = stock_alarm.StockAlarm(sock)
     return subscribe_alarm
 
 

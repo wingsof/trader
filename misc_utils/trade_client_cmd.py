@@ -38,6 +38,9 @@ def display_trade_result(result):
 def display_subject_data(code, data):
     print('SUBJECT', code, data)
 
+def display_alarm_data(code, data):
+    print('ALARM', data)
+
 
 def display_bidask_data(code, data):
     print('BIDASK', code, data)
@@ -59,7 +62,7 @@ def consumer():
     message_reader = stream_readwriter.MessageReader(sock)
     message_reader.start()
 
-    stock_api.subscribe_trade(message_reader, display_trade_result)
+    #stock_api.subscribe_trade(message_reader, display_trade_result)
     while True:
         val = q.get(True)
         command = val.decode('ascii').rstrip()
@@ -169,6 +172,8 @@ def consumer():
             else:
                 code = invc_detail[1]
                 print(stock_api.request_investor_accumulate_data(message_reader, code, date(2020,2,7), date(2020,2,7)))
+        elif command.startswith('alarm'):
+            stock_api.subscribe_alarm(message_reader, display_alarm_data)
 
 
 def main():
