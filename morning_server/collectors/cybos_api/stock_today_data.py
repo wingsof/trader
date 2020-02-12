@@ -41,5 +41,5 @@ def get_today_min_data(code):
     return result_len, list(result)
 
 def get_today_tick_data(code):
-    _, result = get_today_data_raw(code, 'T')
+    result_len, result = get_today_data_raw(code, 'T')
     return result_len, list(result)
