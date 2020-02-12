@@ -17,7 +17,7 @@ def get_today_data_raw(code, period_type='m'):
     chart_obj= win32com.client.Dispatch("CpSysDib.StockChart")
     chart_obj.SetInputValue(0, code)
     chart_obj.SetInputValue(1, ord('2'))
-    chart_obj.SetInputValue(4, 10000)
+    chart_obj.SetInputValue(4, 360)
     data_list = [0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 16, 17, 20, 21, 6, 37]
     chart_obj.SetInputValue(5, data_list)
     chart_obj.SetInputValue(6, ord(period_type))
@@ -32,6 +32,7 @@ def get_today_data_raw(code, period_type='m'):
             d[str(j)] = chart_obj.GetDataValue(j, i)
         data.append(d)
 
+    print('GET TODAY', data)
     return len(data), reversed(data)
 
 
