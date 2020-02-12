@@ -21,7 +21,7 @@ def request_stock_today_data(reader, code, method=message.TODAY_MINUTE_DATA):
 
 
 def request_stock_today_tick_data(reader, code):
-    return request_stock_today_tick_data(reader, code, message.TODAY_TICK_DATA)
+    return request_stock_today_data(reader, code, message.TODAY_TICK_DATA)
 
 def request_investor_data(reader, code, from_date, until_date):
     now = datetime.now().date()
