@@ -184,15 +184,17 @@ class SubscribeClient:
             self.trade_clients.remove(sock)
 
         #TODO:stop subscribe when no client and decrement counts
+        remove_codes = []
         for k, v in self.clients.items():
             if len(v[1]) == 0:
                 if k == message.STOCK_ALARM_CODE:
-                    header = stream_readwriter.create_hedaer(message.SUBSCRIBE, message.MARKET_STOCK, message.STOP_ALARM_DATA)
+                    header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.STOP_ALARM_DATA)
                     body = []
-                    code = message.STOCK_ALARM_CODE
+                    header['code'] = message.STOCK_ALARM_CODE
                     stream_write(v[0], header, body)
-                    self.clients.pop(message.STOCK_ALARM_CODE, None)
-
+                    remove_codes.append(message.STOCK_ALARM_CODE)
+        for code in remove_codes:
+            self.clients.pop(code, None)
 
     def add_to_clients(self, code, sock, header, body, collectors):
         if self.code_in_clients(code):

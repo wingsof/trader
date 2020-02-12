@@ -49,5 +49,5 @@ class StockAlarm:
 
     def stop_subscribe(self):
         if self.started:
-            self.bidask_realtime.unsubscribe()
+            self.alarm_realtime.unsubscribe()
             self.started = False
