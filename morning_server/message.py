@@ -49,12 +49,15 @@ STOP_STOCK_DATA = 'stock_stop_realtime'
 STOP_BIDASK_DATA = 'bidask_stop_realtime'
 STOP_WORLD_DATA = 'world_stop_realtime'
 STOP_INDEX_DATA = 'index_stop_realtime'
+STOP_ALARM_DATA = 'stop_alarm_realtime'
 BACK_DATA = 'stock_backdata'
 COLLECTOR_DATA = 'collector_data'
 TRADE_DATA = 'trade_realtime'
 SUBJECT_DATA = 'subject_realtim'
 STOP_SUBJECT_DATA = 'subject_stop_realtime'
 
+# codes
+STOCK_ALARM_CODE = 'STOCK_ALARM'
 
 # Suffix for subscribe
 BIDASK_SUFFIX = '_BA'

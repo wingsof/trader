@@ -83,7 +83,7 @@ def callback_index_subscribe(sock, code, datas):
 
 def callback_alarm_subscribe(sock, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.ALARM_DATA)
-    header['code'] = 'STOCK_ALARM'
+    header['code'] = message.STOCK_ALARM_CODE
     stream_readwriter.write(sock, header, datas)
 
 
@@ -219,7 +219,12 @@ def handle_subscribe(sock, header, body):
             subscribe_index.pop(code, None)
     elif header['method'] == message.ALARM_DATA:
         s = get_alarm_subscriber(sock) 
-        s.start_subscribe(callback_alarm_subscribe)
+        if not s.is_started():
+            s.start_subscribe(callback_alarm_subscribe)
+    elif header['method'] == message.STOP_ALARM_DATA:
+        if subscribe_alarm is not None:
+            subscribe_alarm.stop_subscribe()
+            rlogger.info('STOP SUBSCRIBE STOCK ALARM')
 
 
 def mainloop(app):

@@ -98,7 +98,12 @@ def handle_request(sock, header, body):
 def handle_subscribe(sock, header, body):
     logger.info('HANDLE SUBSCRIBE %s', hex(threading.get_ident()))
     code = header['code']
-    subscribe_client.add_to_clients(code, sock, header, body, collectors)
+    stop_methods = [message.STOP_ALARM_DATA]
+    if header['method'] in stop_methods:
+        subscribe_client.remove_from_clients(code, stock, header, body, collectors)
+    else:
+        subscribe_client.add_to_clients(code, sock, header, body, collectors)
+
 
 def handle_subscribe_response(sock, header, body):
     logger.info('HANDLE SUBSCRIBE RESPONSE %s', hex(threading.get_ident()))
@@ -106,11 +111,13 @@ def handle_subscribe_response(sock, header, body):
     subscribe_client.send_to_clients(code, header, body)
     logger.info('HANDLE SUBSCRIBE RESPONSE DONE')
 
+
 def handle_trade_response(sock, header, body):
     logger.info('HANDLE TRADE RESPONSE %s', header)
     collector = collectors.find_by_id(header['_id'])
     stream_write(collector.request_socket(), header, body, subscribe_client)
     collector.set_pending(False)
+
 
 def handle_trade_request(sock, header, body):
     logger.info('HANDLE TRADE REQUEST %s', header)
@@ -121,9 +128,11 @@ def handle_trade_request(sock, header, body):
 
     stream_write(collector.sock, header, body, collectors)
 
+
 def handle_trade_subscribe_response(sock, header, body):
     logger.info('HANDLE TRADE SUBSCRIBE RESPONSE %s', header)
     subscribe_client.send_trade_to_client(header, body)
+
 
 def handle(sock, address):
     logger.info('new connection, address ' + str(address))

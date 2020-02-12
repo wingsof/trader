@@ -186,7 +186,12 @@ class SubscribeClient:
         #TODO:stop subscribe when no client and decrement counts
         for k, v in self.clients.items():
             if len(v[1]) == 0:
-                pass 
+                if k == message.STOCK_ALARM_CODE:
+                    header = stream_readwriter.create_hedaer(message.SUBSCRIBE, message.MARKET_STOCK, message.STOP_ALARM_DATA)
+                    body = []
+                    code = message.STOCK_ALARM_CODE
+                    stream_write(v[0], header, body)
+                    self.clients.pop(message.STOCK_ALARM_CODE, None)
 
 
     def add_to_clients(self, code, sock, header, body, collectors):
@@ -209,6 +214,14 @@ class SubscribeClient:
                 logger.info('ADD NEW SUBSCRIBE %s', code)
                 stream_write(collector.sock, header, body, collectors)
 
+    def remove_from_clients(self, code, sock, header, body, collectors):
+        if self.code_in_clients(code):
+            self.clients[code][1].remove(sock)
+            if len(self.clients[code][1]) == 0:
+                steram_write(self.clients[code][0], header, body, collectors)
+                self.clients.pop(code, None)
+        else:
+            print('No subscribe client for ' + code)
 
 class _Partial:
     def __init__(self, header, db_data, count):

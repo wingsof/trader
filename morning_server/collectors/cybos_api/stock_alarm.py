@@ -37,9 +37,17 @@ class StockAlarm:
     def __init__(self, sock):
         self.sock = sock
         self.alarm_realtime = _AlarmRealtime()
+        self.started = False
+
+    def is_started(self):
+        return self.started
 
     def start_subscribe(self, callback):
-        self.alarm_realtime.subscribe(self.sock, callback)
+        if not self.started:
+            self.alarm_realtime.subscribe(self.sock, callback)
+            self.started = True
 
     def stop_subscribe(self):
-        self.bidask_realtime.unsubscribe()
+        if self.started:
+            self.bidask_realtime.unsubscribe()
+            self.started = False

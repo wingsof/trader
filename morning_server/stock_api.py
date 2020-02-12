@@ -87,8 +87,15 @@ def subscribe_index(reader, code, handler):
 def subscribe_alarm(reader, handler):
     header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.ALARM_DATA)
     body = []
-    code = 'STOCK_ALARM'
+    code = message.STOCK_ALARM_CODE
     reader.subscribe_write(header, body, code, handler)
+
+
+def stop_subscribe_alarm(reader):
+    header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.STOP_ALARM_DATA)
+    body = []
+    code = message.STOCK_ALARM_CODE
+    reader.stop_subscribe_write(header, body, code, handler)
 
 
 def request_stock_code(reader, market_type):

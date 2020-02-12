@@ -38,6 +38,14 @@ class MessageReader(gevent.Greenlet):
             header['code'] = code
             write(self.sock, header, body)
 
+    def stop_subscribe_write(self, header, body, code):
+        if code in self.subscribers:
+            self.subscribers.pop(code, None)
+            header['code'] = code
+            write(self.sock, header, body)
+        else:
+            print('Not subscribing code', code)
+
     def subscribe_trade_write(self, header, body, handler):
         # multiple listener?
         self.trade_subscriber = handler
