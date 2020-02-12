@@ -130,7 +130,7 @@ def handle_trade_request(sock, header, body):
         #TODO: handle multiple clients
         order_s = get_order_subscriber(sock)
         start_result = False
-        if not order.is_started():
+        if not order_s.is_started():
             order_s.start_subscribe(callback_trade_subscribe)
             start_result = True
             rlogger.info('START ORDER SUBSCRIBE')
