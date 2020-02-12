@@ -90,7 +90,7 @@ def callback_alarm_subscribe(sock, datas):
 def get_order_subscriber(sock):
     global order_subscriber
     if order_subscriber is None:
-        order_subscriber = order.Order(sock, account.get_account_number(), account.get_account_type(), callback_trade_subscribe)
+        order_subscriber = order.Order(sock, account.get_account_number(), account.get_account_type())
     return order_subscriber
 
 
@@ -128,10 +128,19 @@ def handle_trade_request(sock, header, body):
         stream_readwriter.write(sock, header, result)
     elif header['method'] == message.TRADE_DATA:
         #TODO: handle multiple clients
-        get_order_subscriber(sock)
-        result = {'result': True}
+        order_s = get_order_subscriber(sock)
+        start_result = False
+        if not order.is_started():
+            order_s.start_subscribe(callback_trade_subscribe)
+            start_result = True
+            rlogger.info('START ORDER SUBSCRIBE')
+        result = {'result': start_result}
         stream_readwriter.write(sock, header, result)
-        rlogger.info('START ORDER SUBSCRIBE')
+    elif header['method'] == message.STOP_TRADE_DATA:
+        if order_subscriber is not None:
+            order_subscriber.stop_subscribe()
+            rlogger.info('STOP ORDER SUBSCRIBER')
+        # Server do not expect to receive STOP response for STOP_TRADE_DATA
     elif header['method'] == message.CANCEL_ORDER:
         cancel_order_obj = cancel_order.CancelOrder(account.get_account_number(), account.get_account_type())
         order_num = header['order_number']

@@ -161,6 +161,15 @@ class SubscribeClient:
         if sock not in self.trade_clients:
             self.trade_clients.append(sock)
 
+    def remove_trade_from_clients(self, sock):
+        if sock in self.trade_clients:
+            self.trade_clients.remove(sock)
+        else:
+            print('No trade subscribe client')
+
+    def count_of_trade_client(self):
+        return len(self.trade_clients)
+
     def send_to_clients(self, code, header, body):
         if self.code_in_clients(code):
             #logger.info('Subscribe socket count %d', len(self.clients[code][1]))
@@ -182,6 +191,12 @@ class SubscribeClient:
                     #break
         if sock in self.trade_clients:
             self.trade_clients.remove(sock)
+            if len(self.trade_clients) == 0:
+                collector = collectors.find_trade_collector()
+                if collector is not None:
+                    header = stream_readwriter.create_header(message.TRADE_REQUEST, message.MARKET_STOCK, message.STOP_TRADE_DATA)
+                    body = []
+                    stream_write(collector.sock, header, body)
 
         #TODO:stop subscribe when no client and decrement counts
         remove_codes = []
@@ -220,7 +235,7 @@ class SubscribeClient:
         if self.code_in_clients(code):
             self.clients[code][1].remove(sock)
             if len(self.clients[code][1]) == 0:
-                steram_write(self.clients[code][0], header, body, collectors)
+                stream_write(self.clients[code][0], header, body, collectors)
                 self.clients.pop(code, None)
         else:
             print('No subscribe client for ' + code)

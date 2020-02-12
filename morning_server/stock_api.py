@@ -95,7 +95,7 @@ def stop_subscribe_alarm(reader):
     header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.STOP_ALARM_DATA)
     body = []
     code = message.STOCK_ALARM_CODE
-    reader.stop_subscribe_write(header, body, code, handler)
+    reader.stop_subscribe_write(header, body, code)
 
 
 def request_stock_code(reader, market_type):
@@ -130,6 +130,12 @@ def order_stock(reader, code, price, quantity, is_buy):
 
 def subscribe_trade(reader, handler):
     header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.TRADE_DATA)
+    body = []
+    reader.subscribe_trade_write(header, body, handler)
+
+
+def stop_subscribe_trade(reader):
+    header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.STOP_TRADE_DATA)
     body = []
     reader.subscribe_trade_write(header, body, handler)
 

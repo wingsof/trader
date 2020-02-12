@@ -100,7 +100,7 @@ def handle_subscribe(sock, header, body):
     code = header['code']
     stop_methods = [message.STOP_ALARM_DATA]
     if header['method'] in stop_methods:
-        subscribe_client.remove_from_clients(code, stock, header, body, collectors)
+        subscribe_client.remove_from_clients(code, sock, header, body, collectors)
     else:
         subscribe_client.add_to_clients(code, sock, header, body, collectors)
 
@@ -122,11 +122,21 @@ def handle_trade_response(sock, header, body):
 def handle_trade_request(sock, header, body):
     logger.info('HANDLE TRADE REQUEST %s', header)
     collector = collectors.get_available_trade_collector()
-    collector.set_request(sock, header['_id'], True)
     if header['method'] == message.TRADE_DATA:
         subscribe_client.add_trade_to_clients(sock)
+        collector.set_request(sock, header['_id'], True)
+        stream_write(collector.sock, header, body, collectors)
+    elif header['method'] == message.STOP_TRADE_DATA:
+        subscribe_client.remove_trade_from_clients(sock)
+        if subscribe_client.count_of_trade_client() == 0:
+            stream_write(collector.sock, header, body, collectors)
 
-    stream_write(collector.sock, header, body, collectors)
+        header['type'] = message.RESPONSE_TRADE
+        body = {'result': True}
+        stream_write(sock, header, body, collectors)
+    else:
+        collector.set_request(sock, header['_id'], True)
+        stream_write(collector.sock, header, body, collectors)
 
 
 def handle_trade_subscribe_response(sock, header, body):

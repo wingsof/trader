@@ -70,6 +70,10 @@ def consumer():
 
         if command == 'long':
             print(stock_api.request_long_list(message_reader))
+        elif command.startswith('trade_subscribe'):
+            stock_api.subscribe_trade(message_reader, display_trade_result)
+        elif command.startswith('trade_stop_subscribe'):
+            stock_api.stop_subscribe_trade(message_reader)
         elif command.startswith('todaym'):
             todaym_detail = command.split(',')
             if len(todaym_detail) != 2:
@@ -196,6 +200,8 @@ def consumer():
                 print(stock_api.request_investor_accumulate_data(message_reader, code, date(2020,2,7), date(2020,2,7)))
         elif command.startswith('alarm'):
             stock_api.subscribe_alarm(message_reader, display_alarm_data)
+        elif command.startswith('stop_alarm'):
+            stock_api.stop_subscribe_alarm(message_reader)
 
 
 def main():

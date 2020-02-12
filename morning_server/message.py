@@ -53,6 +53,7 @@ STOP_ALARM_DATA = 'stop_alarm_realtime'
 BACK_DATA = 'stock_backdata'
 COLLECTOR_DATA = 'collector_data'
 TRADE_DATA = 'trade_realtime'
+STOP_TRADE_DATA = 'trade_stop_realtime'
 SUBJECT_DATA = 'subject_realtim'
 STOP_SUBJECT_DATA = 'subject_stop_realtime'
 

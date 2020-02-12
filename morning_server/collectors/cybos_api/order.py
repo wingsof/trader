@@ -37,18 +37,27 @@ class _OrderRealtime:
 
 
 class Order:
-    def __init__(self, sock, account_num, account_type, listener):
+    def __init__(self, sock, account_num, account_type):
         self.sock = sock
         self.conn = connection.Connection()
-        self.listener = listener
         self.realtime_order = win32com.client.Dispatch('DsCbo1.CpConclusion')
-        handler = win32com.client.WithEvents(self.realtime_order, _OrderRealtime)
-        handler.set_params(self.sock, self.realtime_order, listener)
-        self.realtime_order.Subscribe()
+        self.started = False
         rlogger.info('START Listening CpConclusion')
-  
-    def stop(self):
-        self.realtime_order.Unsubscribe()
+
+    def start_subscribe(self, callback):
+        if not self.started:
+            handler = win32com.client.WithEvents(self.realtime_order, _OrderRealtime)
+            handler.set_params(self.sock, self.realtime_order, callback)
+            self.realtime_order.Subscribe()
+            self.started = True
+ 
+    def is_started(self):
+        return self.started
+
+    def stop_subscribe(self):
+        if self.started:
+            self.realtime_order.Unsubscribe()
+            self.started = False
 
     def process(self, code, quantity, account_num, account_type, price, is_buy):
         while self.conn.order_left_count() <= 0:
