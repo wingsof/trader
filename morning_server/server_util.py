@@ -153,11 +153,13 @@ class SubscribeClient:
         # Key: code, Values: (collector_socket, [subscribe_client_socket, ])
         self.clients = dict()
         self.trade_clients = []
+        self.trader_sock = None
 
     def code_in_clients(self, code):
         return code in self.clients
 
-    def add_trade_to_clients(self, sock):
+    def add_trade_to_clients(self, sock, trader_sock):
+        self.trader_sock = trader_sock
         if sock not in self.trade_clients:
             self.trade_clients.append(sock)
 
@@ -192,11 +194,10 @@ class SubscribeClient:
         if sock in self.trade_clients:
             self.trade_clients.remove(sock)
             if len(self.trade_clients) == 0:
-                collector = collectors.find_trade_collector()
-                if collector is not None:
-                    header = stream_readwriter.create_header(message.TRADE_REQUEST, message.MARKET_STOCK, message.STOP_TRADE_DATA)
+                if self.trader_sock is not None:
+                    header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.STOP_TRADE_DATA)
                     body = []
-                    stream_write(collector.sock, header, body)
+                    stream_write(self.trader_sock, header, body)
 
         #TODO:stop subscribe when no client and decrement counts
         remove_codes = []

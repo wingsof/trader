@@ -123,7 +123,7 @@ def handle_trade_request(sock, header, body):
     logger.info('HANDLE TRADE REQUEST %s', header)
     collector = collectors.get_available_trade_collector()
     if header['method'] == message.TRADE_DATA:
-        subscribe_client.add_trade_to_clients(sock)
+        subscribe_client.add_trade_to_clients(sock, collector.sock)
         collector.set_request(sock, header['_id'], True)
         stream_write(collector.sock, header, body, collectors)
     elif header['method'] == message.STOP_TRADE_DATA:
