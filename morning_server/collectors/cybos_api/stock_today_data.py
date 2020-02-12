@@ -36,8 +36,9 @@ def get_today_data_raw(code, period_type='m'):
 
 
 def get_today_min_data(code):
-    return get_today_data_raw(code)
-
+    _, result = get_today_data_raw(code)
+    return len(result), list(result)
 
 def get_today_tick_data(code):
-    return get_today_data_raw(code, 'T')
+    _, result = get_today_data_raw(code, 'T')
+    return len(result), list(result)
