@@ -73,7 +73,7 @@ def subscribe_stock_bidask(reader, code, handler):
     reader.subscribe_write(header, body, code, handler)
 
 
-def stop_subscribe_bidask(reader, code):
+def stop_subscribe_stock_bidask(reader, code):
     _send_stop_subscribe_index(reader, code + message.BIDASK_SUFFIX, mesage.STOP_BIDASK_DATA)
 
 
@@ -84,7 +84,7 @@ def subscribe_stock_subject(reader, code, handler):
     reader.subscribe_write(header, body, code, handler)
 
 
-def stop_subscribe_subject(reader, code):
+def stop_subscribe_stock_subject(reader, code):
     _send_stop_subscribe_index(reader, code + message.SUBJECT_SUFFIX, mesage.STOP_SUBJECT_DATA)
 
 

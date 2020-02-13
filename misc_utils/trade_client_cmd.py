@@ -66,7 +66,7 @@ def consumer():
     while True:
         val = q.get(True)
         command = val.decode('ascii').rstrip()
-        print(command)
+        #print(command)
 
         if command == 'long':
             print(stock_api.request_long_list(message_reader))
@@ -146,6 +146,20 @@ def consumer():
             else:
                 code = subject_detail[1]
                 stock_api.subscribe_stock_subject(message_reader, code, display_subject_data)
+        elif command.startswith('stop_subject'):
+            subject_detail = command.split(',')
+            if len(subject_detail) != 2:
+                print('stop_subject,code')
+            else:
+                code = subject_detail[1]
+                stock_api.stop_subscribe_stock_subject(message_reader, code)
+        elif command.startswith('stop_bidask'):
+             bidask_detail = command.split(',')
+            if len(bidask_detail) != 2:
+                print('stop_bidask,code')
+            else:
+                code = bidask_detail[1]
+                stock_api.stop_subscribe_stock_bidask(message_reader, code)
         elif command.startswith('bidask'):
             bidask_detail = command.split(',')
             if len(bidask_detail) != 2:
@@ -160,6 +174,13 @@ def consumer():
             else:
                 code = stock_detail[1]
                 stock_api.subscribe_stock(message_reader, code, display_stock_data)
+        elif command.startswith('stop_stock'):
+            stock_detail = command.split(',')
+            if len(stock_detail) != 2:
+                print('stop_stock,code')
+            else:
+                code = stock_detail[1]
+                stock_api.stop_subscribe_stock(message_reader, code)
         elif command.startswith('req'):
             req_detail = command.split(',')
             if len(req_detail) != 2:
@@ -184,6 +205,14 @@ def consumer():
             else:
                 code = world_detail[1]
                 stock_api.subscribe_world(message_reader, code, display_world_data)
+        elif command.startswith('stop_world'):
+            world_detail = command.split(',')
+            if len(world_detail) != 2:
+                print('stop_world,code')
+            else:
+                code = world_detail[1]
+                stock_api.stop_subscribe_world(message_reader, code)
+
         elif command.startswith('investor'):
             inv_detail = command.split(',')
             if len(inv_detail) != 2:

@@ -20,6 +20,7 @@ class MessageReader(gevent.Greenlet):
         self.clients = dict()
         self.subscribers = dict()
         self.trade_subscriber = None
+        self._stop_event = Event()
 
     def block_write(self, header, body):
         msg_id = header['_id']

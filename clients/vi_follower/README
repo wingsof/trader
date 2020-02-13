@@ -1,0 +1,4 @@
+1. get yesterday data
+2. listen VI events
+3. when get VI events, start listening bidask, prices
+4. draw speed table(every 1min, calculate how long it will take to eat 3 bid/ask

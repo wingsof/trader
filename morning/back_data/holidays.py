@@ -38,6 +38,19 @@ def get_yesterday(today):
     return yesterday
 
 
+def count_of_working_days(from_date, until_date):
+    from_d = from_date
+    until_d = until_date
+    count_of_days = 0
+    while from_d <= until_d:
+        if is_holidays(from_d):
+            from_d += timedelta(days=1)
+            continue
+        count_of_days += 1
+        from_d += timedelta(days=1)
+    return count_of_days
+
+
 def get_tomorrow(today):
     today = today if today.__class__.__name__ == 'date' else today.date()
     tomorrow = today + timedelta(days=1)
