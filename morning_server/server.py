@@ -98,7 +98,11 @@ def handle_request(sock, header, body):
 def handle_subscribe(sock, header, body):
     logger.info('HANDLE SUBSCRIBE %s', hex(threading.get_ident()))
     code = header['code']
-    stop_methods = [message.STOP_ALARM_DATA]
+    stop_methods = [message.STOP_ALARM_DATA,
+                    message.STOP_STOCK_DATA,
+                    message.STOP_WORLD_DATA,
+                    message.STOP_INDEX_DATA,
+                    message.STOP_SUBJECT_DATA]
     if header['method'] in stop_methods:
         subscribe_client.remove_from_clients(code, sock, header, body, collectors)
     else:

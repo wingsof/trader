@@ -188,9 +188,9 @@ class SubscribeClient:
         for v in self.clients.values():
             for s in v[1]:
                 if s == sock:
-                    # Assume that sock is not duplicated in a code
                     v[1].remove(sock)
-                    #break
+
+        # Handle trade subscriber
         if sock in self.trade_clients:
             self.trade_clients.remove(sock)
             if len(self.trade_clients) == 0:
@@ -199,16 +199,29 @@ class SubscribeClient:
                     body = []
                     stream_write(self.trader_sock, header, body)
 
-        #TODO:stop subscribe when no client and decrement counts
         remove_codes = []
+        stop_methods = {message.STOCK_ALARM_CODE: message.STOP_ALARM_DATA,
+                        message.BIDASK_SUFFIX: message.STOP_BIDASK_DATA,
+                        message.SUBJECT_SUFFIX: message.STOP_SUBJECT_DATA,
+                        message.WORLD_SUFFIX: message.STOP_WORLD_DATA,
+                        message.INDEX_SUFFIX: message.STOP_INDEX_DATA,}
+        # Handle other subscriber
         for k, v in self.clients.items():
             if len(v[1]) == 0:
-                if k == message.STOCK_ALARM_CODE:
-                    header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.STOP_ALARM_DATA)
+                for stop_k, stop_v in stop_methods.items():
+                    if k.endswith(stop_k):
+                        header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, stop_v)
+                        body = []
+                        header['code'] = k
+                        stream_write(v[0], header, body)
+                        remove_codes.append(k)
+                if k not in remove_codes:
+                    header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.STOCK_DATA)
                     body = []
-                    header['code'] = message.STOCK_ALARM_CODE
+                    header['code'] = k
                     stream_write(v[0], header, body)
-                    remove_codes.append(message.STOCK_ALARM_CODE)
+                    remove_codes.append(k)
+                   
         for code in remove_codes:
             self.clients.pop(code, None)
 

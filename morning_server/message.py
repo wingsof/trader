@@ -45,17 +45,19 @@ BIDASK_DATA = 'bidask_realtime'
 WORLD_DATA = 'world_realtime'
 INDEX_DATA = 'index_realtime'
 ALARM_DATA = 'alarm_realtime'
+SUBJECT_DATA = 'subject_realtim'
+
 STOP_STOCK_DATA = 'stock_stop_realtime'
 STOP_BIDASK_DATA = 'bidask_stop_realtime'
 STOP_WORLD_DATA = 'world_stop_realtime'
 STOP_INDEX_DATA = 'index_stop_realtime'
 STOP_ALARM_DATA = 'stop_alarm_realtime'
+STOP_SUBJECT_DATA = 'subject_stop_realtime'
+
 BACK_DATA = 'stock_backdata'
 COLLECTOR_DATA = 'collector_data'
 TRADE_DATA = 'trade_realtime'
 STOP_TRADE_DATA = 'trade_stop_realtime'
-SUBJECT_DATA = 'subject_realtim'
-STOP_SUBJECT_DATA = 'subject_stop_realtime'
 
 # codes
 STOCK_ALARM_CODE = 'STOCK_ALARM'

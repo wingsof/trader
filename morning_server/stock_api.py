@@ -46,6 +46,12 @@ def request_abroad_data(reader, code, period_type, count):
     return reader.block_write(header, body)
 
 
+def _send_stop_subscribe_index(reader, code, method):
+    header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, method)
+    body = []
+    reader.stop_subscribe_write(header, body, code)
+
+
 def request_stock_minute_data(reader, code, from_date, until_date):
     return request_stock_day_data(reader, code, from_date, until_date, message.MINUTE_DATA)
 
@@ -56,11 +62,19 @@ def subscribe_stock(reader, code, handler):
     reader.subscribe_write(header, body, code, handler)
 
 
+def stop_subscribe_stock(reader, code):
+    _send_stop_subscribe_index(reader, code, mesage.STOP_STOCK_DATA)
+
+
 def subscribe_stock_bidask(reader, code, handler):
     header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.BIDASK_DATA)
     body = []
     code += message.BIDASK_SUFFIX
     reader.subscribe_write(header, body, code, handler)
+
+
+def stop_subscribe_bidask(reader, code):
+    _send_stop_subscribe_index(reader, code + message.BIDASK_SUFFIX, mesage.STOP_BIDASK_DATA)
 
 
 def subscribe_stock_subject(reader, code, handler):
@@ -70,6 +84,10 @@ def subscribe_stock_subject(reader, code, handler):
     reader.subscribe_write(header, body, code, handler)
 
 
+def stop_subscribe_subject(reader, code):
+    _send_stop_subscribe_index(reader, code + message.SUBJECT_SUFFIX, mesage.STOP_SUBJECT_DATA)
+
+
 def subscribe_world(reader, code, handler):
     header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.WORLD_DATA)
     body = []
@@ -77,11 +95,19 @@ def subscribe_world(reader, code, handler):
     reader.subscribe_write(header, body, code, handler)
 
 
+def stop_subscribe_world(reader, code):
+    _send_stop_subscribe_index(reader, code + message.WORLD_SUFFIX, mesage.STOP_WORLD_DATA)
+    
+
 def subscribe_index(reader, code, handler):
     header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.INDEX_DATA)
     body = []
     code += message.INDEX_SUFFIX
     reader.subscribe_write(header, body, code, handler)
+
+
+def stop_subscribe_index(reader, code):
+    _send_stop_subscribe_index(reader, code + message.INDEX_SUFFIX, mesage.STOP_INDEX_DATA)
 
 
 def subscribe_alarm(reader, handler):
