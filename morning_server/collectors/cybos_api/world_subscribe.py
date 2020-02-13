@@ -41,4 +41,4 @@ class WorldSubscribe:
         self.world_realtime.subscribe(self.sock, callback)
 
     def stop_subscribe(self):
-        self.bidask_realtime.unsubscribe()
+        self.world_realtime.unsubscribe()
