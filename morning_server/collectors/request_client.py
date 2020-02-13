@@ -182,6 +182,7 @@ def handle_subscribe(sock, header, body):
         if code in subscribe_stock:
             subscribe_stock[code].stop_subscribe()
             subscribe_stock.pop(code, None)
+            rlogger.info('STOP Subscribe stock' + code)
     elif header['method'] == message.BIDASK_DATA:
         if code in subscribe_bidask:
             rlogger.info('Already subscribe bidask ' + code)
@@ -193,6 +194,7 @@ def handle_subscribe(sock, header, body):
         if code in subscribe_bidask:
             subscribe_bidask[code].stop_subscribe()
             subscribe_bidask.pop(code, None)
+            rlogger.info('STOP Subscribe world ' + code)
     elif header['method'] == message.WORLD_DATA:
         if code in subscribe_world:
             rlogger.info('Already subscribe world ' + code)
@@ -215,6 +217,7 @@ def handle_subscribe(sock, header, body):
         if code in subscribe_subject:
             subscribe_subject[code].stop_subscribe()
             subscribe_subject.pop(code, None)
+            rlogger.info('STOP Subscribe subject ' + code)
     elif header['method'] == message.INDEX_DATA:
         if code in subscribe_index:
             rlogger.info('Already subscribe index ' + code)
@@ -226,10 +229,12 @@ def handle_subscribe(sock, header, body):
         if code in subscribe_index:
             subscribe_index[code].stop_subscribe()
             subscribe_index.pop(code, None)
+            rlogger.info('STOP Subscribe index ' + code)
     elif header['method'] == message.ALARM_DATA:
         s = get_alarm_subscriber(sock) 
         if not s.is_started():
             s.start_subscribe(callback_alarm_subscribe)
+            rlogger.info('START SUBSCRIBE STOCK ALARM')
     elif header['method'] == message.STOP_ALARM_DATA:
         if subscribe_alarm is not None:
             subscribe_alarm.stop_subscribe()

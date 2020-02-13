@@ -95,10 +95,6 @@
 
 
 
-* DB / Cybos API 만들기
-    * 항상 DB에서 지우고, 다시 insert 하는 것도 burden, DB 에 있는 경우 DB에서 사용, 없는 경우 cybos API 로 얻어와
-      append 로 붙이는 거 고려
-
 
 
 
@@ -176,6 +172,10 @@ Done
         * 이벤트 subscribe count가 0일 때, STOP
     * Window client에서 고려필요 있을까? 다 Server로 넘기기 때문에, 사실상 문제 발생시 Server 문제이기 때문에, 의미가 있을까?
     * Trade Subscribe 및 Index 등도 확인
+* DB / Cybos API 만들기
+    * 항상 DB에서 지우고, 다시 insert 하는 것도 burden, DB 에 있는 경우 DB에서 사용, 없는 경우 cybos API 로 얻어와
+      append 로 붙이는 거 고려
+
 
 
 No important

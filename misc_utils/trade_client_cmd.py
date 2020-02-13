@@ -154,7 +154,7 @@ def consumer():
                 code = subject_detail[1]
                 stock_api.stop_subscribe_stock_subject(message_reader, code)
         elif command.startswith('stop_bidask'):
-             bidask_detail = command.split(',')
+            bidask_detail = command.split(',')
             if len(bidask_detail) != 2:
                 print('stop_bidask,code')
             else:

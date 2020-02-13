@@ -216,7 +216,7 @@ class SubscribeClient:
                         stream_write(v[0], header, body)
                         remove_codes.append(k)
                 if k not in remove_codes:
-                    header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.STOCK_DATA)
+                    header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.STOP_STOCK_DATA)
                     body = []
                     header['code'] = k
                     stream_write(v[0], header, body)

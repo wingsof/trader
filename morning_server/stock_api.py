@@ -63,7 +63,7 @@ def subscribe_stock(reader, code, handler):
 
 
 def stop_subscribe_stock(reader, code):
-    _send_stop_subscribe_index(reader, code, mesage.STOP_STOCK_DATA)
+    _send_stop_subscribe_index(reader, code, message.STOP_STOCK_DATA)
 
 
 def subscribe_stock_bidask(reader, code, handler):
@@ -74,7 +74,7 @@ def subscribe_stock_bidask(reader, code, handler):
 
 
 def stop_subscribe_stock_bidask(reader, code):
-    _send_stop_subscribe_index(reader, code + message.BIDASK_SUFFIX, mesage.STOP_BIDASK_DATA)
+    _send_stop_subscribe_index(reader, code + message.BIDASK_SUFFIX, message.STOP_BIDASK_DATA)
 
 
 def subscribe_stock_subject(reader, code, handler):
@@ -85,7 +85,7 @@ def subscribe_stock_subject(reader, code, handler):
 
 
 def stop_subscribe_stock_subject(reader, code):
-    _send_stop_subscribe_index(reader, code + message.SUBJECT_SUFFIX, mesage.STOP_SUBJECT_DATA)
+    _send_stop_subscribe_index(reader, code + message.SUBJECT_SUFFIX, message.STOP_SUBJECT_DATA)
 
 
 def subscribe_world(reader, code, handler):
@@ -96,7 +96,7 @@ def subscribe_world(reader, code, handler):
 
 
 def stop_subscribe_world(reader, code):
-    _send_stop_subscribe_index(reader, code + message.WORLD_SUFFIX, mesage.STOP_WORLD_DATA)
+    _send_stop_subscribe_index(reader, code + message.WORLD_SUFFIX, message.STOP_WORLD_DATA)
     
 
 def subscribe_index(reader, code, handler):
@@ -107,7 +107,7 @@ def subscribe_index(reader, code, handler):
 
 
 def stop_subscribe_index(reader, code):
-    _send_stop_subscribe_index(reader, code + message.INDEX_SUFFIX, mesage.STOP_INDEX_DATA)
+    _send_stop_subscribe_index(reader, code + message.INDEX_SUFFIX, message.STOP_INDEX_DATA)
 
 
 def subscribe_alarm(reader, handler):
