@@ -100,6 +100,7 @@ def handle_subscribe(sock, header, body):
     code = header['code']
     stop_methods = [message.STOP_ALARM_DATA,
                     message.STOP_STOCK_DATA,
+                    message.STOP_BIDASK_DATA,
                     message.STOP_WORLD_DATA,
                     message.STOP_INDEX_DATA,
                     message.STOP_SUBJECT_DATA]

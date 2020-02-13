@@ -41,4 +41,4 @@ class IndexSubscribe:
         self.index_realtime.subscribe(self.sock, callback)
 
     def stop_subscribe(self):
-        self.bidask_realtime.unsubscribe()
+        self.index_realtime.unsubscribe()

@@ -54,6 +54,10 @@ def display_world_data(code, data):
     print('WORLD', code, data)
 
 
+def display_index_data(code, data):
+    print('INDEX', code, data)
+
+
 def consumer():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
@@ -188,6 +192,20 @@ def consumer():
             else:
                 code = req_detail[1]
                 print(stock_api.request_stock_day_data(message_reader, code, date(2020,1,31), date(2020,1,31)))
+        elif command.startswith('index'):
+            index_detail = command.split(',')
+            if len(index_detail) != 2:
+                print('index,code')
+            else:
+                code = index_detail[1]
+                stock_api.subscribe_index(message_reader, code, display_index_data)
+        elif command.startswith('stop_index'):
+            index_detail = command.split(',')
+            if len(index_detail) != 2:
+                print('index,code')
+            else:
+                code = index_detail[1]
+                stock_api.stop_subscribe_index(message_reader, code)
         elif command.startswith('abroad'):
             abroad_detail = command.split(',')
             if len(abroad_detail) != 2:
