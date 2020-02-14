@@ -259,9 +259,15 @@ def dispatch_message(sock):
 if __name__ == '__main__':
     app = QCoreApplication([])
     conn = connection.Connection()
-    while not conn.is_connected():
-        rlogger.info('Retry connecting to CP Server')
-        gevent.sleep(5)
+    while True:
+        try:
+            if conn.is_connected():
+                break
+            else:
+                rlogger.info('Retry connecting to CP Server')
+                gevent.sleep(5)
+        except:
+            rlogger.critical('Error while trying to server')
 
     rlogger.info('Connected to CP Server')
     subscribe_stock = dict()

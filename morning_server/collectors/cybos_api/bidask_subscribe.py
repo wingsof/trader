@@ -13,6 +13,7 @@ class _CpEvent:
         d = {}
         for i in range(69):
             d[str(i)] = self.obj.GetHeaderValue(i)
+        d['date'] = datetime.now()
         self.filter_callback(self.sock, self.code, [d])
 
 

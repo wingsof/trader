@@ -37,6 +37,15 @@ def get_reader():
     return _message_reader
 
 
+def _convert_min_data_readable(code, min_data):
+    converted_data = []
+    for md in min_data:
+        converted = dt.cybos_stock_day_tick_convert(md)
+        converted['code'] = code
+        converted_data.append(converted)
+
+    return converted_data
+
 def _convert_data_readable(code, past_data):
     converted_data = []
     avg_prices = np.array([])
@@ -45,7 +54,7 @@ def _convert_data_readable(code, past_data):
     for p in past_data:
         converted = dt.cybos_stock_day_tick_convert(p)
         converted['code'] = code
-        converted['date'] = time_converter.intdate_to_datetime(converted['0']).date()
+        converted['date'] = time_converter.intdate_to_datetime(converted['0'])
         avg_prices = np.append(avg_prices, np.array([converted['close_price']]))
         avg_volumes = np.append(avg_volumes, np.array([converted['volume']]))
 
@@ -71,13 +80,16 @@ def _convert_data_readable(code, past_data):
 
 
 def get_past_day_data(code, from_date, until_date, mavg=MAVG):
+    from_date = from_date if from_date.__class__.__name__ == 'date' else from_date.date()
+    until_date = until_date if until_date.__class__.__name__ == 'date' else until_date.date()
+
     past_data = stock_api.request_stock_day_data(get_reader(), code, from_date - timedelta(days=int(mavg*1.5)), until_date)
     past_data = _convert_data_readable(code, past_data)
     # until_date shall not be holiday
 
     cut_by_date_data = []
     for data in past_data:
-        if from_date <= data['date'] <= until_date:
+        if from_date <= data['date'].date() <= until_date:
             cut_by_date_data.append(data)
 
     if holidays.count_of_working_days(from_date, until_date) > len(cut_by_date_data):
@@ -86,6 +98,17 @@ def get_past_day_data(code, from_date, until_date, mavg=MAVG):
         return []
 
     return cut_by_date_data
+
+
+def get_minute_data(code, from_date, until_date, t = 0):
+    from_date = from_date if from_date.__class__.__name__ == 'date' else from_date.date()
+    until_date = until_date if until_date.__class__.__name__ == 'date' else until_date.date()
+
+    minute_data = stock_api.request_stock_minute_data(get_reader(), code, from_date, until_date) 
+    minute_data = _convert_min_data_readable(code, minute_data)
+    if t != 0:
+        minute_data = list(filter(lambda x: x['time'] < t, minute_data))
+    return minute_data
 
 
 def setup():

@@ -14,6 +14,7 @@ from gevent.queue import Queue
 from clients.vi_follower import stock_follower
 from configs import db
 from pymongo import MongoClient
+from utils import time_converter
 
 
 subscribe_code = dict()
@@ -50,23 +51,36 @@ def vi_handler(_, data):
 
 if __name__ == '__main__':
     market_code = morning_client.get_market_code()
-    yesterday = holidays.get_yesterday(datetime.now().date())
-    db_collection = MongoClient(db.HOME_MONGO_ADDRESS).stock_alarm
+    today = datetime.now().date()
+    if holidays.is_holidays(today):
+        print('today is holiday')
+        sys.exit(1)
+
+    yesterday = holidays.get_yesterday(today)
+    db_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
 
     yesterday_list = []
-    for progress, code in enumerate(market_code):
-        print('collect yesterday data', f'{progress+1}/{len(market_code)}', end='\r')
-        data = morning_client.get_past_day_data(code, yesterday, yesterday)
-        if len(data) == 1:
-            yesterday_data[code] = data[0]
-            yesterday_list.append(data)
-    print('')
-    yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
+    db_list = list(db_collection['amount_rank'].find({'0': time_converter.datetime_to_intdate(today)}))
+
+    if len(db_list) > 0:
+        yesterday_list = db_list
+    else:
+        for progress, code in enumerate(market_code):
+            print('collect yesterday data', f'{progress+1}/{len(market_code)}', end='\r')
+            data = morning_client.get_past_day_data(code, yesterday, yesterday)
+            if len(data) == 1:
+                yesterday_data[code] = data[0]
+                yesterday_list.append(data[0])
+        print('')
+        yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
+
     yesterday_list = yesterday_list[:100]
     for ydata in yesterday_list:
         sf = stock_follower.StockFollower(morning_client.get_reader(), db_collection, ydata['code'], yesterday_data[code])
         sf.subscribe_at_startup()
         subscribe_code[code] = sf
+        if len(db_list) == 0:
+            db_collection['amount_rank'].insert_one(ydata)
 
     print('Start Listening...')
     stock_api.subscribe_alarm(morning_client.get_reader(), vi_handler)
