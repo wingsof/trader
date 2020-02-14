@@ -173,6 +173,9 @@ def index():
 
 def vbox_control():
     global vbox_on
+    global collectors
+    global subscribe_client
+    global partial_request
     import trade_machine
     vbox_controller = trade_machine.VBoxControl()
     while True:
@@ -180,8 +183,10 @@ def vbox_control():
         year, month, day = now.year, now.month, now.day
         is_turn_off_time = datetime(year, month, day, 5) <= now <= datetime(year, month, day, 7)
         if vbox_on and is_turn_off_time:
+            collectors.reset()
+            subscribe_client.reset()
+            partial_request.reset()
             vbox_controller.stop_machine()
-            #TODO: reset collectors
             vbox_on = False
         elif not vbox_on and not is_turn_off_time:
             vbox_on = True

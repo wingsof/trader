@@ -71,6 +71,9 @@ class CollectorList:
     def add_collector(self, sock, header, body):
         self.collectors.append(_Collector(sock, body['capability'], header['vendor']))
 
+    def reset(self):
+        self.collectors.clear()
+
     def handle_disconnect(self, sock):
         logger.warning('HANDLE DISCONNECT: CollectorList')
         collector = None
@@ -151,6 +154,11 @@ class CollectorList:
 class SubscribeClient:
     def __init__(self):
         # Key: code, Values: (collector_socket, [subscribe_client_socket, ])
+        self.clients = dict()
+        self.trade_clients = []
+        self.trader_sock = None
+
+    def reset(self):
         self.clients = dict()
         self.trade_clients = []
         self.trader_sock = None
@@ -314,6 +322,9 @@ class _Partial:
 
 class PartialRequest:
     def __init__(self):
+        self.client = dict()
+
+    def reset(self):
         self.client = dict()
 
     def start_partial_request(self, header, data, count):
