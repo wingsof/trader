@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['.
 
 
 from clients.common import morning_client
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, time
 from morning.back_data import holidays
 from morning_server import stock_api
 import gevent
@@ -21,6 +21,7 @@ from scipy.signal import find_peaks, peak_prominences
 
 target_date = datetime(2020, 2, 14)
 code_dict = dict()
+MAVG=10
 STATE_NONE = 0
 STATE_BOTTOM_PEAK = 1
 STATE_BUY = 1
@@ -31,11 +32,11 @@ def get_reversed(s):
 
 
 def calculate(x):
-    peaks, _ = find_peaks(x, distance=10)
+    peaks, _ = find_peaks(x, distance=MAVG)
     prominences = peak_prominences(x, peaks)[0]
 
-    peaks = np.extract(prominences > x.mean() * 0.002, peaks)
-    prominences = np.extract(prominences > x.mean() * 0.002, prominences)
+    peaks = np.extract(prominences > x.mean() * 0.005, peaks)
+    prominences = np.extract(prominences > x.mean() * 0.005, prominences)
     return peaks, prominences
 
 
@@ -49,14 +50,14 @@ def get_peaks(avg_data, is_top):
 
 
 def get_avg_price(price_array):
-    if len(price_array) < 10:
+    if len(price_array) < MAVG:
         return []
     avg_prices = np.array([])
     result_prices = []
     for p in price_array:
         avg_prices = np.append(avg_prices, np.array([p]))
 
-        if len(avg_prices) == 10:
+        if len(avg_prices) == MAVG:
             result_prices.append(avg_prices.mean())
             avg_prices = avg_prices[1:]
         else:
@@ -66,8 +67,9 @@ def get_avg_price(price_array):
 
 def get_tick_data(code, today, t):
     print('get_tick_data', code, today, t)
-    # TODO: no date field 2020/2/14 in db
-    tick_data = db_collection[code].find({'18': {'$gt': t}})
+    dt = datetime.combine(today, time(int(t/10000), int(t%10000/100), int(t%100)))
+    until_dt = datetime.combine(today, time(0)) + timedelta(days=1)
+    tick_data = db_collection[code].find({'date': {'$gt': dt, '$lt': until_dt}})
     converted_data = []
     for td in tick_data:
         converted = dt.cybos_stock_tick_convert(td)
@@ -81,9 +83,12 @@ def get_past_datas(code, today, yesterday, t):
         print('Cannot get yesterday data', code, yesterday)
         return
     code_dict[code]['yesterday_data'] = data[0]
+    # get minute data time < (t / 100)
     min_data = morning_client.get_minute_data(code, today, today, int(t / 100))
     code_dict[code]['today_min_data'] = min_data
+
     code_dict[code]['today_tick_data'] = get_tick_data(code, today, t)
+
     for mdata in code_dict[code]['today_min_data']:
         if mdata['highest_price'] > code_dict[code]['vi_highest']:
             code_dict[code]['vi_highest'] = mdata['highest_price']
@@ -92,9 +97,7 @@ def get_past_datas(code, today, yesterday, t):
 def get_min_data(tick, current):
     min_data = None
     if tick['time'] != current['tick_min']:
-        if current['tick_min'] == 0:
-            current['tick_min'] = tick['time']
-        else:
+        if current['tick_min'] != 0:
             if len(current['prices']) > 0:
                 min_data = {'h': max(current['prices']),
                             'l': min(current['prices']),
@@ -115,13 +118,17 @@ def get_min_data(tick, current):
 def start_trade(code, t):
     if len(code_dict[code]['today_tick_data']) == 0:
         print('something goes wrong', code)
+        return
     elif code_dict[code]['yesterday_data']['close_price'] > code_dict[code]['today_tick_data'][0]['current_price']:
         print('Low price than yesterday', code)
         return 
     
     current = {'tick_min': 0, 'prices': [], 'volumes': [], 'cum_buy_volumes': [], 'cum_sell_volumes': []}
     for tick in code_dict[code]['today_tick_data']:
-        if tick['market_type'] == dt.MarketType.IN_MARKET:
+        if tick['market_type'] == dt.MarketType.PRE_MARKET_EXP: # VI period
+            if code_dict[code]['vi_highest'] < tick['current_price']:
+                code_dict[code]['vi_highest'] = tick['current_price']
+        elif tick['market_type'] == dt.MarketType.IN_MARKET:
             min_data = get_min_data(tick, current)
             if min_data is not None:
                 code_dict[code]['today_min_data'].append({
@@ -141,16 +148,22 @@ def start_trade(code, t):
                                 code_dict[code]['bottom_price'] = data['close_price']
                                 code_dict[code]['state'] = STATE_BOTTOM_PEAK
             elif code_dict[code]['state'] == STATE_BOTTOM_PEAK:
-                if tick['current_price'] > code_dict[code]['vi_highest']:
+                if tick['current_price'] > code_dict[code]['vi_highest'] and tick['time'] <= 1500:
                     code_dict[code]['buy_price'] = tick['current_price']
                     gap_price = (code_dict[code]['vi_highest'] - code_dict[code]['bottom_price']) * 2/3
                     code_dict[code]['target_gap'] = gap_price
+
+                    if gap_price / code_dict[code]['vi_highest'] * 100 > 1:
+                        code_dict[code]['state'] = STATE_BUY
             elif code_dict[code]['state'] == STATE_BUY:
                 if tick['current_price'] > code_dict[code]['vi_highest'] + code_dict[code]['target_gap']:
-                    print('OK')
+                    print(code, 'OK', (tick['current_price'] - code_dict[code]['buy_price']) / code_dict[code]['buy_price'] * 100)
                     break
                 elif tick['current_price'] < code_dict[code]['vi_highest'] - code_dict[code]['target_gap']:
-                    print('FAILED')
+                    print(code, 'FAILED', (tick['current_price'] - code_dict[code]['buy_price']) / code_dict[code]['buy_price'] * 100)
+                    break
+                elif tick['time'] >= 1519:
+                    print(code, 'TIMEOUT', (tick['current_price'] - code_dict[code]['buy_price']) / code_dict[code]['buy_price'] * 100)
                     break
 
 

@@ -5,8 +5,6 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from pymongo import MongoClient
-from flask import Flask
-from gevent import pywsgi
 from gevent.server import StreamServer
 from datetime import datetime
 import threading
@@ -26,8 +24,6 @@ from utils import logger_server, logger
 
 VBOX_CHECK_INTERVAL = 60 # 1 minute
 
-app = Flask(__name__)
-app.debug = True
 vbox_on = False
 collectors = server_util.CollectorList()
 subscribe_client = server_util.SubscribeClient()
@@ -134,8 +130,10 @@ def handle_trade_request(sock, header, body):
     elif header['method'] == message.STOP_TRADE_DATA:
         subscribe_client.remove_trade_from_clients(sock)
         if subscribe_client.count_of_trade_client() == 0:
+            # send to collector
             stream_write(collector.sock, header, body, collectors)
 
+        # send to client
         header['type'] = message.RESPONSE_TRADE
         body = {'result': True}
         stream_write(sock, header, body, collectors)
@@ -166,11 +164,6 @@ def handle(sock, address):
         subscribe_client.handle_disconnect(e.args[1])
         
 
-@app.route('/')
-def index():
-    return 'hello world'
-
-
 def vbox_control():
     global vbox_on
     global collectors
@@ -181,7 +174,7 @@ def vbox_control():
     while True:
         now = datetime.now()
         year, month, day = now.year, now.month, now.day
-        is_turn_off_time = datetime(year, month, day, 5) <= now <= datetime(year, month, day, 7)
+        is_turn_off_time = datetime(year, month, day, 5) <= now <= datetime(year, month, day, 6, 30)
         if vbox_on and is_turn_off_time:
             collectors.reset()
             subscribe_client.reset()
@@ -203,8 +196,5 @@ server.start()
 
 if len(sys.argv) > 1 and sys.argv[1] == 'vbox':
     gevent.Greenlet.spawn(vbox_control)
-
-wsgi_server = pywsgi.WSGIServer((message.SERVER_IP, message.CLIENT_WEB_PORT), app)
-wsgi_server.serve_forever()
 
 log_server.join()

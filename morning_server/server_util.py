@@ -58,6 +58,9 @@ class _Collector:
     def append_subscribe_code(self, code):
         self.subscribe_code.append(code)
 
+    def remove_subscribe_code(self, code):
+        self.subscribe_code.remove(code)
+
     def set_request(self, sock, msg_id, is_pending):
         self.request['socket'] = sock
         self.request['id'] = msg_id
@@ -133,7 +136,8 @@ class CollectorList:
     def find_subscribe_collector(self):
         collector = None
         for c in self.collectors:
-            if c.capability & message.CAPABILITY_COLLECT_SUBSCRIBE and c.subscribe_count() < 400:
+            max_count = 380 if c.capability & message.CAPABILITY_TRADE else 400
+            if c.capability & message.CAPABILITY_COLLECT_SUBSCRIBE and c.subscribe_count() < max_count:
                 if collector is None:
                     collector = c
                 else:
@@ -157,6 +161,7 @@ class SubscribeClient:
         self.clients = dict()
         self.trade_clients = []
         self.trader_sock = None
+        self.collector = dict()
 
     def reset(self):
         self.clients = dict()
@@ -176,6 +181,7 @@ class SubscribeClient:
             self.trade_clients.remove(sock)
         else:
             print('No trade subscribe client')
+        # Handle count zero at handle_trade_request
 
     def count_of_trade_client(self):
         return len(self.trade_clients)
@@ -183,7 +189,6 @@ class SubscribeClient:
     def send_to_clients(self, code, header, body):
         if self.code_in_clients(code):
             #logger.info('Subscribe socket count %d', len(self.clients[code][1]))
-            # STOP subscribe when client sock len is zero
             for s in self.clients[code][1]:
                 stream_write(s, header, body, self)
 
@@ -216,6 +221,8 @@ class SubscribeClient:
         # Handle other subscriber
         for k, v in self.clients.items():
             if len(v[1]) == 0:
+                self.collector[k].remove_subscribe_code(k)
+                self.collector.pop(k, None)
                 for stop_k, stop_v in stop_methods.items():
                     if k.endswith(stop_k):
                         header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, stop_v)
@@ -250,6 +257,7 @@ class SubscribeClient:
             else:
                 collector.append_subscribe_code(code)
                 self.clients[code] = (collector.sock, [sock])
+                self.collector[code] = collector
                 logger.info('ADD NEW SUBSCRIBE %s', code)
                 stream_write(collector.sock, header, body, collectors)
 
@@ -257,6 +265,9 @@ class SubscribeClient:
         if self.code_in_clients(code):
             self.clients[code][1].remove(sock)
             if len(self.clients[code][1]) == 0:
+                self.collector[code].remove_subscribe_code(code)
+                self.collector.pop(code, None)
+
                 stream_write(self.clients[code][0], header, body, collectors)
                 self.clients.pop(code, None)
         else:

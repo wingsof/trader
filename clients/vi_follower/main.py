@@ -19,19 +19,25 @@ from utils import time_converter
 
 subscribe_code = dict()
 yesterday_data = dict()
+db_collection = None
 tasks = Queue()
 
-def start_watch(db_client):
+def start_watch():
     while True:
-        code = tasks.get()
-        if code in subscribe_code:
-            pass
-        else:
-            sf = stock_follower.StockFollower(morning_client.get_reader(), db_collection, code, yesterday_data[code])
-            if sf.start_watch():
-                subscribe_code[code] = sf
+        msg = tasks.get().split(':')
+
+        if msg[0] == 'alarm':
+            code = msg[1]
+            if code in subscribe_code:
+                pass
             else:
-                print('Failed to watch', code)
+                sf = stock_follower.StockFollower(morning_client.get_reader(), code, yesterday_data[code])
+                if sf.start_watch():
+                    subscribe_code[code] = sf
+                else:
+                    print('Failed to watch', code)
+        elif msg[0] == 'exit':
+            break
 
 
 def vi_handler(_, data):
@@ -43,40 +49,56 @@ def vi_handler(_, data):
         code = data['3']
         print(data)
         if data['4'] == 755: # start
-            tasks.put_nowait(code)
+            tasks.put_nowait('alarm:' + code)
             print('put code', code)
         elif data['4'] == 756: # stop
-            pass # Start monitoring
+            tasks.put_nowait('disalarm:' + code)
 
 
-if __name__ == '__main__':
+def check_time():
+    while True:
+        now = datetime.now()
+        if now.hour >= 18 and now.minute >= 35:
+            tasks.put_nowait('exit:')
+            break
+        gevent.sleep(60)
+
+
+def start_vi_follower():
+    global db_collection
+
     market_code = morning_client.get_market_code()
     today = datetime.now().date()
-    if holidays.is_holidays(today):
-        print('today is holiday')
-        sys.exit(1)
+    #if holidays.is_holidays(today):
+    #    print('today is holiday')
+    #    sys.exit(1)
 
     yesterday = holidays.get_yesterday(today)
     db_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
 
     yesterday_list = []
-    db_list = list(db_collection['amount_rank'].find({'0': time_converter.datetime_to_intdate(today)}))
+    db_list = list(db_collection['amount_rank'].find({'0': time_converter.datetime_to_intdate(yesterday)}))
 
     if len(db_list) > 0:
         yesterday_list = db_list
+        for data in yesterday_list:
+            yesterday_data[data['code']] = data
     else:
         for progress, code in enumerate(market_code):
             print('collect yesterday data', f'{progress+1}/{len(market_code)}', end='\r')
             data = morning_client.get_past_day_data(code, yesterday, yesterday)
             if len(data) == 1:
-                yesterday_data[code] = data[0]
-                yesterday_list.append(data[0])
+                data = data[0]
+                data['code'] = code
+                yesterday_data[code] = data
+                yesterday_list.append(data)
         print('')
         yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
 
     yesterday_list = yesterday_list[:100]
     for ydata in yesterday_list:
-        sf = stock_follower.StockFollower(morning_client.get_reader(), db_collection, ydata['code'], yesterday_data[code])
+        code = ydata['code']
+        sf = stock_follower.StockFollower(morning_client.get_reader(), db_collection, code, yesterday_data[code])
         sf.subscribe_at_startup()
         subscribe_code[code] = sf
         if len(db_list) == 0:
@@ -85,4 +107,10 @@ if __name__ == '__main__':
     print('Start Listening...')
     stock_api.subscribe_alarm(morning_client.get_reader(), vi_handler)
 
-    gevent.spawn(start_watch, db_collection).join()
+    watch_thread = gevent.spawn(start_watch)
+    time_check_thread = gevent.spawn(check_time)
+    gevent.joinall([watch_thread, time_check_thread])
+
+
+if __name__ == '__main__':
+    start_vi_follower()

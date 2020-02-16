@@ -22,7 +22,7 @@ from scipy.signal import find_peaks, peak_prominences
 code_dict = dict()
 STATE_NONE = 0
 STATE_BOTTOM_PEAK = 1
-STATE_BUY = 1
+STATE_BUY = 2
 
 def get_reversed(s):
     distance_from_mean = s.mean() - s
@@ -33,8 +33,8 @@ def calculate(x):
     peaks, _ = find_peaks(x, distance=10)
     prominences = peak_prominences(x, peaks)[0]
 
-    peaks = np.extract(prominences > x.mean() * 0.002, peaks)
-    prominences = np.extract(prominences > x.mean() * 0.002, prominences)
+    peaks = np.extract(prominences > x.mean() * 0.005, peaks)
+    prominences = np.extract(prominences > x.mean() * 0.005, prominences)
     return peaks, prominences
 
 
@@ -92,11 +92,17 @@ def get_past_datas(code, today, yesterday, t):
             code_dict[code]['vi_highest'] = mdata['highest_price']
 
     if code_dict[code]['vi_highest'] == 0:
-        code_dict[code]['vi_highest'] = code_dict[code]['today_min_after_vi'][-1]['start_price']
+        # Temporary when 9:00 starts VI then no today_min_data
+        code_dict[code]['vi_highest'] = code_dict[code]['today_min_after_vi'][0]['start_price']#code_dict[code]['yesterday_data']['close_price'] * 1.1
+
+
+def debug_print(*kargs):
+    if len(sys.argv) > 1 and sys.argv[1] == 'debug':
+        print(kargs)
 
 
 def start_trade(code, t):
-    if code_dict[code]['yesterday_data']['close_price'] > code_dict[code]['today_min_data'][-1]['close_price']:
+    if len(code_dict[code]['today_min_data']) > 0 and code_dict[code]['yesterday_data']['close_price'] > code_dict[code]['today_min_data'][-1]['close_price']:
         print('Low price than yesterday', code)
         return 
     
@@ -107,30 +113,36 @@ def start_trade(code, t):
         code_dict[code]['today_min_data'].append(min_data)
 
         if code_dict[code]['state'] == STATE_NONE:
-            print(code, min_data['time'], 'STATE NONE')
+            debug_print(code, min_data['time'], 'STATE NONE')
             avg_prices = get_avg_price([d['close_price'] for d in code_dict[code]['today_min_data']])
             if len(avg_prices) > 0:
                 peaks = get_peaks(avg_prices, False)
-                print(code, min_data['time'], 'len', len(peaks), [code_dict[code]['today_min_data'][p]['time'] for p in peaks])
+                debug_print(code, min_data['time'], 'len', len(peaks), [code_dict[code]['today_min_data'][p]['time'] for p in peaks])
                 if len(peaks) > 0:
                     for p in peaks:
                         data = code_dict[code]['today_min_data'][p]
+                        debug_print('peak', 'min close', data['close_price'], 'vi', code_dict[code]['vi_highest'])
                         if data['time'] > (t / 100) and data['close_price'] < code_dict[code]['vi_highest']:
                             code_dict[code]['bottom_price'] = data['close_price']
                             code_dict[code]['state'] = STATE_BOTTOM_PEAK
         elif code_dict[code]['state'] == STATE_BOTTOM_PEAK:
-            print(code, min_data['time'], 'STATE BOTTOM PEAK')
+            debug_print(code, min_data['time'], 'STATE BOTTOM PEAK', min_data['highest_price'], code_dict[code]['vi_highest'])
             if min_data['highest_price'] > code_dict[code]['vi_highest']:
-                code_dict[code]['buy_price'] = min_data['highest_price']
+                code_dict[code]['buy_price'] = code_dict[code]['vi_highest']
                 gap_price = (code_dict[code]['vi_highest'] - code_dict[code]['bottom_price']) * 2/3
                 code_dict[code]['target_gap'] = gap_price
+
+                if (code_dict[code]['vi_highest'] + code_dict[code]['target_gap'] - code_dict[code]['vi_highest']) / code_dict[code]['vi_highest'] * 100 > 1:
+                    code_dict[code]['state'] = STATE_BUY
+                else:
+                    break
         elif code_dict[code]['state'] == STATE_BUY:
-            print(code, min_data['time'], 'STATE BUY', 'GAP', code_dict[code]['target_gap'])
+            debug_print(code, min_data['time'], 'STATE BUY', 'GAP', code_dict[code]['target_gap'], 'close_price', min_data['close_price'], 'VI', code_dict[code]['vi_highest'])
             if min_data['close_price'] > code_dict[code]['vi_highest'] + code_dict[code]['target_gap']:
-                print('OK')
+                print(code, 'OK', (min_data['close_price'] - code_dict[code]['buy_price']) / code_dict[code]['buy_price'] * 100)
                 break
             elif min_data['close_price'] < code_dict[code]['vi_highest'] - code_dict[code]['target_gap']:
-                print('FAILED')
+                print(code, 'FAILED', (min_data['close_price'] - code_dict[code]['buy_price']) / code_dict[code]['buy_price'] * 100)
                 break
 
 
@@ -144,7 +156,19 @@ if __name__ == '__main__':
         code_dict[code] = {'state': STATE_NONE, 'yesterday_data': None, 'today_min_data': None, 'today_min_after_vi': None, 'vi_highest': 0, 'bottom_price': 0, 'buy_price': 0, 'target_gap': 0}
 
     vi_list = [#{'0': time, '1': ord('1'), '2': 201, '3': code, '4': 755},
+                {'0':100635 , '1': ord('1'), '2': 201, '3': 'A064820', '4': 755},
+                {'0':100853 , '1': ord('1'), '2': 201, '3': 'A064820', '4': 756}, # OK
+                {'0':95825 , '1': ord('1'), '2': 201, '3': 'A016600', '4': 755},
+                {'0':100050 , '1': ord('1'), '2': 201, '3': 'A016600', '4': 756},
+                {'0':90009, '1': ord('1'), '2': 201, '3': 'A263920', '4': 755},
+                {'0':90212, '1': ord('1'), '2': 201, '3': 'A263920', '4': 756},
+                {'0':90028, '1': ord('1'), '2': 201, '3': 'A234100', '4': 755},
+                {'0':90235, '1': ord('1'), '2': 201, '3': 'A234100', '4': 756},
+                {'0':90155, '1': ord('1'), '2': 201, '3': 'A016600', '4': 755},
+                {'0':90416, '1': ord('1'), '2': 201, '3': 'A016600', '4': 756},
             ]
+
+    #vi_list = vi_list[-2:]
     for adata in vi_list:
         #print(adata)
         code = adata['3']

@@ -20,21 +20,21 @@ class StockFollower:
 
         tick_data = data[0]
         self.db_collection[code].insert_one(tick_data)
-        print('TICK', code)
+        #print('TICK', code)
 
     def ba_data_handler(self, code, data):
         if len(data) != 1:
             return
         ba_data = data[0]
         self.db_collection[code].insert_one(ba_data)
-        print('BA', code)
+        #print('BA', code)
 
     def subject_handler(self, code, data):
         if len(data) != 1:
             return
         subject_data = data[0]
         self.db_collection[code].insert_one(subject_data)
-        print('SUBJECT', subject_data)
+        #print('SUBJECT', subject_data)
 
 
     def start_watch(self):
