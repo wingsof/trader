@@ -113,9 +113,16 @@ def get_minute_data(code, from_date, until_date, t = 0):
 
 def setup():
     global _message_reader
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
-    sock.connect(server_address)
+    while True:
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
+            sock.connect(server_address)
+            break
+        except socket.error:
+            print('Retrying connect to apiserver')
+            gevent.sleep(1)
+
     _message_reader = stream_readwriter.MessageReader(sock)
     _message_reader.start()
 
