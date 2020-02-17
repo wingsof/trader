@@ -3,6 +3,7 @@ from gevent import monkey; monkey.patch_all()
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.join(*(['..' + os.sep] * 2)))))
 
+
 import socket
 import gevent
 import time
@@ -19,8 +20,7 @@ def handle_request(sock, header, body):
     print('REQUEST ' + str(header))
     header['type'] = message.RESPONSE
     if header['method'] == message.SHUTDOWN:
-        import win32api
-        win32api.InitiateSystemShutdown(None, 'Shutdown msg from API Server', 10, 1, 0)
+        pass
     elif header['method'] == message.DAY_DATA:
         _, data = stock_chart.get_day_period_data(header['code'], header['from'], header['until'])
         stream_readwriter.write(sock, header, data)
@@ -258,13 +258,9 @@ def handle_subscribe(sock, header, body):
 
 def mainloop(app):
     while True:
-        print('App Process Events-s')
         app.processEvents()
-        print('App Process Events-f')
         while app.hasPendingEvents():
-            print('App Process Events-b')
             app.processEvents()
-            print('App Process Events-e')
             gevent.sleep()
         gevent.sleep()
 
@@ -323,3 +319,5 @@ if __name__ == '__main__':
         rlogger.info('HAS TRADE CAPABILITY')
     
     gevent.joinall([gevent.spawn(dispatch_message, sock), gevent.spawn(mainloop, app)])
+
+

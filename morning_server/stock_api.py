@@ -4,6 +4,18 @@ from morning_server import stream_readwriter
 from morning_server import message
 
 
+def request_subscribe_stat(reader):
+    header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.SUBSCRIBE_STATS)
+    body = []
+    return reader.block_write(header, body)
+
+
+def request_collector_stat(reader):
+    header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.COLLECTOR_STATS)
+    body = []
+    return reader.block_write(header, body)
+
+
 def request_stock_day_data(reader, code, from_date, until_date, method=message.DAY_DATA):
     header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, method)
     header['code'] = code

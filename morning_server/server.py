@@ -186,6 +186,9 @@ def vbox_control():
     global subscribe_client
     global partial_request
     import trade_machine
+    gevent.sleep(60)
+    send_shutdown_msg()
+    """
     vbox_controller = trade_machine.VBoxControl()
     while True:
         now = datetime.now()
@@ -203,6 +206,7 @@ def vbox_control():
             vbox_controller.start_machine()
 
         gevent.sleep(VBOX_CHECK_INTERVAL)
+    """
 
 
 log_server = Process(target=logger_server.start_log_server)

@@ -43,7 +43,7 @@ class MorningStats:
 
     def get_collector_info(self):
         msg = []
-        for c in self.collectors:
+        for c in self.collectors.collectors:
             info = dict()
             info['vendor'] = c.get_vendor()
             info['subscribe_count'] = c.subscribe_count()
@@ -51,11 +51,11 @@ class MorningStats:
             info['lastest_process_time'] = c.latest_request_process_time
             capability = ''
             if c.capability & message.CAPABILITY_REQUEST_RESPONSE:
-                capability += 'REQ/REP '
+                capability += 'REQ/REP'
             if c.capability & message.CAPABILITY_COLLECT_SUBSCRIBE:
-                capability += 'TRADE '
+                capability += ' SUBSCRIBE'
             if c.capability & message.CAPABILITY_TRADE:
-                capability += 'TRADE '
+                capability += ' TRADE'
             info['capability'] = capability
             msg.append(info)
         return msg
