@@ -15,6 +15,7 @@ from clients.vi_follower import stock_follower
 from configs import db
 from pymongo import MongoClient
 from utils import time_converter
+from utils import slack
 
 
 subscribe_code = dict()
@@ -70,6 +71,7 @@ def check_time():
 def start_vi_follower():
     global db_collection
 
+    slack.send_slack_message('START VI FOLLOWER')
     market_code = morning_client.get_market_code()
     today = datetime.now().date()
     #if holidays.is_holidays(today):
@@ -99,12 +101,13 @@ def start_vi_follower():
         subscribe_code[code] = sf
 
     print('Start Listening...')
+    slack.send_slack_message('START LISTENING')
     stock_api.subscribe_alarm(morning_client.get_reader(), vi_handler)
 
     watch_thread = gevent.spawn(start_watch)
     time_check_thread = gevent.spawn(check_time)
     gevent.joinall([watch_thread, time_check_thread])
-
+    slack.send_slack_message('VI FOLLOWER DONE')
 
 if __name__ == '__main__':
     start_vi_follower()
