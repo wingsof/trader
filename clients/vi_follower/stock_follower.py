@@ -12,6 +12,7 @@ class StockFollower:
         self.started_at_startup = False
         self.db_collection = db_col
         # yesterday data is None when newly stocked today
+        # additionally sometimes market code does not contain VI code why?
         self.yesterday_data = yesterday_data
         self.min_data = None
 

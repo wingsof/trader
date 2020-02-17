@@ -19,7 +19,7 @@ import numpy as np
 from scipy.signal import find_peaks, peak_prominences
 
 
-target_date = datetime(2020, 2, 14)
+target_date = datetime(2020, 2, 17)
 code_dict = dict()
 MAVG=10
 STATE_NONE = 0
@@ -67,9 +67,9 @@ def get_avg_price(price_array):
 
 def get_tick_data(code, today, t):
     print('get_tick_data', code, today, t)
-    dt = datetime.combine(today, time(int(t/10000), int(t%10000/100), int(t%100)))
+    from_dt = datetime.combine(today, time(int(t/10000), int(t%10000/100), int(t%100)))
     until_dt = datetime.combine(today, time(0)) + timedelta(days=1)
-    tick_data = db_collection[code].find({'date': {'$gt': dt, '$lt': until_dt}})
+    tick_data = db_collection[code].find({'date': {'$gt': from_dt, '$lt': until_dt}})
     converted_data = []
     for td in tick_data:
         converted = dt.cybos_stock_tick_convert(td)
@@ -173,6 +173,8 @@ if __name__ == '__main__':
     alarm_data = sorted(alarm_data, key=lambda x: x['date'])
     market_code = morning_client.get_market_code()
     yesterday = holidays.get_yesterday(target_date.date())
+    done_codes = []
+    print(len(market_code))
 
     for code in market_code:
         code_dict[code] = {'state': STATE_NONE, 'yesterday_data': None, 'today_min_data': None, 'vi': True, 'today_tick_data': None, 'vi_highest': 0, 'bottom_price': 0, 'buy_price': 0, 'target_gap': 0}
@@ -180,6 +182,8 @@ if __name__ == '__main__':
     for adata in alarm_data:
         #print(adata)
         code = adata['3']
+        if code not in market_code:
+            continue
         alarm_type = adata['1']
         market_type = adata['2']
         vi_type = adata['4']
@@ -188,6 +192,7 @@ if __name__ == '__main__':
                 print('get past data', code, adata['0'])
                 get_past_datas(code, target_date.date(), yesterday, adata['0']) 
         elif alarm_type == ord('1') and market_type == 201 and vi_type == 756:
-            if code_dict[code]['yesterday_data'] is not None:
+            if code_dict[code]['yesterday_data'] is not None and code not in done_codes:
                 print('start trade', code, adata['0'])
                 start_trade(code, adata['0'])
+                done_codes.append(code)

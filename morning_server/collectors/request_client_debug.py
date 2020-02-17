@@ -15,11 +15,27 @@ from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, 
 from morning_server.collectors import shutdown
 from configs import client_info
 from utils import rlogger
+from gevent.lock import Semaphore
+
+
+USE_SEMAPHORE = True
+
+semaphore = Semaphore()
+
+def acquire_sem():
+    if USE_SEMAPHORE:
+        semaphore.acquire()
+
+
+def release_sem():
+    if USE_SEMAPHORE:
+        semaphore.release()
 
 
 def handle_request(sock, header, body):
     print('REQUEST ' + str(header))
     header['type'] = message.RESPONSE
+    acquire_sem()
     if header['method'] == message.SHUTDOWN:
         shutdown.go_shutdown()
     elif header['method'] == message.DAY_DATA:
@@ -48,6 +64,7 @@ def handle_request(sock, header, body):
     elif header['method'] == message.INVESTOR_DATA:
         data = investor_7254.check_investor_trend(header['code'], header['from'], header['until'])
         stream_readwriter.write(sock, header, data)
+    release_sem()
     print('REQUEST DONE')
 
 
@@ -119,6 +136,7 @@ def get_alarm_subscriber(sock):
 def handle_trade_request(sock, header, body):
     rlogger.info('TRADE REQUEST ' + str(header))
     header['type'] = message.RESPONSE_TRADE
+    acquire_sem()
     if header['method'] == message.GET_LONG_LIST:
         lm = long_manifest_6033.LongManifest(account.get_account_number(), account.get_account_type())
         stream_readwriter.write(sock, header, lm.get_long_list())
@@ -168,6 +186,7 @@ def handle_trade_request(sock, header, body):
         order_queue = order_in_queue.OrderInQueue(account.get_account_number(), account.get_account_type())
         result = order_queue.request()
         stream_readwriter.write(sock, header, result)
+    release_sem()
 
 
 def get_code(code):
@@ -181,6 +200,7 @@ def get_code(code):
 
 def handle_subscribe(sock, header, body):
     print('HANDLE SUBSCRIBE ' + str(header))
+    acquire_sem()
     code = get_code(header['code'])
     if len(code) == 0:
         rlogger.warning('EMPTY CODE %s', header)
@@ -254,14 +274,19 @@ def handle_subscribe(sock, header, body):
         if subscribe_alarm is not None:
             subscribe_alarm.stop_subscribe()
             rlogger.info('STOP SUBSCRIBE STOCK ALARM')
+    release_sem()
     print('HANDLE SUBSCRIBE DONE')
 
 
 def mainloop(app):
     while True:
+        acquire_sem()
         app.processEvents()
+        release_sem()
         while app.hasPendingEvents():
+            acquire_sem()
             app.processEvents()
+            release_sem()
             gevent.sleep()
         gevent.sleep()
 
