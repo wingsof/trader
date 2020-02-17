@@ -13,14 +13,14 @@ from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bi
 from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance, trade_subject, world_subscribe, index_subscribe, stock_alarm
 from configs import client_info
 from utils import rlogger
+from morning_server.collectors import shutdown
 
 
 def handle_request(sock, header, body):
     rlogger.info('REQUEST ' + str(header))
     header['type'] = message.RESPONSE
     if header['method'] == message.SHUTDOWN:
-        import win32api
-        win32api.InitiateSystemShutdown(None, 'Shutdown msg from API Server', 10, 1, 0)
+        shutdown.go_shutdown()
     elif header['method'] == message.DAY_DATA:
         _, data = stock_chart.get_day_period_data(header['code'], header['from'], header['until'])
         stream_readwriter.write(sock, header, data)

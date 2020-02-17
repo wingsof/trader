@@ -12,6 +12,7 @@ from PyQt5.QtCore import QCoreApplication
 from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code, abroad_chart, investor_7254, stock_today_data
 from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance, trade_subject, world_subscribe, index_subscribe, stock_alarm
+from morning_server.collectors import shutdown
 from configs import client_info
 from utils import rlogger
 
@@ -20,7 +21,7 @@ def handle_request(sock, header, body):
     print('REQUEST ' + str(header))
     header['type'] = message.RESPONSE
     if header['method'] == message.SHUTDOWN:
-        pass
+        shutdown.go_shutdown()
     elif header['method'] == message.DAY_DATA:
         _, data = stock_chart.get_day_period_data(header['code'], header['from'], header['until'])
         stream_readwriter.write(sock, header, data)
