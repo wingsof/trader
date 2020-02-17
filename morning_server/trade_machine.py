@@ -29,11 +29,12 @@ class VBoxControl:
             gevent.sleep(60)
 
     def stop_machine(self):
+        """ Use msg to shutdown vbox
         for m in self.vbox_machines:
             print('STOP Machine', m.vm_name)
             m.stop()
             gevent.sleep(60)
-            
+        """  
         self.vbox_machines.clear()
 
 if __name__ == '__main__':

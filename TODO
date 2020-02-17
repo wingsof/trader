@@ -1,7 +1,18 @@
-* insert_many 로 어제 데이터 없는 경우 DB에 넣기
-* VirtualMachine 에서 연결되지 않은 경우, restart
-* amount 100 개 DB에 넣기
-    * 이미 100개 있다면, DB에서 읽기
+* 테스트
+    * Shutdown 테스트
+    * STAT 테스트
+    * 내일 오전: conflict test
+
+
+* VBOX 강제 종료가 아닌 InitiateShutdown 관련 테스트
+* 금일 데이터 Simulation
+* Data Validation 테스트(금일 관련 자료가 정상적으로 수집되었는지 검사)
+    * 문제가 있다면, Slack 으로 메시지 전송
+    * 초기 시스템 시작 관련도 메시지 전달
+* Slack 관련 연동 검토(트레이딩 관련 메시지)
+* 
+
+
 * VI Simulator
     * alarm 읽고 나서, 10분 MAVG 로 데이터 만들어, peak 검사
         * 일단 VI 시점 가격으로 다음 아래 peak가 가격 아래에 놓이는지 확인
@@ -186,7 +197,7 @@ Done
 * DB / Cybos API 만들기
     * 항상 DB에서 지우고, 다시 insert 하는 것도 burden, DB 에 있는 경우 DB에서 사용, 없는 경우 cybos API 로 얻어와
       append 로 붙이는 거 고려
-
+* VirtualMachine 에서 연결되지 않은 경우, restart
 
 
 No important

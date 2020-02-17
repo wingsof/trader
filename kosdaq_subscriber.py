@@ -5,6 +5,7 @@ import sys
 import gevent
 from clients.vi_follower import main
 from morning.back_data import holidays
+from clients.vi_data_validation import data_validation
 from datetime import datetime
 from multiprocessing import Process
 
@@ -19,8 +20,13 @@ def run_subscriber():
             subscribe_process = Process(target=main.start_vi_follower)
             subscribe_process.start()
             subscribe_process.join()
+            gevent.sleep(600)
+            validate_process = Process(target=data_validation.start_validation)
+            validate_process.start()
+            validate_process.join()
 
-        gevent.sleep(600)    
+        gevent.sleep(600)
+                 
 
 if __name__ == '__main__':
     run_subscriber()

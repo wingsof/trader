@@ -20,6 +20,7 @@ from morning_server.handlers import request_pre_handler as request_pre_handler
 import server_util
 from server_util import stream_write
 from utils import logger_server, logger
+from morning_server import morning_stats
 
 
 VBOX_CHECK_INTERVAL = 60 # 1 minute
@@ -28,6 +29,7 @@ vbox_on = False
 collectors = server_util.CollectorList()
 subscribe_client = server_util.SubscribeClient()
 partial_request = server_util.PartialRequest()
+morning_stat = morning_stats.MorningStats(collectors)
 
 
 def handle_collector(sock, header, body):
@@ -83,7 +85,13 @@ def handle_request_kiwoom(sock, header, body):
 
 def handle_request(sock, header, body):
     logger.info('HANDLE REQUEST %s', header)
-    if header['vendor'] == message.CYBOS:
+    if header['method'] == message.SUBSCRIBE_STATS:
+        header['type'] = message.RESPONSE
+        stream_write(sock, header, morning_stat.get_subscribe_response_info())
+    elif header['method'] == message.COLLECTOR_STATS:
+        header['type'] = message.RESPONSE
+        stream_write(sock, header, morning_stat.get_collector_info())
+    elif header['vendor'] == message.CYBOS:
         handle_request_cybos(sock, header, body)
     elif header['vendor'] == message.KIWOOM:
         handle_request_kiwoom(sock, header, body)
@@ -107,10 +115,11 @@ def handle_subscribe(sock, header, body):
 
 
 def handle_subscribe_response(sock, header, body):
-    logger.info('HANDLE SUBSCRIBE RESPONSE %s', hex(threading.get_ident()))
+    #logger.info('HANDLE SUBSCRIBE RESPONSE %s', hex(threading.get_ident()))
     code = header['code']
     subscribe_client.send_to_clients(code, header, body)
-    logger.info('HANDLE SUBSCRIBE RESPONSE DONE')
+    morning_stat.increment_subscribe_count(code)
+    #logger.info('HANDLE SUBSCRIBE RESPONSE DONE')
 
 
 def handle_trade_response(sock, header, body):
@@ -164,6 +173,13 @@ def handle(sock, address):
         subscribe_client.handle_disconnect(e.args[1])
         
 
+def send_shutdown_msg():
+    header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.SHUTDOWN)
+    body = []
+    for c in collectors.collectors:
+        stream_write(c.sock, header, body)
+
+
 def vbox_control():
     global vbox_on
     global collectors
@@ -176,6 +192,7 @@ def vbox_control():
         year, month, day = now.year, now.month, now.day
         is_turn_off_time = datetime(year, month, day, 5) <= now <= datetime(year, month, day, 6, 30)
         if vbox_on and is_turn_off_time:
+            send_shutdown_msg()
             collectors.reset()
             subscribe_client.reset()
             partial_request.reset()

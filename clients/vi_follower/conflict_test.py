@@ -11,7 +11,7 @@ from morning.back_data import holidays
 from morning_server import stock_api
 import gevent
 from gevent.queue import Queue
-from clients.vi_follower import stock_follower
+from clients.vi_follower import stock_follower_conflict as stock_follower
 from configs import db
 from pymongo import MongoClient
 from utils import time_converter
@@ -20,50 +20,10 @@ from utils import time_converter
 subscribe_code = dict()
 yesterday_data = dict()
 db_collection = None
-tasks = Queue()
-
-def start_watch():
-    while True:
-        msg = tasks.get().split(':')
-
-        if msg[0] == 'alarm':
-            code = msg[1]
-            if code in subscribe_code:
-                pass
-            else:
-                if code in yesterday_data:
-                    sf = stock_follower.StockFollower(morning_client.get_reader(), db_collection, code, yesterday_data[code])
-                else:
-                    sf = stock_follower.StockFollower(morning_client.get_reader(), db_collection, code, None)
-                if sf.start_watch():
-                    subscribe_code[code] = sf
-                else:
-                    print('Failed to watch', code)
-        elif msg[0] == 'exit':
-            break
-
-
-def vi_handler(_, data):
-    print('ALARM', data)
-    data = data[0]
-    db_collection['alarm'].insert_one(data)
-    if data['1'] == ord('1') and data['2'] == 201:
-        alarm_time = data['0']
-        code = data['3']
-        print(data)
-        if data['4'] == 755: # start
-            tasks.put_nowait('alarm:' + code)
-            print('put code', code)
-        elif data['4'] == 756: # stop
-            tasks.put_nowait('disalarm:' + code)
 
 
 def check_time():
     while True:
-        now = datetime.now()
-        if now.hour >= 18 and now.minute >= 35:
-            tasks.put_nowait('exit:')
-            break
         gevent.sleep(60)
 
 
@@ -99,11 +59,9 @@ def start_vi_follower():
         subscribe_code[code] = sf
 
     print('Start Listening...')
-    stock_api.subscribe_alarm(morning_client.get_reader(), vi_handler)
 
-    watch_thread = gevent.spawn(start_watch)
     time_check_thread = gevent.spawn(check_time)
-    gevent.joinall([watch_thread, time_check_thread])
+    gevent.joinall([time_check_thread])
 
 
 if __name__ == '__main__':

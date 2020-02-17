@@ -88,6 +88,7 @@ class CollectorList:
 
         if collector is not None:
             # TODO: Notify collector disconnected events to clients
+            # Remove subscribes in SubsbscribeClient
             self.collectors.remove(collector)
 
     def get_available_trade_collector(self):

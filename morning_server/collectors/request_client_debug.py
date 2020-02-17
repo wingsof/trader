@@ -16,7 +16,7 @@ from utils import rlogger
 
 
 def handle_request(sock, header, body):
-    rlogger.info('REQUEST ' + str(header))
+    print('REQUEST ' + str(header))
     header['type'] = message.RESPONSE
     if header['method'] == message.SHUTDOWN:
         import win32api
@@ -47,24 +47,31 @@ def handle_request(sock, header, body):
     elif header['method'] == message.INVESTOR_DATA:
         data = investor_7254.check_investor_trend(header['code'], header['from'], header['until'])
         stream_readwriter.write(sock, header, data)
+    print('REQUEST DONE')
 
 
 def callback_stock_subscribe(sock, code, datas):
+    print('callback_subject_stock-started')
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.STOCK_DATA)
     header['code'] = code
     stream_readwriter.write(sock, header, datas)
+    print('callback_subject_stock-done')
 
 
 def callback_bidask_subscribe(sock, code, datas):
+    print('callback_subject_bidask-started')
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.BIDASK_DATA)
     header['code'] = code + message.BIDASK_SUFFIX
     stream_readwriter.write(sock, header, datas)
+    print('callback_subject_bidask-done')
 
 
 def callback_subject_subscribe(sock, code, datas):
+    print('callback_subject_subscribe-started')
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.SUBJECT_DATA)
     header['code'] = code + message.SUBJECT_SUFFIX
     stream_readwriter.write(sock, header, datas)
+    print('callback_subject_subscribe-done')
 
 
 def callback_world_subscribe(sock, code, datas):
@@ -79,15 +86,19 @@ def callback_trade_subscribe(sock, result):
 
 
 def callback_index_subscribe(sock, code, datas):
+    print('callback_index_subscribe-started')
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.INDEX_DATA)
     header['code'] = code + message.INDEX_SUFFIX
     stream_readwriter.write(sock, header, datas)
+    print('callback_index_subscribe-done')
 
 
 def callback_alarm_subscribe(sock, datas):
+    print('callback_alarm_subscribe-started')
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.ALARM_DATA)
     header['code'] = message.STOCK_ALARM_CODE
     stream_readwriter.write(sock, header, datas)
+    print('callback_alarm_subscribe-done')
 
 
 def get_order_subscriber(sock):
@@ -168,7 +179,7 @@ def get_code(code):
 
 
 def handle_subscribe(sock, header, body):
-    rlogger.info('HANDLE SUBSCRIBE ' + str(header))
+    print('HANDLE SUBSCRIBE ' + str(header))
     code = get_code(header['code'])
     if len(code) == 0:
         rlogger.warning('EMPTY CODE %s', header)
@@ -242,21 +253,28 @@ def handle_subscribe(sock, header, body):
         if subscribe_alarm is not None:
             subscribe_alarm.stop_subscribe()
             rlogger.info('STOP SUBSCRIBE STOCK ALARM')
+    print('HANDLE SUBSCRIBE DONE')
 
 
 def mainloop(app):
     while True:
+        print('App Process Events-s')
         app.processEvents()
+        print('App Process Events-f')
         while app.hasPendingEvents():
+            print('App Process Events-b')
             app.processEvents()
+            print('App Process Events-e')
             gevent.sleep()
         gevent.sleep()
 
 
 def dispatch_message(sock):
+    print('dispatch_message-start')
     stream_readwriter.dispatch_message(sock, request_handler=handle_request, 
                                         subscribe_handler=handle_subscribe, 
                                         request_trade_handler=handle_trade_request)
+    print('dispatch_message-done')
 
 
 if __name__ == '__main__':

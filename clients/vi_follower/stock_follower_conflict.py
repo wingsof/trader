@@ -15,32 +15,37 @@ class StockFollower:
         self.yesterday_data = yesterday_data
         self.min_data = None
 
+    def check_min_data(self, code):
+        min_data = stock_api.request_stock_today_data(self.reader, self.code)
+
     def tick_data_handler(self, code, data):
         if len(data) != 1:
             return
 
         tick_data = data[0]
-        self.db_collection[code].insert_one(tick_data)
+        gevent.spawn(self.check_min_data, code)
+        #self.db_collection[code].insert_one(tick_data)
         #print('TICK', code)
 
     def ba_data_handler(self, code, data):
         if len(data) != 1:
             return
         ba_data = data[0]
-        self.db_collection[code].insert_one(ba_data)
+        gevent.spawn(self.check_min_data, code)
+        #self.db_collection[code].insert_one(ba_data)
         #print('BA', code)
 
     def subject_handler(self, code, data):
         if len(data) != 1:
             return
         subject_data = data[0]
-        self.db_collection[code].insert_one(subject_data)
+        gevent.spawn(self.check_min_data, code)
+        #self.db_collection[code].insert_one(subject_data)
         #print('SUBJECT', subject_data)
 
 
     def start_watch(self):
         print('request min data')
-        # Test min_data since have a conflict
         min_data = stock_api.request_stock_today_data(self.reader, self.code)
         print('today min len', len(min_data))
         if len(min_data) > 0:

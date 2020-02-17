@@ -23,6 +23,12 @@ MARKET_STOCK = 'stock'
 
 
 # Method
+SHUTDOWN = 'shutdown'
+
+SUBSCRIBE_STATS = 'subscribe_stats'
+COLLECTOR_STATS = 'collector_stats'
+
+
 DAY_DATA = 'day_data'
 TODAY_MINUTE_DATA = 'today_min_data'
 TODAY_TICK_DATA = 'today_tick_data'
