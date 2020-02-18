@@ -8,20 +8,20 @@ from pymongo import MongoClient
 from gevent.server import StreamServer
 from datetime import datetime
 import threading
-import stream_readwriter
 import time
 import gevent
 import virtualbox
-from multiprocessing import Process
 
-import message
+from morning_server import stream_readwriter
+from morning_server import message
 from morning.config import db
 from morning_server.handlers import request_pre_handler as request_pre_handler
-import server_util
-from server_util import stream_write
+from morning_server import server_util
+from morning_server.server_util import stream_write
 from utils import logger_server, logger
 from morning_server import morning_stats
-from configs.time_info
+from configs import time_info
+from morning_server import trade_machine
 
 
 VBOX_CHECK_INTERVAL = time_info.VBOX_CHECK_INTERVAL # 1 minute
@@ -187,7 +187,6 @@ def vbox_control():
     global collectors
     global subscribe_client
     global partial_request
-    import trade_machine
     vbox_controller = trade_machine.VBoxControl()
     while True:
         now = datetime.now()
@@ -211,10 +210,16 @@ def vbox_control():
 
 def start_server(run_vbox):
     global server
+    print('Start stream server')
     server = StreamServer((message.SERVER_IP, message.CLIENT_SOCKET_PORT), handle)
 
     if run_vbox:
         gevent.spawn(vbox_control)
 
     server.serve_forever()
+    print('Start stream server DONE')
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    start_server(False)

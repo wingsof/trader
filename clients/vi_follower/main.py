@@ -16,6 +16,7 @@ from configs import db
 from pymongo import MongoClient
 from utils import time_converter
 from utils import slack
+from configs import time_info
 
 
 subscribe_code = dict()

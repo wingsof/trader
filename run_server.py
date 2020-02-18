@@ -1,10 +1,4 @@
-from gevent import monkey; monkey.patch_all()
-
-from pymongo import MongoClient
-from gevent.server import StreamServer
-from datetime import datetime
 import threading
-import stream_readwriter
 import time
 import gevent
 
@@ -27,6 +21,8 @@ vbox_on = False
 
 def run_subscriber():
     while True:
+        time.sleep(300)
+        print('Run subscriber')
         now = datetime.now()
         year, month, day = now.year, now.month, now.day
 
@@ -35,27 +31,35 @@ def run_subscriber():
             subscribe_process = Process(target=main.start_vi_follower)
             subscribe_process.start()
             subscribe_process.join()
-            gevent.sleep(600)
+            time.sleep(600)
             validate_process = Process(target=data_validation.start_validation)
             validate_process.start()
             validate_process.join()
+    print('Run subscriber Wait')
 
-        gevent.sleep(600)
- 
 
-def run_server(is_vbox_on):
+def start_server(is_vbox_on):
     while True:
-        server_process = Process(target=morning_server.start_server, args=(is_vbox_on,))
+        print('Run Server')
+        server_process = Process(target=server.start_server, args=(is_vbox_on,))
         server_process.start()
         server_process.join()
+        print('Run Server DONE')
 
 
-if len(sys.argv) > 1 and sys.argv[1] == 'vbox':
-    vbox_on = True
+if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == 'vbox':
+        vbox_on = True
 
-log_server = Process(target=logger_server.start_log_server)
-log_server.start()
+    log_server = Process(target=logger_server.start_log_server)
+    log_server.start()
 
-gevent.spawn(run_server, vbox_on)
-gevent.spawn(run_subscriber)
-log_server.join()
+    api_server = Process(target=start_server, args=(vbox_on,))
+    subscriber = Process(target=run_subscriber)
+
+    api_server.start()
+    subscriber.start()
+
+    api_server.join()
+    subscriber.join()
+    log_server.join()
