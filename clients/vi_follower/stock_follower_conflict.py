@@ -16,22 +16,23 @@ class StockFollower:
         self.min_data = None
 
     def check_min_data(self, code):
-        min_data = stock_api.request_stock_today_data(self.reader, self.code)
+        min_data = stock_api.request_stock_today_data(self.reader, code)
 
     def tick_data_handler(self, code, data):
         if len(data) != 1:
             return
 
         tick_data = data[0]
-        gevent.spawn(self.check_min_data, code)
+        #gevent.spawn(self.check_min_data, code)
         #self.db_collection[code].insert_one(tick_data)
-        #print('TICK', code)
+        print('TICK', code)
 
     def ba_data_handler(self, code, data):
         if len(data) != 1:
             return
         ba_data = data[0]
-        gevent.spawn(self.check_min_data, code)
+        if '_' in code:
+            gevent.spawn(self.check_min_data, code.split('_')[0])
         #self.db_collection[code].insert_one(ba_data)
         #print('BA', code)
 
@@ -39,7 +40,7 @@ class StockFollower:
         if len(data) != 1:
             return
         subject_data = data[0]
-        gevent.spawn(self.check_min_data, code)
+        #gevent.spawn(self.check_min_data, code)
         #self.db_collection[code].insert_one(subject_data)
         #print('SUBJECT', subject_data)
 

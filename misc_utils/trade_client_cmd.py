@@ -23,6 +23,7 @@ from morning_server import stock_api
 
 sys.stdin = FileObject(sys.stdin)
 q = Queue()
+message_reader = None
 
 
 def producer():
@@ -50,7 +51,12 @@ def display_stock_data(code, data):
     print('STOCK', code, data)
 
 
+def request_test_data():
+    print(stock_api.request_stock_today_data(message_reader, 'A005930'))
+
+
 def display_world_data(code, data):
+    gevent.spawn(request_test_data)
     print('WORLD', code, data)
 
 
@@ -59,6 +65,7 @@ def display_index_data(code, data):
 
 
 def consumer():
+    global message_reader
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
     sock.connect(server_address)

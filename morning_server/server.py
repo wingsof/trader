@@ -21,11 +21,13 @@ import server_util
 from server_util import stream_write
 from utils import logger_server, logger
 from morning_server import morning_stats
+from configs.time_info
 
 
-VBOX_CHECK_INTERVAL = 60 # 1 minute
+VBOX_CHECK_INTERVAL = time_info.VBOX_CHECK_INTERVAL # 1 minute
 
 vbox_on = False
+server = None
 collectors = server_util.CollectorList()
 subscribe_client = server_util.SubscribeClient()
 partial_request = server_util.PartialRequest()
@@ -190,7 +192,7 @@ def vbox_control():
     while True:
         now = datetime.now()
         year, month, day = now.year, now.month, now.day
-        is_turn_off_time = datetime(year, month, day, 5) <= now <= datetime(year, month, day, 6, 30)
+        is_turn_off_time = datetime(year, month, day, time_info.VBOX_TURN_OFF_FROM_TIME['hour']) <= now <= datetime(year, month, day, time_info.VBOX_TURN_OFF_UNTIL_TIME['hour'], time_info.VBOX_TURN_OFF_UNTIL_TIME['minute'])
         if vbox_on and is_turn_off_time:
             send_shutdown_msg()
             collectors.reset()
@@ -198,6 +200,8 @@ def vbox_control():
             partial_request.reset()
             vbox_controller.stop_machine()
             vbox_on = False
+            server.stop()
+            break
         elif not vbox_on and not is_turn_off_time:
             vbox_on = True
             vbox_controller.start_machine()
@@ -205,13 +209,12 @@ def vbox_control():
         gevent.sleep(VBOX_CHECK_INTERVAL)
 
 
-log_server = Process(target=logger_server.start_log_server)
-log_server.start()
+def start_server(run_vbox):
+    global server
+    server = StreamServer((message.SERVER_IP, message.CLIENT_SOCKET_PORT), handle)
 
-server = StreamServer((message.SERVER_IP, message.CLIENT_SOCKET_PORT), handle)
-server.start()
+    if run_vbox:
+        gevent.spawn(vbox_control)
 
-if len(sys.argv) > 1 and sys.argv[1] == 'vbox':
-    gevent.Greenlet.spawn(vbox_control)
-
-log_server.join()
+    server.serve_forever()
+    sys.exit(0)

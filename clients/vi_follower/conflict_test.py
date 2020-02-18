@@ -20,11 +20,50 @@ from utils import time_converter
 subscribe_code = dict()
 yesterday_data = dict()
 db_collection = None
+tasks = Queue()
 
 
 def check_time():
     while True:
         gevent.sleep(60)
+
+
+def start_watch():
+    global subscribe_code
+
+    while True:
+        msg = tasks.get().split(':')
+
+        if msg[0] == 'alarm':
+            code = msg[1]
+            if code in subscribe_code:
+                pass
+            else:
+                if code in yesterday_data:
+                    sf = stock_follower.StockFollower(morning_client.get_reader(), db_collection, code, yesterday_data[code])
+                else:
+                    sf = stock_follower.StockFollower(morning_client.get_reader(), db_collection, code, None)
+                if sf.start_watch():
+                    subscribe_code[code] = sf
+                else:
+                    print('Failed to watch', code)
+        elif msg[0] == 'exit':
+            break
+
+
+
+def vi_handler(_, data):
+    print('ALARM', data)
+    data = data[0]
+    if data['1'] == ord('1') and data['2'] == 201:
+        alarm_time = data['0']
+        code = data['3']
+        print(data)
+        if data['4'] == 755: # start
+            tasks.put_nowait('alarm:' + code)
+            print('put code', code)
+        elif data['4'] == 756: # stop
+            tasks.put_nowait('disalarm:' + code)
 
 
 def start_vi_follower():
@@ -60,8 +99,9 @@ def start_vi_follower():
 
     print('Start Listening...')
 
-    time_check_thread = gevent.spawn(check_time)
-    gevent.joinall([time_check_thread])
+    stock_api.subscribe_alarm(morning_client.get_reader(), vi_handler)
+    watch_thread = gevent.spawn(start_watch)
+    gevent.joinall([watch_thread])
 
 
 if __name__ == '__main__':

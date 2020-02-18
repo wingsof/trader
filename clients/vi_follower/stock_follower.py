@@ -14,7 +14,7 @@ class StockFollower:
         # yesterday data is None when newly stocked today
         # additionally sometimes market code does not contain VI code why?
         self.yesterday_data = yesterday_data
-        self.min_data = None
+        #self.min_data = None
 
     def tick_data_handler(self, code, data):
         if len(data) != 1:
@@ -42,16 +42,18 @@ class StockFollower:
     def start_watch(self):
         print('request min data')
         # Test min_data since have a conflict
-        min_data = stock_api.request_stock_today_data(self.reader, self.code)
+        # Disable minute data since purpose is collect data
+        #min_data = stock_api.request_stock_today_data(self.reader, self.code)
         print('today min len', len(min_data))
-        if len(min_data) > 0:
-            print('Subscribe Start', self.code)
-            self.min_data = min_data
-            stock_api.subscribe_stock(self.reader, self.code, self.tick_data_handler)
-            stock_api.subscribe_stock_bidask(self.reader, self.code, self.ba_data_handler)
-            stock_api.subscribe_stock_subject(self.reader, self.code, self.subject_handler)
-            return True
-        return False
+        #if len(min_data) > 0:
+        print('Subscribe Start', self.code)
+        # 9:00 at min_data size will be zero
+        #self.min_data = min_data
+        stock_api.subscribe_stock(self.reader, self.code, self.tick_data_handler)
+        stock_api.subscribe_stock_bidask(self.reader, self.code, self.ba_data_handler)
+        stock_api.subscribe_stock_subject(self.reader, self.code, self.subject_handler)
+        return True
+        #return False
 
     def subscribe_at_startup(self):
         self.started_at_startup = True
