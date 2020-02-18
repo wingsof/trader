@@ -92,6 +92,7 @@ class CollectorList:
             self.collectors.remove(collector)
 
     def get_available_trade_collector(self):
+        collector = None
         while True:
             collector = self.find_trade_collector()
             if collector is not None:
