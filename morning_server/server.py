@@ -7,8 +7,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from datetime import datetime
 from utils import logger_server, logger
 
-sys.stdout = open(logger.get_log_filename(False), 'w')
-sys.stderr = open(logger.get_log_filename(True), 'w')
+sys.stdout = open(logger.get_log_filename(False), 'w+')
+sys.stderr = open(logger.get_log_filename(True), 'w+')
 
 from pymongo import MongoClient
 from gevent.server import StreamServer

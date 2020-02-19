@@ -10,8 +10,8 @@ from PyQt5.QtCore import QCoreApplication
 from utils import rlogger
 
 
-sys.stdout = open(rlogger.get_log_filename(False), 'w')
-sys.stderr = open(rlogger.get_log_filename(True), 'w')
+sys.stdout = open(rlogger.get_log_filename(False), 'w+')
+sys.stderr = open(rlogger.get_log_filename(True), 'w+')
 
 from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code, abroad_chart, investor_7254, stock_today_data
