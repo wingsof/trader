@@ -1,9 +1,15 @@
 from datetime import datetime
 
 from morning_server import message
-from morning_server.server_util import stream_write
-from utils import logger
+from configs import client_info
+if client_info.TEST_MODE:
+    from tests.morning_server.mock_server_util import stream_write
+    from tests.morning_server import mock_logger as logger
+else:
+    from utils import logger
+    from morning_server.server_util import stream_write
 import gevent
+from morning_server import stream_readwriter
 
 
 class _Collector:
@@ -60,21 +66,88 @@ class ClientManager:
     def __init__(self):
         self.collectors = []
         self.code_subscribe_info = dict()
-        vendors = [message.CYBOS, message.KIWOOM]
+        self.vendors = [message.CYBOS, message.KIWOOM]
         self.trade_subscribe_sockets = dict()
-        for v in vendors:
+        for v in self.vendors:
             self.trade_subscribe_sockets[v] = []
 
+    def _send_stop_msg(self, collector_sock, code):
+        stop_methods = {message.STOCK_ALARM_CODE: message.STOP_ALARM_DATA,
+                        message.BIDASK_SUFFIX: message.STOP_BIDASK_DATA,
+                        message.SUBJECT_SUFFIX: message.STOP_SUBJECT_DATA,
+                        message.WORLD_SUFFIX: message.STOP_WORLD_DATA,
+                        message.INDEX_SUFFIX: message.STOP_INDEX_DATA,}
+        processed = False
+        for stop_k, stop_v in stop_methods.items():
+            if code.endswith(stop_k):
+                header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, stop_v)
+                header['code'] = code
+                stream_write(collector_sock, header, [])
+                processed = True
+        if not processed:
+            header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.STOP_STOCK_DATA)
+            header['code'] = code
+            stream_write(collector_sock, header, [])
+
+    def _handle_code_subscribe_info_disconnection(self, sock):
+        remove_code_list = []
+        for k, v in self.code_subscribe_info.items():
+            if sock in v[1]:
+                v[1].remove(sock)
+                if len(v[1]) == 0:
+                    self._send_stop_msg(v[0].sock, k)
+                    remove_code_list.append(k)
+        for code in remove_code_list:
+            self.code_subscribe_info.pop(code, None)
+
+    def _handle_trade_subscribe_disconnection(self, sock):
+        for vendor in self.vendors:
+            collector = self.get_trade_collector(vendor)
+            if collector is None:
+                continue
+
+            if sock in self.trade_subscribe_sockets[vendor]:
+                self.trade_subscribe_sockets[vendor].remove(sock)
+
+                if len(self.trade_subscribe_sockets[vendor]) == 0:
+                    header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.STOP_TRADE_DATA)
+                    stream_write(collector.sock, header, [])
+
+    def _handle_collector_disconnection(self, sock):
+        remove_code_list = []
+        for k, v in self.code_subscribe_info.items():
+            if v[0].sock == sock:
+                remove_code_list.append(k)
+        found = True if len(remove_code_list) > 0 else False
+        for code in remove_code_list:
+            self.code_subscribe_info.pop(k, None)
+        
+        if found:
+            logger.critical('subscribe collector removed')
+
+        collector_list = []
+        for c in self.collectors:
+            if c.sock == sock:
+                collector_list.append(c)
+        found = True if len(collector_list) > 0 else False
+        for c in collector_list:
+            self.collectors.remove(c)
+        if found:
+            logger.critical('collector removed')
+
     def handle_disconnect(self, sock):
-        # TODO: identify whether sock is collector or client
-        # 1. collector
-        #   1-1. remove from self.collectors
-        #   1-2. find collector in self.code_subscribe_info 
-        #   1-3. find collector in trade
-        # 2. client
-        #   2-1. check trade client
-        #   2-2. check code_subscribe_info
-        pass
+        cybos_collectors = self.get_vendor_collector(message.CYBOS)
+        kiwoom_collectors = self.get_vendor_collector(message.KIWOOM)
+        for c in cybos_collectors:
+            if c.sock == sock:
+                self._handle_collector_disconnection(sock)
+
+        for c in kiwoom_collectors:
+            if c.sock == sock:
+                self._handle_collector_disconnection(sock)
+
+        self._handle_code_subscribe_info_disconnection(sock)
+        self._handle_trade_subscribe_disconnection(sock)
 
     def add_collector(self, sock, header, body):
         self.collectors.append(_Collector(sock, body['capability'], header['vendor']))
@@ -149,17 +222,18 @@ class ClientManager:
                 logger.info('ADD NEW SUBSCRIBE %s', code)
                 stream_write(collector.sock, header, body, self)
 
-    def disconnect_to_subscribe(self, code, sock, heaer, body):
+    def disconnect_to_subscribe(self, code, sock, header, body):
         if code in self.code_subscribe_info:
             self.code_subscribe_info[code][1].remove(sock) 
             if len(self.code_subscribe_info[code][1]) == 0:
                 collector = self.code_subscribe_info[code][0]
                 collector.remove_subscribe_code(code)
+                self.code_subscribe_info.pop(code, None)
                 stream_write(collector.sock, header, body, self)
         else:
             logger.warning('No subscribe but try to disconnect %s', code)
 
-    def connect_to_trade_subscribe(self, sock, vendor):
+    def connect_to_trade_subscribe(self, sock, vendor=message.CYBOS):
         collector = self.get_trade_collector(vendor)
         if collector is None:
             logger.error('NO TRADE collector %s', vendor)
@@ -170,7 +244,7 @@ class ClientManager:
             logger.warning('Sock is already connected to trade subscriber %s', vendor)
              
 
-    def disconnect_to_trade_subscribe(self, sock, vendor):
+    def disconnect_to_trade_subscribe(self, sock, vendor=message.CYBOS):
         collector = self.get_trade_collector(vendor)
         if collector is None:
             logger.error('NO TRADE collector %s', vendor)
@@ -178,35 +252,44 @@ class ClientManager:
         if sock in self.trade_subscribe_sockets[vendor]:
             self.trade_subscribe_sockets[vendor].remove(sock)
 
-        if len(self.trade_subscribe_sockets[vendor]):
-            pass # TODO: send STOP message
+            if len(self.trade_subscribe_sockets[vendor]) == 0:
+                header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.STOP_TRADE_DATA)
+                stream_write(collector.sock, header, [])
 
-    def broadcast_trade_data(self, header, body, vendor):
+    def broadcast_subscribe_data(self, code, header, body):
+        if code not in self.code_subscribe_info:
+            logger.error('code is not in code_subscribe_info %s', code)
+            return
+
+        for s in self.code_subscribe_info[code][1]:
+            stream_write(s, header, body, self)
+
+    def broadcast_trade_data(self, header, body, vendor=message.CYBOS):
         for s in self.trade_subscribe_sockets[vendor]:
             stream_write(s, header, body, self)
 
     def reset(self):
         pass
 
-    def handle_block_request(self, sock, header, body):
-        collector = self.get_available_request_collector()
+    def handle_block_request(self, sock, header, body, vendor=message.CYBOS):
+        collector = self.get_available_request_collector(vendor)
         if collector is None:
             logger.critical('Cannot find collector(request) %s', header)
             return
         collector.set_request(sock, header['_id'], True)
         stream_write(collector.sock, header, body, self)
 
-    def handle_block_response(self, sock, header, body):
+    def handle_block_response(self, header, body):
         collector = self.find_request_by_id(header['_id'])
         if collector is None:
             logger.critical('Cannot find collector(response) %s', header)    
             return
         collector.set_pending(False)
-        stream_write(collector,request_socket(), header, body, self)
+        stream_write(collector.request_socket(), header, body, self)
 
     def handle_trade_block_request(self, sock, header, body):
         collector = self.get_available_trade_collector()
-        if collecor is None:
+        if collector is None:
             logger.critical('Cannot find collector(trade) %s', header)
             return
         collector.set_request(sock, header['_id'], True)

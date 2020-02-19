@@ -2,6 +2,7 @@ import json
 import os
 
 _client_info = None
+TEST_MODE = False
 
 def _get_client_info():
     global _client_info

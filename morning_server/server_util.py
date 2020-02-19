@@ -7,6 +7,7 @@ from pymongo import MongoClient
 import gevent
 from datetime import timedelta, datetime
 from utils import logger
+from utils import slack
 
 
 def stream_write(sock, header, body, manager = None):
@@ -84,6 +85,7 @@ class CollectorList:
             if c.sock == sock:
                 logger.warning('Collector Removed')
                 collector = c
+                slack.send_slack_message('Collector REMOVED')
                 break
 
         if collector is not None:
