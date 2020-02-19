@@ -16,9 +16,6 @@ def except_hook(exc_type, exc_value, traceback):
 
 
 def _setup_log(use_console_out=True):
-    sys.stdout = open(mf.get_log_filename(False), 'w+')
-    sys.stderr = open(mf.get_log_filename(True), 'w+')
-
     logg = logging.getLogger(client_info.get_client_name())
     logg.setLevel(logging.DEBUG)
 

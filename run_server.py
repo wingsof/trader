@@ -3,7 +3,7 @@ import time
 import gevent
 
 
-from utils import logger_server, logger
+from utils import logger_server
 import os
 import sys
 import gevent

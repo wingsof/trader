@@ -16,8 +16,8 @@ def except_hook(exc_type, exc_value, traceback):
 
 
 def _setup_log():
-    sys.stdout = open(mf.get_log_filename(False), 'w+')
-    sys.stderr = open(mf.get_log_filename(True), 'w+')
+    #sys.stdout = open(mf.get_log_filename(False), 'w+')
+    #sys.stderr = open(mf.get_log_filename(True), 'w+')
     logg = logging.getLogger('morning')
     logg.setLevel(logging.DEBUG)
 
@@ -26,7 +26,6 @@ def _setup_log():
     stream_handler.setFormatter(formatter)
     logg.addHandler(stream_handler)
 
-    """
     filename = 'logs' + os.sep + 'morning_server.log'
     try:
         filename = os.environ['MORNING_PATH'] + os.sep + filename
@@ -38,7 +37,6 @@ def _setup_log():
     file_handler = logging.handlers.RotatingFileHandler(filename, maxBytes=2**20, backupCount=1000)
     file_handler.setFormatter(formatter)
     logg.addHandler(file_handler)
-    """
     return logg
 
 

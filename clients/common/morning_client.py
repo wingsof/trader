@@ -94,7 +94,7 @@ def get_past_day_data(code, from_date, until_date, mavg=MAVG):
 
     if holidays.count_of_working_days(from_date, until_date) > len(cut_by_date_data):
         print('get_past_day_data days not matched', code, from_date, until_date, 'data',
-                len(cut_by_date_data), 'expected', count_of_days)
+                len(cut_by_date_data))
         return []
 
     return cut_by_date_data
