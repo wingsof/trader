@@ -43,7 +43,7 @@ class MorningStats:
 
     def get_collector_info(self):
         msg = []
-        for c in self.collectors.collectors:
+        for c in self.collectors:
             info = dict()
             info['vendor'] = c.get_vendor()
             info['subscribe_count'] = c.subscribe_count()

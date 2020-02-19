@@ -23,57 +23,51 @@ from morning_server.server_util import stream_write
 from morning_server import morning_stats
 from configs import time_info
 from morning_server import trade_machine
+from morning_server import clientmanager
+from utils import slack
 
 
 VBOX_CHECK_INTERVAL = time_info.VBOX_CHECK_INTERVAL # 1 minute
 
 vbox_on = False
 server = None
-collectors = server_util.CollectorList()
-subscribe_client = server_util.SubscribeClient()
 partial_request = server_util.PartialRequest()
-morning_stat = morning_stats.MorningStats(collectors)
+client_manager = clientmanager.ClientManager()
+morning_stat = morning_stats.MorningStats(client_manager.collectors)
 
 
 def handle_collector(sock, header, body):
-    logger.info('HANDLE COLLECTOR %s', hex(threading.get_ident()))
-    collectors.add_collector(sock, header, body)
-
+    logger.info('HANDLE COLLECTOR %s', header)
+    client_manager.add_collector(sock, header, body)
 
 def handle_response(sock, header, body):
     logger.info('HANDLE RESPONSE %s', header)
     item = partial_request.get_item(header['_id'])
-    collector = collectors.find_by_id(header['_id'])
 
     if item is not None:
         if item.add_body(body, header): # Message completed
             data = item.get_whole_message()
-            stream_write(collector.request_socket(), header, data, subscribe_client)
+            client_manager.handle_block_response(header, data)
             partial_request.pop_item(header['_id'])
     else:
-        stream_write(collector.request_socket(), header, body, subscribe_client)
+        client_manager.handle_block_response(header, body)
 
-    collector.set_pending(False)
     logger.info('HANDLE RESPONSE DONE')
 
 
 def handle_request_cybos(sock, header, body):
     data, vacancy = request_pre_handler.pre_handle_request(sock, header, body)
     if data is None:
-        logger.info('HEADER ' +str(header))
-        collector = collectors.get_available_request_collector()
-        collector.set_request(sock, header['_id'], True)
-        stream_write(collector.sock, header, body, collectors)
+        client_manager.handle_block_request(sock, header, body)
     elif len(vacancy) > 0:
         logger.info('HEADER(to collector) ' + str(header))
         partial_request.start_partial_request(header, data, len(vacancy))
-        for v in vacancy:
-            collector = collectors.get_available_request_collector()
-            # TODO: create separate header ID
+        for i, v in enumerate(vacancy):
+            collector = client_manager.get_available_request_collector()
             collector.set_request(sock, header['_id'], True)
             header['from'] = v[0]
             header['until'] = v[1]
-            stream_write(collector.sock, header, body, collectors)
+            stream_write(collector.sock, header, body, client_manager)
     else:
         logger.info('HEADER(cached) %s', header)
         header['type'] = message.RESPONSE
@@ -81,9 +75,7 @@ def handle_request_cybos(sock, header, body):
 
 
 def handle_request_kiwoom(sock, header, body):
-    collector = collectors.get_available_request_collector(message.KIWOOM)
-    collector.set_request(sock, header['_id'], True)
-    stream_write(collector.sock, header, body, collectors)
+    client_manager.handle_block_request(sock, header, body, message.KIWOOM)
 
 
 def handle_request(sock, header, body):
@@ -112,51 +104,43 @@ def handle_subscribe(sock, header, body):
                     message.STOP_INDEX_DATA,
                     message.STOP_SUBJECT_DATA]
     if header['method'] in stop_methods:
-        subscribe_client.remove_from_clients(code, sock, header, body, collectors)
+        client_manager.disconnect_to_subscribe(code, sock, header, body)
     else:
-        subscribe_client.add_to_clients(code, sock, header, body, collectors)
+        client_manager.connect_to_subscribe(code, sock, header, body)
 
 
 def handle_subscribe_response(sock, header, body):
     #logger.info('HANDLE SUBSCRIBE RESPONSE %s', hex(threading.get_ident()))
     code = header['code']
-    subscribe_client.send_to_clients(code, header, body)
+    client_manager.broadcast_subscribe_data(code, header, body)
     morning_stat.increment_subscribe_count(code)
     #logger.info('HANDLE SUBSCRIBE RESPONSE DONE')
 
 
 def handle_trade_response(sock, header, body):
     logger.info('HANDLE TRADE RESPONSE %s', header)
-    collector = collectors.find_by_id(header['_id'])
-    stream_write(collector.request_socket(), header, body, subscribe_client)
-    collector.set_pending(False)
+    client_manager.handle_trade_block_response(sock, header, body)
 
 
 def handle_trade_request(sock, header, body):
     logger.info('HANDLE TRADE REQUEST %s', header)
-    collector = collectors.get_available_trade_collector()
     if header['method'] == message.TRADE_DATA:
-        subscribe_client.add_trade_to_clients(sock, collector.sock)
-        collector.set_request(sock, header['_id'], True)
-        stream_write(collector.sock, header, body, collectors)
+        client_manager.connect_to_trade_subscribe(sock)
+        client_manager.handle_trade_block_request(sock, header, body)
     elif header['method'] == message.STOP_TRADE_DATA:
-        subscribe_client.remove_trade_from_clients(sock)
-        if subscribe_client.count_of_trade_client() == 0:
-            # send to collector
-            stream_write(collector.sock, header, body, collectors)
+        client_manager.disconnect_to_trade_subscribe(sock)
 
         # send to client
         header['type'] = message.RESPONSE_TRADE
         body = {'result': True}
-        stream_write(sock, header, body, collectors)
+        stream_write(sock, header, body, client_manager)
     else:
-        collector.set_request(sock, header['_id'], True)
-        stream_write(collector.sock, header, body, collectors)
+        client_manager.handle_trade_block_request(sock, header, body)
 
 
 def handle_trade_subscribe_response(sock, header, body):
     logger.info('HANDLE TRADE SUBSCRIBE RESPONSE %s', header)
-    subscribe_client.send_trade_to_client(header, body)
+    client_manager.broadcast_trade_data(header, body)
 
 
 def handle(sock, address):
@@ -172,21 +156,18 @@ def handle(sock, address):
                                             subscribe_trade_response_handler=handle_trade_subscribe_response)
     except Exception as e:
         logger.warning('Dispatch exception ' + str(e))
-        collectors.handle_disconnect(e.args[1])
-        subscribe_client.handle_disconnect(e.args[1])
+        client_manager.handle_disconnect(e.args[1])
         
 
 def send_shutdown_msg():
     header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.SHUTDOWN)
     body = []
-    for c in collectors.collectors:
+    for c in client_manager.collectors:
         stream_write(c.sock, header, body)
 
 
 def vbox_control():
     global vbox_on
-    global collectors
-    global subscribe_client
     global partial_request
     vbox_controller = trade_machine.VBoxControl()
 
@@ -197,8 +178,6 @@ def vbox_control():
         if vbox_on and is_turn_off_time:
             logger.info('START TURN OFF VBOX')
             send_shutdown_msg()
-            collectors.reset()
-            subscribe_client.reset()
             partial_request.reset()
             vbox_controller.stop_machine()
             vbox_on = False
@@ -215,6 +194,7 @@ def vbox_control():
 def start_server(run_vbox):
     global server
     logger.info('Start stream server')
+    slack.send_slack_message('Start API Server')
     server = StreamServer((message.SERVER_IP, message.CLIENT_SOCKET_PORT), handle)
 
     if run_vbox:
@@ -222,6 +202,7 @@ def start_server(run_vbox):
 
     server.serve_forever()
     logger.info('Start stream server DONE')
+    slack.send_slack_message('API Server Finished')
     sys.exit(0)
 
 

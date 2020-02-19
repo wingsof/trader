@@ -10,6 +10,7 @@ else:
     from morning_server.server_util import stream_write
 import gevent
 from morning_server import stream_readwriter
+from utils import slack
 
 
 class _Collector:
@@ -96,6 +97,7 @@ class ClientManager:
                 v[1].remove(sock)
                 if len(v[1]) == 0:
                     self._send_stop_msg(v[0].sock, k)
+                    v[0].remove_subscribe_code(k)
                     remove_code_list.append(k)
         for code in remove_code_list:
             self.code_subscribe_info.pop(code, None)
@@ -136,15 +138,20 @@ class ClientManager:
             logger.critical('collector removed')
 
     def handle_disconnect(self, sock):
+        logger.warning('ClientManager handle disconnect')
         cybos_collectors = self.get_vendor_collector(message.CYBOS)
         kiwoom_collectors = self.get_vendor_collector(message.KIWOOM)
         for c in cybos_collectors:
             if c.sock == sock:
                 self._handle_collector_disconnection(sock)
+                logger.warning('Remove collector')
+                slack.send_slack_message('Collector removed')
 
         for c in kiwoom_collectors:
             if c.sock == sock:
                 self._handle_collector_disconnection(sock)
+                logger.warning('Remove collector')
+                slack.send_slack_message('Collector removed')
 
         self._handle_code_subscribe_info_disconnection(sock)
         self._handle_trade_subscribe_disconnection(sock)
@@ -301,4 +308,4 @@ class ClientManager:
             logger.critical('Cannot find collector(trade response) %s', header)
             return
         collector.set_pending(False)
-        stream_write(collector.sock, header, body, self)
+        stream_write(collector.request_socket(), header, body, self)

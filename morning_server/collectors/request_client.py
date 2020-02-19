@@ -209,6 +209,7 @@ def handle_subscribe(sock, header, body):
         if code in subscribe_world:
             subscribe_world[code].stop_subscribe()
             subscribe_world.pop(code, None)
+            rlogger.info('STOP Subscribe world ' + code)
     elif header['method'] == message.SUBJECT_DATA:
         if code in subscribe_subject:
             rlogger.info('Already subscribe subject ' + code)

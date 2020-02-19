@@ -59,7 +59,7 @@ def critical(msg, *args, **kwargs):
 
 
 def log(msg, *args, **kwargs):
-    _logger.critical(msg, *args, *kwargs)
+    _logger.log(msg, *args, *kwargs)
 
 
 _logger = _setup_log()
