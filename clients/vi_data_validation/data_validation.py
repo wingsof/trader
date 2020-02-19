@@ -139,6 +139,7 @@ def start_validation():
     else:
         slack.send_slack_message('NO ALARM TODAY')
         print('NO ALARM TODAY')
+    sys.exit(0)
 
 if __name__ == '__main__':
     start_validation()

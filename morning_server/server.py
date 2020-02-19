@@ -4,9 +4,14 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+from datetime import datetime
+from utils import logger_server, logger
+
+sys.stdout = open(logger.get_log_filename(False), 'w')
+sys.stderr = open(logger.get_log_filename(True), 'w')
+
 from pymongo import MongoClient
 from gevent.server import StreamServer
-from datetime import datetime
 import threading
 import time
 import gevent
@@ -18,7 +23,6 @@ from morning.config import db
 from morning_server.handlers import request_pre_handler as request_pre_handler
 from morning_server import server_util
 from morning_server.server_util import stream_write
-from utils import logger_server, logger
 from morning_server import morning_stats
 from configs import time_info
 from morning_server import trade_machine
@@ -188,11 +192,13 @@ def vbox_control():
     global subscribe_client
     global partial_request
     vbox_controller = trade_machine.VBoxControl()
+
     while True:
         now = datetime.now()
         year, month, day = now.year, now.month, now.day
-        is_turn_off_time = datetime(year, month, day, time_info.VBOX_TURN_OFF_FROM_TIME['hour']) <= now <= datetime(year, month, day, time_info.VBOX_TURN_OFF_UNTIL_TIME['hour'], time_info.VBOX_TURN_OFF_UNTIL_TIME['minute'])
+        is_turn_off_time = datetime(year, month, day, time_info.VBOX_TURN_OFF_FROM_TIME['hour'], time_info.VBOX_TURN_OFF_FROM_TIME['minute']) <= now <= datetime(year, month, day, time_info.VBOX_TURN_OFF_UNTIL_TIME['hour'], time_info.VBOX_TURN_OFF_UNTIL_TIME['minute'])
         if vbox_on and is_turn_off_time:
+            logger.info('START TURN OFF VBOX')
             send_shutdown_msg()
             collectors.reset()
             subscribe_client.reset()
@@ -202,6 +208,7 @@ def vbox_control():
             server.stop()
             break
         elif not vbox_on and not is_turn_off_time:
+            logger.info('START TURN ON VBOX')
             vbox_on = True
             vbox_controller.start_machine()
 
@@ -210,14 +217,14 @@ def vbox_control():
 
 def start_server(run_vbox):
     global server
-    print('Start stream server')
+    logger.info('Start stream server')
     server = StreamServer((message.SERVER_IP, message.CLIENT_SOCKET_PORT), handle)
 
     if run_vbox:
         gevent.spawn(vbox_control)
 
     server.serve_forever()
-    print('Start stream server DONE')
+    logger.info('Start stream server DONE')
     sys.exit(0)
 
 

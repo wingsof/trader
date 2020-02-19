@@ -19,7 +19,7 @@ import numpy as np
 from scipy.signal import find_peaks, peak_prominences
 
 
-target_date = datetime(2020, 2, 17)
+target_date = datetime(2020, 2, 18)
 code_dict = dict()
 MAVG=10
 STATE_NONE = 0

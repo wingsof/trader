@@ -11,7 +11,3 @@ SUBSCRIBER_FINISH_TIME = {'hour': 18, 'minute': 30}
 
 VBOX_TURN_OFF_FROM_TIME = {'hour': 5, 'minute': 0}
 VBOX_TURN_OFF_UNTIL_TIME = {'hour': 6, 'minute': 30}
-
-
-
-

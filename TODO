@@ -7,10 +7,6 @@
 
 
 * 금일 데이터 Simulation
-* Data Validation 테스트(금일 관련 자료가 정상적으로 수집되었는지 검사)
-    * 문제가 있다면, Slack 으로 메시지 전송
-    * 초기 시스템 시작 관련도 메시지 전달
-* Slack 관련 연동 검토(트레이딩 관련 메시지)
 
 
 * VI Simulator
@@ -203,6 +199,10 @@ Done
     * STAT 테스트
 * VBOX 강제 종료가 아닌 InitiateShutdown 관련 테스트
 * 내일 오전: conflict test
+* Data Validation 테스트(금일 관련 자료가 정상적으로 수집되었는지 검사)
+    * 문제가 있다면, Slack 으로 메시지 전송
+    * 초기 시스템 시작 관련도 메시지 전달
+* Slack 관련 연동 검토(트레이딩 관련 메시지)
 
 No important
 * 코스피 200 종목 동일하게 추세로 선물 거래는?

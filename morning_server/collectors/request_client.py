@@ -7,12 +7,16 @@ import socket
 import gevent
 import time
 from PyQt5.QtCore import QCoreApplication
+from utils import rlogger
+
+
+sys.stdout = open(rlogger.get_log_filename(False), 'w')
+sys.stderr = open(rlogger.get_log_filename(True), 'w')
 
 from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code, abroad_chart, investor_7254, stock_today_data
 from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance, trade_subject, world_subscribe, index_subscribe, stock_alarm
 from configs import client_info
-from utils import rlogger
 from morning_server.collectors import shutdown
 
 

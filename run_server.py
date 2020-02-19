@@ -21,13 +21,15 @@ vbox_on = False
 
 def run_subscriber():
     while True:
+        print('Run subscriber Wait')
+
         time.sleep(300)
-        print('Run subscriber')
         now = datetime.now()
         year, month, day = now.year, now.month, now.day
 
         is_start_time = datetime(year, month, day, time_info.SUBSCRIBER_START_TIME['hour']) <= now < datetime(year, month, day, time_info.SUBSCRIBER_FINISH_TIME['hour'], time_info.SUBSCRIBER_FINISH_TIME['minute'])
         if not holidays.is_holidays(now.date()) and is_start_time:
+            print('Run subscriber')
             subscribe_process = Process(target=main.start_vi_follower)
             subscribe_process.start()
             subscribe_process.join()
@@ -35,7 +37,6 @@ def run_subscriber():
             validate_process = Process(target=data_validation.start_validation)
             validate_process.start()
             validate_process.join()
-    print('Run subscriber Wait')
 
 
 def start_server(is_vbox_on):
