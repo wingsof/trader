@@ -54,4 +54,4 @@ def log(msg, *args, **kwargs):
 
 
 _logger = _setup_log()
-sys.excepthook = except_hook
+#sys.excepthook = except_hook
