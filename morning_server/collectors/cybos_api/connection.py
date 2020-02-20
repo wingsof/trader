@@ -1,5 +1,5 @@
 import win32com.client
-import gevent
+import eventlet
 from utils import rlogger
 
 
@@ -28,7 +28,7 @@ class Connection:
     def wait_until_available(self):
         while self.request_left_count() <= 0:
             rlogger.info('Request Limit is reached')
-            gevent.sleep(1)
+            eventlet.sleep(1)
 
 
 if __name__ == '__main__':

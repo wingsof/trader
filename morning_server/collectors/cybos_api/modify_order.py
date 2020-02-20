@@ -1,5 +1,5 @@
 import win32com.client
-import gevent
+import eventlet
 
 from morning_server.collectors.cybos_api import connection
 from utils import rlogger
@@ -26,7 +26,7 @@ class ModifyOrder:
                 break
             elif ret == 4:
                 if self.conn.request_left_count() <= 0:
-                    gevent.sleep(self.conn.get_remain_time() / 1000)
+                    eventlet.sleep(self.conn.get_remain_time() / 1000)
                 continue
             else:
                 rlogger.errro('TD0313 Modify Order Failed')

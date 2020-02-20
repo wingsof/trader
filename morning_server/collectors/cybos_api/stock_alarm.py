@@ -3,7 +3,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..' 
 
 
 import win32com.client
-import gevent
 from datetime import datetime
 
 class _CpEvent:

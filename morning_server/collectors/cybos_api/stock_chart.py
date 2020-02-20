@@ -5,7 +5,6 @@ import win32com.client
 from utils import time_converter
 from datetime import datetime, timedelta
 from cybos_api import connection
-import gevent
 from utils import rlogger
 
     # stock chart fields

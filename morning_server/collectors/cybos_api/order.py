@@ -1,5 +1,5 @@
 import win32com.client
-import gevent
+import eventlet
 
 from morning_server.collectors.cybos_api import connection
 from utils import rlogger
@@ -62,7 +62,7 @@ class Order:
     def process(self, code, quantity, account_num, account_type, price, is_buy):
         while self.conn.order_left_count() <= 0:
             rlogger.warning("WAIT ORDER LEFT COUNT " + code + ' ' + str(quantity) + ' ' + str(is_buy) + ' ' + str(price))
-            gevent.sleep(1)
+            eventlet.sleep(1)
 
         if quantity == 0:
             rlogger.warning("ORDER Failed " + code + ' ' + str(quantity) + ' ' + str(is_buy) + ' ' + str(price))

@@ -1,10 +1,10 @@
-from gevent import monkey; monkey.patch_all()
+import eventlet
+eventlet.monkey_patch(all=True)
 
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.join(*(['..' + os.sep] * 2)))))
 
-import socket
-import gevent
+from eventlet.green import socket
 import time
 from PyQt5.QtCore import QCoreApplication
 
@@ -250,8 +250,8 @@ def mainloop(app):
         app.processEvents()
         while app.hasPendingEvents():
             app.processEvents()
-            gevent.sleep()
-        gevent.sleep()
+            eventlet.sleep()
+        eventlet.sleep()
 
 
 def dispatch_message(sock):
@@ -269,7 +269,7 @@ if __name__ == '__main__':
                 break
             else:
                 rlogger.info('Retry connecting to CP Server')
-                gevent.sleep(5)
+                eventlet.sleep(5)
         except:
             rlogger.critical('Error while trying to server')
 
@@ -285,12 +285,12 @@ if __name__ == '__main__':
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
-            sock.connect(server_address)
+            eventlet.connect(server_address)
             rlogger.info('Connected to apiserver')
             break
         except socket.error:
             rlogger.info('Retrying connect to apiserver')
-            gevent.sleep(1)
+            eventlet.sleep(1)
 
     header = stream_readwriter.create_header(message.COLLECTOR, message.MARKET_STOCK, message.COLLECTOR_DATA)
 
@@ -305,4 +305,5 @@ if __name__ == '__main__':
         order_subscriber = None
         rlogger.info('HAS TRADE CAPABILITY')
     
-    gevent.joinall([gevent.spawn(dispatch_message, sock), gevent.spawn(mainloop, app)])
+    eventlet.spawn_n(mainloop, app)
+    dispatch_message(sock)

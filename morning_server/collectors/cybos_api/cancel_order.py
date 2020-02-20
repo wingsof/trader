@@ -3,7 +3,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..' 
 
 
 import win32com.client
-import gevent
+import eventlet
 
 from morning_server.collectors.cybos_api import connection
 from utils import rlogger
@@ -29,7 +29,7 @@ class CancelOrder:
                 break
             elif ret == 4:
                 if self.conn.request_left_count() <= 0:
-                    gevent.sleep(self.conn.get_remain_time() / 1000)
+                    eventlet.sleep(self.conn.get_remain_time() / 1000)
                 continue
             else:
                 rlogger.error('TD0314 Cancel Order Failed')
