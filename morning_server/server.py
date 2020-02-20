@@ -119,7 +119,7 @@ def handle_subscribe_response(sock, header, body):
 
 def handle_trade_response(sock, header, body):
     logger.info('HANDLE TRADE RESPONSE %s', header)
-    client_manager.handle_trade_block_response(sock, header, body)
+    client_manager.handle_trade_block_response(header, body)
 
 
 def handle_trade_request(sock, header, body):
@@ -179,6 +179,7 @@ def vbox_control():
             logger.info('START TURN OFF VBOX')
             send_shutdown_msg()
             partial_request.reset()
+            client_manager.reset()
             vbox_controller.stop_machine()
             vbox_on = False
             server.stop()

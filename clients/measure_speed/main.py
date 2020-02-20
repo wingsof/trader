@@ -41,12 +41,12 @@ def filter_in_market_tick(tick_data):
 def filter_in_market_ba_tick(tick_data, t):
     index = 0
     for i, d in enumerate(tick_data):
-        if d['time'] > t:
+        if d['date'] > t:
             index = i
     return tick_data[index:]
 
 
-def get_yesterday_amount_rank(today, db_collection):
+def get_yesterday_amount_rank(today):
     market_code = morning_client.get_market_code()
     yesterday = holidays.get_yesterday(today)
     yesterday_list = []
@@ -100,13 +100,13 @@ def save_to_graph(code, datetime_arr, price_arr, buy_speed_arr, sell_speed_arr, 
 
 def start_meause_speed(today):
     db_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
-    yesterday_list = get_yesterday_amount_rank(today, db_collection)
+    yesterday_list = get_yesterday_amount_rank(today)
     for ydata in yesterday_list:
         tick_data = get_tick_data(ydata['code'], today, db_collection)
         ba_tick_data = get_tick_data(ydata['code'] + message.BIDASK_SUFFIX, today, db_collection)
         tick_data = filter_in_market_tick(tick_data)
-        ba_tick_data = filter_in_market_ba_tick(ba_tick_data, tick_data[0]['time'])
-        current_datetime = datetime.combine(today, time(9,15))
+        ba_tick_data = filter_in_market_ba_tick(ba_tick_data, tick_data[0]['date'])
+        current_datetime = datetime.combine(today, time(9,0,10))
         price_array = []
         buy_speed_array = []
         sell_speed_array = []
@@ -117,7 +117,7 @@ def start_meause_speed(today):
             buy_quantity, sell_quantity, filter_tick_data = get_one_min_tick_quantity(tick_data, current_datetime)
             bid_avg, ask_avg = get_one_min_ba_tick_quantity(ba_tick_data, current_datetime)
             if buy_quantity == 0 or sell_quantity == 0 or bid_avg == 0 or ask_avg == 0:
-                current_datetime += timedelta(seconds=15)
+                current_datetime += timedelta(seconds=10)
                 continue
             price_array.append(filter_tick_data[-1]['current_price'])
             buy_speed_array.append(ask_avg / buy_quantity)
@@ -125,7 +125,7 @@ def start_meause_speed(today):
             amount_array.append(filter_tick_data[-1]['cum_amount'] - filter_tick_data[0]['cum_amount'])
             datetime_array.append(current_datetime)
 
-            current_datetime += timedelta(seconds=15)
+            current_datetime += timedelta(seconds=10)
         save_to_graph(ydata['code'], datetime_array, price_array, buy_speed_array, sell_speed_array, amount_array)
 
 

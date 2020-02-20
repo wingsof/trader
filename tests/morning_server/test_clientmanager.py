@@ -59,7 +59,7 @@ def test_handle_block_request_response():
     collector = c.find_request_by_id('12345')
     assert collector is not None
     assert collector.request['pending']
-    c.handle_block_response(200, {'_id': '12345'}, {})
+    c.handle_block_response({'_id': '12345'}, {})
     assert not collector.request['pending']
     assert c.find_request_by_id('12345') is None
 
@@ -71,8 +71,8 @@ def test_handle_trade_block_request_response():
     collector = c.get_available_trade_collector()
     c.handle_trade_block_request(200, {'_id': '12345'}, {})
     assert collector.request['pending']
-    c.handle_trade_block_response(200, {'_id': '12345'}, {})
-    c.handle_trade_block_response(200, {'_id': '12345'}, {})
+    c.handle_trade_block_response({'_id': '12345'}, {})
+    c.handle_trade_block_response({'_id': '12345'}, {})
     assert not collector.request['pending']
 
 def test_connect_to_trade_subscribe():
@@ -162,3 +162,20 @@ def test_socket_disconnect_client():
     c.handle_disconnect(100)
     assert mock_server_util.last_msg[-1][1]['method'] == message.STOP_STOCK_DATA
     assert len(c.collectors) == 3
+
+def test_reset():
+    c = ClientManager()
+    body = {'capability': message.CAPABILITY_TRADE | message.CAPABILITY_COLLECT_SUBSCRIBE}
+    c.add_collector(7, {'vendor': message.CYBOS}, body)
+
+    body = {'capability': message.CAPABILITY_REQUEST_RESPONSE | message.CAPABILITY_COLLECT_SUBSCRIBE}
+    c.add_collector(11, {'vendor': message.CYBOS}, body)
+
+    body = {'capability': message.CAPABILITY_REQUEST_RESPONSE | message.CAPABILITY_COLLECT_SUBSCRIBE}
+    c.add_collector(13, {'vendor': message.CYBOS}, body)
+    c.connect_to_subscribe('A00001', 100, {}, {})
+    c.connect_to_subscribe('A00001' + message.BIDASK_SUFFIX, 101, {}, {})
+    c.connect_to_subscribe('A00001' + message.SUBJECT_SUFFIX, 102, {}, {})
+    c.reset()
+    assert len(c.collectors) == 0
+    assert len(c.code_subscribe_info) == 0

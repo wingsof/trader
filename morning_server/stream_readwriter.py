@@ -6,10 +6,11 @@ import gevent
 from gevent.event import Event
 import threading
 import socket
+import errno
 
 from morning_server import message
 
-READ_PACKET_SIZE=32768
+READ_PACKET_SIZE=4096
 HEADER_SIZE=8
 
 
@@ -108,7 +109,7 @@ def write(sock, header, body):
         raise Exception(e.args[0], sock)
 
 
-def read(sock, full_msg=b'', new_msg=True, header_len=0):
+def read(sock, full_msg, new_msg, header_len):
     while True:
         if new_msg and len(full_msg) >= HEADER_SIZE:
             pass
@@ -116,10 +117,15 @@ def read(sock, full_msg=b'', new_msg=True, header_len=0):
             try:
                 msg = sock.recv(READ_PACKET_SIZE)
             except socket.error as e:
-                raise Exception(e.args[0], sock)
+                err = e.args[0]
+                if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
+                    print('No data available')
+                    continue
+                else:
+                    raise Exception('Socket Error ' + e.args[0], sock)
 
             if len(msg) == 0:
-                raise Exception('Client disconnected', sock)
+                raise Exception('Length 0 Socket error', sock)
 
             #print('receive', len(msg))
             full_msg += msg

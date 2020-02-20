@@ -1,6 +1,27 @@
+* 10053 에러 해결
+    * 일단 로그상으로는 request_client.py 가 먼저 죽었으나, request_client.py 가 10053을 받음
+    * 예측 방안
+        * 1. 윈도우 포트 제한 변경 - 가능성 낮음
+        * 2. recv 사이즈 4096으로 변경
+        * 3. https://support.microsoft.com/ko-kr/help/981344/an-application-may-receive-the-10054-error-when-the-application-receiv 부분 적용 
+        * 4. server 로그에서 exception 인지, recv length가 zero인지 로그를 다르게 두어 확인
+        * 5. 기존 포트 번호를43100 으로 뒤쪽 번호로 변경
+        * 6. RequestClient 에서 message_reader 의 socket 과 
+    * Sequence
+        * RequestClient 가 12:05 에 socket 10054 받음
+        * DB는 12:23 분까지 기록 -> socket read 에러가 발생하였지만, write는 문제 없이 된다?
+        * Server 로그는 12:25에 disconnect 이벤트 처리
+    * 테스트
+        * 소켓을 ==로 비교한 것에서 문제가 발생 아닌듯, fd 가 같더라도 == 는 다름
+
 * 스윙에서 가야할 자리에서 가는 경우와 못가는 경우 알고리즘
     * 가야할 자리는 이전 고점 돌파 지점
     * 가야할 자리에서 시간외단일가 확인도 중요
+
+* https://support.microsoft.com/ko-kr/help/981344/an-application-may-receive-the-10054-error-when-the-application-receiv
+    * 10054 에러인데, Server 측에서는 그냥 연결이 끊어진 것으로 나옴
+    * 포트 번호 제한도 풀기 
+
 
 * 상위 10%가 차지하는 물량 검토 (가정: 상위 10%의 물량이 50% 이상이면, 기관이거나 곧 하락 장세)
 * BJJ 사용 방법에서 변경하여, VI 이전 호가에서 파는 전략 (5% 이상 8%이하, 10% VI 이전 매도)

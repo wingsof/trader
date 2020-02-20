@@ -3,7 +3,7 @@ from gevent import monkey; monkey.patch_all()
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.join(*(['..' + os.sep] * 2)))))
 
-import socket
+from gevent import socket
 import gevent
 import time
 from PyQt5.QtCore import QCoreApplication
