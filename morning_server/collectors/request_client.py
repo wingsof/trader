@@ -286,7 +286,7 @@ if __name__ == '__main__':
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
-            eventlet.connect(server_address)
+            sock.connect(server_address)
             rlogger.info('Connected to apiserver')
             break
         except socket.error:
