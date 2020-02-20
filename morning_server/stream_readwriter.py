@@ -8,7 +8,7 @@ import errno
 
 from morning_server import message
 
-READ_PACKET_SIZE=4096
+READ_PACKET_SIZE=8192
 HEADER_SIZE=8
 
 
