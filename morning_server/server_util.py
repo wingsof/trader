@@ -1,3 +1,5 @@
+from gevent import monkey; monkey.patch_all()
+
 from morning_server import stream_readwriter
 from morning_server import message
 from configs import db
