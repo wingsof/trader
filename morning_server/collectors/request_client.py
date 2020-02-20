@@ -248,10 +248,10 @@ def handle_subscribe(sock, header, body):
 def mainloop(app):
     while True:
         app.processEvents()
+        eventlet.sleep(0.03)
         while app.hasPendingEvents():
             app.processEvents()
-            eventlet.sleep()
-        eventlet.sleep()
+            eventlet.sleep(0.03)
 
 
 def dispatch_message(sock):
@@ -263,6 +263,7 @@ def dispatch_message(sock):
 if __name__ == '__main__':
     app = QCoreApplication([])
     conn = connection.Connection()
+    epool = eventlet.GreenPool()
     while True:
         try:
             if conn.is_connected():
@@ -305,5 +306,6 @@ if __name__ == '__main__':
         order_subscriber = None
         rlogger.info('HAS TRADE CAPABILITY')
     
-    eventlet.spawn_n(mainloop, app)
-    dispatch_message(sock)
+    epool.spawn_n(mainloop, app)
+    epool.spawn_n(dispatch_message, sock)
+    epool.waitall()

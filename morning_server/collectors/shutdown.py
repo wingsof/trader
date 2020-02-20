@@ -1,7 +1,6 @@
 import win32security
 import win32api
 import sys
-import time
 from ntsecuritycon import *
 
 
