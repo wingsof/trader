@@ -41,6 +41,8 @@ def handle_request(sock, header, body):
             stream_readwriter.write(sock, header, stock_code.get_kospi_company_code_list())
         elif header['market_type'] == message.KOSDAQ:
             stream_readwriter.write(sock, header, stock_code.get_kosdaq_company_code_list())
+    elif header['method'] == message.CODE_TO_NAME_DATA:
+        stream_readwriter.write(sock, header, stock_code.code_to_name(header['code'])
     elif header['method'] == message.USCODE_DATA:
         data = stock_code.get_us_code(header['us_type'])
         stream_readwriter.write(sock, header, data)

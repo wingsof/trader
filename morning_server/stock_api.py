@@ -143,6 +143,13 @@ def request_stock_code(reader, market_type):
     return reader.block_write(header, body)
 
 
+def request_code_to_name(reader, code):
+    header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.CODE_TO_NAME_DATA)
+    header['code'] = code
+    body = []
+    return reader.block_write(header, body)
+
+
 def request_us_stock_code(reader, us_type):
     header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.USCODE_DATA)
     header['us_type'] = us_type

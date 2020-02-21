@@ -19,6 +19,12 @@ from utils import slack
 
 
 db_collection = None
+SEND_SLACK = True
+
+
+def send_slack_message(msg):
+    if SEND_SLACK:
+        slack.send_slack_message(msg)
 
 
 def validate_tick_data(code, today, h=0, m=0):
@@ -78,11 +84,15 @@ def validate_alarm_data(code, today, alarm_datetime):
     return True
 
 
-def start_validation():
+def start_validation(codes=[]):
     global db_collection
-    slack.send_slack_message('START VALIDATION')
+    send_slack_message('START VALIDATION')
 
-    market_code = morning_client.get_market_code()
+    if len(codes) > 0:
+        market_code = codes
+    else:
+        market_code = morning_client.get_market_code()
+
     today = datetime.now().date()
     yesterday = holidays.get_yesterday(today)
     db_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
@@ -109,17 +119,17 @@ def start_validation():
             failed_ba_tick_codes.append(ydata['code'])
 
     if len(failed_tick_codes) > 0:
-        slack.send_slack_message('FAILED TICK ' + str(failed_tick_codes))
+        send_slack_message('FAILED TICK ' + str(failed_tick_codes))
         print('FAILED TICK', failed_tick_codes)
     else:
-        slack.send_slack_message('TICK ALL SUCCESS')
+        send_slack_message('TICK ALL SUCCESS')
         print('TICK ALL SUCCESS')
 
     if len(failed_ba_tick_codes) > 0:
-        slack.send_slack_message('FAILED BA TICK ' + str(failed_ba_tick_codes))
+        send_slack_message('FAILED BA TICK ' + str(failed_ba_tick_codes))
         print('FAILED BA TICK', failed_ba_tick_codes)
     else:
-        slack.send_slack_message('TICK BA ALL SUCCESS')
+        send_slack_message('TICK BA ALL SUCCESS')
         print('TICK BA ALL SUCCESS')
 
     # 2. validate today alarm tick data 
@@ -127,19 +137,26 @@ def start_validation():
     alarm_failed_codes = []
     if len(alarm_list) > 0:
         for ac in alarm_list:
+            if len(codes) > 0 and ac['3'] not in codes:
+                continue
+
             if not validate_alarm_data(ac['3'], today, ac['date']):
                 alarm_failed_codes.append(ac['3'])
 
         if len(alarm_failed_codes) > 0:
-            slack.send_slack_message('FAILED ALARM CODES ' + str(alarm_failed_codes) + '\t' + str(len(alarm_failed_codes)) + ' / ' + str(len(alarm_list)))
+            send_slack_message('FAILED ALARM CODES ' + str(alarm_failed_codes) + '\t' + str(len(alarm_failed_codes)) + ' / ' + str(len(alarm_list)))
             print('FAILED ALARM CODES', alarm_failed_codes, len(alarm_failed_codes), '/', len(alarm_list))
         else:
-            slack.send_slack_message('ALARM ALL SUCCESS ' + str(len(alarm_list)))
+            send_slack_message('ALARM ALL SUCCESS ' + str(len(alarm_list)))
             print('ALARM ALL SUCCESS', len(alarm_list))
     else:
-        slack.send_slack_message('NO ALARM TODAY')
+        send_slack_message('NO ALARM TODAY')
         print('NO ALARM TODAY')
     sys.exit(0)
 
 if __name__ == '__main__':
-    start_validation()
+    SEND_SLACK = False
+    if len(sys.argv) > 1:
+        start_validation(sys.argv[1:])
+    else:
+        start_validation()
