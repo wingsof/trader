@@ -62,7 +62,7 @@ def get_kospi200_list():
 
 def code_to_name(code):
     obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
-    return obj.CodeToName(code)
+    return [obj.CodeToName(code)]
 
 
 def is_there_warning(code):
