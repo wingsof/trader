@@ -126,6 +126,7 @@ def start_meause_speed(today):
         sell_speed_array = []
         amount_array = []
         datetime_array = []
+        MAX_SPEED_LIMIT = 5
 
         while current_datetime < datetime.combine(today, time(15,20)):
             buy_quantity, sell_quantity, filter_tick_data = get_one_min_tick_quantity(tick_data, current_datetime)
@@ -134,8 +135,17 @@ def start_meause_speed(today):
                 current_datetime += timedelta(seconds=10)
                 continue
             price_array.append(filter_tick_data[-1]['current_price'])
-            buy_speed_array.append(ask_avg / buy_quantity)
-            sell_speed_array.append(bid_avg / sell_quantity)
+            buy_speed = ask_avg / buy_quantity
+            sell_speed = bid_avg / sell_quantity
+
+            if buy_speed > MAX_SPEED_LIMIT:
+                buy_speed = MAX_SPEED_LIMIT
+
+            if sell_speed > MAX_SPEED_LIMIT:
+                sell_speed = MAX_SPEED_LIMIT
+
+            buy_speed_array.append(buy_speed)
+            sell_speed_array.append(sell_speed)
             amount_array.append(filter_tick_data[-1]['cum_amount'] - filter_tick_data[0]['cum_amount'])
             datetime_array.append(current_datetime)
 
@@ -144,5 +154,5 @@ def start_meause_speed(today):
 
 
 if __name__ == '__main__':
-    TODAY = date(2020, 2, 20)
+    TODAY = date(2020, 2, 21)
     start_meause_speed(TODAY)

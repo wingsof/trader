@@ -260,6 +260,13 @@ def consumer():
             stock_api.subscribe_alarm(message_reader, display_alarm_data)
         elif command.startswith('stop_alarm'):
             stock_api.stop_subscribe_alarm(message_reader)
+        elif command.startswith('code_to_name'):
+            code_detail = command.split(',')
+            if len(code_detail) != 2:
+                print('code_to_name,code')
+            else:
+                code = code_detail[1]
+                print(stock_api.request_code_to_name(message_reader, code))
 
 
 def main():
