@@ -17,6 +17,7 @@ from pymongo import MongoClient
 from morning.pipeline.converter import dt
 import numpy as np
 from scipy.signal import find_peaks, peak_prominences
+import pandas as pd
 
 
 code_dict = dict()
@@ -149,6 +150,17 @@ def start_trade(code, t):
             elif min_data['highest_price'] > code_dict[code]['vi_highest'] + code_dict[code]['target_gap']:
                 print('\t', code, 'OK', (min_data['close_price'] - code_dict[code]['buy_price']) / code_dict[code]['buy_price'] * 100)
                 break
+
+
+def read_kosdaq_vi_excel(reader, market_code):
+    code_name = dict()
+    for code in market_code:
+        stock_name = stock_api.request_code_to_name(reader, code)
+        if len(stock_name) > 0:
+            code_name[stock_name[0]] = code
+
+    vi_df = pd.read_excel(os.environ['MORNING_PATH'] + os.sep + 'sample_data' + os.sep + 'vi_kosdaq_list.xlsx')
+
 
 
 if __name__ == '__main__':
