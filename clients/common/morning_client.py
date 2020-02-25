@@ -26,8 +26,8 @@ from morning.config import db
 _message_reader = None
 MAVG=20
 
-def get_market_code():
-    return stock_api.request_stock_code(get_reader(), message.KOSDAQ)
+def get_market_code(market_type=message.KOSDAQ):
+    return stock_api.request_stock_code(get_reader(), market_type)
 
 
 def get_reader():
@@ -35,6 +35,35 @@ def get_reader():
         setup()
 
     return _message_reader
+
+
+def get_ask_bid_price_unit(market_type, price):
+    if market_type == message.KOSDAQ:
+        if price < 1000:
+            return 1
+        elif 1000 <= price < 5000:
+            return 5
+        elif 5000 <= price < 10000:
+            return 10
+        elif 10000 <= price < 50000:
+            return 50
+        else:
+            return 100
+    elif market_type == message.KOSPI:
+        if price < 1000:
+            return 1
+        elif 1000 <= price < 5000:
+            return 5
+        elif 5000 <= price < 10000:
+            return 10
+        elif 10000 <= price < 50000:
+            return 50
+        elif 50000 <= price < 100000:
+            return 100
+        elif 100000 <= price < 500000:
+            return 500
+        else:
+            return 1000
 
 
 def _convert_min_data_readable(code, min_data):

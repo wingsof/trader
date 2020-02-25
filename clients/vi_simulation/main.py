@@ -19,7 +19,7 @@ import numpy as np
 from scipy.signal import find_peaks, peak_prominences
 
 
-target_date = datetime(2020, 2, 21)
+target_date = datetime(2020, 2, 24)
 code_dict = dict()
 MAVG=10
 STATE_NONE = 0
@@ -186,7 +186,7 @@ if __name__ == '__main__':
     market_code = morning_client.get_market_code()
     yesterday = holidays.get_yesterday(target_date.date())
     done_codes = []
-    alarm_data = list(filter(lambda x: x['3'] == 'A017890', alarm_data))
+    #alarm_data = list(filter(lambda x: x['3'] == 'A017890', alarm_data))
     print(len(market_code))
 
     for code in market_code:

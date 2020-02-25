@@ -37,9 +37,12 @@ def get_kosdaq_company_code_list():
 
 
 def is_company_stock(code):
-    obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
-    return obj.GetStockSectionKind(code) == 1
+    return get_stock_section(code) == 1
 
+
+def get_stock_section(code):
+    obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
+    return obj.GetStockSectionKind(code)
 
 def get_country_code():
     obj = win32com.client.Dispatch('CpUtil.CpUsCode')
@@ -89,12 +92,13 @@ if __name__ == '__main__':
 
     #conn = connection.Connection()
     #print("Connected", conn.is_connected())
+    get_stock_section('A079980')
+    """
     codes = get_kosdaq_code_list()
     for code in codes:
         print(code, get_industry_name(code), code_to_name(code), is_company_stock(code))
     print("US CODE ALL", get_us_code(1))
     print('TYPE', type(get_us_code(1)))
-    """
     print("Left", conn.request_left_count())
     print("KOSPI ", get_kospi_code_list())
     print("Warning", is_there_warning('A134780'))
