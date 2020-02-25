@@ -33,7 +33,7 @@ def start_search(code, search_time, kosdaq_market_code):
             profit = (stock_data['close_price'] - stock_data['start_price']) / stock_data['start_price'] * 100
             data_list.append({'code': kosdaq_code, 'profit': profit, 'amount': stock_data['amount']})
         else:
-            print(kosdaq_code, 'len', len(fdata))
+            print(kosdaq_code, 'len', len(fdata), len(data))
     by_profit = sorted(data_list, key=lambda x: x['profit'], reverse=True)
 
     print(by_profit[:7])
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     print(search_time)
     kosdaq_market_code = morning_client.get_market_code()
     kospi_market_code = morning_client.get_market_code(message.KOSPI)
-    kosdaq_market_code.extend(kosdaq_market_code)
+    kosdaq_market_code.extend(kospi_market_code)
 
     print(len(kosdaq_market_code))
     if code in kosdaq_market_code:

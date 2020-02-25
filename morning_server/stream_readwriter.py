@@ -120,7 +120,7 @@ def read(sock, full_msg, new_msg, header_len):
                     print('No data available')
                     continue
                 else:
-                    raise Exception('Socket Error ' + e.args[0], sock)
+                    raise Exception('Socket Error ' + e.args[1], sock)
 
             if len(msg) == 0:
                 raise Exception('Length 0 Socket error', sock)

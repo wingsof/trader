@@ -89,6 +89,13 @@ def consumer():
             stock_api.subscribe_trade(message_reader, display_trade_result)
         elif command.startswith('trade_stop_subscribe'):
             stock_api.stop_subscribe_trade(message_reader)
+        elif command.startswith('min_data'):
+            min_detail = command.split(',')
+            if len(min_detail) != 2:
+                print('min_data,code')
+            else:
+                result = stock_api.request_stock_minute_data(message_reader, min_detail[1], date(2020,2,3), date(2020,2,3))
+                print(result)
         elif command.startswith('todaym'):
             todaym_detail = command.split(',')
             if len(todaym_detail) != 2:
