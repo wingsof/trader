@@ -94,7 +94,7 @@ def start_vi_follower():
     print('')
     yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
 
-    yesterday_list = yesterday_list[:200]
+    yesterday_list = yesterday_list[:300]
     for ydata in yesterday_list:
         code = ydata['code']
         sf = stock_follower.StockFollower(morning_client.get_reader(), db_collection, code, yesterday_data[code])

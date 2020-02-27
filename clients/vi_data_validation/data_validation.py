@@ -108,7 +108,7 @@ def start_validation(codes=[]):
             yesterday_list.append(data)
     print('')
     yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
-    yesterday_list = yesterday_list[:100]
+    yesterday_list = yesterday_list[:300]
     failed_tick_codes = []
     failed_ba_tick_codes = []
     # 1. validate yesterday_list :100's today tick data

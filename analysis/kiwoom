@@ -62,3 +62,74 @@
 * 거래대금에 크게 의미를 두지 않고, 상승 속도에만 집중으로 예상
 * VI 를 크게 신경쓰는 것 같지 않음
 * 
+
+------------------------------------------------------------------
+[{'code': 'A035510', 'profit': 9.913793103448276, 'amount': 391280000}, {'code': 'A045060', 'profit': 9.5, 'amount': 9061627000}, {'code': 'A246720', 'profit': 6.092436974789916, 'amount': 3501000}, {'code': 'A043710', 'profit': 5.7915057915057915, 'amount': 608000}, {'code': 'A038530', 'profit': 5.577689243027888, 'amount': 15965000}, {'code': 'A131400', 'profit': 5.401844532279315, 'amount': 18730000}, {'code': 'A035080', 'profit': 5.384615384615385, 'amount': 122603000}]
+by profit rank 8
+{'code': 'A065060', 'profit': 5.351170568561873, 'amount': 2799799000}
+amount rank1 79269960000
+by amount rank 23
+{'code': 'A065060', 'profit': 5.351170568561873, 'amount': 2799799000}
+9시 지엔코의 경우는 상위기는 했지만, profit, amount 모두 1위가 있는데(A035510), 위 지엔코를 선택했을까?
+추측 1: 1위의 경우 이미 vi 값에 근접
+추측 2: 5% 선을 선호? 특정 profit 이상의 값을 제외
+추측 3: 
+
+
+[{'code': 'A017650', 'profit': 6.70391061452514, 'amount': 1721427000}, {'code': 'A065950', 'profit': 5.103280680437424, 'amount': 4091457000}, {'code': 'A021880', 'profit': 5.072463768115942, 'amount': 4041000}, {'code': 'A102940', 'profit': 5.063291139240507, 'amount': 67456000}, {'code': 'A139050', 'profit': 5.042016806722689, 'amount': 6089000}, {'code': 'A083550', 'profit': 4.335260115606936, 'amount': 1096745000}, {'code': 'A216080', 'profit': 3.917525773195876, 'amount': 10320000}]
+by profit rank 1
+{'code': 'A017650', 'profit': 6.70391061452514, 'amount': 1721427000}
+amount rank1 9549350000
+by amount rank 8
+{'code': 'A017650', 'profit': 6.70391061452514, 'amount': 1721427000}
+2월 3일 9시 4분 진입시 분봉상 rank 1위, 금액상 8위 - 
+
+
+-> 2월 26일 데이터, 단순히 profit을 보고 들어왔을까? -> 추가 데이터 확보 되는 대로 확인 가능
+RANK BY PROFIT code A059090 delta 60 search time 2020-02-26 14:48:49 from open 8.47 profit 1.80 RANK 1
+RANK BY AMOUNT code A059090 delta 60 search time 2020-02-26 14:48:49 from open 8.47 amount 794402950 RANK 3
+----------------------------------------------------------------------------------------------------
+{'code': 'A059090', 'profit': 1.7991004497751124, 'amount': 794402950, 'from_open': 8.466453674121405}
+{'code': 'A080720', 'profit': 1.2012012012012012, 'amount': 1821195250, 'from_open': 5.3125}
+{'code': 'A200780', 'profit': 0.9900990099009901, 'amount': 3401303400, 'from_open': 24.390243902439025}
+{'code': 'A067570', 'profit': 0.9345794392523363, 'amount': 285909085, 'from_open': 17.027863777089784}
+{'code': 'A017890', 'profit': 0.8403361344537815, 'amount': 344427300, 'from_open': 5.263157894736842}
+{'code': 'A047820', 'profit': 0.7692307692307693, 'amount': 352204640, 'from_open': 11.3314447592068}
+{'code': 'A022220', 'profit': 0.5420054200542005, 'amount': 3290875, 'from_open': -3.8860103626943006}
+{'code': 'A263690', 'profit': 0.5056890012642226, 'amount': 51970430, 'from_open': -9.556313993174061}
+{'code': 'A039030', 'profit': 0.5050505050505051, 'amount': 46117500, 'from_open': -1.7769002961500493}
+{'code': 'A037950', 'profit': 0.49382716049382713, 'amount': 68566570, 'from_open': -7.077625570776255}
+****************************************************************************************************
+{'code': 'A200780', 'profit': 0.9900990099009901, 'amount': 3401303400, 'from_open': 24.390243902439025}
+{'code': 'A080720', 'profit': 1.2012012012012012, 'amount': 1821195250, 'from_open': 5.3125}
+{'code': 'A059090', 'profit': 1.7991004497751124, 'amount': 794402950, 'from_open': 8.466453674121405}
+{'code': 'A289010', 'profit': -0.8888888888888888, 'amount': 657769600, 'from_open': 0.45045045045045046}
+{'code': 'A131370', 'profit': 0.0, 'amount': 390098470, 'from_open': 7.890961262553802}
+{'code': 'A047820', 'profit': 0.7692307692307693, 'amount': 352204640, 'from_open': 11.3314447592068}
+{'code': 'A017890', 'profit': 0.8403361344537815, 'amount': 344427300, 'from_open': 5.263157894736842}
+{'code': 'A130500', 'profit': -0.628930817610063, 'amount': 315682170, 'from_open': 22.797927461139896}
+{'code': 'A067570', 'profit': 0.9345794392523363, 'amount': 285909085, 'from_open': 17.027863777089784}
+{'code': 'A133750', 'profit': -0.2317497103128621, 'amount': 252359350, 'from_open': 0.819672131147541}
+
+
+-> 매도 타이밍은 어떻게?
+
+
+- 첫 매수 6800 1979 호가 매수
+{'_id': ObjectId('5e5606c1a492ed014a67e32f'), 'code': 'A059090', 'company_name': '미코', 'yesterday_diff': 410, 'time': 1448, 'start_price': 6260, 'highest_price': 6800, 'lowest_price': 6250, 'ask_price': 6790, 'bid_price': 6780, 'cum_volume': 2575139, 'cum_amount': 16787704, '11': None, '12': None, 'current_price': 6800, 'buy_or_sell': 49, 'cum_sell_volume_by_price': 1182658, 'cum_buy_volume_by_price': 1369307, 'volume': 1979, 'time_with_sec': 144849, 'market_type_exp': 50, 'market_type': 50, 'out_time_volume': 23174, '22': 50, '23': '0', '24': 0, '25': 0.0, '26': 49, 'cum_sell_volume': 1114106, 'cum_buy_volume': 1437859, 'date': datetime.datetime(2020, 2, 26, 14, 48, 49, 652000)}
+2020-02-26 14:48:49.652000
+
+- 두번째 매수 6790 12565 호가 매수
+{'_id': ObjectId('5e5606c1a492ed014a67e32e'), 'code': 'A059090', 'company_name': '미코', 'yesterday_diff': 400, 'time': 1448, 'start_price': 6260, 'highest_price': 6790, 'lowest_price': 6250, 'ask_price': 6790, 'bid_price': 6780, 'cum_volume': 2573160, 'cum_amount': 16774247, '11': None, '12': None, 'current_price': 6790, 'buy_or_sell': 49, 'cum_sell_volume_by_price': 1182658, 'cum_buy_volume_by_price': 1367328, 'volume': 12565, 'time_with_sec': 144849, 'market_type_exp': 50, 'market_type': 50, 'out_time_volume': 23174, '22': 50, '23': '0', '24': 0, '25': 0.0, '26': 49, 'cum_sell_volume': 1114106, 'cum_buy_volume': 1435880, 'date': datetime.datetime(2020, 2, 26, 14, 48, 49, 651000)}
+2020-02-26 14:48:49.651000
+
+- 3,4 번째 매수? 어디로
+3번째 6800 3121
+4번째 6800 105
+
+- 매도1  6840 1777  - 6840원 호가에 걸어둠
+{'_id': ObjectId('5e5607dca492ed014a69aced'), 'code': 'A059090', 'company_name': '미코', 'yesterday_diff': 450, 'time': 1453, 'start_price': 6260, 'highest_price': 6880, 'lowest_price': 6250, 'ask_price': 6850, 'bid_price': 6840, 'cum_volume': 48324, 'cum_amount': 19905048, '11': None, '12': None, 'current_price': 6840, 'buy_or_sell': 49, 'cum_sell_volume_by_price': 1349538, 'cum_buy_volume_by_price': 1659670, 'volume': 1777, 'time_with_sec': 145332, 'market_type_exp': 49, 'market_type': 49, 'out_time_volume': 23174, '22': 50, '23': '0', '24': 0, '25': 0.0, '26': 50, 'cum_sell_volume': 1282940, 'cum_buy_volume': 1726268, 'date': datetime.datetime(2020, 2, 26, 14, 53, 32, 149000)}
+
+
+- 매도 2  6810 15993 - 6810원 호가에 매도
+{'_id': ObjectId('5e5607f7a492ed014a69d95b'), 'code': 'A059090', 'company_name': '미코', 'yesterday_diff': 420, 'time': 1453, 'start_price': 6260, 'highest_price': 6900, 'lowest_price': 6250, 'ask_price': 6850, 'bid_price': 6810, 'cum_volume': 3261388, 'cum_amount': 21477020, '11': None, '12': None, 'current_price': 6810, 'buy_or_sell': 50, 'cum_sell_volume_by_price': 1448755, 'cum_buy_volume_by_price': 1789459, 'volume': 15993, 'time_with_sec': 145359, 'market_type_exp': 50, 'market_type': 50, 'out_time_volume': 23174, '22': 50, '23': '0', '24': 0, '25': 0.0, '26': 50, 'cum_sell_volume': 1330821, 'cum_buy_volume': 1907393, 'date': datetime.datetime(2020, 2, 26, 14, 53, 59, 220000)}

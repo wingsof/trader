@@ -297,16 +297,21 @@ if __name__ == '__main__':
 
     header = stream_readwriter.create_header(message.COLLECTOR, message.MARKET_STOCK, message.COLLECTOR_DATA)
 
-    if client_info.get_client_capability() & message.CAPABILITY_TRADE:
-        body = {'capability': message.CAPABILITY_COLLECT_SUBSCRIBE | message.CAPABILITY_TRADE}
+    if len(sys.argv) > 1 and sys.argv[1] == 'collector':
+        if client_info.get_client_capability() & message.CAPABILITY_COLLECT_SUBSCRIBE:
+            body = {'capability': message.CAPABILITY_COLLECT_SUBSCRIBE}
+            stream_readwriter.write(sock, header, body)
     else:
-        body = {'capability': message.CAPABILITY_REQUEST_RESPONSE | message.CAPABILITY_COLLECT_SUBSCRIBE}
-    stream_readwriter.write(sock, header, body)
+        if client_info.get_client_capability() & message.CAPABILITY_TRADE:
+            body = {'capability': message.CAPABILITY_COLLECT_SUBSCRIBE | message.CAPABILITY_TRADE}
+        else:
+            body = {'capability': message.CAPABILITY_REQUEST_RESPONSE | message.CAPABILITY_COLLECT_SUBSCRIBE}
+        stream_readwriter.write(sock, header, body)
 
-    if body['capability'] & message.CAPABILITY_TRADE:
-        account = trade_util.TradeUtil()
-        order_subscriber = None
-        rlogger.info('HAS TRADE CAPABILITY')
+        if body['capability'] & message.CAPABILITY_TRADE:
+            account = trade_util.TradeUtil()
+            order_subscriber = None
+            rlogger.info('HAS TRADE CAPABILITY')
     
     epool.spawn_n(mainloop, app)
     epool.spawn_n(dispatch_message, sock)

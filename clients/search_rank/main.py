@@ -32,11 +32,14 @@ def start_search(code, search_time, kosdaq_market_code):
             stock_data = fdata[0]
             profit = (stock_data['close_price'] - stock_data['start_price']) / stock_data['start_price'] * 100
             data_list.append({'code': kosdaq_code, 'profit': profit, 'amount': stock_data['amount']})
-        else:
-            print(kosdaq_code, 'len', len(fdata), len(data))
+        #else:
+        #    print(kosdaq_code, 'len', len(fdata), len(data))
     by_profit = sorted(data_list, key=lambda x: x['profit'], reverse=True)
+    print('*' * 100)
+    for bp in enumerate(by_profit[:10]):
+        print(bp)
+    print('*' * 100)
 
-    print(by_profit[:7])
     for i, bp in enumerate(by_profit):
         if bp['code'] == code:
             print('by profit rank', i+1)
@@ -44,6 +47,11 @@ def start_search(code, search_time, kosdaq_market_code):
             break
 
     by_amount = sorted(data_list, key=lambda x: x['amount'], reverse=True)
+    print('*' * 100)
+    for ba in enumerate(by_amount[:10]):
+        print(ba)
+    print('*' * 100)
+
     print('amount rank1', by_amount[0]['amount'])
     for i, ba in enumerate(by_amount):
         if ba['code'] == code:
