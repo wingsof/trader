@@ -30,6 +30,11 @@ def _get_client_info():
     return _client_info
 
 
+def add_client_name_suffix(suffix):
+    client_name = get_client_name()
+    _get_client_info()['client_name'] = client_name + '_' + suffix
+
+
 def get_client_name():
     return _get_client_info()['client_name']
 
