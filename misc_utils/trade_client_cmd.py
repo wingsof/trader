@@ -84,7 +84,9 @@ def consumer():
         elif command.startswith('stats'):
             print(stock_api.request_subscribe_stat(message_reader))
         elif command.startswith('statc'):
-            print(stock_api.request_collector_stat(message_reader))
+            cinfo = stock_api.request_collector_stat(message_reader)
+            print('total', len(cinfo))
+            print(cinfo)
         elif command.startswith('trade_subscribe'):
             stock_api.subscribe_trade(message_reader, display_trade_result)
         elif command.startswith('trade_stop_subscribe'):

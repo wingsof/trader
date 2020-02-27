@@ -16,7 +16,12 @@ def except_hook(exc_type, exc_value, traceback):
 
 
 def _setup_log(use_console_out=True):
-    logg = logging.getLogger(client_info.get_client_name())
+    # here will be first place to set client name by import rlogger
+    if len(sys.argv) > 1 and sys.argv[1] == 'collector':
+        client_info.add_client_name_suffix('collector') 
+        logg = logging.getLogger(client_info.get_client_name())
+    else:
+        logg = logging.getLogger(client_info.get_client_name())
     logg.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')

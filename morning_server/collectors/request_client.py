@@ -263,9 +263,6 @@ def dispatch_message(sock):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == 'collector':
-        client_info.add_client_name_suffix('collector') 
-
     app = QCoreApplication([])
     conn = connection.Connection()
     epool = eventlet.GreenPool()
