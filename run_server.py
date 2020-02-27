@@ -9,7 +9,7 @@ import sys
 import gevent
 from clients.vi_follower import main
 from morning.back_data import holidays
-from clients.vi_data_validation import data_validation
+from clients.vi_data_validation import data_validation_only_tick as data_validation
 from datetime import datetime
 from multiprocessing import Process
 from morning_server import server
