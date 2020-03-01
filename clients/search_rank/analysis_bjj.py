@@ -4,7 +4,7 @@ import sys
 
 
 if __name__ == '__main__':
-    sheet_names = ['2-3', '2-4', '2-5', '2-6']
+    sheet_names = ['2-3', '2-4', '2-5', '2-6', '2-26', '2-27']
     for sn in sheet_names:
         trading_dict = dict()
         total_tax = 0

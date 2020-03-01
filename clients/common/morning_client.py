@@ -21,6 +21,7 @@ from morning_server import message
 from morning.pipeline.converter import dt
 from utils import time_converter
 from morning.config import db
+import os.path
 
 
 _message_reader = None
@@ -35,6 +36,15 @@ def get_reader():
         setup()
 
     return _message_reader
+
+
+def get_save_filename(path, filename, ext):
+    fullpath = os.path.join(path, filename + '.' + ext)
+    prefix_num = 1
+    while os.path.exists(fullpath):
+        fullpath = os.path.join(path, filename + '_' + str(prefix_num) + '.' + ext)
+        prefix_num += 1
+    return fullpath
 
 
 def get_ask_bid_price_unit(market_type, price):

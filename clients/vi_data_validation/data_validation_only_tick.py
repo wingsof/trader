@@ -48,7 +48,7 @@ def validate_tick_data(code, today, h=0, m=0):
         return False
 
     for d in data:
-        if d['date'] - current_time > timedelta(minutes=5):
+        if d['date'] - current_time > timedelta(minutes=20):
             if d['date'].hour <= 15 and d['date'].minute <= 20:
                 print(code, 'time gap is bigger than 5 min', d['date'] - current_time, d['date'], current_time)
                 return False
@@ -109,8 +109,8 @@ def start_validation(codes=[]):
 
 
     if len(failed_tick_codes) > 0:
-        send_slack_message('FAILED TICK ' + str(failed_tick_codes))
-        print('FAILED TICK', failed_tick_codes)
+        send_slack_message('FAILED TICK ' + str(len(failed_tick_codes)) + '/' + str(len(market_code)))
+        print('FAILED TICK', len(failed_tick_codes), len(market_code))
     else:
         send_slack_message('TICK ALL SUCCESS')
         print('TICK ALL SUCCESS')

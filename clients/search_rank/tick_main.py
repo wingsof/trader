@@ -28,6 +28,10 @@ def filter_in_market_tick(tick_data):
     return tick_data[index]['current_price'], tick_data[index+1:]
 
 
+def print_code_info(code_info):
+    print('code', code_info['code'], 'from open', "{0:.2f}".format(code_info['from_open']), 'profit', "{0:.2f}".format(code_info['profit']))
+
+
 def print_rank_code(code, sec_delta, search_time, rank_by_profit, rank_by_amount):
     for i, rbp in enumerate(rank_by_profit):
         if rbp['code'] == code:
@@ -77,7 +81,7 @@ def start_search(code, search_time, yesterday_list, price, qty, db_collection):
             converted_data.append(converted)
 
         if (search_time.hour == 9 and search_time.minute < 2) or search_time.hour < 9:
-            converted_data = filter_in_market_tick(converted_data)
+            _, converted_data = filter_in_market_tick(converted_data)
 
         code_dict[ycode] = {'tick': converted_data, 'yesterday_data': data, 'open': open_price}
         # loop ex) 9:02 -> from 9:02:00 to 9:02:59  loop by increment 1 second and search past 10 sec, 20 sec, 30 sec, 40 sec, 50 sec, 60 sec
@@ -103,7 +107,8 @@ def start_search(code, search_time, yesterday_list, price, qty, db_collection):
             search_time += timedelta(seconds=1)
             continue
 
-        for t in range(60, 0, -10):
+        time_interval = [60, 50, 40, 30, 20, 10, 5, 3]
+        for t in time_interval:
             rank_list = []
             for k, v in code_dict.items():
                 tick = code_dict[k]['tick']
@@ -121,10 +126,10 @@ def start_search(code, search_time, yesterday_list, price, qty, db_collection):
             print_rank_code(code, t, search_time, rank_by_profit, rank_by_amount)
             print('-' * 100)
             for rbp in rank_by_profit[:10]:
-                print(rbp)
+                print_code_info(rbp)
             print('*' * 100)
             for rba in rank_by_amount[:10]:
-                print(rba)
+                print_code_info(rba)
             print('-' * 100)
                 
         search_time += timedelta(seconds=1)

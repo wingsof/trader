@@ -23,7 +23,7 @@ def run_subscriber():
     while True:
         print('Run subscriber Wait')
 
-        time.sleep(300)
+        time.sleep(600)
         now = datetime.now()
         year, month, day = now.year, now.month, now.day
 

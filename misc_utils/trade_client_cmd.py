@@ -85,8 +85,10 @@ def consumer():
             print(stock_api.request_subscribe_stat(message_reader))
         elif command.startswith('statc'):
             cinfo = stock_api.request_collector_stat(message_reader)
-            print('total', len(cinfo))
-            print(cinfo)
+            print('total collector', len(cinfo))
+            print('total subscribe count', sum([c['subscribe_count'] for c in cinfo]))
+            for i, ci in enumerate(cinfo):
+                print(i, '\t', 'vendor', ci['vendor'], 'subscribe count', ci['subscribe_count'])
         elif command.startswith('trade_subscribe'):
             stock_api.subscribe_trade(message_reader, display_trade_result)
         elif command.startswith('trade_stop_subscribe'):

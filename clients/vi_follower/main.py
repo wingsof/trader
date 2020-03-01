@@ -9,6 +9,7 @@ from clients.common import morning_client
 from datetime import datetime, date
 from morning.back_data import holidays
 from morning_server import stock_api
+from morning_server import message
 import gevent
 from gevent.queue import Queue
 from clients.vi_follower import stock_follower
