@@ -22,8 +22,9 @@ def stream_write(sock, header, body, manager = None):
 
 
 class _Collector:
-    def __init__(self, sock, capability, vendor):
+    def __init__(self, sock, client_name, capability, vendor):
         self.sock = sock
+        self.client_name = client_name
         self.capability = capability
         self.vendor = vendor
         self.subscribe_code = []
@@ -52,6 +53,9 @@ class _Collector:
     def get_vendor(self):
         return self.vendor
 
+    def get_name(self):
+        return self.client_name
+
     def set_pending(self, is_pending):
         #print('set_pending', is_pending)
         self.request['pending'] = is_pending
@@ -75,7 +79,7 @@ class CollectorList:
         self.collectors = []
 
     def add_collector(self, sock, header, body):
-        self.collectors.append(_Collector(sock, body['capability'], header['vendor']))
+        self.collectors.append(_Collector(sock, body['name'], body['capability'], header['vendor']))
 
     def reset(self):
         self.collectors.clear()
@@ -87,7 +91,7 @@ class CollectorList:
             if c.sock == sock:
                 logger.warning('Collector Removed')
                 collector = c
-                slack.send_slack_message('Collector REMOVED')
+                slack.send_slack_message('Collector REMOVED:' + c.get_name())
                 break
 
         if collector is not None:
