@@ -163,18 +163,23 @@ def read_no_loop(sock, full_msg):
     if len(msg) == 0:
         raise Exception('Length 0 Socket error', sock)
 
+    print('read', len(msg))
     full_msg += msg
 
     while True:
+        print('BUF len', len(full_msg))
         if len(full_msg) < HEADER_SIZE:
             break
         
         header_len = int(full_msg[:HEADER_SIZE])
+
+        print('HEADER len', header_len)
         if len(full_msg) < header_len + HEADER_SIZE:
             break
 
         data = full_msg[HEADER_SIZE:HEADER_SIZE+header_len]
         full_msg = full_msg[HEADER_SIZE+header_len:]
+        print('LEFT packet', len(full_msg))
         data = pickle.loads(data)
         msg_list.append(data)
 

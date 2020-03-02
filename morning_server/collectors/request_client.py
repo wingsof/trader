@@ -1,5 +1,8 @@
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.join(*(['..' + os.sep] * 2)))))
+from configs import client_info
+if len(sys.argv) > 1 and sys.argv[1] == 'collector':
+    client_info.add_client_name_suffix('collector') 
 
 import time
 from PyQt5.QtCore import QCoreApplication
