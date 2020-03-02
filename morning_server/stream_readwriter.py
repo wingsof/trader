@@ -125,7 +125,7 @@ def read(sock, full_msg, new_msg, header_len):
             if len(msg) == 0:
                 raise Exception('Length 0 Socket error', sock)
 
-            print('receive', len(msg))
+            #print('receive', len(msg))
             full_msg += msg
 
         if new_msg:
@@ -136,7 +136,7 @@ def read(sock, full_msg, new_msg, header_len):
             full_msg = full_msg[HEADER_SIZE:]
 
         if not new_msg:
-            print('new_msg')
+            #print('new_msg')
             if len(full_msg) < header_len:
                 continue
 
@@ -167,7 +167,6 @@ def read_no_loop(sock, full_msg):
 
     while True:
         if len(full_msg) < HEADER_SIZE:
-            print('new msg but short')
             break
         
         header_len = int(full_msg[:HEADER_SIZE])
