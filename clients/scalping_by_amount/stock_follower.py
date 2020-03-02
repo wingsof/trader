@@ -30,8 +30,8 @@ class StockFollower:
         self.status = StockFollower.STATUS_PRE_MARKET
         self.trader = None
 
-    def start_trading(self):
-        self.trader = trader.Trader()
+    def start_trading(self, code_info):
+        self.trader = trader.Trader(self.reader, code_info)
         stock_api.subscribe_stock(self.reader, self.code + message.BIDASK_SUFFIX, self.trader.ba_tick_handler)
 
 

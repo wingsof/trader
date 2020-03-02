@@ -53,7 +53,7 @@ class _Collector:
     def get_vendor(self):
         return self.vendor
 
-    def get_name(self):
+    def get_collector_name(self):
         return self.client_name
 
     def set_pending(self, is_pending):
@@ -91,7 +91,7 @@ class CollectorList:
             if c.sock == sock:
                 logger.warning('Collector Removed')
                 collector = c
-                slack.send_slack_message('Collector REMOVED:' + c.get_name())
+                slack.send_slack_message('Collector REMOVED:' + c.get_collector_name())
                 break
 
         if collector is not None:

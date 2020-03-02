@@ -23,7 +23,7 @@ def run_subscriber():
     while True:
         print('Run subscriber Wait')
 
-        time.sleep(600)
+        time.sleep(600) # wait until virtual machine is on
         now = datetime.now()
         year, month, day = now.year, now.month, now.day
 
@@ -45,6 +45,7 @@ def start_server(is_vbox_on):
         server_process = Process(target=server.start_server, args=(is_vbox_on,))
         server_process.start()
         server_process.join()
+        time.sleep(600) # Prevent to start immediately since disconnecting client can messed up server
         print('Run Server DONE')
 
 

@@ -49,7 +49,7 @@ def data_process():
                 candidates.append(snapshot)
             code = picker.pick_one(candidates)
             if len(code) > 0:
-                candidate_queue.put_nowait(code)
+                candidate_queue.put_nowait({'code': code, 'info': snapshot.copy()})
             gevent.sleep(10)
 
 
@@ -61,7 +61,7 @@ def heart_beat():
         while datetime.now() - last_processed_time < timedelta(seconds=1):
             gevent.sleep(0.05)
 
-        picked_code = ''
+        picked_code = None
         if trading_follower is None:
             while not candidate_queue.empty():
                 picked_code = candidate_queue.get()
@@ -69,9 +69,9 @@ def heart_beat():
         last_processed_time = datetime.now()
         for fw in followers:
             fw.process_tick()
-            if picked_code == fw.code:
+            if picked_code is not None and fw.code == picked_code['code']:
                 trading_follower = fw
-                fw.start_trading()
+                fw.start_trading(picked_code['info'])
 
         if trading_follower is not None:
             if trading_follower.is_trading_done():
