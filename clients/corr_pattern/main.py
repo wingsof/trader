@@ -29,7 +29,7 @@ from morning_server import stream_readwriter
 from morning_server import message
 from morning.pipeline.converter import dt
 from utils import time_converter
-from morning.config import db
+from configs import db
 from clients.snake import today_watcher, trade_account, trader_env
 
 

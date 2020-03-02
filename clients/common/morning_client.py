@@ -20,7 +20,7 @@ from morning_server import stream_readwriter
 from morning_server import message
 from morning.pipeline.converter import dt
 from utils import time_converter
-from morning.config import db
+from configs import db
 import os.path
 
 
@@ -30,6 +30,14 @@ MAVG=20
 def get_market_code(market_type=message.KOSDAQ):
     return stock_api.request_stock_code(get_reader(), market_type)
 
+def get_all_market_code():
+    market_code = []
+    kosdaq_code = morning_client.get_market_code()
+    kospi_code = morning_client.get_market_code(message.KOSPI)
+    market_code.extend(kosdaq_code)
+    market_code.extend(kospi_code)
+    market_code = list(dict.fromkeys(market_code))
+    return list(filter(lambda x: len(x) > 0 and x[1:].isdigit(), market_code))
 
 def get_reader():
     if _message_reader is None:

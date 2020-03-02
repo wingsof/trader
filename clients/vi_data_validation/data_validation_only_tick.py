@@ -91,12 +91,8 @@ def start_validation(codes=[]):
     if len(codes) > 0:
         market_code = codes
     else:
-        market_code = []
-        kosdaq_code = morning_client.get_market_code()
-        kospi_code = morning_client.get_market_code(message.KOSPI)
-        market_code.extend(kosdaq_code)
-        market_code.extend(kospi_code)
-
+        market_code = morning_client.get_all_market_code()
+        
     today = datetime.now().date()
     yesterday = holidays.get_yesterday(today)
     db_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
