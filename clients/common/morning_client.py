@@ -32,8 +32,8 @@ def get_market_code(market_type=message.KOSDAQ):
 
 def get_all_market_code():
     market_code = []
-    kosdaq_code = morning_client.get_market_code()
-    kospi_code = morning_client.get_market_code(message.KOSPI)
+    kosdaq_code = get_market_code()
+    kospi_code = get_market_code(message.KOSPI)
     market_code.extend(kosdaq_code)
     market_code.extend(kospi_code)
     market_code = list(dict.fromkeys(market_code))

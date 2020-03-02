@@ -107,7 +107,7 @@ def write(sock, header, body):
         raise Exception(e.args[0], sock)
 
 
-def read(sock, full_msg, new_msg, header_len):
+def read(sock, full_msg, new_msg, header_len, loop=True):
     while True:
         if new_msg and len(full_msg) >= HEADER_SIZE:
             pass
@@ -118,7 +118,10 @@ def read(sock, full_msg, new_msg, header_len):
                 err = e.args[0]
                 if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
                     print('No data available')
-                    continue
+                    if loop:
+                        continue
+                    else:
+                        break
                 else:
                     raise Exception('Socket Error ' + e.args[1], sock)
 
@@ -130,7 +133,10 @@ def read(sock, full_msg, new_msg, header_len):
 
         if new_msg:
             if len(full_msg) < HEADER_SIZE:
-                continue
+                if loop:
+                    continue
+                else:
+                    break
             header_len = int(full_msg[:HEADER_SIZE])
             new_msg = False
             full_msg = full_msg[HEADER_SIZE:]
@@ -138,13 +144,19 @@ def read(sock, full_msg, new_msg, header_len):
         if not new_msg:
             #print('new_msg')
             if len(full_msg) < header_len:
-                continue
+                if loop:
+                    continue
+                else:
+                    break
 
             data = full_msg[:header_len]
             full_msg = full_msg[header_len:]
             new_msg = True
             data = pickle.loads(data)
             return {**data, 'packet_info': (full_msg, new_msg, header_len)}
+
+        if not loop:
+            break
 
     return None
 
@@ -159,7 +171,9 @@ def dispatch_message_for_collector(sock, full_msg, new_msg, header_len,
                     response_trade_handler=None,
                     subscribe_trade_response_handler=None):
     try:
-        packet = read(sock, full_msg, new_msg, header_len)
+        packet = read(sock, full_msg, new_msg, header_len, False)
+        if packet is None:
+            return
         full_msg = packet['packet_info'][0]
         new_msg = packet['packet_info'][1]
         header_len = packet['packet_info'][2]
