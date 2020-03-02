@@ -3,10 +3,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..' 
 
 
 import win32com.client
-import eventlet
+import time
 
 from morning_server.collectors.cybos_api import connection
-from utils import rlogger
 
 class CancelOrder:
     def __init__(self, account_num, account_type):
@@ -16,7 +15,7 @@ class CancelOrder:
         self.conn = connection.Connection()
 
     def cancel_order(self, order_number, code, amount):
-        rlogger.info('Cancel Order ' + str(order_number) + ' ' + code + ' ' + str(amount))
+        print('Cancel Order ', order_number, code, amount)
         self.obj.SetInputValue(1, order_number)
         self.obj.SetInputValue(2, self.account_num)
         self.obj.SetInputValue(3, self.account_type)
@@ -29,14 +28,14 @@ class CancelOrder:
                 break
             elif ret == 4:
                 if self.conn.request_left_count() <= 0:
-                    eventlet.sleep(self.conn.get_remain_time() / 1000)
+                    time.sleep(self.conn.get_remain_time() / 1000)
                 continue
             else:
-                rlogger.error('TD0314 Cancel Order Failed')
+                print('TD0314 Cancel Order Failed')
                 return
             
         if self.obj.GetDibStatus() != 0:
-            rlogger.error('TD0314 Cancel Order Status Error ' + str(self.obj.GetDibMsg1()))
+            print('TD0314 Cancel Order Status Error ' + str(self.obj.GetDibMsg1()))
             return False
 
         return True

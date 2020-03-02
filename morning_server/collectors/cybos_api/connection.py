@@ -1,6 +1,5 @@
 import win32com.client
-import eventlet
-from utils import rlogger
+import time
 
 
 # get_remain_time return as milliseconds
@@ -27,8 +26,8 @@ class Connection:
 
     def wait_until_available(self):
         while self.request_left_count() <= 0:
-            rlogger.info('Request Limit is reached')
-            eventlet.sleep(1)
+            print('Request Limit is reached')
+            time.sleep(1)
 
 
 if __name__ == '__main__':

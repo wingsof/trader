@@ -5,7 +5,6 @@ import win32com.client
 from utils import time_converter
 from datetime import datetime, timedelta
 from cybos_api import connection
-from utils import rlogger
 
 
 def get_today_data_raw(code, period_type):

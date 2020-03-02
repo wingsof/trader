@@ -1,8 +1,7 @@
 import win32com.client
-import eventlet
+import time
 
 from morning_server.collectors.cybos_api import connection
-from utils import rlogger
 
 
 class ModifyOrder:
@@ -26,14 +25,14 @@ class ModifyOrder:
                 break
             elif ret == 4:
                 if self.conn.request_left_count() <= 0:
-                    eventlet.sleep(self.conn.get_remain_time() / 1000)
+                    time.sleep(self.conn.get_remain_time() / 1000)
                 continue
             else:
-                rlogger.errro('TD0313 Modify Order Failed')
+                print('TD0313 Modify Order Failed')
                 return
         
         if self.obj.GetDibStatus() != 0:
-            rlogger.error('TD0313 Modify Order Status Error ' + self.obj.GetDibMsg1())
+            print('TD0313 Modify Order Status Error ' + self.obj.GetDibMsg1())
             return 0
         
         return self.obj.GetHeaderValue(7) # 새로운 주문 번호

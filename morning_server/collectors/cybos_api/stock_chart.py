@@ -4,8 +4,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..' 
 import win32com.client
 from utils import time_converter
 from datetime import datetime, timedelta
-from cybos_api import connection
-from utils import rlogger
+from morning_server.collectors.cybos_api import connection
 
     # stock chart fields
     # 6: D - day, W - week, M - month, m - minute, T - tick
@@ -71,5 +70,4 @@ def get_min_period_data(code, startdate, enddate):
 
 
 if __name__ == '__main__':
-
     print(get_day_period_data('A000250', datetime(2019, 12, 20), datetime(2019, 12, 20)))

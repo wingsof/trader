@@ -6,14 +6,13 @@ from utils import time_converter
 from datetime import datetime, timedelta
 from cybos_api import connection
 import time
-from utils import rlogger
 
 
 def get_period_data(code, period_type, count):
     data = []
     conn = connection.Connection()
     while conn.request_left_count() <= 0:
-        rlogger.info('Request Limit is reached')
+        print('Request Limit is reached')
         time.sleep(1)
 
     chart_obj= win32com.client.Dispatch("Dscbo1.CpSvr8300")
@@ -22,7 +21,7 @@ def get_period_data(code, period_type, count):
 
     chart_obj.SetInputValue(3, count)
     chart_obj.BlockRequest()
-    rlogger.info('Abroad data len %s, %d', code, chart_obj.GetHeaderValue(3))
+    print('Abroad data len', code, chart_obj.GetHeaderValue(3))
 
     data_len = chart_obj.GetHeaderValue(3)
     for i in range(data_len):

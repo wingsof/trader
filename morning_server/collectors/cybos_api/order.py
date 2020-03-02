@@ -1,8 +1,7 @@
 import win32com.client
-import eventlet
+import time
 
 from morning_server.collectors.cybos_api import connection
-from utils import rlogger
 
 
 class _OrderRealtime:
@@ -32,7 +31,7 @@ class _OrderRealtime:
             'order_type': order_type,
             'total_quantity': total_quantity
         }
-        rlogger.info('ORDER EVENT %s', result)
+        print('ORDER EVENT ', result)
         self.callback(self.sock, result.copy())
 
 
@@ -42,7 +41,7 @@ class Order:
         self.conn = connection.Connection()
         self.realtime_order = win32com.client.Dispatch('DsCbo1.CpConclusion')
         self.started = False
-        rlogger.info('START Listening CpConclusion')
+        print('START Listening CpConclusion')
 
     def start_subscribe(self, callback):
         if not self.started:
@@ -61,11 +60,11 @@ class Order:
 
     def process(self, code, quantity, account_num, account_type, price, is_buy):
         while self.conn.order_left_count() <= 0:
-            rlogger.warning("WAIT ORDER LEFT COUNT " + code + ' ' + str(quantity) + ' ' + str(is_buy) + ' ' + str(price))
-            eventlet.sleep(1)
+            print("WAIT ORDER LEFT COUNT " + code + ' ' + str(quantity) + ' ' + str(is_buy) + ' ' + str(price))
+            time.sleep(1)
 
         if quantity == 0:
-            rlogger.warning("ORDER Failed " + code + ' ' + str(quantity) + ' ' + str(is_buy) + ' ' + str(price))
+            print("ORDER Failed " + code + ' ' + str(quantity) + ' ' + str(is_buy) + ' ' + str(price))
         else:
             self.obj = win32com.client.Dispatch('CpTrade.CpTd0311')
             order_type = '2' if is_buy else '1'

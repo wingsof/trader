@@ -7,7 +7,6 @@ import time
 
 from morning.cybos_api import connection
 from pywintypes import com_error
-from utils import rlogger
 
 
 class OrderInQueue:
@@ -22,19 +21,19 @@ class OrderInQueue:
 
     def _td5339(self):
         orders = []
-        rlogger.info('START REQUEST TD5339 ORDER IN QUEUE')        
+        print('START REQUEST TD5339 ORDER IN QUEUE')        
         while True:
             try:
                 ret = self.obj.BlockRequest()
             except com_error:
-                rlogger.error('TD5339 BlockRequest Error')
+                print('TD5339 BlockRequest COM Error')
                 return []
 
             if self.obj.GetDibStatus() != 0:
-                rlogger.error('TD5339 failed')
+                print('TD5339 failed')
                 return []
             elif ret == 2 or ret == 3:
-                rlogger.error('TD5339 communication failed')
+                print('TD5339 communication failed')
                 return []
 
             while ret == 4:
@@ -44,7 +43,7 @@ class OrderInQueue:
             
             count = self.obj.GetHeaderValue(5)
 
-            rlogger.info('ORDER IN QUEUE COUNT: %d', count)
+            print('ORDER IN QUEUE COUNT: %d', count)
             for i in range(count):
                 order = dict()
                 order['number'] = self.obj.GetDataValue(1, i)
@@ -61,11 +60,11 @@ class OrderInQueue:
                 order['credit_date'] = self.obj.GetDataValue(17, i) # 대출일
                 order['flag_describe'] = self.obj.GetDataValue(19, i) # 주문호가구분코드 내용
                 order['flag'] = self.obj.GetDataValue(21, i)    # 주문호가구분코드
-                rlogger.info('ORDER IN QUEUE ' + str(order))
+                print('ORDER IN QUEUE ', order)
                 orders.append(order)
             if self.obj.Continue == False:
                 break
-            rlogger.info('TD5339 ORDER IN QUEUE %s', orders)        
+            print('TD5339 ORDER IN QUEUE ', orders)        
         return orders
 
 
