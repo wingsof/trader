@@ -197,7 +197,7 @@ def dispatch_message_for_collector(sock, full_msg,
         raise
 
     for packet in msgs:
-    header_type = packet['header']['type']
+        header_type = packet['header']['type']
         if header_type == message.request and request_handler is not none:
             request_handler(sock, packet['header'], packet['body'])
         elif header_type == message.subscribe and subscribe_handler is not none:
