@@ -14,9 +14,10 @@ from utils import slack
 
 
 class _Collector:
-    def __init__(self, sock, capability, vendor):
+    def __init__(self, sock, collector_name, capability, vendor):
         self.sock = sock
         self.capability = capability
+        self.collector_name = collector_name
         self.vendor = vendor
         self.subscribe_code = []
         self.latest_request_process_time = datetime.now()
@@ -40,6 +41,9 @@ class _Collector:
 
     def subscribe_count(self):
         return len(self.subscribe_code)
+
+    def get_name(self):
+        return self.collector_name
 
     def get_vendor(self):
         return self.vendor
@@ -144,20 +148,20 @@ class ClientManager:
         for c in cybos_collectors:
             if c.sock == sock:
                 self._handle_collector_disconnection(sock)
-                logger.warning('Remove collector')
-                slack.send_slack_message('Collector removed')
+                logger.warning('Remove collector: ' + c.get_name())
+                slack.send_slack_message('Collector removed:' + c.get_name())
 
         for c in kiwoom_collectors:
             if c.sock == sock:
                 self._handle_collector_disconnection(sock)
-                logger.warning('Remove collector')
-                slack.send_slack_message('Collector removed')
+                logger.warning('Remove collector: ' + c.get_name())
+                slack.send_slack_message('Collector removed:' + c.get_name())
 
         self._handle_code_subscribe_info_disconnection(sock)
         self._handle_trade_subscribe_disconnection(sock)
 
     def add_collector(self, sock, header, body):
-        self.collectors.append(_Collector(sock, body['capability'], header['vendor']))
+        self.collectors.append(_Collector(sock, body['name'], body['capability'], header['vendor']))
 
     def get_vendor_collector(self, vendor):
         collectors = []
