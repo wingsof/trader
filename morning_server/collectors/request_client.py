@@ -248,14 +248,12 @@ def handle_subscribe(sock, header, body):
 
 
 full_msg = b''
-new_msg = True
-header_len = 0
 
 @QtCore.pyqtSlot()
 def dispatch_message():
     global full_msg, new_msg, header_len
 
-    stream_readwriter.dispatch_message_for_collector(_sock, full_msg, new_msg, header_len,
+    stream_readwriter.dispatch_message_for_collector(_sock, full_msg,
                                                     request_handler=handle_request, 
                                                     subscribe_handler=handle_subscribe, 
                                                     request_trade_handler=handle_trade_request)

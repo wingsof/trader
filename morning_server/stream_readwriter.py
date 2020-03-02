@@ -107,7 +107,7 @@ def write(sock, header, body):
         raise Exception(e.args[0], sock)
 
 
-def read(sock, full_msg, new_msg, header_len, loop=True):
+def read(sock, full_msg, new_msg, header_len):
     while True:
         if new_msg and len(full_msg) >= HEADER_SIZE:
             pass
@@ -118,36 +118,27 @@ def read(sock, full_msg, new_msg, header_len, loop=True):
                 err = e.args[0]
                 if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
                     print('No data available')
-                    if loop:
-                        continue
-                    else:
-                        break
+                    continue
                 else:
                     raise Exception('Socket Error ' + e.args[1], sock)
 
             if len(msg) == 0:
                 raise Exception('Length 0 Socket error', sock)
 
-            #print('receive', len(msg))
+            print('receive', len(msg))
             full_msg += msg
 
         if new_msg:
             if len(full_msg) < HEADER_SIZE:
-                if loop:
-                    continue
-                else:
-                    break
+                continue
             header_len = int(full_msg[:HEADER_SIZE])
             new_msg = False
             full_msg = full_msg[HEADER_SIZE:]
 
         if not new_msg:
-            #print('new_msg')
+            print('new_msg')
             if len(full_msg) < header_len:
-                if loop:
-                    continue
-                else:
-                    break
+                continue
 
             data = full_msg[:header_len]
             full_msg = full_msg[header_len:]
@@ -155,13 +146,43 @@ def read(sock, full_msg, new_msg, header_len, loop=True):
             data = pickle.loads(data)
             return {**data, 'packet_info': (full_msg, new_msg, header_len)}
 
-        if not loop:
-            break
-
     return None
 
 
-def dispatch_message_for_collector(sock, full_msg, new_msg, header_len,
+def read_no_loop(sock, full_msg):
+    msg_list = []
+    try:
+        msg = sock.recv(READ_PACKET_SIZE)
+    except socket.error as e:
+        err = e.args[0]
+        if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
+            print('No data available')
+        else:
+            raise Exception('Socket Error ' + e.args[1], sock)
+
+    if len(msg) == 0:
+        raise Exception('Length 0 Socket error', sock)
+
+    full_msg += msg
+
+    while True:
+        if len(full_msg) < HEADER_SIZE:
+            print('new msg but short')
+            break
+        
+        header_len = int(full_msg[:HEADER_SIZE])
+        if len(full_msg) < header_len + HEADER_SIZE:
+            break
+
+        data = full_msg[HEADER_SIZE:HEADER_SIZE+header_len]
+        full_msg = full_msg[HEADER_SIZE+header_len:]
+        data = pickle.loads(data)
+        msg_list.append(data)
+
+    return msg_list
+
+
+def dispatch_message_for_collector(sock, full_msg,
                     collector_handler = None, 
                     request_handler=None, 
                     response_handler = None, 
@@ -171,34 +192,30 @@ def dispatch_message_for_collector(sock, full_msg, new_msg, header_len,
                     response_trade_handler=None,
                     subscribe_trade_response_handler=None):
     try:
-        packet = read(sock, full_msg, new_msg, header_len, False)
-        if packet is None:
-            return
-        full_msg = packet['packet_info'][0]
-        new_msg = packet['packet_info'][1]
-        header_len = packet['packet_info'][2]
+        msgs = read_no_loop(sock, full_msg)
     except:
         raise
 
+    for packet in msgs:
     header_type = packet['header']['type']
-    if header_type == message.REQUEST and request_handler is not None:
-        request_handler(sock, packet['header'], packet['body'])
-    elif header_type == message.SUBSCRIBE and subscribe_handler is not None:
-        subscribe_handler(sock, packet['header'], packet['body'])
-    elif header_type == message.COLLECTOR and collector_handler is not None:
-        collector_handler(sock, packet['header'], packet['body'])
-    elif header_type == message.RESPONSE and response_handler is not None:
-        response_handler(sock, packet['header'], packet['body'])
-    elif header_type == message.SUBSCRIBE_RESPONSE and subscribe_response_handler is not None:
-        subscribe_response_handler(sock, packet['header'], packet['body'])
-    elif header_type == message.REQUEST_TRADE and request_trade_handler is not None:
-        request_trade_handler(sock, packet['header'], packet['body'])
-    elif header_type == message.RESPONSE_TRADE and response_trade_handler is not None:
-        response_trade_handler(sock, packet['header'], packet['body'])
-    elif header_type == message.TRADE_SUBSCRIBE_RESPONSE and subscribe_trade_response_handler is not None:
-        subscribe_trade_response_handler(sock, packet['header'], packet['body'])
-    else:
-        print('Unknown header type', packet['header'])
+        if header_type == message.request and request_handler is not none:
+            request_handler(sock, packet['header'], packet['body'])
+        elif header_type == message.subscribe and subscribe_handler is not none:
+            subscribe_handler(sock, packet['header'], packet['body'])
+        elif header_type == message.collector and collector_handler is not none:
+            collector_handler(sock, packet['header'], packet['body'])
+        elif header_type == message.response and response_handler is not none:
+            response_handler(sock, packet['header'], packet['body'])
+        elif header_type == message.subscribe_response and subscribe_response_handler is not none:
+            subscribe_response_handler(sock, packet['header'], packet['body'])
+        elif header_type == message.request_trade and request_trade_handler is not none:
+            request_trade_handler(sock, packet['header'], packet['body'])
+        elif header_type == message.response_trade and response_trade_handler is not none:
+            response_trade_handler(sock, packet['header'], packet['body'])
+        elif header_type == message.trade_subscribe_response and subscribe_trade_response_handler is not none:
+            subscribe_trade_response_handler(sock, packet['header'], packet['body'])
+        else:
+            print('Unknown header type', packet['header'])
             
 
 def dispatch_message(sock,
