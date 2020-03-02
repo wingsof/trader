@@ -295,7 +295,7 @@ if __name__ == '__main__':
 
     _sock = sock
     socket_notifier = QtCore.QSocketNotifier(sock.fileno(), QtCore.QSocketNotifier.Read)
-    socket_notifier.activated.connect(dispath_message)
+    socket_notifier.activated.connect(dispatch_message)
 
     header = stream_readwriter.create_header(message.COLLECTOR, message.MARKET_STOCK, message.COLLECTOR_DATA)
 
