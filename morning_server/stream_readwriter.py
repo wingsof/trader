@@ -198,21 +198,21 @@ def dispatch_message_for_collector(sock, full_msg,
 
     for packet in msgs:
         header_type = packet['header']['type']
-        if header_type == message.request and request_handler is not none:
+        if header_type == message.REQUEST and request_handler is not None:
             request_handler(sock, packet['header'], packet['body'])
-        elif header_type == message.subscribe and subscribe_handler is not none:
+        elif header_type == message.SUBSCRIBE and subscribe_handler is not None:
             subscribe_handler(sock, packet['header'], packet['body'])
-        elif header_type == message.collector and collector_handler is not none:
+        elif header_type == message.COLLECTOR and collector_handler is not None:
             collector_handler(sock, packet['header'], packet['body'])
-        elif header_type == message.response and response_handler is not none:
+        elif header_type == message.RESPONSE and response_handler is not None:
             response_handler(sock, packet['header'], packet['body'])
-        elif header_type == message.subscribe_response and subscribe_response_handler is not none:
+        elif header_type == message.SUBSCRIBE_RESPONSE and subscribe_response_handler is not None:
             subscribe_response_handler(sock, packet['header'], packet['body'])
-        elif header_type == message.request_trade and request_trade_handler is not none:
+        elif header_type == message.REQUEST_TRADE and request_trade_handler is not None:
             request_trade_handler(sock, packet['header'], packet['body'])
-        elif header_type == message.response_trade and response_trade_handler is not none:
+        elif header_type == message.RESPONSE_TRADE and response_trade_handler is not None:
             response_trade_handler(sock, packet['header'], packet['body'])
-        elif header_type == message.trade_subscribe_response and subscribe_trade_response_handler is not none:
+        elif header_type == message.TRADE_SUBSCRIBE_RESPONSE and subscribe_trade_response_handler is not None:
             subscribe_trade_response_handler(sock, packet['header'], packet['body'])
         else:
             print('Unknown header type', packet['header'])
