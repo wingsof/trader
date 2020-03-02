@@ -4,6 +4,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), os.pa
 import time
 from PyQt5.QtCore import QCoreApplication
 from PyQt5 import QtCore
+import socket
 
 from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code, abroad_chart, investor_7254, stock_today_data
@@ -246,11 +247,18 @@ def handle_subscribe(sock, header, body):
             print('STOP SUBSCRIBE STOCK ALARM')
 
 
+full_msg = b''
+new_msg = True
+header_len = 0
+
 @QtCore.pyqtSlot()
 def dispatch_message():
-    stream_readwriter.dispatch_message(_sock, request_handler=handle_request, 
-                                        subscribe_handler=handle_subscribe, 
-                                        request_trade_handler=handle_trade_request)
+    global full_msg, new_msg, header_len
+
+    stream_readwriter.dispatch_message_for_collector(_sock, full_msg, new_msg, header_len,
+                                                    request_handler=handle_request, 
+                                                    subscribe_handler=handle_subscribe, 
+                                                    request_trade_handler=handle_trade_request)
 
 
 if __name__ == '__main__':
@@ -307,4 +315,4 @@ if __name__ == '__main__':
             order_subscriber = None
             print('HAS TRADE CAPABILITY')
     
-    app._exec()
+    app.exec_()

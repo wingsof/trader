@@ -149,7 +149,45 @@ def read(sock, full_msg, new_msg, header_len):
     return None
 
 
-def dispatch_message(sock, 
+def dispatch_message_for_collector(sock, full_msg, new_msg, header_len,
+                    collector_handler = None, 
+                    request_handler=None, 
+                    response_handler = None, 
+                    subscribe_handler=None, 
+                    subscribe_response_handler=None,
+                    request_trade_handler=None,
+                    response_trade_handler=None,
+                    subscribe_trade_response_handler=None):
+    try:
+        packet = read(sock, full_msg, new_msg, header_len)
+        full_msg = packet['packet_info'][0]
+        new_msg = packet['packet_info'][1]
+        header_len = packet['packet_info'][2]
+    except:
+        raise
+
+    header_type = packet['header']['type']
+    if header_type == message.REQUEST and request_handler is not None:
+        request_handler(sock, packet['header'], packet['body'])
+    elif header_type == message.SUBSCRIBE and subscribe_handler is not None:
+        subscribe_handler(sock, packet['header'], packet['body'])
+    elif header_type == message.COLLECTOR and collector_handler is not None:
+        collector_handler(sock, packet['header'], packet['body'])
+    elif header_type == message.RESPONSE and response_handler is not None:
+        response_handler(sock, packet['header'], packet['body'])
+    elif header_type == message.SUBSCRIBE_RESPONSE and subscribe_response_handler is not None:
+        subscribe_response_handler(sock, packet['header'], packet['body'])
+    elif header_type == message.REQUEST_TRADE and request_trade_handler is not None:
+        request_trade_handler(sock, packet['header'], packet['body'])
+    elif header_type == message.RESPONSE_TRADE and response_trade_handler is not None:
+        response_trade_handler(sock, packet['header'], packet['body'])
+    elif header_type == message.TRADE_SUBSCRIBE_RESPONSE and subscribe_trade_response_handler is not None:
+        subscribe_trade_response_handler(sock, packet['header'], packet['body'])
+    else:
+        print('Unknown header type', packet['header'])
+            
+
+def dispatch_message(sock,
                     collector_handler = None, 
                     request_handler=None, 
                     response_handler = None, 
