@@ -23,7 +23,6 @@ db_collection = None
 def vi_handler(_, data):
     print('ALARM', data)
     data = data[0]
-    db_collection['alarm'].insert_one(data)
 
 
 def start_test():

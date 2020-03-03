@@ -13,7 +13,7 @@ class MarketStatus:
     PRE_MARKET = 0
     IN_MARKET = 1
     VI = 2
-    CLOSE = 3:
+    CLOSE = 3
 
     def __init__(self):
         self.status = MarketStatus.PRE_MARKET

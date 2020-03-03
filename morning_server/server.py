@@ -37,7 +37,7 @@ morning_stat = morning_stats.MorningStats(client_manager.collectors)
 
 
 def handle_collector(sock, header, body):
-    logger.info('HANDLE COLLECTOR %s', header)
+    logger.info('HANDLE COLLECTOR %s', header, body)
     client_manager.add_collector(sock, header, body)
 
 def handle_response(sock, header, body):

@@ -99,7 +99,7 @@ def start_trader():
 
     market_code = list(dict.fromkeys(market_code))
     market_code =  list(filter(lambda x: len(x) > 0 and x[1:].isdigit(), market_code))
-    yesterday_data = get_yesterday(datetime.now(), market_code) 
+    yesterday_data = get_yesterday_data(datetime.now(), market_code) 
 
     for code in market_code:
         yesterday_summary = None
