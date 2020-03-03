@@ -182,7 +182,7 @@ class ClientManager:
             available_collectors = []
             for c in self.get_vendor_collector(vendor):
                 if c.capability & capability and not c.request_pending():
-                    avaiable_collectors.append(c)
+                    available_collectors.append(c)
 
             if len(avaiable_collectors) > 0:
                 available_collectors = sorted(available_collectors, key=lambda x: x.latest_request_process_time)
