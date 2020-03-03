@@ -1,8 +1,8 @@
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.join(*(['..' + os.sep] * 2)))))
 from configs import client_info
-if len(sys.argv) > 1 and sys.argv[1] == 'collector':
-    client_info.add_client_name_suffix('collector') 
+if len(sys.argv) > 1 and len(sys.argv[1]) > 0:
+    client_info.add_client_name_suffix(sys.argv[1]) 
 
 import time
 from PyQt5.QtCore import QCoreApplication
@@ -16,7 +16,6 @@ from configs import client_info
 from morning_server.collectors import shutdown
 
 
-_sock = None
 
 
 def handle_request(sock, header, body):
@@ -250,11 +249,8 @@ def handle_subscribe(sock, header, body):
             print('STOP SUBSCRIBE STOCK ALARM')
 
 
-class ReadBuf:
-    full_msg = b''
-
-
-read_buf = ReadBuf()
+read_buf = stream_readwriter.ReadBuffer()
+_sock = None
 
 
 @QtCore.pyqtSlot()
@@ -279,6 +275,7 @@ if __name__ == '__main__':
         except:
             print('Error while trying to server')
 
+    time.sleep(5)
     print('Connected to CP Server')
     subscribe_stock = dict()
     subscribe_bidask = dict()

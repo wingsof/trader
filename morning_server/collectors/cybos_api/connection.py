@@ -26,8 +26,8 @@ class Connection:
 
     def wait_until_available(self):
         while self.request_left_count() <= 0:
-            print('Request Limit is reached')
-            time.sleep(1)
+            print('*' * 10, 'Request Limit', '*' * 10)
+            time.sleep(self.get_remain_time() / 1000)
 
 
 if __name__ == '__main__':
