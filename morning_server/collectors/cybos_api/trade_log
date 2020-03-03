@@ -1,3 +1,6 @@
+flag 가 1번으로 들어오는거는 거래 성공
+'flag': flag,  flag '1': done, '2': ok, '3': denied, '4':queued'
+
 CANCEL
 
 2020-01-22 10:24:20,831 - wwwlife - INFO - TRADE REQUEST {'type': 'request_trade', 'market': 'stock', 'method': 'cancel_order', 'vendor': 'cybos', '_id': '7f5be3dc-a645-4920-879b-57642919aada', 'code': 'A005930', 'order_number': 98639, 'amount': 1}
