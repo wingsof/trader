@@ -8,16 +8,12 @@ from morning_server import stock_api
 from morning.pipeline.converter import dt
 from datetime import datetime
 from clients.scalping_by_amount import trader
+from clients.scalping_by_amount.marketstatus import MarketStatus
 
 import gevent
 
 
 class StockFollower:
-    STATUS_PRE_MARKET = 0
-    STATUS_MARKET = 1
-    STATUS_VI = 2
-    STATUS_CLOSE_MARKET = 3
-
     def __init__(self, reader, code, yesterday_summary, is_kospi):
         self.reader = reader
         self.code = code
@@ -25,18 +21,33 @@ class StockFollower:
         self.yesterday_summary = yesterday_summary
         self.tick_data = []
         self.sec_data = []
-        self.current_price = 0
         self.is_kospi = is_kospi
-        self.status = StockFollower.STATUS_PRE_MARKET
+        self.market_status = MarketStatus()
         self.trader = None
+        self.ba_waching = False
 
     def start_trading(self, code_info):
-        self.trader = trader.Trader(self.reader, code_info)
-        stock_api.subscribe_stock(self.reader, self.code + message.BIDASK_SUFFIX, self.trader.ba_tick_handler)
+        self.trader = trader.Trader(self.reader, code_info, self.market_status)
+        if not self.ba_waching:
+            stock_api.subscribe_stock(self.reader, self.code + message.BIDASK_SUFFIX, self.ba_data_handler)
+            self.ba_watching = True
+        self.trader.start()
 
+    def receive_result(self, result):
+        if self.trader is not None:
+            self.trader.receive_result(result)
 
     def is_trading_done(self):
-        return self.trader is None
+        if self.trader is None:
+            return True
+
+    def ba_data_handler(self, code, data):
+        if len(data) != 1:
+            return
+        tick_data = data[0]
+        tick_data = dt.cybos_stock_ba_tick_convert(tick_data)
+        if self.trader is not None:
+            self.trader.ba_data_handler(tick_data)
 
     def tick_data_handler(self, code, data):
         if len(data) != 1:
@@ -44,20 +55,13 @@ class StockFollower:
 
         tick_data = data[0]
         tick_data = dt.cybos_stock_tick_convert(tick_data)
-        market_type = tick_data['market_type']
-        self.current_price = tick_data['current_price']
+        has_change = self.market_status.set_tick_data(tick_data)
 
-        # for drop first IN_MARKET tick
-        if self.status == StockFollower.STATUS_MARKET:
+        if not has_change and self.market_status.is_in_market:
             self.tick_data.append(a)
 
-        if self.status == StockFollower.STATUS_PRE_MARKET and market_type == dt.MarketType.IN_MARKET:
-            self.status = StockFollower.STATUS_MARKET
-            self.open_price = tick_data['current_price']
-        elif self.status == StockFollower.STATUS_MARKET and market_type == dt.MarketType.PRE_MARKET_EXP:
-            self.status = StockFollower.STATUS_VI
-        elif self.status == StockFollower.STATUS_VI and market_type == dt.MarketType.IN_MARKET:
-            self.status = StockFollower.STATUS_MARKET
+        if self.trader is not None:
+            self.trader.tick_data_handler(data)
 
     def subject_handler(self, code, data):
         if len(data) != 1:

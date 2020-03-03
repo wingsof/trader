@@ -55,7 +55,6 @@ def data_process():
 
 def heart_beat():
     last_processed_time = datetime.now()
-    trade_processing = False
     trading_follower = None
     while True:
         while datetime.now() - last_processed_time < timedelta(seconds=1):
@@ -111,6 +110,7 @@ def start_trader():
         followers.append(sf)
 
     stock_api.subscribe_alarm(morning_client.get_reader(), vi_handler)
+    stock_api.subscribe_trade(morning_client.get_reader(), receive_result)
 
     gevent.joinall([gevent.spawn(heart_beat), gevent.spawn(data_process)])
 
