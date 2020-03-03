@@ -149,7 +149,7 @@ def read(sock, full_msg, new_msg, header_len):
     return None
 
 
-def read_no_loop(sock, full_msg):
+def read_no_loop(sock, read_buf):
     msg_list = []
     try:
         msg = sock.recv(READ_PACKET_SIZE)
@@ -164,29 +164,29 @@ def read_no_loop(sock, full_msg):
         raise Exception('Length 0 Socket error', sock)
 
     print('read', len(msg))
-    full_msg += msg
+    read_buf.full_msg += msg
 
     while True:
-        print('BUF len', len(full_msg))
-        if len(full_msg) < HEADER_SIZE:
+        print('BUF len', len(read_buf.full_msg))
+        if len(read_buf.full_msg) < HEADER_SIZE:
             break
         
-        header_len = int(full_msg[:HEADER_SIZE])
+        header_len = int(read_buf.full_msg[:HEADER_SIZE])
 
         print('HEADER len', header_len)
-        if len(full_msg) < header_len + HEADER_SIZE:
+        if len(read_buf.full_msg) < header_len + HEADER_SIZE:
             break
 
-        data = full_msg[HEADER_SIZE:HEADER_SIZE+header_len]
-        full_msg = full_msg[HEADER_SIZE+header_len:]
-        print('LEFT packet', len(full_msg))
+        data = read_buf.full_msg[HEADER_SIZE:HEADER_SIZE+header_len]
+        read_buf.full_msg = read_buf.full_msg[HEADER_SIZE+header_len:]
+        print('LEFT packet', len(read_buf.full_msg))
         data = pickle.loads(data)
         msg_list.append(data)
 
     return msg_list
 
 
-def dispatch_message_for_collector(sock, full_msg,
+def dispatch_message_for_collector(sock, read_buf,
                     collector_handler = None, 
                     request_handler=None, 
                     response_handler = None, 
@@ -196,7 +196,7 @@ def dispatch_message_for_collector(sock, full_msg,
                     response_trade_handler=None,
                     subscribe_trade_response_handler=None):
     try:
-        msgs = read_no_loop(sock, full_msg)
+        msgs = read_no_loop(sock, read_buf)
     except:
         raise
 

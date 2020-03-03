@@ -250,13 +250,17 @@ def handle_subscribe(sock, header, body):
             print('STOP SUBSCRIBE STOCK ALARM')
 
 
-full_msg = b''
+class ReadBuf:
+    full_msg = b''
+
+
+read_buf = ReadBuf()
+
 
 @QtCore.pyqtSlot()
 def dispatch_message():
-    global full_msg, new_msg, header_len
-
-    stream_readwriter.dispatch_message_for_collector(_sock, full_msg,
+    global read_buf
+    stream_readwriter.dispatch_message_for_collector(_sock, read_buf,
                                                     request_handler=handle_request, 
                                                     subscribe_handler=handle_subscribe, 
                                                     request_trade_handler=handle_trade_request)
