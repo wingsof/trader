@@ -186,7 +186,7 @@ class ClientManager:
 
             if len(available_collectors) > 0:
                 available_collectors = sorted(available_collectors, key=lambda x: x.latest_request_process_time)
-                available_collectors[0].latest_process_time = datetime.now()
+                available_collectors[0].latest_request_process_time = datetime.now()
                 collector = available_collectors[0]
                 break
 
