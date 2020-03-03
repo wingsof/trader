@@ -197,6 +197,7 @@ class ClientManager:
         return self._get_available_collector(message.CAPABILITY_TRADE, vendor)
 
     def get_trade_collector(self, vendor=message.CYBOS):
+        # trader should be only one
         return self._get_collector(message.CAPABILITY_TRADE, vendor)
 
     def get_available_request_collector(self, vendor=message.CYBOS):
