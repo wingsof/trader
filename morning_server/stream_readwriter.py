@@ -153,7 +153,7 @@ def dispatch_message_for_collector(sock, read_buf,
                     response_trade_handler=None,
                     subscribe_trade_response_handler=None):
     try:
-        msgs = read_no_loop(sock, read_buf)
+        msgs = read(sock, read_buf)
     except:
         raise
 
