@@ -53,6 +53,11 @@ def data_process():
             gevent.sleep(10)
 
 
+def receive_result(result):
+    for fw in followers:
+        fw.receive_result(result)
+
+
 def heart_beat():
     last_processed_time = datetime.now()
     trading_follower = None
