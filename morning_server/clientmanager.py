@@ -179,11 +179,17 @@ class ClientManager:
     def _get_available_collector(self, capability, vendor):
         collector = None
         while True:
+            avaiable_collectors = []
             for c in self.get_vendor_collector(vendor):
                 if c.capability & capability and not c.request_pending():
-                    collector = c
-            if collector is not None:
+                    avaiable_collectors.append(c)
+
+            if len(avaiable_collectors) > 0:
+                available_collectors = sorted(available_collectors, key=lambda x: x.latest_request_process_time)
+                available_collectors[0].latest_process_time = datetime.now()
+                collector = available_collectors[0]
                 break
+
             gevent.sleep()
         return collector
 
