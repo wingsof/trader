@@ -179,7 +179,7 @@ class ClientManager:
     def _get_available_collector(self, capability, vendor):
         collector = None
         while True:
-            avaiable_collectors = []
+            available_collectors = []
             for c in self.get_vendor_collector(vendor):
                 if c.capability & capability and not c.request_pending():
                     avaiable_collectors.append(c)
