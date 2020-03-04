@@ -4,8 +4,9 @@ import sys
 class TradeUtil:
     def __init__(self):
         self.trade_obj = win32com.client.Dispatch('CpTrade.CpTdUtil')
-        if self.trade_obj.TradeInit(0) != 0:
-            print('Trade Init Failed')
+        ret = self.trade_obj.TradeInit(0)
+        if ret != 0:
+            print('Trade Init Failed', ret)
             sys.exit(1)
 
     def get_account_number(self):
