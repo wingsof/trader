@@ -5,6 +5,8 @@ from gevent.event import Event
 import threading
 import socket
 import errno
+import select
+import traceback
 
 from morning_server import message
 
@@ -93,29 +95,55 @@ def write(sock, header, body):
     msg = pickle.dumps(msg)
     msg = bytes(f"{len(msg):<{HEADER_SIZE}}", 'utf-8') + msg
     total_len = len(msg)
-    try:
-        while True:
+    while True:
+        try:
             sent = sock.send(msg)
             total_len -= sent
             if total_len == 0:
                 break
             else:
                 msg = msg[sent:]
-
-    except Exception as e:
-        raise Exception(e.args[0], sock)
+        except socket.error as e:
+            err = e.args[0]
+            if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
+                print(e, 'ERROR) EAGAIN or EWOULDBLOCK(write) sent message len', sent, 'total len', total_len)
+                select.select([], [sock], [])
+                continue
+            else:
+                print('ERROR) write socket error, reraise')
+                print(sys.exc_info())
+                print(traceback.format_exc())
+                raise
+        except:
+            print('ERROR) write error, reraise')
+            print(sys.exc_info())
+            print(traceback.format_exc())
+            raise
 
 
 def read(sock, read_buf):
     msg_list = []
-    try:
-        msg = sock.recv(READ_PACKET_SIZE)
-    except socket.error as e:
-        err = e.args[0]
-        if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
-            print('No data available')
-        else:
-            raise Exception('Socket Error ' + e.args[1], sock)
+    while True:
+        try:
+            msg = sock.recv(READ_PACKET_SIZE)
+        except socket.error as e:
+            err = e.args[0]
+            if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
+                # TODO: check whether need to handle msg if some of packet is read
+                print(e, 'ERROR) EAGAIN or EWOULDBLOCK(read) receive message len', len(msg))
+                select.select([sock], [], [])
+                continue
+            else:
+                print('ERROR) read socket error, reraise')
+                print(sys.exc_info())
+                print(traceback.format_exc())
+                raise
+        except:
+            print('ERROR) read error, reraise')
+            print(sys.exc_info())
+            print(traceback.format_exc())
+            raise
+        break
 
     if len(msg) == 0:
         raise Exception('Length 0 Socket error', sock)

@@ -29,8 +29,8 @@ class StockFollower:
     def start_trading(self, code_info):
         self.trader = trader.Trader(self.reader, code_info, self.market_status)
         if not self.ba_waching:
-            stock_api.subscribe_stock(self.reader, self.code + message.BIDASK_SUFFIX, self.ba_data_handler)
             self.ba_watching = True
+            stock_api.subscribe_stock(self.reader, self.code + message.BIDASK_SUFFIX, self.ba_data_handler)
         self.trader.start()
 
     def receive_result(self, result):
@@ -40,6 +40,7 @@ class StockFollower:
     def is_trading_done(self):
         if self.trader is None:
             return True
+        return False
 
     def ba_data_handler(self, code, data):
         if len(data) != 1:
@@ -57,7 +58,7 @@ class StockFollower:
         tick_data = dt.cybos_stock_tick_convert(tick_data)
         has_change = self.market_status.set_tick_data(tick_data)
 
-        if not has_change and self.market_status.is_in_market:
+        if not has_change and self.market_status.is_in_market():
             self.tick_data.append(a)
 
         if self.trader is not None:

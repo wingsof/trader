@@ -13,6 +13,7 @@ import threading
 import time
 import gevent
 import virtualbox
+import traceback
 
 from morning_server import stream_readwriter
 from morning_server import message
@@ -95,7 +96,7 @@ def handle_request(sock, header, body):
 
 
 def handle_subscribe(sock, header, body):
-    logger.info('HANDLE SUBSCRIBE %s', hex(threading.get_ident()))
+    #logger.info('HANDLE SUBSCRIBE %s', header)
     code = header['code']
     stop_methods = [message.STOP_ALARM_DATA,
                     message.STOP_STOCK_DATA,
@@ -110,10 +111,13 @@ def handle_subscribe(sock, header, body):
 
 
 def handle_subscribe_response(sock, header, body):
-    #logger.info('HANDLE SUBSCRIBE RESPONSE %s', hex(threading.get_ident()))
-    code = header['code']
-    client_manager.broadcast_subscribe_data(code, header, body)
-    morning_stat.increment_subscribe_count(code)
+    logger.info('HANDLE SUBSCRIBE RESPONSE %s', header)
+    if 'code' in header:
+        code = header['code']
+        client_manager.broadcast_subscribe_data(code, header, body)
+        morning_stat.increment_subscribe_count(code)
+    else:
+        print('ERROR) NO code in subscribe response header')
     #logger.info('HANDLE SUBSCRIBE RESPONSE DONE')
 
 
@@ -155,7 +159,8 @@ def handle(sock, address):
                                             response_trade_handler=handle_trade_response,
                                             subscribe_trade_response_handler=handle_trade_subscribe_response)
     except Exception as e:
-        logger.warning('Dispatch exception ' + str(e))
+        logger.warning('ERROR) handle error ' + str(sys.exc_info()))
+        logger.warning(traceback.format_exc())
         client_manager.handle_disconnect(e.args[1])
         
 
