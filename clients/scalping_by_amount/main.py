@@ -50,6 +50,7 @@ def data_process():
                     continue
                 candidates.append(snapshot)
             code = picker.pick_one(candidates)
+            print('*' * 10, 'PICKED', code, '*' * 10)
             if len(code) > 0:
                 candidate_queue.put_nowait({'code': code, 'info': snapshot.copy()})
         gevent.sleep(0.3)
@@ -76,9 +77,9 @@ def heart_beat():
         for fw in followers:
             fw.process_tick()
             if picked_code is not None and fw.code == picked_code['code']:
-                # TODO: check whether in VI state
-                trading_follower = fw
-                fw.start_trading(picked_code['info'])
+                if fw.is_in_market():
+                    trading_follower = fw
+                    fw.start_trading(picked_code['info'])
 
         if trading_follower is not None:
             if trading_follower.is_trading_done():

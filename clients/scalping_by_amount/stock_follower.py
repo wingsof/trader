@@ -27,11 +27,15 @@ class StockFollower:
         self.ba_waching = False
 
     def start_trading(self, code_info):
+        print('*' * 10, 'START TRADING', self.code, '*' * 10)
         self.trader = trader.Trader(self.reader, code_info, self.market_status)
         if not self.ba_waching:
             self.ba_watching = True
             stock_api.subscribe_stock(self.reader, self.code + message.BIDASK_SUFFIX, self.ba_data_handler)
         self.trader.start()
+
+    def is_in_market(self):
+        return self.market_status.is_in_market()
 
     def receive_result(self, result):
         if self.trader is not None:

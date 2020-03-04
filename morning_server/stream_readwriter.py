@@ -113,7 +113,7 @@ def write(sock, header, body):
                 print('ERROR) write socket error, reraise')
                 print(sys.exc_info())
                 print(traceback.format_exc())
-                raise
+                raise Exception('ERROR) socket write error', sock)
         except:
             print('ERROR) write error, reraise')
             print(sys.exc_info())
@@ -137,7 +137,7 @@ def read(sock, read_buf):
                 print('ERROR) read socket error, reraise')
                 print(sys.exc_info())
                 print(traceback.format_exc())
-                raise
+                raise Exception('ERROR) socket read error', sock)
         except:
             print('ERROR) read error, reraise')
             print(sys.exc_info())
