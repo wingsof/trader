@@ -4,9 +4,13 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 2))))
 
-from morning_server import stock_api
 from datetime import datetime
 from clients.scalping_by_amount import tradestatus
+from configs import client_info
+if client_info.TEST_MODE:
+    from clients.scalping_by_amount import mock_stock_api as stock_api
+else:
+    from morning_server import stock_api
 
 import gevent
 
@@ -37,10 +41,10 @@ class BuyStage:
                 pass
 
     def set_order_quantity(self, qty):
-        self.quantity = 0
+        self.quantity = qty
 
     def get_buy_average(self):
-        amount = ([d['quantity'] * d['price'] for d in self.order_traded])
+        amount = sum([d['quantity'] * d['price'] for d in self.order_traded])
         quantity = sum([d['quantity'] for d in self.order_traded])
         return amount / quantity, quantity
 
@@ -56,7 +60,7 @@ class BuyStage:
             if self.quantity == result['quantity']:
                 self.set_status(tradestatus.BUY_ORDER_CONFIRM)
             else:
-                print('cannot be possible')
+                print('cannot be possible quantity', self.quantity, 'result', result['quantity'])
                 self.set_status(tradestatus.BUY_FAIL)
         elif result['flag'] == 1:
             self.order_traded.append(result)
@@ -73,9 +77,9 @@ class BuyStage:
 
         self.order_done = True
 
-        price_table = [(tick_data['first_ask_price'], tick_data['first_ask_remain']),
-                        (tick_data['second_ask_price'], tick_data['second_ask_remain']),
-                        (tick_data['third_ask_price'], tick_data['third_ask_remain'])]
+        price_table = [(data['first_ask_price'], data['first_ask_remain']),
+                        (data['second_ask_price'], data['second_ask_remain']),
+                        (data['third_ask_price'], data['third_ask_remain'])]
         price = self.find_target_price(price_table)
         if price == 0:
             print('stop, cannot find target price', price_table)
@@ -84,7 +88,8 @@ class BuyStage:
             qty = int(self.balance / price)
             if qty > 0:
                 #TODO: change real qty after testing done
-                self.set_order_quantity(1)
+                #qty = 1
+                self.set_order_quantity(qty)
                 print('*' * 20, 'process buy order', code, 'price:', price, 'qty:', qty, '*' * 20)
                 result = stock_api.order_stock(self.reader, code, price, qty, True)
                 print('*' * 20, '\nBUY ORDER RETURN\n', result, '*' * 20)
@@ -100,13 +105,19 @@ class BuyStage:
         pass
 
     def find_target_price(self, table):
-        invest = self.invest_balance
+        invest = self.balance
         table_index = -1
+
         for i, t in enumerate(table):
-            invest -= t[0] * t[1] 
-            if invest < 0:
+            if t[0] > invest:
+                table_index = i - 1
+                break
+            elif t[0] * t[1] > invest:
                 table_index = i
                 break
+            else:
+                invest -= t[0] * t[1]
+            
         if table_index == -1:
             return 0
 

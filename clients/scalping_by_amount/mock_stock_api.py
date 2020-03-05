@@ -22,3 +22,7 @@ def modify_order(reader, order_num: int, code, price):
 def cancel_order(reader, order_num: int, code, amount): # quantity
     modify_order_list.append({'order_num': order_num, 'code': code, 'quantity': amount})
     return {'status': 0, 'msg': 'OK'}
+
+
+def get_balance(reader):
+    return 1000000

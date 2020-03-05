@@ -4,10 +4,15 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 2))))
 
-from morning_server import stock_api
+from configs import client_info
+if client_info.TEST_MODE:
+    from clients.scalping_by_amount import mock_stock_api as stock_api
+else:
+    from morning_server import stock_api
 from morning.pipeline.converter import dt
 from datetime import datetime
 from clients.scalping_by_amount.buystage import BuyStage
+from clients.scalping_by_amount.sellstage import SellStage
 from clients.scalping_by_amount import tradestatus
 
 import gevent
@@ -25,7 +30,7 @@ class Trader:
     def start(self):
         self.stage = BuyStage(self.reader, self.market_status, int(self.balance / 10))
 
-    def receive_result(self, resut):
+    def receive_result(self, result):
         if 'flag' not in result or 'quantity' not in result:
             print('result something wrong', result)
             return
