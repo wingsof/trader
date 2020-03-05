@@ -7,6 +7,7 @@ import socket
 import errno
 import select
 import traceback
+import sys
 
 from morning_server import message
 

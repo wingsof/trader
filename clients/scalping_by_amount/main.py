@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['.
 
 
 from clients.common import morning_client
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from morning.back_data import holidays
 from morning_server import stock_api
 from morning_server import message

@@ -5,6 +5,7 @@ from morning_server import message
 from configs import db
 from utils import time_converter
 
+import sys
 from pymongo import MongoClient
 import gevent
 from datetime import timedelta, datetime
