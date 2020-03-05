@@ -96,7 +96,7 @@ def handle_request(sock, header, body):
 
 
 def handle_subscribe(sock, header, body):
-    #logger.info('HANDLE SUBSCRIBE %s', header)
+    logger.info('HANDLE SUBSCRIBE %s', header)
     code = header['code']
     stop_methods = [message.STOP_ALARM_DATA,
                     message.STOP_STOCK_DATA,
@@ -111,13 +111,13 @@ def handle_subscribe(sock, header, body):
 
 
 def handle_subscribe_response(sock, header, body):
-    logger.info('HANDLE SUBSCRIBE RESPONSE %s', header)
+    #logger.info('HANDLE SUBSCRIBE RESPONSE %s', header)
     if 'code' in header:
         code = header['code']
         client_manager.broadcast_subscribe_data(code, header, body)
         morning_stat.increment_subscribe_count(code)
     else:
-        print('ERROR) NO code in subscribe response header')
+        logger.warning('ERROR) NO code in subscribe response header')
     #logger.info('HANDLE SUBSCRIBE RESPONSE DONE')
 
 

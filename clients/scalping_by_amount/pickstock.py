@@ -18,7 +18,7 @@ class PickStock:
 
     def is_satisfy_slot(p, today_open, profit, is_kospi, yclose):
         slots = price_info.create_slots(yclose, p, today_open, is_kospi)
-        slot_count = price_info.upper_available_empty_slots(slots)
+        slot_count = len(price_info.upper_available_empty_slots(slots))
         if slot_count > 10:
             return True
 
@@ -32,6 +32,5 @@ class PickStock:
             #if current_profit_by_yesterday > 20.:
             #    continue
             if self.is_satisfy_slot(c, ba['today_open'], current_profit_by_open, ba['is_kospi'], ba['yesterday_close']):
-                self.is_trading = True
                 return ba['code']
         return ''

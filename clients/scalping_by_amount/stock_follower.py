@@ -31,7 +31,7 @@ class StockFollower:
         self.trader = trader.Trader(self.reader, code_info, self.market_status)
         if not self.ba_waching:
             self.ba_watching = True
-            stock_api.subscribe_stock(self.reader, self.code + message.BIDASK_SUFFIX, self.ba_data_handler)
+            stock_api.subscribe_stock_bidask(self.reader, self.code, self.ba_data_handler)
         self.trader.start()
 
     def is_in_market(self):
@@ -47,12 +47,16 @@ class StockFollower:
         return False
 
     def ba_data_handler(self, code, data):
+        # Use ba data tick as heartbeat for trading
         if len(data) != 1:
             return
+
         tick_data = data[0]
         tick_data = dt.cybos_stock_ba_tick_convert(tick_data)
         if self.trader is not None:
             self.trader.ba_data_handler(tick_data)
+            if self.trader.is_finished():
+                self.trader = None
 
     def tick_data_handler(self, code, data):
         if len(data) != 1:
@@ -62,16 +66,12 @@ class StockFollower:
         tick_data = dt.cybos_stock_tick_convert(tick_data)
         has_change = self.market_status.set_tick_data(tick_data)
 
+        # for skipping first tick of in-market data
         if not has_change and self.market_status.is_in_market():
             self.tick_data.append(a)
 
         if self.trader is not None:
             self.trader.tick_data_handler(data)
-
-    def subject_handler(self, code, data):
-        if len(data) != 1:
-            return
-        subject_data = data[0]
 
     def snapshot(self, count_of_sec):
         if len(self.sec_data) == 0:

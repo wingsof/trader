@@ -15,17 +15,23 @@ TODAY_OPEN_MARK = 5
 
 
 def upper_available_empty_slots(slots):
-    slot_count = 0
+    available_slots = []
     start_count = False
+
     for i in range(len(slots[0])):
         if start_count:
-            if slots[1][i] != NORMAL_MARK:
+            if slots[1][i] == VI_MARK:
                 break
-            slot_count += 1
+            available_slots.append(slots[0][i])
         else:
             if slots[1][i] == CURRENT_MARK:
                 start_count = True
-    return slot_count
+    return available_slots
+
+
+def get_ask_bid_price_unit(price, is_kospi):
+    market_type = (message.KOSPI if is_kospi else message.KOSDAQ)
+    return morning_client.get_ask_bid_price_unit(market_type, price)
 
 
 def create_slots(yesterday_close, current_price, today_open, is_kospi):
