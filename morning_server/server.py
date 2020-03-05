@@ -161,7 +161,8 @@ def handle(sock, address):
     except Exception as e:
         logger.warning('ERROR) handle error ' + str(sys.exc_info()))
         logger.warning(traceback.format_exc())
-        client_manager.handle_disconnect(e.args[1])
+        if isinstance(e, tuple):
+            client_manager.handle_disconnect(e.args[1])
         
 
 def send_shutdown_msg():
