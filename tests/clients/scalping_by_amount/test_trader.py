@@ -16,7 +16,8 @@ def test_init():
     market_status.status = MarketStatus.IN_MARKET
     code_info = {'yesterday_close': 6000, # 10 ba unit
                 'today_open': 6030,
-                'is_kospi': False}
+                'is_kospi': False,
+                'code': 'A005930'}
     trader = Trader(None, code_info, market_status)
     trader.start()
     assert isinstance(trader.stage, BuyStage)
@@ -26,7 +27,8 @@ def test_send_tick():
     market_status.status = MarketStatus.IN_MARKET
     code_info = {'yesterday_close': 6000, # 10 ba unit
                 'today_open': 6030,
-                'is_kospi': False}
+                'is_kospi': False,
+                'code': 'A005930'}
     trader = Trader(None, code_info, market_status)
     assert trader.balance == 1000000
     trader.start()
@@ -38,8 +40,8 @@ def test_send_tick():
             'second_ask_remain': 100,
             'third_ask_remain': 100}
     trader.ba_data_handler('A005930', ba)
-    trader.receive_result({'flag': 4, 'order_number': 12345, 'price': 6060, 'quantity': 16})
-    trader.receive_result({'flag': 1, 'order_number': 12345, 'price': 6060, 'quantity': 16})
+    trader.receive_result({'flag': '4', 'order_number': 12345, 'price': 6060, 'quantity': 16})
+    trader.receive_result({'flag': '1', 'order_number': 12345, 'price': 6060, 'quantity': 16})
     
     trader.ba_data_handler('A005930', ba)
     assert isinstance(trader.stage, SellStage)
