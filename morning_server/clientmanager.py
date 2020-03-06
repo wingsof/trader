@@ -112,10 +112,9 @@ class ClientManager:
             if collector is None:
                 continue
             
-            logger.info('find in trade_subscribe_sockets')
             if sock in self.trade_subscribe_sockets[vendor]:
                 self.trade_subscribe_sockets[vendor].remove(sock)
-                logger.info('found and remove, left %d', len(self.trade_subscribe_sockets[vendor]))
+                logger.info('trade subscribe found and remove, left %d', len(self.trade_subscribe_sockets[vendor]))
                 if len(self.trade_subscribe_sockets[vendor]) == 0:
                     header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.STOP_TRADE_DATA)
                     stream_write(collector.sock, header, [], self)
