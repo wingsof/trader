@@ -17,7 +17,6 @@ import traceback
 
 from morning_server import stream_readwriter
 from morning_server import message
-from morning.config import db
 from morning_server.handlers import request_pre_handler as request_pre_handler
 from morning_server import server_util
 from morning_server.server_util import stream_write

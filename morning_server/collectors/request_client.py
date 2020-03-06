@@ -16,6 +16,8 @@ from configs import client_info
 from morning_server.collectors import shutdown
 
 
+order_subscriber = None
+subscribe_alarm = None
 
 
 def handle_request(sock, header, body):
@@ -247,7 +249,6 @@ if __name__ == '__main__':
     subscribe_subject = dict()
     subscribe_world = dict()
     subscribe_index = dict()
-    subscribe_alarm = None
 
     while True:
         try:
@@ -279,7 +280,6 @@ if __name__ == '__main__':
 
         if body['capability'] & message.CAPABILITY_TRADE:
             account = trade_util.TradeUtil()
-            order_subscriber = None
             print('HAS TRADE CAPABILITY')
     
     app.exec_()

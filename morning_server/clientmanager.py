@@ -111,10 +111,11 @@ class ClientManager:
             collector = self.get_trade_collector(vendor)
             if collector is None:
                 continue
-
+            
+            logger.info('find in trade_subscribe_sockets')
             if sock in self.trade_subscribe_sockets[vendor]:
                 self.trade_subscribe_sockets[vendor].remove(sock)
-
+                logger.info('found and remove, left %d', len(self.trade_subscribe_sockets[vendor]))
                 if len(self.trade_subscribe_sockets[vendor]) == 0:
                     header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.STOP_TRADE_DATA)
                     stream_write(collector.sock, header, [], self)
@@ -126,7 +127,8 @@ class ClientManager:
                 remove_code_list.append(k)
         found = True if len(remove_code_list) > 0 else False
         for code in remove_code_list:
-            self.code_subscribe_info.pop(k, None)
+            self.code_subscribe_info.pop(code, None)
+            logger.warning('remove code in code_subscribe_info %s', code)
         
         if found:
             logger.critical('subscribe collector removed')
