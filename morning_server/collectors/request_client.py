@@ -94,7 +94,7 @@ def callback_trade_subscribe(result):
     stream_readwriter.write(_sock, header, result)
 
 
-def get_order_subscriber(sock):
+def get_order_subscriber():
     global order_subscriber
     if order_subscriber is None:
         order_subscriber = order.Order(account.get_account_number(), account.get_account_type(), callback_trade_subscribe)
@@ -122,7 +122,7 @@ def handle_trade_request(sock, header, body):
         quantity = header['quantity']
         price = header['price']
         is_buy = header['trade_type'] == message.ORDER_BUY
-        status, msg = get_order_subscriber(sock).process(code, quantity, account.get_account_number(), account.get_account_type(), price, is_buy)
+        status, msg = get_order_subscriber().process(code, quantity, account.get_account_number(), account.get_account_type(), price, is_buy)
         result = {'status': status, 'msg': msg}
         stream_readwriter.write(sock, header, result)
     elif header['method'] == message.MODIFY_ORDER:
@@ -134,7 +134,6 @@ def handle_trade_request(sock, header, body):
         result = {'order_number': new_order_num}
         stream_readwriter.write(sock, header, result)
     elif header['method'] == message.TRADE_DATA:
-        #TODO: handle multiple clients
         order_s = get_order_subscriber()
         order_s.start_subscribe()
         result = {'result': True}
