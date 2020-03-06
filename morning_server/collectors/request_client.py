@@ -267,15 +267,15 @@ if __name__ == '__main__':
 
     header = stream_readwriter.create_header(message.COLLECTOR, message.MARKET_STOCK, message.COLLECTOR_DATA)
 
-    if len(sys.argv) > 1 and sys.argv[1] == 'collector':
+    if len(sys.argv) > 1 and sys.argv[1].startswith('collector'):
         if client_info.get_client_capability() & message.CAPABILITY_COLLECT_SUBSCRIBE:
             body = {'capability': message.CAPABILITY_COLLECT_SUBSCRIBE, 'name': client_info.get_client_name()}
             stream_readwriter.write(sock, header, body)
     else:
         if client_info.get_client_capability() & message.CAPABILITY_TRADE:
-            body = {'capability': message.CAPABILITY_COLLECT_SUBSCRIBE | message.CAPABILITY_TRADE, 'name': client_info.get_client_name()}
+            body = {'capability': message.CAPABILITY_TRADE, 'name': client_info.get_client_name()}
         else:
-            body = {'capability': message.CAPABILITY_REQUEST_RESPONSE | message.CAPABILITY_COLLECT_SUBSCRIBE, 'name': client_info.get_client_name()}
+            body = {'capability': message.CAPABILITY_REQUEST_RESPONSE, 'name': client_info.get_client_name()}
         stream_readwriter.write(sock, header, body)
 
         if body['capability'] & message.CAPABILITY_TRADE:
