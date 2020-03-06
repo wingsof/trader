@@ -55,14 +55,14 @@ class BuyStage:
         return False
 
     def receive_result(self, result):
-        if result['flag'] == 4: # This should be received
+        if result['flag'] == '4': # This should be received
             self.order_num = result['order_number']
             if self.quantity == result['quantity']:
                 self.set_status(tradestatus.BUY_ORDER_CONFIRM)
             else:
                 print('cannot be possible quantity', self.quantity, 'result', result['quantity'])
                 self.set_status(tradestatus.BUY_FAIL)
-        elif result['flag'] == 1:
+        elif result['flag'] == '1':
             self.order_traded.append(result)
             if self.is_done(result['quantity']):
                 self.set_status(tradestatus.BUY_DONE)

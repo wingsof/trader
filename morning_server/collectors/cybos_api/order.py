@@ -5,8 +5,7 @@ from morning_server.collectors.cybos_api import connection
 
 
 class _OrderRealtime:
-    def set_params(self, sock, obj, listener):
-        self.sock = sock
+    def set_params(self, obj, listener):
         self.obj = obj
         self.callback = listener
 
@@ -32,31 +31,29 @@ class _OrderRealtime:
             'total_quantity': total_quantity
         }
         print('ORDER EVENT ', result)
-        self.callback(self.sock, result.copy())
+        self.callback(result.copy())
 
 
 class Order:
-    def __init__(self, sock, account_num, account_type):
-        self.sock = sock
+    def __init__(self, account_num, account_type, callback):
+        self.started = False
         self.conn = connection.Connection()
         self.realtime_order = win32com.client.Dispatch('DsCbo1.CpConclusion')
-        self.started = False
+        self.handler = win32com.client.WithEvents(self.realtime_order, _OrderRealtime)
+        self.handler.set_params(self.realtime_order, callback)
         print('START Listening CpConclusion')
 
-    def start_subscribe(self, callback):
+    def start_subscribe(self):
         if not self.started:
-            handler = win32com.client.WithEvents(self.realtime_order, _OrderRealtime)
-            handler.set_params(self.sock, self.realtime_order, callback)
-            self.realtime_order.Subscribe()
             self.started = True
+            self.realtime_order.Subscribe()
+            print('START ORDER SUBSCRIBE')
  
-    def is_started(self):
-        return self.started
-
     def stop_subscribe(self):
         if self.started:
-            self.realtime_order.Unsubscribe()
             self.started = False
+            self.realtime_order.Unsubscribe()
+            print('STOP ORDER SUBSCRIBE')
 
     def process(self, code, quantity, account_num, account_type, price, is_buy):
         while self.conn.order_left_count() <= 0:

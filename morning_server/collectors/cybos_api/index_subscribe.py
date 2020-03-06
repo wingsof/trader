@@ -3,29 +3,27 @@ from datetime import datetime
 
 
 class _CpEvent:
-    def set_params(self, obj, code, sock, filter_callback):
+    def set_params(self, obj, code, callback):
         self.obj = obj
         self.code = code
-        self.sock = sock
-        self.filter_callback = filter_callback
+        self.callback = callback
 
     def OnReceived(self):
         d = {}
         for i in range(8):
             d[str(i)] = self.obj.GetHeaderValue(i)
         d['date'] = datetime.now()
-        self.filter_callback(self.sock, self.code, [d])
+        self.callback(self.code, [d])
 
 
 class _IndexRealtime:
-    def __init__(self, code):
+    def __init__(self, code, callback):
         self.obj = win32com.client.Dispatch("DsCbo1.StockIndexIS")
-        self.code = code
+        self.handler = win32com.client.WithEvents(self.obj, _CpEvent)
+        self.obj.SetInputValue(0, code)
+        self.handler.set_params(self.obj, code, callback)
 
-    def subscribe(self, sock, filter_callback):
-        handler = win32com.client.WithEvents(self.obj, _CpEvent)
-        self.obj.SetInputValue(0, self.code)
-        handler.set_params(self.obj, self.code, sock, filter_callback)
+    def subscribe(self):
         self.obj.Subscribe()
 
     def unsubscribe(self):
@@ -33,12 +31,19 @@ class _IndexRealtime:
 
 
 class IndexSubscribe:
-    def __init__(self, sock, code):
-        self.sock = sock
-        self.index_realtime = _IndexRealtime(code)
+    def __init__(self, code, callback):
+        self.started = False
+        self.code = code
+        self.index_realtime = _IndexRealtime(code, callback)
 
-    def start_subscribe(self, callback):
-        self.index_realtime.subscribe(self.sock, callback)
+    def start_subscribe(self):
+        if not self.started:
+            self.started = True
+            self.index_realtime.subscribe()
+            print('START index subscribe stock', self.code)
 
     def stop_subscribe(self):
-        self.index_realtime.unsubscribe()
+        if self.started:
+            self.started = False
+            self.index_realtime.unsubscribe()
+            print('STOP index subscribe stock', self.code)

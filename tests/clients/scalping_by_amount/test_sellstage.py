@@ -85,14 +85,14 @@ def test_send_first_ba():
     assert ss.get_status() == tradestatus.SELL_ORDER_SEND_DONE
     start_price = 6070
     for i in range(10):
-        ss.receive_result({'flag': 4, 'order_number': 12345, 'price': start_price, 'quantity': 1})
+        ss.receive_result({'flag': '4', 'order_number': 12345, 'price': start_price, 'quantity': 1})
         start_price += 10
 
     assert ss.get_status() != tradestatus.SELL_DONE
 
     start_price = 6070
     for i in range(9):
-        ss.receive_result({'flag': 1, 'order_number': 12345, 'price': start_price, 'quantity': 1})
+        ss.receive_result({'flag': '1', 'order_number': 12345, 'price': start_price, 'quantity': 1})
         start_price += 10
     assert ss.get_status() != tradestatus.SELL_DONE
 

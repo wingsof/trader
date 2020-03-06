@@ -107,7 +107,7 @@ def write(sock, header, body):
         except socket.error as e:
             err = e.args[0]
             if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
-                print(e, 'ERROR) EAGAIN or EWOULDBLOCK(write) sent message len', sent, 'total len', total_len)
+                print(e, 'ERROR) EAGAIN or EWOULDBLOCK(write) sent message len')
                 select.select([], [sock], [])
                 continue
             else:
@@ -131,7 +131,7 @@ def read(sock, read_buf):
             err = e.args[0]
             if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
                 # TODO: check whether need to handle msg if some of packet is read
-                print(e, 'ERROR) EAGAIN or EWOULDBLOCK(read) receive message len', len(msg))
+                print(e, 'ERROR) EAGAIN or EWOULDBLOCK(read) receive message len')
                 select.select([sock], [], [])
                 continue
             else:

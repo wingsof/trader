@@ -18,7 +18,7 @@ class MarketStatus:
     def __init__(self):
         self.status = MarketStatus.PRE_MARKET
 
-    def set_tick_data(self, data):
+    def set_tick_data(self, tick_data):
         prev_status = self.status
 
         market_type = tick_data['market_type']
@@ -32,7 +32,7 @@ class MarketStatus:
                 self.status = MarketStatus.VI
             else:
                 self.status = MarketStatus.CLOSE
-        elif self.status == MarketStatus.STATUS_VI and market_type == dt.MarketType.IN_MARKET:
+        elif self.status == MarketStatus.VI and market_type == dt.MarketType.IN_MARKET:
             self.status = MarketStatus.IN_MARKET
 
         return prev_status != self.status

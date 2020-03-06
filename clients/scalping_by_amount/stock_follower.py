@@ -54,7 +54,8 @@ class StockFollower:
         tick_data = data[0]
         tick_data = dt.cybos_stock_ba_tick_convert(tick_data)
         if self.trader is not None:
-            self.trader.ba_data_handler(tick_data)
+            # careful not to use code since it has _BA suffix
+            self.trader.ba_data_handler(self.code, tick_data)
             if self.trader.is_finished():
                 self.trader = None
 
@@ -68,10 +69,13 @@ class StockFollower:
 
         # for skipping first tick of in-market data
         if not has_change and self.market_status.is_in_market():
-            self.tick_data.append(a)
+            if self.open_price == 0 and tick_data['start_price'] != 0:
+                self.open_price = tick_data['start_price']
+
+            self.tick_data.append(tick_data)
 
         if self.trader is not None:
-            self.trader.tick_data_handler(data)
+            self.trader.tick_data_handler(tick_data)
 
     def snapshot(self, count_of_sec):
         if len(self.sec_data) == 0:
@@ -90,7 +94,7 @@ class StockFollower:
         profit = (current_close - data[0]['open']) / data[0]['open'] * 100
         yesterday_close = 0
         if self.yesterday_summary is not None:
-            yesterday_close = self.yesterday_summary['close_priec']
+            yesterday_close = self.yesterday_summary['close_price']
         return {'code': self.code, 'amount': amount, 'profit': profit,
                 'yesterday_close': yesterday_close, 'today_open': self.open_price,
                 'current_price': current_close, 'is_kospi': self.is_kospi}

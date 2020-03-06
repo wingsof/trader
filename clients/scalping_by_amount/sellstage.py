@@ -53,7 +53,7 @@ class SellStage:
     def get_status(self):
         return self.status
 
-    def tick_handler(self, data):
+    def tick_data_handler(self, data):
         pass
 
     def process_sell_order(self, code, order_sheet):
@@ -110,19 +110,19 @@ class SellStage:
 
     def receive_result(self, result):
         if self.get_status() == tradestatus.SELL_ORDER_SEND_DONE or self.get_status() == tradestatus.SELL_ORDER_SENDING:
-            if result['flag'] == 4:
+            if result['flag'] == '4':
                 for order in self.order_in_queue:
                     if order.price == result['price'] and order.order_quantity == result['quantity']:
                         if order.order_number != 0: # cancel, modify
                             order.order_number = result['order_number']
                         else: # buy, sell..
                             order.order_number = result['order_number']
-            elif result['flag'] == 1:
+            elif result['flag'] == '1':
                 for order in self.order_in_queue:
                     if order.order_number == result['order_number']:
                         order.order_quantity -= result['quantity']
                         break
-            elif result['flag'] == 2:
+            elif result['flag'] == '2':
                 # modify, cancel
                for order in self.order_in_queue:
                     if order.order_number == result['order_number']:

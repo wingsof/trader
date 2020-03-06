@@ -53,58 +53,58 @@ def handle_request(sock, header, body):
         stream_readwriter.write(sock, header, data)
 
 
-def callback_stock_subscribe(sock, code, datas):
+def callback_stock_subscribe(code, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.STOCK_DATA)
     header['code'] = code
-    stream_readwriter.write(sock, header, datas)
+    stream_readwriter.write(_sock, header, datas)
 
 
-def callback_bidask_subscribe(sock, code, datas):
+def callback_bidask_subscribe(code, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.BIDASK_DATA)
     header['code'] = code + message.BIDASK_SUFFIX
-    stream_readwriter.write(sock, header, datas)
+    stream_readwriter.write(_sock, header, datas)
 
 
-def callback_subject_subscribe(sock, code, datas):
+def callback_subject_subscribe(code, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.SUBJECT_DATA)
     header['code'] = code + message.SUBJECT_SUFFIX
-    stream_readwriter.write(sock, header, datas)
+    stream_readwriter.write(_sock, header, datas)
 
 
-def callback_world_subscribe(sock, code, datas):
+def callback_world_subscribe(code, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.WORLD_DATA)
     header['code'] = code + message.WORLD_SUFFIX
-    stream_readwriter.write(sock, header, datas)
+    stream_readwriter.write(_sock, header, datas)
 
 
-def callback_trade_subscribe(sock, result):
-    header = stream_readwriter.create_header(message.TRADE_SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.TRADE_DATA)
-    stream_readwriter.write(sock, header, result)
-
-
-def callback_index_subscribe(sock, code, datas):
+def callback_index_subscribe(code, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.INDEX_DATA)
     header['code'] = code + message.INDEX_SUFFIX
-    stream_readwriter.write(sock, header, datas)
+    stream_readwriter.write(_sock, header, datas)
 
 
-def callback_alarm_subscribe(sock, datas):
+def callback_alarm_subscribe(datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.ALARM_DATA)
     header['code'] = message.STOCK_ALARM_CODE
-    stream_readwriter.write(sock, header, datas)
+    stream_readwriter.write(_sock, header, datas)
+
+
+def callback_trade_subscribe(result):
+    header = stream_readwriter.create_header(message.TRADE_SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.TRADE_DATA)
+    stream_readwriter.write(_sock, header, result)
 
 
 def get_order_subscriber(sock):
     global order_subscriber
     if order_subscriber is None:
-        order_subscriber = order.Order(sock, account.get_account_number(), account.get_account_type())
+        order_subscriber = order.Order(account.get_account_number(), account.get_account_type(), callback_trade_subscribe)
     return order_subscriber
 
 
-def get_alarm_subscriber(sock):
+def get_alarm_subscriber():
     global subscribe_alarm
     if subscribe_alarm is None:
-        subscribe_alarm = stock_alarm.StockAlarm(sock)
+        subscribe_alarm = stock_alarm.StockAlarm(callback_alarm_subscribe)
     return subscribe_alarm
 
 
@@ -135,19 +135,13 @@ def handle_trade_request(sock, header, body):
         stream_readwriter.write(sock, header, result)
     elif header['method'] == message.TRADE_DATA:
         #TODO: handle multiple clients
-        order_s = get_order_subscriber(sock)
-        start_result = False
-        if not order_s.is_started():
-            order_s.start_subscribe(callback_trade_subscribe)
-            start_result = True
-            print('START ORDER SUBSCRIBE')
-        result = {'result': start_result}
+        order_s = get_order_subscriber()
+        order_s.start_subscribe()
+        result = {'result': True}
         stream_readwriter.write(sock, header, result)
     elif header['method'] == message.STOP_TRADE_DATA:
         if order_subscriber is not None:
             order_subscriber.stop_subscribe()
-            print('STOP ORDER SUBSCRIBER')
-        # Server do not expect to receive STOP response for STOP_TRADE_DATA
     elif header['method'] == message.CANCEL_ORDER:
         cancel_order_obj = cancel_order.CancelOrder(account.get_account_number(), account.get_account_type())
         order_num = header['order_number']
@@ -179,74 +173,46 @@ def handle_subscribe(sock, header, body):
         return
 
     if header['method'] == message.STOCK_DATA:
-        if code in subscribe_stock:
-            print('Already subscribe stock ' + code)
-        else:
-            subscribe_stock[code] = stock_subscribe.StockSubscribe(sock, code)
-            subscribe_stock[code].start_subscribe(callback_stock_subscribe)
-            print('START Subscribe stock' + code)
+        if code not in subscribe_stock:
+            subscribe_stock[code] = stock_subscribe.StockSubscribe(code, callback_stock_subscribe)
+        subscribe_stock[code].start_subscribe()
     elif header['method'] == message.STOP_STOCK_DATA:
         if code in subscribe_stock:
             subscribe_stock[code].stop_subscribe()
-            subscribe_stock.pop(code, None)
-            print('STOP Subscribe stock' + code)
     elif header['method'] == message.BIDASK_DATA:
-        if code in subscribe_bidask:
-            print('Already subscribe bidask ' + code)
-        else:
-            subscribe_bidask[code] = bidask_subscribe.BidAskSubscribe(sock, code)
-            subscribe_bidask[code].start_subscribe(callback_bidask_subscribe)
-            print('START Subscribe bidask ' + code)
+        if code not in subscribe_bidask:
+            subscribe_bidask[code] = bidask_subscribe.BidAskSubscribe(code, callback_bidask_subscribe)
+        subscribe_bidask[code].start_subscribe()
     elif header['method'] == message.STOP_BIDASK_DATA:
         if code in subscribe_bidask:
             subscribe_bidask[code].stop_subscribe()
-            subscribe_bidask.pop(code, None)
-            print('STOP Subscribe bidask ' + code)
     elif header['method'] == message.WORLD_DATA:
-        if code in subscribe_world:
-            print('Already subscribe world ' + code)
-        else:
-            subscribe_world[code] = world_subscribe.WorldSubscribe(sock, code)
-            subscribe_world[code].start_subscribe(callback_world_subscribe)
-            print('START Subscribe world ' + code)
+        if code not in subscribe_world:
+            subscribe_world[code] = world_subscribe.WorldSubscribe(code, callback_world_subscribe)
+        subscribe_world[code].start_subscribe()
     elif header['method'] == message.STOP_WORLD_DATA:
         if code in subscribe_world:
             subscribe_world[code].stop_subscribe()
-            subscribe_world.pop(code, None)
-            print('STOP Subscribe world ' + code)
     elif header['method'] == message.SUBJECT_DATA:
-        if code in subscribe_subject:
-            print('Already subscribe subject ' + code)
-        else:
-            subscribe_subject[code] = trade_subject.TradeSubject(sock, code)
-            subscribe_subject[code].start_subscribe(callback_subject_subscribe)
-            print('START Subscribe subject ' + code)
+        if code not in subscribe_subject:
+            subscribe_subject[code] = trade_subject.TradeSubject(code, callback_subject_subscribe)
+        subscribe_subject[code].start_subscribe()
     elif header['method'] == message.STOP_SUBJECT_DATA:
         if code in subscribe_subject:
             subscribe_subject[code].stop_subscribe()
-            subscribe_subject.pop(code, None)
-            print('STOP Subscribe subject ' + code)
     elif header['method'] == message.INDEX_DATA:
-        if code in subscribe_index:
-            print('Already subscribe index ' + code)
-        else:
-            subscribe_index[code] = index_subscribe.IndexSubscribe(sock, code)
-            subscribe_index[code].start_subscribe(callback_index_subscribe)
-            print('START Subscribe index ' + code)
+        if code not in subscribe_index:
+            subscribe_index[code] = index_subscribe.IndexSubscribe(code, callback_index_subscribe)
+        subscribe_index[code].start_subscribe()
     elif header['method'] == message.STOP_INDEX_DATA:
         if code in subscribe_index:
             subscribe_index[code].stop_subscribe()
-            subscribe_index.pop(code, None)
-            print('STOP Subscribe index ' + code)
     elif header['method'] == message.ALARM_DATA:
-        s = get_alarm_subscriber(sock) 
-        if not s.is_started():
-            s.start_subscribe(callback_alarm_subscribe)
-            print('START SUBSCRIBE STOCK ALARM')
+        s = get_alarm_subscriber() 
+        s.start_subscribe()
     elif header['method'] == message.STOP_ALARM_DATA:
         if subscribe_alarm is not None:
             subscribe_alarm.stop_subscribe()
-            print('STOP SUBSCRIBE STOCK ALARM')
 
 
 read_buf = stream_readwriter.ReadBuffer()

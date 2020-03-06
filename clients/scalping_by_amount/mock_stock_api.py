@@ -25,4 +25,5 @@ def cancel_order(reader, order_num: int, code, amount): # quantity
 
 
 def get_balance(reader):
-    return 1000000
+    return {'balance': 1000000}
+

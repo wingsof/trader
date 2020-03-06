@@ -70,8 +70,8 @@ def test_buy_with_result():
     assert len(ordered_list) == 1
     assert ordered_list[0]['price'] == 6050
     assert ordered_list[0]['quantity'] == 1
-    bs.receive_result({'flag': 4, 'order_number': 12345, 'price': 6050, 'quantity': 1})
+    bs.receive_result({'flag': '4', 'order_number': 12345, 'price': 6050, 'quantity': 1})
     assert bs.get_status() == tradestatus.BUY_ORDER_CONFIRM
-    bs.receive_result({'flag': 1, 'order_number': 12345, 'price': 6050, 'quantity': 1})
+    bs.receive_result({'flag': '1', 'order_number': 12345, 'price': 6050, 'quantity': 1})
     assert bs.get_status() == tradestatus.BUY_DONE
     ordered_list.clear()

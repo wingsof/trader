@@ -22,12 +22,13 @@ class Trader:
     def __init__(self, reader, code_info, market_status):
         self.reader = reader
         self.code_info = code_info
-        self.balance = stock_api.get_balance(self.reader)
+        self.balance = stock_api.get_balance(self.reader)['balance']
         print('*' * 50, 'CURRENT BALANCE', self.balance, '*' * 50)
         self.market_status = market_status
         self.stage = None
 
     def start(self):
+        print('Enter BUY STAGE', self.code_info['code'])
         self.stage = BuyStage(self.reader, self.market_status, int(self.balance / 10))
 
     def receive_result(self, result):
@@ -35,13 +36,14 @@ class Trader:
             print('result something wrong', result)
             return
 
-        print('*' * 50, '\nTRADE RESULT\n', result, '\n', '*' * 50)
+        print('receive result', self.code_info['code'])
+
         if self.stage is None:
             print('STAGE IS NONE')
         else:
             self.stage.receive_result(result)
 
-    def tick_handler(self, data):
+    def tick_data_handler(self, data):
         if self.stage is not None:
             self.stage.tick_handler(data)
 

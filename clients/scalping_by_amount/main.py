@@ -49,14 +49,15 @@ def data_process():
                     snapshot['amount'] < MINIMUM_AMOUNT):
                     continue
                 candidates.append(snapshot)
-            code = picker.pick_one(candidates)
-            print('*' * 10, 'PICKED', code, '*' * 10)
-            if len(code) > 0:
-                candidate_queue.put_nowait({'code': code, 'info': snapshot.copy()})
+            picked = picker.pick_one(candidates)
+            if picked is not None:
+                print('*' * 10, 'PICKED', picked['code'], '*' * 10)
+                candidate_queue.put_nowait({'code': picked['code'], 'info': picked})
         gevent.sleep(0.3)
 
 
 def receive_result(result):
+    print('*' * 50, '\nTRADE RESULT\n', result, '\n', '*' * 50)
     for fw in followers:
         fw.receive_result(result)
 

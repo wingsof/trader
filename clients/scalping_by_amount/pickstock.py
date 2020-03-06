@@ -22,15 +22,17 @@ class PickStock:
         if slot_count > 10:
             return True
 
+        return False
+
     def pick_one(self, candidates):
         by_amount = sorted(candidates, key=lambda x: x['amount'])
         # already filtered : profit > 0, yesterday_close != 0
         for ba in by_amount[:10]:
-            c = ba['currrent_price']
-            #current_profit_by_yesterday = (c - ba['yesterday_close']) / ba['yesterday_close'] * 100
+            c = ba['current_price']
+            current_profit_by_yesterday = (c - ba['yesterday_close']) / ba['yesterday_close'] * 100
             current_profit_by_open = (c - ba['today_open']) / ba['today_open'] * 100
             #if current_profit_by_yesterday > 20.:
             #    continue
             if self.is_satisfy_slot(c, ba['today_open'], current_profit_by_open, ba['is_kospi'], ba['yesterday_close']):
-                return ba['code']
-        return ''
+                return ba
+        return None
