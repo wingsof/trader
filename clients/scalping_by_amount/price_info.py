@@ -76,6 +76,32 @@ def _get_vi_prices(open_price, market_type):
     return vi_list
 
 
+def create_order_sheet(price_slots, all_qty):
+    order_sheet = []
+    order_qty = all_qty
+    divider = all_qty / len(price_slots)
+    if divider < 1:
+        for p in price_slots:
+            if order_qty <= 0:
+                break
+            order_qty -= 1
+            order_sheet.append((p, 1))
+    else:
+        balancer = 0
+        for i, p in enumerate(price_slots):
+            if order_qty <= 0:
+                break
+
+            if i == len(price_slots) - 1:
+                q = order_qty
+            else:
+                q = int(divider+balancer)
+                balancer = divider + balancer - q
+            order_qty -= q        
+            order_sheet.append((p, q))
+    return order_sheet
+
+
 if __name__ == '__main__':
     l = create_slots(9000, 9500, 9100, False)
     # 9100 today open -> 10% -> 1010 VI, 20% -> 9100 + 1820 = 10920

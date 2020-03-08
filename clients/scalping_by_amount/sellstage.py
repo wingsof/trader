@@ -26,6 +26,13 @@ class OrderItem:
         self.order_number = 0
         self.order_time = datetime.now()
         self.is_cancel_progressing = False
+        self.is_cut = False
+        self.status = tradestatus.SELL_ORDER_IN_TRANSACTION
+
+    def set_cut_order(self, price):
+        self.price = price
+        self.status = tradestatus.SELL_ORDER_IN_TRANSACTION
+        self.is_cut = True # for identifying put at high price or keep price
 
 
 class SellStage:
@@ -58,21 +65,16 @@ class SellStage:
 
     def process_sell_order(self, code, order_sheet):
         # for preventing ba_data_handler reentered and call process_sell_order
-        self.set_status(tradestatus.SELL_ORDER_SENDING) 
         for order in order_sheet:
             price = order[0]
             qty = order[1]
             print('*' * 20, 'process sell order', code, 'price:', price, 'qty:', qty, '*' * 20)
             result = stock_api.order_stock(self.reader, code, price, qty, False)
-            print('*' * 20, '\nSELL ORDER RETURN\n', result, '*' * 20)
             if result['status'] == 0:
                 self.order_in_queue.append(OrderItem(price, qty))
-        self.set_status(tradestatus.SELL_ORDER_SEND_DONE)
+            print('*' * 20, '\nSELL ORDER RETURN\n', result, '*' * 20)
 
-    def ba_data_handler(self, code, tick_data):
-        if self.current_bid == tick_data['first_bid_price']:
-            return
-
+    def ba_data_handler(self, code, tick_data):       
         self.current_bid = tick_data['first_bid_price']
         self.slots = price_info.create_slots(
                 self.code_info['yesterday_close'],
@@ -80,61 +82,102 @@ class SellStage:
                 self.code_info['today_open'],
                 self.code_info['is_kospi'])
         if self.get_status() == tradestatus.SELL_WAIT:
+            self.set_status(tradestatus.SELL_PROGRESSING)
             self.point_price = self.current_bid
             price_slots = self.get_price_slots(self.slots, self.minimum_profit_price, self.qty)
             if len(price_slots) == 0:
                 self.process_sell_order(code, [(self.current_bid, self.qty)])
             else:
-                order_sheet = []
-                order_qty = self.qty
-                for p in price_slots:
-                    if order_qty == 0:
-                        break
-                    q = int(self.qty / len(price_slots))
-                    order_qty -= q
-                    order_sheet.append((p, q))
+                order_sheet = price_info.create_order_sheet(price_slots, self.qty)
                 self.process_sell_order(code, order_sheet)
-        elif self.get_status() == tradestatus.SELL_ORDER_SEND_DONE:
+        elif self.get_status() == tradestatus.SELL_PROGRESSING:
             ba_unit = price_info.get_ask_bid_price_unit(self.point_price, self.code_info['is_kospi'])
             price_step = (self.current_bid - self.point_price) / ba_unit
-
+            print('price_step', price_step, self.point_price, self.current_bid)
             if price_step <= self.current_cut_step and len(self.order_in_queue) > 0:
-                self.current_cut_step = -1
-
                 order = self.order_in_queue[-1]
-                self.order_in_queue.remove(order)
-                self.order_in_queue.insert(0, order)
-                order.price = self.current_bid
-                result = stock_api.modify_order(self.reader, order.order_number, code, order.price)
-                print('*' * 20, '\nMODIFY ORDER RETURN\n', result, '*' * 20)
+                if order.status == tradestatus.SELL_ORDER_READY:
+                    self.current_cut_step = -1
+                    self.point_price = self.current_bid
+                    self.order_in_queue.remove(order)
+                    self.order_in_queue.insert(0, order)
+                    order.set_cut_order(self.current_bid) # put order status to SELL_ORDER_IN_TRANSACTION
+                    result = stock_api.modify_order(self.reader, order.order_number, code, order.price)
+                    order.order_number = result['order_number'] # new order number
+                    print('*' * 20, '\nMODIFY ORDER RETURN\n', result, '*' * 20)
+                else:
+                    print('TOP ORDER ITEM is in transaction')
+
+    def move_to_top(self, order):
+        price_slots = self.get_current_available_price_slots()
+        top_price = 0
+        if len(self.order_in_queue) == 1:
+            top_price = order.price
+        else:
+            top_price = max([d.price for d in self.order_in_queue])
+        
+        for p in price_slots:
+            if top_price < p:
+                top_price = p
+                break
+        
+        if top_price != order.price:
+            order.status = tradestatus.SELL_ORDER_IN_TRANSACTION
+            order.price = top_price
+            self.order_in_queue.remove(order)
+            self.order_in_queue.append(order)
+            result = stock_api.modify_order(self.reader, order.order_number, self.code_info['code'], order.price)
+            order.order_number = result['order_number'] # new order number
+            print('*' * 20, '\nMODIFY ORDER RETURN\n', result, '*' * 20)
 
     def receive_result(self, result):
-        if self.get_status() == tradestatus.SELL_ORDER_SEND_DONE or self.get_status() == tradestatus.SELL_ORDER_SENDING:
-            if result['flag'] == '4':
-                for order in self.order_in_queue:
-                    if order.price == result['price'] and order.order_quantity == result['quantity']:
-                        if order.order_number != 0: # cancel, modify
-                            order.order_number = result['order_number']
-                        else: # buy, sell..
-                            order.order_number = result['order_number']
-            elif result['flag'] == '1':
-                for order in self.order_in_queue:
-                    if order.order_number == result['order_number']:
-                        order.order_quantity -= result['quantity']
+        if result['flag'] == '4':
+            for order in self.order_in_queue:
+                if order.price == result['price'] and order.order_quantity == result['quantity']:
+                    if order.order_number == 0: # buy, sell
+                        order.order_number = result['order_number']
+                        order.status = tradestatus.SELL_ORDER_READY
                         break
-            elif result['flag'] == '2':
-                # modify, cancel
-               for order in self.order_in_queue:
-                    if order.order_number == result['order_number']:
-                        if order.is_cancel_progressing:
-                            order.order_quantity = 0
-                        else: # modify
-                            order.order_quantity = result['order_quantity']
-                            order.order_price = result['price']
+                    elif order.order_number == result['order_number']: # cancel, modify
+                        break
+                    else:
+                        print('CANNOT FIND ITEM')
+        elif result['flag'] == '1':
+            order_done = None
+            for order in self.order_in_queue:
+                if order.order_number == result['order_number']:
+                    order.order_quantity -= result['quantity']
+                    if order.order_quantity == 0:
+                        order_done = order
+                    else:
+                        pass
+                        #if not order.is_cut:
+                        #    self.move_to_top(order)
+                    break
+            if order_done is not None:
+                self.order_in_queue.remove(order)
+        elif result['flag'] == '2':
+            # modify, cancel
+            order_done = None
+            for order in self.order_in_queue:
+                if order.order_number == result['order_number']:
+                    if order.is_cancel_progressing: # still no case to cancel order
+                        order.order_quantity = 0
+                        order_done = order
+                    else: # modify
+                        order.order_quantity = result['order_quantity']
+                        order.order_price = result['price']
+                        order.status = tradestatus.SELL_ORDER_READY
+                    break
+            if order_done is not None:
+                self.order_in_queue.remove(order)
 
-
-        if sum([d.order_quantity for d in self.order_in_queue]) == 0:
+        if len(self.order_in_queue) == 0:
             self.set_status(tradestatus.SELL_DONE)
+
+    def get_current_available_price_slots(self):
+        price_slot = price_info.upper_available_empty_slots(self.slots)
+        return list(filter(lambda x: x > self.minimum_profit_price, price_slot))
 
     def get_price_slots(self, slots, mprice, qty):
         price_slot = price_info.upper_available_empty_slots(slots)

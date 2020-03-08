@@ -24,6 +24,9 @@ class Trader:
         self.code_info = code_info
         self.balance = stock_api.get_balance(self.reader)['balance']
         print('*' * 50, 'CURRENT BALANCE', self.balance, '*' * 50)
+        print('set limit 100000')
+        if self.balance > 1000000:
+            self.balance = 1000000
         self.market_status = market_status
         self.stage = None
 

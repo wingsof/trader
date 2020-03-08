@@ -87,7 +87,6 @@ class BuyStage:
         else:
             qty = int(self.balance / price)
             if qty > 0:
-                #TODO: change real qty after testing done
                 #qty = 1
                 self.set_order_quantity(qty)
                 print('*' * 20, 'process buy order', code, 'price:', price, 'qty:', qty, '*' * 20)
