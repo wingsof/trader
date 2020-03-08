@@ -36,7 +36,7 @@ class StockAlarm:
         self.alarm_realtime = _AlarmRealtime(callback)
         self.started = False
 
-    def start_subscribe(self, callback):
+    def start_subscribe(self):
         if not self.started:
             self.started = True
             self.alarm_realtime.subscribe()
