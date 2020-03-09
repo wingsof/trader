@@ -32,7 +32,11 @@ class Trader:
 
     def start(self):
         print('Enter BUY STAGE', self.code_info['code'])
-        self.stage = BuyStage(self.reader, self.market_status, int(self.balance / 10))
+        self.stage = BuyStage(self.reader, self.code_info, self.market_status, int(self.balance / 10))
+
+    def finish_work(self):
+        if self.stage is not None and isinstance(self.stage, SellStage):
+            self.stage.sell_immediately()
 
     def receive_result(self, result):
         if 'flag' not in result or 'quantity' not in result:
@@ -56,7 +60,7 @@ class Trader:
             self.stage.ba_data_handler(code, tick_data)
             if isinstance(self.stage, BuyStage):
                 if self.stage.get_status() == tradestatus.BUY_FAIL:
-                    pass
+                    self.stage = None
                 elif self.stage.get_status() == tradestatus.BUY_SOME:
                     # Try cancel order remained
                     pass

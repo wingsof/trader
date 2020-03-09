@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['.
 
 from datetime import datetime
 from clients.scalping_by_amount import tradestatus
+from clients.scalping_by_amount import price_info
 from configs import client_info
 if client_info.TEST_MODE:
     from clients.scalping_by_amount import mock_stock_api as stock_api
@@ -16,9 +17,10 @@ import gevent
 
 
 class BuyStage:
-    def __init__(self, reader, market_status, balance):
+    def __init__(self, reader, code_info, market_status, balance):
         self.reader = reader
         self.balance = balance
+        self.code_info = code_info
         self.market_status = market_status
         self.quantity = 0
         self.order_done = False
@@ -69,6 +71,12 @@ class BuyStage:
             else:
                 self.set_status(tradestatus.BUY_SOME)
                     
+    def is_abnormal_bid_table(self, bid_table):
+        for i in range(len(bid_table)-1):
+            distance = price_info.get_price_unit_distance(bid_table[i], bid_table[i+1], self.code_info['is_kospi'])
+            if distance > 2:
+                return True
+        return False
 
     def ba_data_handler(self, code, data):
         self.current_ba_tick = data
@@ -77,12 +85,19 @@ class BuyStage:
 
         self.order_done = True
 
+        bid_table = [data['fifth_bid_price'], data['fourth_bid_price'],
+                        data['third_bid_price'], data['second_bid_price'],
+                        data['first_bid_price']]
         price_table = [(data['first_ask_price'], data['first_ask_remain']),
                         (data['second_ask_price'], data['second_ask_remain']),
                         (data['third_ask_price'], data['third_ask_remain'])]
         price = self.find_target_price(price_table)
-        if price == 0:
-            print('stop, cannot find target price', price_table)
+        if (price == 0 or
+                self.is_abnormal_bid_table(bid_table) or
+                price_info.get_price_unit_distance(data['first_bid_price'], data['first_ask_price'], self.code_info['is_kospi']) > 2):
+            print('stop, ba price is abnormal or cannot find target price', price, price_table, bid_table)
+            print('distance', price_info.get_price_unit_distance(data['first_bid_price'], data['first_ask_price'], self.code_info['is_kospi']))
+
             self.set_status(tradestatus.BUY_FAIL)
         else:
             qty = int(self.balance / price)

@@ -29,6 +29,16 @@ def upper_available_empty_slots(slots):
     return available_slots
 
 
+def get_price_unit_distance(low_price, high_price, is_kospi):
+    if low_price >= high_price or low_price == 0 or high_price == 0:
+        return 100 # abnormal price
+    count = 0
+    while low_price < high_price:
+        count += 1
+        unit = get_ask_bid_price_unit(low_price, is_kospi)
+        low_price += unit
+    return count
+
 def get_ask_bid_price_unit(price, is_kospi):
     market_type = (message.KOSPI if is_kospi else message.KOSDAQ)
     return morning_client.get_ask_bid_price_unit(market_type, price)

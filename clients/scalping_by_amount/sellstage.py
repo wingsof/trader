@@ -16,7 +16,7 @@ else:
 import gevent
 
 
-MAX_SLOT=10
+MAX_SLOT=5
 
 
 class OrderItem:
@@ -49,6 +49,7 @@ class SellStage:
         self.point_price = -1
         self.current_cut_step = -2
         self.order_in_queue = []
+        self.finish_flag = False
         self.set_status(tradestatus.SELL_WAIT)
 
     def set_status(self, status):
@@ -60,8 +61,18 @@ class SellStage:
     def get_status(self):
         return self.status
 
-    def tick_data_handler(self, data):
+    def tick_handler(self, data):
         pass
+
+    def sell_immediately(self):
+        if not self.finish_flag:
+            self.finish_flag = True
+            for order in self.order_in_queue:
+                if order.status == tradestatus.SELL_ORDER_READY:
+                    order.set_cut_order(self.current_bid)
+                    result = stock_api.modify_order(self.reader, order.order_number, self.code_info['code'], order.price)
+                    order.order_number = result['order_number'] # new order number
+                    print('*' * 20, '\nMODIFY ORDER RETURN(EXIT)\n', result, '*' * 20)
 
     def process_sell_order(self, code, order_sheet):
         # for preventing ba_data_handler reentered and call process_sell_order
@@ -93,7 +104,8 @@ class SellStage:
         elif self.get_status() == tradestatus.SELL_PROGRESSING:
             ba_unit = price_info.get_ask_bid_price_unit(self.point_price, self.code_info['is_kospi'])
             price_step = (self.current_bid - self.point_price) / ba_unit
-            print('price_step', price_step, self.point_price, self.current_bid)
+            print('price_step', price_step, 'currnet point', self.point_price, 'current bid', self.current_bid, 'order remain', len(self.order_in_queue),
+                    'asks', [o.price for o in self.order_in_queue])
             if price_step <= self.current_cut_step and len(self.order_in_queue) > 0:
                 order = self.order_in_queue[-1]
                 if order.status == tradestatus.SELL_ORDER_READY:
@@ -147,6 +159,7 @@ class SellStage:
             for order in self.order_in_queue:
                 if order.order_number == result['order_number']:
                     order.order_quantity -= result['quantity']
+                    self.point_price = order.price
                     if order.order_quantity == 0:
                         order_done = order
                     else:
@@ -165,7 +178,7 @@ class SellStage:
                         order.order_quantity = 0
                         order_done = order
                     else: # modify
-                        order.order_quantity = result['order_quantity']
+                        order.order_quantity = result['quantity']
                         order.order_price = result['price']
                         order.status = tradestatus.SELL_ORDER_READY
                     break
@@ -188,7 +201,7 @@ class SellStage:
 
         print('available profit slot', len(profit_slot), 'start from', profit_slot[0])
         if len(profit_slot) > MAX_SLOT:
-            profit_slot = profit_slot[:10]
+            profit_slot = profit_slot[:MAX_SLOT]
         
         while qty / len(profit_slot) < 0:
             profit_slot = profit_slot[:-1]

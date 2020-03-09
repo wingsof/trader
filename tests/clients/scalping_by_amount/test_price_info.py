@@ -67,3 +67,10 @@ def test_order_sheet():
     assert slots[7][1] == 2  # 1.7 + 0.9 = 2.6
     assert slots[8][1] == 2  # 1.7 + 0.6 = 2.3
     assert slots[9][1] == 2
+
+
+def test_get_price_unit_distance():
+    assert price_info.get_price_unit_distance(9990, 10050, False) == 2
+    assert price_info.get_price_unit_distance(3000, 0, False) == 100
+    assert price_info.get_price_unit_distance(0, 3000, False) == 100
+    assert price_info.get_price_unit_distance(10050, 10250, False) == 4
