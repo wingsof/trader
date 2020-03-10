@@ -15,6 +15,7 @@ from morning.pipeline.converter import dt
 from datetime import datetime
 from clients.scalping_by_amount import trader, price_info
 from clients.scalping_by_amount.marketstatus import MarketStatus
+from utils import trade_logger as logger
 
 import gevent
 
@@ -35,7 +36,7 @@ class StockFollower:
         self.ba_waching = False
 
     def start_trading(self, code_info):
-        print('*' * 10, 'START TRADING', self.code, '*' * 10)
+        logger.warning('START TRADING %s', self.code)
         self.trader = trader.Trader(self.reader, code_info, self.market_status)
         self.top_edges = list(price_info.get_peaks(self.avg_prices))
         if not self.ba_waching:
@@ -45,6 +46,10 @@ class StockFollower:
 
     def is_in_market(self):
         return self.market_status.is_in_market()
+
+    def finish_work(self):
+        if self.trader is not None:
+            self.trader.finish_work()
 
     def receive_result(self, result):
         if self.trader is not None:
@@ -123,7 +128,6 @@ class StockFollower:
         self.tick_data.clear()
         if self.trader is not None:
             peaks = list(price_info.get_peaks(self.avg_prices))
-            print('peaks', peaks, type(peaks), 'top_edge', self.top_edges)
             if peaks != self.top_edges:
                 self.top_edges = peaks
                 self.trader.top_edge_detected()

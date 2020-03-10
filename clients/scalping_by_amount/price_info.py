@@ -15,8 +15,7 @@ VI_MARK = 4
 TODAY_OPEN_MARK = 5
 
 
-def get_immediate_sell_price(ba_tick, order_queue):
-    all_qty = sum([o.order_quantity for o in order_queue])
+def get_immediate_sell_price(ba_tick, all_qty):
     prices = [ba_tick['first_bid_price'], ba_tick['second_bid_price'],
                 ba_tick['third_bid_price'], ba_tick['fourth_bid_price'],
                 ba_tick['fifth_bid_price']]

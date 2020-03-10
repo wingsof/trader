@@ -14,6 +14,7 @@ from datetime import datetime
 from clients.scalping_by_amount.buystage import BuyStage
 from clients.scalping_by_amount.sellstage import SellStage
 from clients.scalping_by_amount import tradestatus
+from utils import trade_logger as logger
 
 import gevent
 
@@ -24,15 +25,15 @@ class Trader:
         self.code_info = code_info
         self.edge_found = False
         self.balance = stock_api.get_balance(self.reader)['balance']
-        print('*' * 50, 'CURRENT BALANCE', self.balance, '*' * 50)
-        print('set limit 100000')
+        logger.warning('CURRENT BALANCE %d', self.balance)
         if self.balance > 1000000:
             self.balance = 1000000
+        logger.warning('SET BALANCE %d', self.balance)
         self.market_status = market_status
         self.stage = None
 
     def start(self):
-        print('Enter BUY STAGE', self.code_info['code'])
+        logger.warning('START BUY STAGE %s', self.code_info['code'])
         self.stage = BuyStage(self.reader, self.code_info, self.market_status, int(self.balance / 10))
 
     def finish_work(self):
@@ -41,17 +42,17 @@ class Trader:
 
     def receive_result(self, result):
         if 'flag' not in result or 'quantity' not in result:
-            print('result something wrong', result)
+            logger.error('RESULT without flag or quantity %s', str(result))
             return
 
         #print('receive result', self.code_info['code'])
         if self.stage is None:
-            print('STAGE IS NONE')
+            logger.error('RECEIVE RESULT but stage None %s', str(result))
         else:
             self.stage.receive_result(result)
 
     def top_edge_detected(self):
-        print('^' * 30, 'FOUND TOP EDGE', '^' * 30)
+        logger.info('TOP EDGE DETECTED')
         self.edge_found = True
         if isinstance(self.stage, SellStage):
             self.stage.sell_immediately()

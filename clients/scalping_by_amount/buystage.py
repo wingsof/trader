@@ -13,6 +13,7 @@ if client_info.TEST_MODE:
 else:
     from morning_server import stock_api
 
+from utils import trade_logger as logger
 import gevent
 
 
@@ -37,7 +38,7 @@ class BuyStage:
         before = self.status
         self.status = status
         if before != self.status:
-            print('*' * 10, 'BUY STATUS', tradestatus.status_to_str(before), 'TO', tradestatus.status_to_str(status), '*' * 10)
+            logger.info('BUY STATUS %s to %s', tradestatus.status_to_str(before), tradestatus.status_to_str(status))
             if self.get_status() == tradestatus.BUY_CANCEL:
                 # consider two cases (1) BUY_CANCEL but TRADED, (2) BUY_CANCEL succeeded
                 pass
@@ -62,7 +63,7 @@ class BuyStage:
             if self.quantity == result['quantity']:
                 self.set_status(tradestatus.BUY_ORDER_CONFIRM)
             else:
-                print('cannot be possible quantity', self.quantity, 'result', result['quantity'])
+                logger.error("ORDER QUANTITY and flag '4' QUANTITY DIFFERENT, ORDERED %d, RECEIVE %d", self.quantity, result['quantity'])
                 self.set_status(tradestatus.BUY_FAIL)
         elif result['flag'] == '1':
             self.order_traded.append(result)
@@ -95,24 +96,22 @@ class BuyStage:
         if (price == 0 or
                 #self.is_abnormal_bid_table(bid_table) or
                 price_info.get_price_unit_distance(data['first_bid_price'], data['first_ask_price'], self.code_info['is_kospi']) > 2):
-            print('stop, ba price is abnormal or cannot find target price', price, price_table, bid_table)
-            print('distance', price_info.get_price_unit_distance(data['first_bid_price'], data['first_ask_price'], self.code_info['is_kospi']))
-
+            logger.warning('STOP, BA price is abnormal or cannot find target price %d\nPRICE TABLE: %s\nBID TABLE: %s\nFIRST BID PRICE %d\nFIRST ASK PRICE %d', price, str(price_table), str(bid_table), data['first_bid_price'], data['first_ask_price'])
             self.set_status(tradestatus.BUY_FAIL)
         else:
             qty = int(self.balance / price)
             if qty > 0:
                 #qty = 1
                 self.set_order_quantity(qty)
-                print('*' * 20, 'process buy order', code, 'price:', price, 'qty:', qty, '*' * 20)
+                logger.info('PROCESS BUY ORDER %s, price: %d, qty: %d', code, price, qty)
                 result = stock_api.order_stock(self.reader, code, price, qty, True)
-                print('*' * 20, '\nBUY ORDER RETURN\n', result, '*' * 20)
+                logger.info('BUY ORDER RETURN %s', str(result))
                 if result['status'] != 0:
                     self.set_status(tradestatus.BUY_FAIL)
                 else:
                     self.set_status(tradestatus.BUY_ORDER_SEND_DONE)
             else:
-                print('quantity wrong', 'balance', self.balance, 'price', price)
+                logger.warning('QUANTITY is 0, balance: %d, price: %d', self.balance, price)
                 self.set_status(tradestatus.BUY_FAIL)
 
     def tick_handler(self, data):

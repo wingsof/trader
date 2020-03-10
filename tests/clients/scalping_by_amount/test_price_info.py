@@ -88,12 +88,9 @@ def test_get_immediate_sell_price():
         def __init__(self, qty):
             self.order_quantity = qty
 
-    order_queue = [OrderQuantity(5), OrderQuantity(5)]
-    assert price_info.get_immediate_sell_price(bid_ask, order_queue) == 5960
-    order_queue.append(OrderQuantity(5))
-    assert price_info.get_immediate_sell_price(bid_ask, order_queue) == 5950
-    order_queue.append(OrderQuantity(6))
-    assert price_info.get_immediate_sell_price(bid_ask, order_queue) == 5940
+    assert price_info.get_immediate_sell_price(bid_ask, 10) == 5960
+    assert price_info.get_immediate_sell_price(bid_ask, 15) == 5950
+    assert price_info.get_immediate_sell_price(bid_ask, 21) == 5940
 
 
 def test_get_peaks():

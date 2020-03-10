@@ -5,6 +5,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 2))))
 
 
+from utils import trade_logger as logger
 from clients.common import morning_client
 from datetime import datetime, date, timedelta
 from morning.back_data import holidays
@@ -34,6 +35,7 @@ def data_process():
     now = datetime.now()
     start_time = now.replace(hour=9+DELTA, minute=0, second=3)
     done_time = now.replace(hour=15+DELTA, minute=10, second=0)
+    pick_finish_time = now.replace(hour=15+DELTA, minute=5, second=0)
     entered = False
 
     while True:
@@ -53,18 +55,20 @@ def data_process():
                     continue
                 candidates.append(snapshot)
             picked = picker.pick_one(candidates)
-            if picked is not None:
-                print('*' * 10, 'PICKED', picked['code'], '*' * 10)
+            if picked is not None and datetime.now() <= pick_finish_time:
+                logger.info('PICKED %s, amount: %d, profit: %f', picked['code'], picked['amount'],
+                            picked['profit'])
                 candidate_queue.put_nowait({'code': picked['code'], 'info': picked})
         else:
             if entered:
+                logger.info('QUEUE EXIT')
                 candidate_queue.put_nowait({'code': 'exit', 'info': None})
                 entered = False
         gevent.sleep(0.3)
 
 
 def receive_result(result):
-    print('*' * 50, '\nTRADE RESULT\n', result, '\n', '*' * 50)
+    logger.warning('TRADE RESULT\n%s', str(result))
     for fw in followers:
         fw.receive_result(result)
 
@@ -84,13 +88,15 @@ def heart_beat():
 
         for c in candidates:
             if c['code'] == 'exit':
+                logger.warning('SET FINISH FLAG')
                 finish_flag = True
 
         if finish_flag:
             if trading_follower is None:
-                print('finish today work')
+                logger.warning('FINISH TODAY WORK')
                 break
             else:
+                logger.warning('SEND FINISH WORK')
                 trading_follower.finish_work()
         else:
             if trading_follower is None:
