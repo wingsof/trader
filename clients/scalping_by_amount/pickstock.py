@@ -33,14 +33,14 @@ class PickStock:
         by_amount = sorted(candidates, key=lambda x: x['amount'], reverse=True)
         by_profit = sorted(candidates, key=lambda x: x['profit'], reverse=True)
         # already filtered : profit > 0, yesterday_close != 0
-        by_profit = by_profit[:10]
-        by_profit_codes = [bp['code'] for bp in by_profit]
-        for ba in by_amount[:10]:
-            c = ba['current_price']
-            current_profit_by_yesterday = (c - ba['yesterday_close']) / ba['yesterday_close'] * 100
-            current_profit_by_open = (c - ba['today_open']) / ba['today_open'] * 100
+        by_amount = by_amount[:10]
+        by_amount_codes = [ba['code'] for ba in by_amount]
+        for bp in by_profit[:10]:
+            c = bp['current_price']
+            current_profit_by_yesterday = (c - bp['yesterday_close']) / bp['yesterday_close'] * 100
+            current_profit_by_open = (c - bp['today_open']) / bp['today_open'] * 100
             #if current_profit_by_yesterday > 20.:
             #    continue
-            if ba['code'] in by_profit_codes and self.is_satisfy_slot(c, ba['today_open'], current_profit_by_open, ba['is_kospi'], ba['yesterday_close']):
-                return ba
+            if bp['code'] in by_amount_codes and self.is_satisfy_slot(c, bp['today_open'], current_profit_by_open, bp['is_kospi'], bp['yesterday_close']):
+                return bp
         return None
