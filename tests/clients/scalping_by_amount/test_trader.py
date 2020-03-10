@@ -12,6 +12,8 @@ from clients.scalping_by_amount.trader import Trader
 from clients.common import morning_client
 from morning_server import message
 
+mock_stock_api.balance = 1000000
+invest_money = mock_stock_api.balance / Trader.BALANCE_DIVIDER
 
 def down_bidask(bidask_table):
     keys = ['first_ask_price', 'second_ask_price', 'third_ask_price', 'fourth_ask_price', 'fifth_ask_price',
@@ -36,16 +38,64 @@ def test_start(default_code_info, in_market_status):
 def test_case_1_1(default_code_info, in_market_status, default_bidask):
     trader = get_trader(default_code_info, in_market_status)
     trader.ba_data_handler('A005930', default_bidask)
+    
     assert isinstance(trader.stage, BuyStage)
     assert trader.stage.get_status() == tradestatus.BUY_ORDER_SEND_DONE
-    trader.receive_result({'flag': '4', 'order_number': 12345, 'price': 6060, 'quantity': 16})
+    trader.receive_result({'flag': '4', 'order_number': 12345, 'price': 6060, 'quantity': int(invest_money/6060)})
     assert trader.stage.get_status() == tradestatus.BUY_ORDER_CONFIRM
-    trader.receive_result({'flag': '1', 'order_number': 12345, 'price': 6070, 'quantity': 16})
+    trader.receive_result({'flag': '1', 'order_number': 12345, 'price': 6070, 'quantity': int(invest_money/6060)})
     assert trader.stage.get_status() == tradestatus.BUY_DONE
     trader.ba_data_handler('A005930', default_bidask)
     assert isinstance(trader.stage, SellStage)
     mock_stock_api.clear_all()
 
+def test_buy_some(default_code_info, in_market_status, default_bidask):
+    trader = get_trader(default_code_info, in_market_status)
+    trader.ba_data_handler('A005930', default_bidask)
+    assert isinstance(trader.stage, BuyStage)
+    assert trader.stage.get_status() == tradestatus.BUY_ORDER_SEND_DONE
+    trader.receive_result({'flag': '4', 'order_number': 12345, 'price': 6050, 'quantity': int(invest_money/6050)})
+    assert trader.stage.get_status() == tradestatus.BUY_ORDER_CONFIRM
+    trader.receive_result({'flag': '1', 'order_number': 12345, 'price': 6050, 'quantity': int(invest_money/6050) - 1})
+    assert trader.stage.get_status() == tradestatus.BUY_SOME
+    trader.receive_result({'flag': '1', 'order_number': 12345, 'price': 6050, 'quantity': 1})
+    assert trader.stage.get_status() == tradestatus.BUY_DONE
+    mock_stock_api.clear_all()
+
+def test_buy_some_with_cancel(default_code_info, in_market_status, default_bidask):
+    trader = get_trader(default_code_info, in_market_status)
+    trader.ba_data_handler('A005930', default_bidask)
+    assert isinstance(trader.stage, BuyStage)
+    assert trader.stage.get_status() == tradestatus.BUY_ORDER_SEND_DONE
+    trader.receive_result({'flag': '4', 'order_number': 12345, 'price': 6050, 'quantity': int(invest_money/6050)})
+    assert trader.stage.get_status() == tradestatus.BUY_ORDER_CONFIRM
+    trader.receive_result({'flag': '1', 'order_number': 12345, 'price': 6050, 'quantity': int(invest_money/6050)-1})
+    assert trader.stage.get_status() == tradestatus.BUY_SOME
+    trader.ba_data_handler('A005930', default_bidask)
+    assert len(mock_stock_api.cancel_order_list) == 1
+    assert mock_stock_api.cancel_order_list[0]['quantity'] == 1
+    trader.receive_result({'flag': '4', 'order_number': 12345, 'price': 6050, 'quantity': 1})
+    trader.receive_result({'flag': '2', 'order_number': 12345, 'price': 6050, 'quantity': 1})
+    assert trader.stage.get_status() == tradestatus.BUY_DONE
+    mock_stock_api.clear_all()
+
+def test_buy_some_with_buy_success(default_code_info, in_market_status, default_bidask):
+    trader = get_trader(default_code_info, in_market_status)
+    trader.ba_data_handler('A005930', default_bidask)
+    assert isinstance(trader.stage, BuyStage)
+    assert trader.stage.get_status() == tradestatus.BUY_ORDER_SEND_DONE
+    trader.receive_result({'flag': '4', 'order_number': 12345, 'price': 6050, 'quantity': int(invest_money/6050)})
+    assert trader.stage.get_status() == tradestatus.BUY_ORDER_CONFIRM
+    trader.receive_result({'flag': '1', 'order_number': 12345, 'price': 6050, 'quantity': int(invest_money/6050)-1})
+    assert trader.stage.get_status() == tradestatus.BUY_SOME
+    trader.ba_data_handler('A005930', default_bidask)
+    assert len(mock_stock_api.cancel_order_list) == 1
+    assert mock_stock_api.cancel_order_list[0]['quantity'] == 1
+    trader.receive_result({'flag': '4', 'order_number': 12345, 'price': 6050, 'quantity': 1})
+    trader.receive_result({'flag': '1', 'order_number': 12345, 'price': 6050, 'quantity': 1})
+    trader.receive_result({'flag': '3', 'order_number': 12345, 'price': 6050, 'quantity': 1})
+    assert trader.stage.get_status() == tradestatus.BUY_DONE
+    mock_stock_api.clear_all()
 
 def test_case_1_2(default_code_info, in_market_status, default_bidask):
     trader = get_trader(default_code_info, in_market_status)
@@ -60,9 +110,9 @@ def test_case_1_2(default_code_info, in_market_status, default_bidask):
     trader.ba_data_handler('A005930', ba)
     assert trader.stage.get_status() == tradestatus.BUY_ORDER_SEND_DONE
     assert len(mock_stock_api.modify_order_list) == 0
-    trader.receive_result({'flag': '4', 'order_number': 12345, 'price': 6070, 'quantity': 16})
+    trader.receive_result({'flag': '4', 'order_number': 12345, 'price': 6050, 'quantity': int(invest_money/6050)})
     assert trader.stage.get_status() == tradestatus.BUY_ORDER_CONFIRM
-    trader.receive_result({'flag': '1', 'order_number': 12345, 'price': 6070, 'quantity': 16})
+    trader.receive_result({'flag': '1', 'order_number': 12345, 'price': 6050, 'quantity': int(invest_money/6050)})
     assert trader.stage.get_status() == tradestatus.BUY_DONE
     assert isinstance(trader.stage, BuyStage)
     trader.ba_data_handler('A005930', ba)
@@ -70,8 +120,8 @@ def test_case_1_2(default_code_info, in_market_status, default_bidask):
 
     trader.ba_data_handler('A005930', ba)
     assert trader.stage.get_status() == tradestatus.SELL_PROGRESSING
-    assert trader.stage.point_price == 6020
-    assert mock_stock_api.order_list[-1]['price'] == 6130 # MAX 5 STEP
+    assert trader.stage.point_price == 6090
+    assert mock_stock_api.order_list[-1]['price'] == 6110 # MAX 3 STEP
     quantities = [3, 3, 3, 3, 4]
     for i in range(5): # 6090 is minimum profit ba
         trader.receive_result({'flag': '4', 'order_number': 12346+i, 'price': 6090+i*10, 'quantity': quantities[i]})
@@ -89,7 +139,7 @@ def test_case_1_2(default_code_info, in_market_status, default_bidask):
     trader.top_edge_detected()
     assert len(mock_stock_api.modify_order_list) == 5
     assert trader.stage.immediate_sell_price == 5990
-
+    mock_stock_api.clear_all()
 
 @pytest.fixture()
 def default_bidask():

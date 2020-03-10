@@ -20,21 +20,23 @@ import gevent
 
 
 class Trader:
+    BALANCE_DIVIDER = 5
+
     def __init__(self, reader, code_info, market_status):
         self.reader = reader
         self.code_info = code_info
         self.edge_found = False
         self.balance = stock_api.get_balance(self.reader)['balance']
         logger.warning('CURRENT BALANCE %d', self.balance)
-        if self.balance > 5000000:
-            self.balance = 5000000
+        #if self.balance > 5000000:
+        #    self.balance = 5000000
         logger.warning('SET BALANCE %d', self.balance)
         self.market_status = market_status
         self.stage = None
 
     def start(self):
         logger.warning('START BUY STAGE %s', self.code_info['code'])
-        self.stage = BuyStage(self.reader, self.code_info, self.market_status, int(self.balance / 10))
+        self.stage = BuyStage(self.reader, self.code_info, self.market_status, int(self.balance / Trader.BALANCE_DIVIDER))
 
     def finish_work(self):
         if self.stage is not None and isinstance(self.stage, SellStage):

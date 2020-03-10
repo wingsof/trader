@@ -5,6 +5,7 @@ client_info.TEST_MODE = True
 
 from clients.scalping_by_amount import tradestatus
 from clients.scalping_by_amount.stock_follower import StockFollower
+from clients.scalping_by_amount.trader import Trader
 from clients.scalping_by_amount.marketstatus import MarketStatus
 from clients.common import morning_client
 from morning.back_data import holidays
@@ -15,6 +16,9 @@ from configs import db
 
 from pymongo import MongoClient
 from datetime import datetime, timedelta
+
+mstock_api.balance = 1000000
+invest_money = mstock_api.balance / Trader.BALANCE_DIVIDER
 
 def get_tick_data(code, from_datetime, until_datetime, db_collection, is_ba):
     data = list(db_collection[code].find({'date': {'$gte': from_datetime, '$lte': until_datetime}}))
@@ -48,13 +52,19 @@ def tick_data():
     all_tick = sorted(all_tick, key=lambda x: x['date'])
     return code, all_tick, yesterday_data
 
+def get_today_open(ticks):
+    for t in ticks:
+        if 'first_bid_price' not in t and t['market_type'] == ord('2'):
+            return t['current_price']
+    return 0
 
 def test_create(tick_data):
     code, tick, yesterday_data = tick_data
     start_trading_time = datetime(2020, 2, 27, 9, 0, 3)
     started = False
-    sf = StockFollower(None, code, , False)
+    sf = StockFollower(None, code, yesterday_data, False)
     start_time = tick[0]['date']
+    today_open = get_today_open(tick)
     for t in tick:
         if 'first_bid_price' in t:
             sf.ba_data_handler(code, [t])
@@ -66,7 +76,8 @@ def test_create(tick_data):
             start_time = t['date']
 
         if not started and start_time >= start_trading_time:
-            code_info = {'code': code, 'is_kospi': False}
+            code_info = {'code': code, 'is_kospi': False, 'is_kospi': False, 'today_open': today_open,
+            'amount': 1000000000, 'yesterday_close': yesterday_data['close_price']}
             sf.start_trading(code_info)
             started = True
 

@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['.
 order_list = []
 modify_order_list = []
 cancel_order_list = []
+balance = 1000000
 
 def order_stock(reader, code, price, quantity, is_buy):
     order_list.append({'code': code, 'price': price,
@@ -20,7 +21,7 @@ def modify_order(reader, order_num: int, code, price):
 
 
 def cancel_order(reader, order_num: int, code, amount): # quantity
-    modify_order_list.append({'order_num': order_num, 'code': code, 'quantity': amount})
+    cancel_order_list.append({'order_num': order_num, 'code': code, 'quantity': amount})
     return {'status': 0, 'msg': 'OK'}
 
 def subscribe_stock_bidask(reader, code, ba_data_handler):
@@ -28,7 +29,7 @@ def subscribe_stock_bidask(reader, code, ba_data_handler):
 
 
 def get_balance(reader):
-    return {'balance': 1000000}
+    return {'balance': balance}
 
 
 def clear_all():
