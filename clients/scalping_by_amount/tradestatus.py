@@ -1,16 +1,17 @@
 
-BUY_FAIL                = 0
-BUY_WAIT                = 1
-BUY_ORDER_SEND_DONE     = 2
-BUY_ORDER_CONFIRM       = 3
-BUY_SOME                = 4
-BUY_CANCEL              = 5
-BUY_DONE                = 6
-SELL_FAIL               = 7
-SELL_WAIT               = 8
-SELL_ORDER_SENDING      = 9
-SELL_ORDER_SEND_DONE    = 10
-SELL_DONE               = 11
+BUY_FAIL                    = 0
+BUY_WAIT                    = 1
+BUY_ORDER_SEND_DONE         = 2
+BUY_ORDER_CONFIRM           = 3
+BUY_SOME                    = 4
+BUY_CANCEL                  = 5
+BUY_DONE                    = 6
+SELL_FAIL                   = 7
+SELL_WAIT                   = 8     # for SellStage
+SELL_PROGRESSING            = 9     # for SellStage
+SELL_ORDER_IN_TRANSACTION   = 10    # for items
+SELL_ORDER_READY            = 11    # for items
+SELL_DONE                   = 13    # for SellStage/items
 
 
 def status_to_str(status):
@@ -32,10 +33,12 @@ def status_to_str(status):
         return 'SELL_FAIL'
     elif status == SELL_WAIT:
         return 'SELL_WAIT'
-    elif status == SELL_ORDER_SENDING:
-        return 'SELL_ORDER_SENDING'
-    elif status == SELL_ORDER_SEND_DONE:
-        return 'SELL_ORDER_SEND_DONE'
+    elif status == SELL_PROGRESSING:
+        return 'SELL_PROGRESSING'
+    elif status == SELL_ORDER_IN_TRANSACTION:
+        return 'SELL_ORDER_IN_TRANSACTION'
+    elif status == SELL_ORDER_READY:
+        return 'SELL_ORDER_READY'
     elif status == SELL_DONE:
         return 'SELL_DONE'
 

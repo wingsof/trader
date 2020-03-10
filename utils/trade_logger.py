@@ -15,7 +15,7 @@ def except_hook(exc_type, exc_value, traceback):
 
 
 def _setup_log():
-    logg = logging.getLogger('morning')
+    logg = logging.getLogger('TRADER')
     logg.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
@@ -23,7 +23,8 @@ def _setup_log():
     stream_handler.setFormatter(formatter)
     logg.addHandler(stream_handler)
 
-    filename = 'logs' + os.sep + 'morning_server.log'
+    prefix = datetime.now().strftime('%Y%m%d%H%M')
+    filename = 'logs' + os.sep + 'trader_' + prefix + '.log'
     try:
         filename = os.environ['MORNING_PATH'] + os.sep + filename
         if not os.path.exists(os.environ['MORNING_PATH'] + os.sep + 'logs'):
@@ -58,4 +59,4 @@ def log(msg, *args, **kwargs):
 
 
 _logger = _setup_log()
-#sys.excepthook = except_hook
+sys.excepthook = except_hook

@@ -18,7 +18,7 @@ class _CpEvent:
 
 class _WorldRealtime:
     def __init__(self, code, callback):
-        self.obj = win32com.client.Dispatch("CpSysDib.WorldCur")
+        self.obj = win32com.client.gencache.EnsureDispatch("CpSysDib.WorldCur")
         self.handler = win32com.client.WithEvents(self.obj, _CpEvent)
         self.obj.SetInputValue(0, code)
         self.handler.set_params(self.obj, code, callback)

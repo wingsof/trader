@@ -11,7 +11,7 @@ class CancelOrder:
     def __init__(self, account_num, account_type):
         self.account_num = account_num
         self.account_type = account_type
-        self.obj = win32com.client.Dispatch('CpTrade.CpTd0314')
+        self.obj = win32com.client.gencache.EnsureDispatch('CpTrade.CpTd0314')
         self.conn = connection.Connection()
 
     def cancel_order(self, order_number, code, amount):
@@ -32,7 +32,7 @@ class CancelOrder:
                 continue
             else:
                 print('TD0314 Cancel Order Failed')
-                return
+                return False
             
         if self.obj.GetDibStatus() != 0:
             print('TD0314 Cancel Order Status Error ' + str(self.obj.GetDibMsg1()))

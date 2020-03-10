@@ -20,7 +20,7 @@ class _CpEvent:
 
 class _AlarmRealtime:
     def __init__(self, callback):
-        self.obj = win32com.client.Dispatch("CpSysDib.CpSvr9619S")
+        self.obj = win32com.client.gencache.EnsureDispatch("CpSysDib.CpSvr9619S")
         self.handler = win32com.client.WithEvents(self.obj, _CpEvent)
         self.handler.set_params(self.obj, callback)
 
@@ -36,7 +36,7 @@ class StockAlarm:
         self.alarm_realtime = _AlarmRealtime(callback)
         self.started = False
 
-    def start_subscribe(self, callback):
+    def start_subscribe(self):
         if not self.started:
             self.started = True
             self.alarm_realtime.subscribe()

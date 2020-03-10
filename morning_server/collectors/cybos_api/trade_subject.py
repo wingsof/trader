@@ -19,7 +19,7 @@ class _CpEvent:
 class _SubjectRealtime:
     def __init__(self, code, callback):
         self.code = code
-        self.obj = win32com.client.Dispatch("DsCbo1.CpSvr8091S")
+        self.obj = win32com.client.gencache.EnsureDispatch("DsCbo1.CpSvr8091S")
         self.handler = win32com.client.WithEvents(self.obj, _CpEvent)
         self.obj.SetInputValue(0, "*")
         self.obj.SetInputValue(1, self.code)

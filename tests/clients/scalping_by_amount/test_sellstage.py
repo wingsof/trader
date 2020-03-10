@@ -10,41 +10,8 @@ from clients.scalping_by_amount import mock_stock_api, price_info
 
 
 def test_init():
-    ss = SellStage(None, None, None, 1000, 10)
+    ss = SellStage(None, None, None, 1000, 10, False)
     assert ss.get_status() == tradestatus.SELL_WAIT
-
-
-def test_price_slot():
-    l = price_info.create_slots(9000, 9500, 9100, False)
-    first_vi_index = -1
-    for i in range(len(l[0])):
-        if l[0][i] == 10000: # actual 10% -> 10010
-            first_vi_index = i
-            break
-    assert l[1][first_vi_index] == price_info.VI_MARK
-
-    second_vi_index = -1
-    for i in range(len(l[0])):
-        if l[0][i] == 10900: # actual 20% -> 10920
-            second_vi_index = i
-            break
-    assert l[1][second_vi_index] == price_info.VI_MARK
-
-    l = price_info.create_slots(6000, 6050, 6030, False)
-    first_vi_index = -1
-    for i in range(len(l[0])):
-        if l[0][i] == 6630: # actual 10% -> 6633
-            first_vi_index = i
-            break
-    assert l[1][first_vi_index] == price_info.VI_MARK
-
-    second_vi_index = -1
-    for i in range(len(l[0])):
-        if l[0][i] == 7230: # actual 20% -> 7236
-            second_vi_index = i
-            break
-    assert l[1][second_vi_index] == price_info.VI_MARK
-
 
 
 def test_send_first_ba():
@@ -54,7 +21,7 @@ def test_send_first_ba():
                 'today_open': 6030,
                 'is_kospi': False}
 
-    ss = SellStage(None, code_info, market_status, 6050, 10)
+    ss = SellStage(None, code_info, market_status, 6050, 10, False)
     ss.ba_data_handler('A005930', {'first_bid_price': 6060})
     slots = price_info.create_slots(code_info['yesterday_close'],
         ss.current_bid, code_info['today_open'], False)
@@ -82,13 +49,15 @@ def test_send_first_ba():
         assert m['quantity'] == 1
         start_from += 10
     mock_stock_api.order_list.clear()
-    assert ss.get_status() == tradestatus.SELL_ORDER_SEND_DONE
+    assert ss.get_status() == tradestatus.SELL_PROGRESSING
     start_price = 6070
-    for i in range(10):
+    for _ in range(10):
         ss.receive_result({'flag': '4', 'order_number': 12345, 'price': start_price, 'quantity': 1})
         start_price += 10
 
     assert ss.get_status() != tradestatus.SELL_DONE
+    for order in ss.order_in_queue:
+        assert order.status == tradestatus.SELL_ORDER_READY
 
     start_price = 6070
     for i in range(9):

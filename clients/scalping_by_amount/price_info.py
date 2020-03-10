@@ -5,7 +5,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['.
 
 from morning_server import message
 from clients.common import morning_client
-
+import numpy as np
+from scipy.signal import find_peaks, peak_prominences
 
 YCLOSE_MARK = 1
 NORMAL_MARK = 2
@@ -13,6 +14,19 @@ CURRENT_MARK = 3
 VI_MARK = 4
 TODAY_OPEN_MARK = 5
 
+
+def get_immediate_sell_price(ba_tick, all_qty):
+    prices = [ba_tick['first_bid_price'], ba_tick['second_bid_price'],
+                ba_tick['third_bid_price'], ba_tick['fourth_bid_price'],
+                ba_tick['fifth_bid_price']]
+    remain = [ba_tick['first_bid_remain'], ba_tick['second_bid_remain'],
+                ba_tick['third_bid_remain'], ba_tick['fourth_bid_remain'],
+                ba_tick['fifth_bid_remain']]
+    for i, r in enumerate(remain):
+        all_qty -= r
+        if all_qty <= 0:
+            return prices[i]
+    return 0
 
 def upper_available_empty_slots(slots):
     available_slots = []
@@ -28,6 +42,16 @@ def upper_available_empty_slots(slots):
                 start_count = True
     return available_slots
 
+
+def get_price_unit_distance(low_price, high_price, is_kospi):
+    if low_price >= high_price or low_price == 0 or high_price == 0:
+        return 100 # abnormal price
+    count = 0
+    while low_price < high_price:
+        count += 1
+        unit = get_ask_bid_price_unit(low_price, is_kospi)
+        low_price += unit
+    return count
 
 def get_ask_bid_price_unit(price, is_kospi):
     market_type = (message.KOSPI if is_kospi else message.KOSDAQ)
@@ -74,6 +98,54 @@ def _get_vi_prices(open_price, market_type):
         ask_bid_unit = morning_client.get_ask_bid_price_unit(market_type, vp)
         vi_list.append(int(vp / ask_bid_unit) * ask_bid_unit + ask_bid_unit)
     return vi_list
+
+
+def create_order_sheet(price_slots, all_qty):
+    order_sheet = []
+    order_qty = all_qty
+    divider = all_qty / len(price_slots)
+    if divider < 1:
+        for p in price_slots:
+            if order_qty <= 0:
+                break
+            order_qty -= 1
+            order_sheet.append((p, 1))
+    else:
+        balancer = 0
+        for i, p in enumerate(price_slots):
+            if order_qty <= 0:
+                break
+
+            if i == len(price_slots) - 1:
+                q = order_qty
+            else:
+                q = int(divider+balancer)
+                balancer = divider + balancer - q
+            order_qty -= q        
+            order_sheet.append((p, q))
+    return order_sheet
+
+
+def _calculate(x):
+    peaks, _ = find_peaks(x, distance=2)
+    prominences = peak_prominences(x, peaks)[0]
+
+    peaks = np.extract(prominences > x.mean() * 0.003, peaks)
+    prominences = np.extract(prominences > x.mean() * 0.003, prominences)
+    return peaks, prominences
+
+
+def moving_average(data_set, periods=3):
+    weights = np.ones(periods) / periods
+    return np.convolve(data_set, weights, mode='valid')
+
+
+def get_peaks(sec_price_list):
+    if len(sec_price_list) < 3:
+        return []
+    ma = moving_average(np.array(sec_price_list))
+    peaks, _ = _calculate(ma)
+    return peaks
 
 
 if __name__ == '__main__':

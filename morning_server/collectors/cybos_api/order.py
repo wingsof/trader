@@ -38,7 +38,7 @@ class Order:
     def __init__(self, account_num, account_type, callback):
         self.started = False
         self.conn = connection.Connection()
-        self.realtime_order = win32com.client.Dispatch('DsCbo1.CpConclusion')
+        self.realtime_order = win32com.client.gencache.EnsureDispatch('DsCbo1.CpConclusion')
         self.handler = win32com.client.WithEvents(self.realtime_order, _OrderRealtime)
         self.handler.set_params(self.realtime_order, callback)
         print('START Listening CpConclusion')
@@ -63,7 +63,7 @@ class Order:
         if quantity == 0:
             print("ORDER Failed " + code + ' ' + str(quantity) + ' ' + str(is_buy) + ' ' + str(price))
         else:
-            self.obj = win32com.client.Dispatch('CpTrade.CpTd0311')
+            self.obj = win32com.client.gencache.EnsureDispatch('CpTrade.CpTd0311')
             order_type = '2' if is_buy else '1'
             self.obj.SetInputValue(0, order_type)
             self.obj.SetInputValue(1, account_num)

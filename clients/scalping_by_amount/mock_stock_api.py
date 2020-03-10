@@ -16,14 +16,22 @@ def order_stock(reader, code, price, quantity, is_buy):
 
 def modify_order(reader, order_num: int, code, price):
     modify_order_list.append({'order_num': order_num, 'code': code, 'price': price})
-    return {'status': 0, 'msg': 'OK'}
+    return {'order_number': order_num + 100}
 
 
 def cancel_order(reader, order_num: int, code, amount): # quantity
     modify_order_list.append({'order_num': order_num, 'code': code, 'quantity': amount})
     return {'status': 0, 'msg': 'OK'}
 
+def subscribe_stock_bidask(reader, code, ba_data_handler):
+    pass
+
 
 def get_balance(reader):
     return {'balance': 1000000}
 
+
+def clear_all():
+    order_list.clear()
+    modify_order_list.clear()
+    cancel_order_list.clear()
