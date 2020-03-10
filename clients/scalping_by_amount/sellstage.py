@@ -33,6 +33,7 @@ class SellStage:
         self.edge_found = edge_found
         self.status = -1
         self.current_bid = -1
+        self.previous_current_bid = -1
         self.point_price = -1
         self.current_cut_step = -2
         self.immediate_sell_price = 0
@@ -107,7 +108,6 @@ class SellStage:
             order_sheet = price_info.create_order_sheet(price_slots, self.qty)
             self.process_sell_order(code, order_sheet)
 
-
     def handle_cut_off(self, code):
         ba_unit = price_info.get_ask_bid_price_unit(self.point_price, self.code_info['is_kospi'])
         price_step = (self.current_bid - self.point_price) / ba_unit
@@ -120,6 +120,7 @@ class SellStage:
             else:
                 self.current_cut_step = -1
                 self.point_price = self.current_bid
+                logger.info('CHANGE point price as %d', self.point_price)
                 order.set_cut_order(self.current_bid) # put order status to SELL_ORDER_IN_TRANSACTION
                 result = stock_api.modify_order(self.reader, order.order_number, code, order.price)
                 order.order_number = result['order_number'] # new order number
@@ -127,6 +128,9 @@ class SellStage:
 
     def ba_data_handler(self, code, tick_data):
         self.current_bid = tick_data['first_bid_price']
+        if self.previous_current_bid != self.current_bid:
+            logger.info('FIRST BID CHANGED TO %d', self.current_bid)
+
         self.immediate_sell_price = price_info.get_immediate_sell_price(tick_data, self.order_queue.get_all_quantity())
         self.slots = price_info.create_slots(
                 self.code_info['yesterday_close'],
@@ -144,6 +148,7 @@ class SellStage:
             result = stock_api.modify_order(self.reader, order.order_number, code, order.price)
             order.order_number = result['order_number'] # new order number
             logger.warning('MODIFY ORDER RETURN(TIMEOUT): %s', str(result))
+        self.previous_current_bid = self.current_bid
 
     def move_to_top(self, order):
         price_slots = self.get_current_available_price_slots()
