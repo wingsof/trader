@@ -12,7 +12,6 @@ DLL_FILES = ['cpdib.dll',
             'CpintTrade.dll',
             'CpNanoSysDib.dll',
             'CpPrivDib.dll',
-            'cpshare.dll',
             'CpSysDib.dll',
             'cptrade.dll',
             'cputil.dll']
