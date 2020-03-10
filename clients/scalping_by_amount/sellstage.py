@@ -164,8 +164,7 @@ class SellStage:
                 break
         
         if top_price != order.price:
-            order.status = tradestatus.SELL_ORDER_IN_TRANSACTION
-            order.price = top_price
+            order.modify(tradestatus.SELL_ORDER_IN_TRANSACTION, top_price)
             result = stock_api.modify_order(self.reader, order.order_number, self.code_info['code'], order.price)
             order.order_number = result['order_number'] # new order number
             logger.warning('MODIFY ORDER RETURN(MOVE TO TOP): %s', str(result))

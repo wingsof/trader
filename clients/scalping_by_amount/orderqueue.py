@@ -31,10 +31,13 @@ class _OrderItem:
         self.is_cut = False
         self.status = tradestatus.SELL_ORDER_IN_TRANSACTION
 
-    def set_cut_order(self, price):
+    def modify(self, status, price):
+        self.status = status
         self.price = price
-        self.status = tradestatus.SELL_ORDER_IN_TRANSACTION
-        self.order_time = datetime.now() # refresh time
+        self.order_time = datetime.now()
+
+    def set_cut_order(self, price):
+        self.modify(tradestatus.SELL_ORDER_IN_TRANSACTION, price)
         self.is_cut = True # for identifying put at high price or keep price
 
 class OrderQueue:
