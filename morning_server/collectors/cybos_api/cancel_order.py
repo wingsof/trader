@@ -32,7 +32,7 @@ class CancelOrder:
                 continue
             else:
                 print('TD0314 Cancel Order Failed')
-                return
+                return False
             
         if self.obj.GetDibStatus() != 0:
             print('TD0314 Cancel Order Status Error ' + str(self.obj.GetDibMsg1()))

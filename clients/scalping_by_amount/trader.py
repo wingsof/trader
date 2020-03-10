@@ -26,8 +26,8 @@ class Trader:
         self.edge_found = False
         self.balance = stock_api.get_balance(self.reader)['balance']
         logger.warning('CURRENT BALANCE %d', self.balance)
-        if self.balance > 1000000:
-            self.balance = 1000000
+        if self.balance > 5000000:
+            self.balance = 5000000
         logger.warning('SET BALANCE %d', self.balance)
         self.market_status = market_status
         self.stage = None
@@ -69,8 +69,7 @@ class Trader:
                 if self.stage.get_status() == tradestatus.BUY_FAIL:
                     self.stage = None
                 elif self.stage.get_status() == tradestatus.BUY_SOME:
-                    #TODO: Try cancel order remained
-                    pass
+                    self.stage.cancel_remain()
                 elif self.stage.get_status() == tradestatus.BUY_DONE:
                     average_price, qty = self.stage.get_buy_average()
                     self.stage = SellStage(self.reader, self.code_info, self.market_status, average_price, qty, self.edge_found)

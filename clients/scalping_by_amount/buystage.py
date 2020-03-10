@@ -41,7 +41,11 @@ class BuyStage:
             logger.info('BUY STATUS %s to %s', tradestatus.status_to_str(before), tradestatus.status_to_str(status))
             if self.get_status() == tradestatus.BUY_CANCEL:
                 # consider two cases (1) BUY_CANCEL but TRADED, (2) BUY_CANCEL succeeded
-                pass
+                result = stock_api.cancel_order(self.reader, self.order_num, self.code_info['code'], self.quantity)
+                logger.info('BUY ORDER CANCEL %s', str(result))
+
+    def cancel_remain(self):
+        self.set_status(tradestatus.BUY_CANCEL) 
 
     def set_order_quantity(self, qty):
         self.quantity = qty
@@ -59,18 +63,25 @@ class BuyStage:
 
     def receive_result(self, result):
         if result['flag'] == '4': # This should be received
-            self.order_num = result['order_number']
-            if self.quantity == result['quantity']:
-                self.set_status(tradestatus.BUY_ORDER_CONFIRM)
-            else:
-                logger.error("ORDER QUANTITY and flag '4' QUANTITY DIFFERENT, ORDERED %d, RECEIVE %d", self.quantity, result['quantity'])
-                self.set_status(tradestatus.BUY_FAIL)
+            if self.order_num == result['order_number']:
+                pass
+            else: # Buy request
+                self.order_num = result['order_number']
+                if self.quantity == result['quantity']:
+                    self.set_status(tradestatus.BUY_ORDER_CONFIRM)
+                else:
+                    logger.error("ORDER QUANTITY and flag '4' QUANTITY DIFFERENT, ORDERED %d, RECEIVE %d", self.quantity, result['quantity'])
+                    self.set_status(tradestatus.BUY_FAIL)
         elif result['flag'] == '1':
             self.order_traded.append(result)
             if self.is_done(result['quantity']):
                 self.set_status(tradestatus.BUY_DONE)
             else:
                 self.set_status(tradestatus.BUY_SOME)
+        elif result['flag'] == '2': # Cancel confirm
+            self.set_status(tradestatus.BUY_DONE)
+        elif result['flag'] == '3':
+            pass # rejected, so wait until traded
                     
     def is_abnormal_bid_table(self, bid_table):
         for i in range(len(bid_table)-1):
