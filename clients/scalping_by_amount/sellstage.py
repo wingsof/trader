@@ -36,7 +36,7 @@ class OrderItem:
 
 
 class SellStage:
-    def __init__(self, reader, code_info, market_status, average_price, qty):
+    def __init__(self, reader, code_info, market_status, average_price, qty, edge_found):
         self.reader = reader
         self.code_info = code_info
         self.market_status = market_status
@@ -44,10 +44,12 @@ class SellStage:
         self.minimum_profit_price = self.average_price * 1.0025
         self.qty = qty
         self.slots = None
+        self.edge_found = edge_found
         self.status = -1
         self.current_bid = -1
         self.point_price = -1
         self.current_cut_step = -2
+        self.immediate_sell_price = 0
         self.order_in_queue = []
         self.finish_flag = False
         self.set_status(tradestatus.SELL_WAIT)
@@ -65,14 +67,18 @@ class SellStage:
         pass
 
     def sell_immediately(self):
-        if not self.finish_flag:
+        #TODO:  CALCULATE PRICE for immediately (not just first bid)
+        if not self.finish_flag and self.get_status() == tradestatus.SELL_PROGRESSING and self.immediate_sell_price != 0:
             self.finish_flag = True
             for order in self.order_in_queue:
                 if order.status == tradestatus.SELL_ORDER_READY:
-                    order.set_cut_order(self.current_bid)
+                    order.set_cut_order(self.immediate_sell_price)
                     result = stock_api.modify_order(self.reader, order.order_number, self.code_info['code'], order.price)
                     order.order_number = result['order_number'] # new order number
                     print('*' * 20, '\nMODIFY ORDER RETURN(EXIT)\n', result, '*' * 20)
+        else:
+            print('*' * 50, 'ERROR cannot process sell immediately', '*' * 50)
+            print('finish_flag', self.finish_flag, 'status', self.get_status(), 'immediate price', self.immediate_sell_price)
 
     def process_sell_order(self, code, order_sheet):
         # for preventing ba_data_handler reentered and call process_sell_order
@@ -83,10 +89,11 @@ class SellStage:
             result = stock_api.order_stock(self.reader, code, price, qty, False)
             if result['status'] == 0:
                 self.order_in_queue.append(OrderItem(price, qty))
-            print('*' * 20, '\nSELL ORDER RETURN\n', result, '*' * 20)
+            print('-' * 30, '\nSELL ORDER RETURN\n', result, '\n', '-' * 30)
 
-    def ba_data_handler(self, code, tick_data):       
+    def ba_data_handler(self, code, tick_data):
         self.current_bid = tick_data['first_bid_price']
+        self.immediate_sell_price = price_info.get_immediate_sell_price(tick_data, self.order_in_queue)
         self.slots = price_info.create_slots(
                 self.code_info['yesterday_close'],
                 self.current_bid,
@@ -96,8 +103,11 @@ class SellStage:
             self.set_status(tradestatus.SELL_PROGRESSING)
             self.point_price = self.current_bid
             price_slots = self.get_price_slots(self.slots, self.minimum_profit_price, self.qty)
-            if len(price_slots) == 0:
-                self.process_sell_order(code, [(self.current_bid, self.qty)])
+            if len(price_slots) == 0 or self.edge_found:
+                if self.immediate_sell_price != 0:
+                    self.process_sell_order(code, [(self.immediate_sell_price, self.qty)])
+                else:
+                    print('*' * 50, 'ERROR cannot find immediate sell price', '*' * 50)
             else:
                 order_sheet = price_info.create_order_sheet(price_slots, self.qty)
                 self.process_sell_order(code, order_sheet)
@@ -116,7 +126,7 @@ class SellStage:
                     order.set_cut_order(self.current_bid) # put order status to SELL_ORDER_IN_TRANSACTION
                     result = stock_api.modify_order(self.reader, order.order_number, code, order.price)
                     order.order_number = result['order_number'] # new order number
-                    print('*' * 20, '\nMODIFY ORDER RETURN\n', result, '*' * 20)
+                    print('-' * 30, '\nMODIFY ORDER RETURN\n', result, '\n', '-' * 30)
                 else:
                     print('TOP ORDER ITEM is in transaction')
 

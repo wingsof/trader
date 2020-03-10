@@ -23,6 +23,9 @@ def cancel_order(reader, order_num: int, code, amount): # quantity
     modify_order_list.append({'order_num': order_num, 'code': code, 'quantity': amount})
     return {'status': 0, 'msg': 'OK'}
 
+def subscribe_stock_bidask(reader, code, ba_data_handler):
+    pass
+
 
 def get_balance(reader):
     return {'balance': 1000000}

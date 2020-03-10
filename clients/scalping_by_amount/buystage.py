@@ -74,7 +74,7 @@ class BuyStage:
     def is_abnormal_bid_table(self, bid_table):
         for i in range(len(bid_table)-1):
             distance = price_info.get_price_unit_distance(bid_table[i], bid_table[i+1], self.code_info['is_kospi'])
-            if distance > 2:
+            if distance > 3:
                 return True
         return False
 
@@ -93,7 +93,7 @@ class BuyStage:
                         (data['third_ask_price'], data['third_ask_remain'])]
         price = self.find_target_price(price_table)
         if (price == 0 or
-                self.is_abnormal_bid_table(bid_table) or
+                #self.is_abnormal_bid_table(bid_table) or
                 price_info.get_price_unit_distance(data['first_bid_price'], data['first_ask_price'], self.code_info['is_kospi']) > 2):
             print('stop, ba price is abnormal or cannot find target price', price, price_table, bid_table)
             print('distance', price_info.get_price_unit_distance(data['first_bid_price'], data['first_ask_price'], self.code_info['is_kospi']))

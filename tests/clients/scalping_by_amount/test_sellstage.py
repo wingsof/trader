@@ -10,7 +10,7 @@ from clients.scalping_by_amount import mock_stock_api, price_info
 
 
 def test_init():
-    ss = SellStage(None, None, None, 1000, 10)
+    ss = SellStage(None, None, None, 1000, 10, False)
     assert ss.get_status() == tradestatus.SELL_WAIT
 
 
@@ -21,7 +21,7 @@ def test_send_first_ba():
                 'today_open': 6030,
                 'is_kospi': False}
 
-    ss = SellStage(None, code_info, market_status, 6050, 10)
+    ss = SellStage(None, code_info, market_status, 6050, 10, False)
     ss.ba_data_handler('A005930', {'first_bid_price': 6060})
     slots = price_info.create_slots(code_info['yesterday_close'],
         ss.current_bid, code_info['today_open'], False)

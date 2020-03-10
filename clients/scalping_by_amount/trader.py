@@ -22,6 +22,7 @@ class Trader:
     def __init__(self, reader, code_info, market_status):
         self.reader = reader
         self.code_info = code_info
+        self.edge_found = False
         self.balance = stock_api.get_balance(self.reader)['balance']
         print('*' * 50, 'CURRENT BALANCE', self.balance, '*' * 50)
         print('set limit 100000')
@@ -43,12 +44,17 @@ class Trader:
             print('result something wrong', result)
             return
 
-        print('receive result', self.code_info['code'])
-
+        #print('receive result', self.code_info['code'])
         if self.stage is None:
             print('STAGE IS NONE')
         else:
             self.stage.receive_result(result)
+
+    def top_edge_detected(self):
+        print('^' * 30, 'FOUND TOP EDGE', '^' * 30)
+        self.edge_found = True
+        if isinstance(self.stage, SellStage):
+            self.stage.sell_immediately()
 
     def tick_data_handler(self, data):
         if self.stage is not None:
@@ -62,11 +68,11 @@ class Trader:
                 if self.stage.get_status() == tradestatus.BUY_FAIL:
                     self.stage = None
                 elif self.stage.get_status() == tradestatus.BUY_SOME:
-                    # Try cancel order remained
+                    #TODO: Try cancel order remained
                     pass
                 elif self.stage.get_status() == tradestatus.BUY_DONE:
                     average_price, qty = self.stage.get_buy_average()
-                    self.stage = SellStage(self.reader, self.code_info, self.market_status, average_price, qty)
+                    self.stage = SellStage(self.reader, self.code_info, self.market_status, average_price, qty, self.edge_found)
             elif isinstance(self.stage, SellStage):
                 if self.stage.get_status() == tradestatus.SELL_DONE:
                     self.stage = None

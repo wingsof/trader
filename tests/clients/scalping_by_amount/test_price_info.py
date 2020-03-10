@@ -74,3 +74,30 @@ def test_get_price_unit_distance():
     assert price_info.get_price_unit_distance(3000, 0, False) == 100
     assert price_info.get_price_unit_distance(0, 3000, False) == 100
     assert price_info.get_price_unit_distance(10050, 10250, False) == 4
+
+
+def test_get_immediate_sell_price():
+    bid_ask = {
+            'first_bid_price': 5960, 'first_bid_remain': 10,
+            'second_bid_price': 5950, 'second_bid_remain': 10,
+            'third_bid_price': 5940, 'third_bid_remain': 10,
+            'fourth_bid_price': 5930, 'fourth_bid_remain': 10,
+            'fifth_bid_price': 5920, 'fifth_bid_remain': 10,
+            }
+    class OrderQuantity:
+        def __init__(self, qty):
+            self.order_quantity = qty
+
+    order_queue = [OrderQuantity(5), OrderQuantity(5)]
+    assert price_info.get_immediate_sell_price(bid_ask, order_queue) == 5960
+    order_queue.append(OrderQuantity(5))
+    assert price_info.get_immediate_sell_price(bid_ask, order_queue) == 5950
+    order_queue.append(OrderQuantity(6))
+    assert price_info.get_immediate_sell_price(bid_ask, order_queue) == 5940
+
+
+def test_get_peaks():
+    assert price_info.get_peaks([6000, 6010]) == [] # 10 is 0.16%
+    prices = [6000, 6010, 6020, 6030, 6040, 6070, 6100, 6070, 6060, 6030]
+    assert len(price_info.get_peaks(prices)) > 0
+    

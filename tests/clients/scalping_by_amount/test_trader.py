@@ -14,8 +14,8 @@ from morning_server import message
 
 
 def down_bidask(bidask_table):
-    keys = ['first_ask_price', 'second_ask_price', 'third_ask_price',
-            'first_bid_price', 'second_bid_price', 'third_bid_price',]
+    keys = ['first_ask_price', 'second_ask_price', 'third_ask_price', 'fourth_ask_price', 'fifth_ask_price',
+            'first_bid_price', 'second_bid_price', 'third_bid_price', 'fourth_bid_price', 'fifth_bid_price']
     for k in keys:
         price = bidask_table[k]
         unit = morning_client.get_ask_bid_price_unit(message.KOSDAQ, price-1)
@@ -71,33 +71,39 @@ def test_case_1_2(default_code_info, in_market_status, default_bidask):
     trader.ba_data_handler('A005930', ba)
     assert trader.stage.get_status() == tradestatus.SELL_PROGRESSING
     assert trader.stage.point_price == 6020
-    assert mock_stock_api.order_list[-1]['price'] == 6180
-    quantities = [1, 2, 2, 1, 2, 2, 1, 2, 2, 2]
-    for i in range(10): # 6090 is minimum profit ba
+    assert mock_stock_api.order_list[-1]['price'] == 6130 # MAX 5 STEP
+    quantities = [3, 3, 3, 3, 4]
+    for i in range(5): # 6090 is minimum profit ba
         trader.receive_result({'flag': '4', 'order_number': 12346+i, 'price': 6090+i*10, 'quantity': quantities[i]})
     down_bidask(ba) # 6010
     trader.ba_data_handler('A005930', ba)
     assert len(mock_stock_api.modify_order_list) == 0
     
     down_bidask(ba) # 6000
-    print('current bid price', ba['first_bid_price'])
     trader.ba_data_handler('A005930', ba)
     assert len(mock_stock_api.modify_order_list) == 1
     assert mock_stock_api.modify_order_list[0]['price'] == 6000
     down_bidask(ba) # 5990
     trader.ba_data_handler('A005930', ba)
     assert len(mock_stock_api.modify_order_list) == 2
-
+    trader.top_edge_detected()
+    assert len(mock_stock_api.modify_order_list) == 5
+    assert trader.stage.immediate_sell_price == 5990
 
 
 @pytest.fixture()
 def default_bidask():
-    return {'first_ask_price': 6050, 'first_ask_remain': 100,
-        'second_ask_price': 6060, 'second_ask_remain': 100,
+    return {
+        'fifth_ask_price': 6090, 'fifth_ask_remain': 100,
+        'fourth_ask_price': 6080, 'fourth_ask_remain': 100,
         'third_ask_price': 6070, 'third_ask_remain': 100,
+        'second_ask_price': 6060, 'second_ask_remain': 100,
+        'first_ask_price': 6050, 'first_ask_remain': 100,
         'first_bid_price': 6040, 'first_bid_remain': 100,
         'second_bid_price': 6030, 'second_bid_remain': 100,
-        'third_bid_price': 6020, 'third_bid_remain': 100}
+        'third_bid_price': 6020, 'third_bid_remain': 100,
+        'fourth_bid_price': 6010, 'fourth_bid_remain': 100,
+        'fifth_bid_price': 6000, 'fifth_bid_remain': 100}
 
 
 @pytest.fixture()
