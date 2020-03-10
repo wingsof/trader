@@ -2,22 +2,22 @@ import win32com.client
 
 
 def get_kospi_code_list():
-    obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
+    obj = win32com.client.gencache.EnsureDispatch("CpUtil.CpCodeMgr")
     return obj.GetStockListByMarket(1)
 
 
 def get_kosdaq_code_list():
-    obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
+    obj = win32com.client.gencache.EnsureDispatch("CpUtil.CpCodeMgr")
     return obj.GetStockListByMarket(2)
 
 
 def is_kospi_200(code):
-    obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
+    obj = win32com.client.gencache.EnsureDispatch("CpUtil.CpCodeMgr")
     return obj.GetStockKospi200Kind(code)
 
 
 def get_kospi_company_code_list():
-    obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
+    obj = win32com.client.gencache.EnsureDispatch("CpUtil.CpCodeMgr")
     codes = obj.GetStockListByMarket(1)
     company_codes = []
     for code in codes:
@@ -27,7 +27,7 @@ def get_kospi_company_code_list():
 
 
 def get_kosdaq_company_code_list():
-    obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
+    obj = win32com.client.gencache.EnsureDispatch("CpUtil.CpCodeMgr")
     codes = obj.GetStockListByMarket(2)
     company_codes = []
     for code in codes:
@@ -41,16 +41,16 @@ def is_company_stock(code):
 
 
 def get_stock_section(code):
-    obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
+    obj = win32com.client.gencache.EnsureDispatch("CpUtil.CpCodeMgr")
     return obj.GetStockSectionKind(code)
 
 def get_country_code():
-    obj = win32com.client.Dispatch('CpUtil.CpUsCode')
+    obj = win32com.client.gencache.EnsureDispatch('CpUtil.CpUsCode')
     return obj.GetUsCodeList(2)
 
 
 def get_us_name(code):
-    obj = win32com.client.Dispatch('CpUtil.CpUsCode')
+    obj = win32com.client.gencache.EnsureDispatch('CpUtil.CpUsCode')
     return obj.GetNameByUsCode(code)
 
 
@@ -64,22 +64,22 @@ def get_kospi200_list():
 
 
 def code_to_name(code):
-    obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
+    obj = win32com.client.gencache.EnsureDispatch("CpUtil.CpCodeMgr")
     return [obj.CodeToName(code)]
 
 
 def is_there_warning(code):
-    obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
+    obj = win32com.client.gencache.EnsureDispatch("CpUtil.CpCodeMgr")
     return obj.GetStockControlKind(code) > 0 or obj.GetStockStatusKind(code) > 0 or obj.GetStockSupervisionKind(code) > 0
 
 
 def get_industry_name(code):
-    obj = win32com.client.Dispatch("CpUtil.CpCodeMgr")
+    obj = win32com.client.gencache.EnsureDispatch("CpUtil.CpCodeMgr")
     return obj.GetIndustryName(obj.GetStockIndustryCode(code))
 
 
 def get_us_code(ustype):
-    obj = win32com.client.Dispatch("CpUtil.CpUsCode")
+    obj = win32com.client.gencache.EnsureDispatch("CpUtil.CpUsCode")
     result = obj.GetUsCodeList(ustype)
     return list(result)
 

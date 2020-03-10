@@ -11,7 +11,7 @@ class CancelOrder:
     def __init__(self, account_num, account_type):
         self.account_num = account_num
         self.account_type = account_type
-        self.obj = win32com.client.Dispatch('CpTrade.CpTd0314')
+        self.obj = win32com.client.gencache.EnsureDispatch('CpTrade.CpTd0314')
         self.conn = connection.Connection()
 
     def cancel_order(self, order_number, code, amount):

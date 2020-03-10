@@ -3,7 +3,7 @@ import sys
 
 class TradeUtil:
     def __init__(self):
-        self.trade_obj = win32com.client.Dispatch('CpTrade.CpTdUtil')
+        self.trade_obj = win32com.client.gencache.EnsureDispatch('CpTrade.CpTdUtil')
         ret = self.trade_obj.TradeInit(0)
         if ret != 0:
             print('Trade Init Failed', ret)

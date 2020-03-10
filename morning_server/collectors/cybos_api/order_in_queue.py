@@ -11,7 +11,7 @@ from pywintypes import com_error
 
 class OrderInQueue:
     def __init__(self, account_num, account_type):
-        self.obj = win32com.client.Dispatch('CpTrade.CpTd5339')
+        self.obj = win32com.client.gencache.EnsureDispatch('CpTrade.CpTd5339')
         self.obj.SetInputValue(0, account_num)
         self.obj.SetInputValue(1, account_type)
         self.obj.SetInputValue(4, '0')

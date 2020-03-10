@@ -20,7 +20,7 @@ class _CpEvent:
 
 class _AlarmRealtime:
     def __init__(self, callback):
-        self.obj = win32com.client.Dispatch("CpSysDib.CpSvr9619S")
+        self.obj = win32com.client.gencache.EnsureDispatch("CpSysDib.CpSvr9619S")
         self.handler = win32com.client.WithEvents(self.obj, _CpEvent)
         self.handler.set_params(self.obj, callback)
 

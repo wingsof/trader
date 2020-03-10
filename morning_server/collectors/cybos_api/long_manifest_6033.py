@@ -15,7 +15,7 @@ class LongManifest:
         conn = connection.Connection()
         conn.wait_until_available()
 
-        self.stock_obj = win32com.client.Dispatch('CpTrade.CpTd6033')
+        self.stock_obj = win32com.client.gencache.EnsureDispatch('CpTrade.CpTd6033')
         self.stock_obj.SetInputValue(0, self.account_num)
         self.stock_obj.SetInputValue(1, self.account_type)
         self.stock_obj.SetInputValue(2, 50)
@@ -26,7 +26,7 @@ class LongManifest:
         conn = connection.Connection()
         conn.wait_until_available()
 
-        self.stock_obj = win32com.client.Dispatch('CpTrade.CpTd6033')
+        self.stock_obj = win32com.client.gencache.EnsureDispatch('CpTrade.CpTd6033')
         self.stock_obj.SetInputValue(0, self.account_num)
         self.stock_obj.SetInputValue(1, self.account_type)
         self.stock_obj.SetInputValue(2, 50)
@@ -51,7 +51,7 @@ class LongManifest:
         conn = connection.Connection()
         conn.wait_until_available()
 
-        self.stock_obj = win32com.client.Dispatch('CpTrade.CpTd6033')
+        self.stock_obj = win32com.client.gencache.EnsureDispatch('CpTrade.CpTd6033')
         self.stock_obj.SetInputValue(0, self.account_num)
         self.stock_obj.SetInputValue(1, self.account_type)
         self.stock_obj.SetInputValue(2, 50)

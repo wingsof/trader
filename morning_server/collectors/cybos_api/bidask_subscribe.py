@@ -18,7 +18,7 @@ class _CpEvent:
 
 class _BidAskRealtime:
     def __init__(self, code, callback):
-        self.obj = win32com.client.Dispatch("DsCbo1.StockJpBid")
+        self.obj = win32com.client.gencache.EnsureDispatch("DsCbo1.StockJpBid")
         self.handler = win32com.client.WithEvents(self.obj, _CpEvent)
         self.obj.SetInputValue(0, code)
         self.handler.set_params(self.obj, code, callback)

@@ -11,7 +11,7 @@ from cybos_api import connection
 # Caution: Only for 1 year search is available when set date manually
 def check_investor_trend(code, start_date, end_date):
     conn = connection.Connection()
-    obj = win32com.client.Dispatch('CpSysDib.CpSvr7254')
+    obj = win32com.client.gencache.EnsureDispatch('CpSysDib.CpSvr7254')
     obj.SetInputValue(0, code)
     obj.SetInputValue(1, 0)
     obj.SetInputValue(2, time_converter.datetime_to_intdate(start_date))

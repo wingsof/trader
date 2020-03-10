@@ -22,7 +22,7 @@ def get_period_data_raw(code, start_date, end_date = 0, period_type='m'):
     conn = connection.Connection()
     conn.wait_until_available()
 
-    chart_obj= win32com.client.Dispatch("CpSysDib.StockChart")
+    chart_obj= win32com.client.gencache.EnsureDispatch("CpSysDib.StockChart")
     chart_obj.SetInputValue(0, code)
     chart_obj.SetInputValue(1, ord('1'))
     if end_date == 0:

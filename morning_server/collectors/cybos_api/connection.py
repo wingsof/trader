@@ -6,7 +6,7 @@ import time
 
 class Connection:
     def __init__(self):
-        self.obj = win32com.client.Dispatch("CpUtil.CpCybos")
+        self.obj = win32com.client.gencache.EnsureDispatch("CpUtil.CpCybos")
 
     # return example: 14906
     def get_remain_time(self):

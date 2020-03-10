@@ -12,7 +12,7 @@ def get_today_data_raw(code, period_type):
     conn = connection.Connection()
     conn.wait_until_available()
 
-    chart_obj= win32com.client.Dispatch("CpSysDib.StockChart")
+    chart_obj= win32com.client.gencache.EnsureDispatch("CpSysDib.StockChart")
     chart_obj.SetInputValue(0, code)
     chart_obj.SetInputValue(1, ord('2'))
     chart_obj.SetInputValue(4, 10000)
