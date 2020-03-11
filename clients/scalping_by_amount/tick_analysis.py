@@ -22,8 +22,8 @@ def calculate(x):
     peaks, _ = find_peaks(x, distance=2)
     prominences = peak_prominences(x, peaks)[0]
 
-    peaks = np.extract(prominences > x.mean() * 0.005, peaks)
-    prominences = np.extract(prominences > x.mean() * 0.005, prominences)
+    peaks = np.extract(prominences > x.mean() * 0.004, peaks)
+    prominences = np.extract(prominences > x.mean() * 0.004, prominences)
     return peaks, prominences
 
 
@@ -87,22 +87,13 @@ def get_three_sec_tick_avg(tick_data, current_datetime):
     return 0
 
 
-def start_tick_analysis(code, buy_datetime_arr, sell_datetime_arr, save_path):
-    buy_price_arr = []
-    sell_price_arr = []
-
+def start_tick_analysis(code, buy_datetime_arr, sell_datetime_arr, buy_price_arr, sell_price_arr, save_path):
     start_datetime = buy_datetime_arr[0]
     from_datetime =  start_datetime - timedelta(seconds=60)
     until_datetime = sell_datetime_arr[-1]
 
     db_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
     tick_data = get_tick_data(code, from_datetime, until_datetime, db_collection)
-
-    if len(sys.argv) > 1:
-        df = pd.DataFrame(tick_data)
-        morning_client.get_save_filename(save_path, code, 'xlsx')
-        df.to_excel(sys.argv[1] + '.xlsx')
-        print('Saved to ' + sys.argv[1] + '.xlsx')
 
     expected_market_type = ord('2')
 
@@ -116,25 +107,6 @@ def start_tick_analysis(code, buy_datetime_arr, sell_datetime_arr, save_path):
     volume_datetime_arr = []
     mavg_price_arr = []
     mavg_datetime_arr = []
-
-    print('*' * 30, tick_data[0]['date'], 'to', tick_data[-1]['date'], '*' * 30)
-    for d in tick_data:
-        for ba in buy_datetime_arr:
-            if ba == d['date']:
-                buy_price_arr.append(d['current_price'])
-
-        for sa in sell_datetime_arr:
-            if sa == d['date']:
-                sell_price_arr.append(d['current_price'])
-
-        if expected_market_type != d['market_type']:
-            if d['market_type'] == ord('2'):
-                print('*' * 30, d['date'], 'IN MARKET', '*' * 30)
-            elif d['market_type'] == ord('1'):
-                print('*' * 30, d['date'], 'PRE MARKET(VI)', '*' * 30)
-            else:
-                print('*' * 30, d['date'], 'UNKNOWN', '*' * 30)
-            expected_market_type = d['market_type']
 
     current_time = tick_data[0]['date'] + timedelta(seconds=1)
 
@@ -154,11 +126,3 @@ def start_tick_analysis(code, buy_datetime_arr, sell_datetime_arr, save_path):
 
     peaks = get_peaks(np.array(mavg_price_arr))
     save_to_graph(code, datetime_arr, price_arr, volume_datetime_arr, volume_arr, mavg_datetime_arr, mavg_price_arr, buy_datetime_arr, buy_price_arr, sell_datetime_arr, sell_price_arr, peaks, save_path)
-
-
-if __name__ == '__main__':
-    code = 'A059090'
-
-    buy_datetime_arr = [datetime(2020, 2, 26, 14, 48, 49, 651000)]
-    sell_datetime_arr = [datetime(2020, 2, 26, 14, 53, 32, 149000)]
-    start_tick_analysis(code, buy_datetime_arr, sell_datetime_arr)

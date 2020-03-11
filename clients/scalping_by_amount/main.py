@@ -129,15 +129,16 @@ def heart_beat():
 
 def get_yesterday_data(today, market_code):
     yesterday = holidays.get_yesterday(today)
-    yesterday_dict = dict()
+    yesterday_list = []
     for progress, code in enumerate(market_code):
         print('collect yesterday data', f'{progress+1}/{len(market_code)}', end='\r')
         data = morning_client.get_past_day_data(code, yesterday, yesterday)
         if len(data) == 1:
             data = data[0]
-            yesterday_dict[code] = data
+            data['code'] = code
+            yesterday_list.append(data)
     print('')
-    return yesterday_dict
+    return yesterday_list
 
 
 def start_trader():
@@ -149,13 +150,13 @@ def start_trader():
 
     market_code = list(dict.fromkeys(market_code))
     market_code =  list(filter(lambda x: len(x) > 0 and x[1:].isdigit(), market_code))
-    yesterday_data = get_yesterday_data(datetime.now(), market_code) 
+    yesterday_list = get_yesterday_data(datetime.now(), market_code) 
+    yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True(
+    yesterday_list = yesterday_list[:1000]
 
-    for code in market_code:
-        yesterday_summary = None
-        if code in yesterday_data:
-            yesterday_summary = yesterday_data[code]
-        sf = stock_follower.StockFollower(morning_client.get_reader(), code, yesterday_summary, code in kospi_code)
+    for yesterday_data in yesterday_list:
+        code = yesterday_data['code']
+        sf = stock_follower.StockFollower(morning_client.get_reader(), code, yesterday_data, code in kospi_code)
         sf.subscribe_at_startup()
         followers.append(sf)
 
