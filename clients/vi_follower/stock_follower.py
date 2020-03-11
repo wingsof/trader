@@ -35,4 +35,5 @@ class StockFollower:
     def subscribe_at_startup(self):
         self.started_at_startup = True
         stock_api.subscribe_stock(self.reader, self.code, self.tick_data_handler)
+        stock_api.subscribe_stock_bidask(self.reader, self.code, self.ba_data_handler)
 

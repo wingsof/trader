@@ -36,6 +36,20 @@ def check_time():
         gevent.sleep(60)
 
 
+def get_yesterday_data(today, market_code):
+    yesterday = holidays.get_yesterday(today)
+    yesterday_list = []
+    for progress, code in enumerate(market_code):
+        print('collect yesterday data', f'{progress+1}/{len(market_code)}', end='\r')
+        data = morning_client.get_past_day_data(code, yesterday, yesterday)
+        if len(data) == 1:
+            data = data[0]
+            data['code'] = code
+            yesterday_list.append(data)
+    print('')
+    return yesterday_list
+
+
 def start_vi_follower():
     global db_collection
 
@@ -43,10 +57,13 @@ def start_vi_follower():
     db_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
 
     market_code = morning_client.get_all_market_code()
+    yesterday_list = get_yesterday_data(datetime.now(), market_code)
+    yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
+    yesterday_list = yesterday_list[:1000]
 
     followers = []
-    for code in market_code:
-        sf = stock_follower.StockFollower(morning_client.get_reader(), db_collection, code)
+    for yesterday_data in yesterday_list:
+        sf = stock_follower.StockFollower(morning_client.get_reader(), db_collection, yesterday_data['code'])
         sf.subscribe_at_startup()
         followers.append(sf)
 
