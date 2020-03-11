@@ -6,13 +6,13 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['.
 import numpy as np
 from configs import client_info
 if client_info.TEST_MODE:
-    from clients.scalping_by_amount import mock_stock_api as stock_api
-
+    from clients.scalping_by_amount.mock import stock_api
+    from clients.scalping_by_amount.mock import datetime
 else:
     from morning_server import stock_api
+    from datetime import datetime
 
 from morning.pipeline.converter import dt
-from datetime import datetime
 from clients.scalping_by_amount import trader, price_info
 from clients.scalping_by_amount.marketstatus import MarketStatus
 from utils import trade_logger as logger

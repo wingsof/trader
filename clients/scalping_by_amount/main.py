@@ -7,9 +7,16 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['.
 
 from utils import trade_logger as logger
 from clients.common import morning_client
-from datetime import datetime, date, timedelta
+from datetime import timedelta
 from morning.back_data import holidays
-from morning_server import stock_api
+
+if client_info.TEST_MODE:
+    from clients.scalping_by_amount.mock import stock_api
+    from clients.scalping_by_amount.mock import datetime
+else:
+    from morning_server import stock_api
+    from datetime import datetime
+
 from morning_server import message
 import gevent
 from gevent.queue import Queue
