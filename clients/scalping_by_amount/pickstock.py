@@ -4,12 +4,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 2))))
 
-import gevent
-
-from clients.common import morning_client
-from morning_server import message
 from clients.scalping_by_amount import price_info
-from morning_server import stock_api
 
 
 class PickStock:

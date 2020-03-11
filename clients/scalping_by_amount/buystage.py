@@ -9,9 +9,11 @@ from clients.scalping_by_amount import tradestatus
 from clients.scalping_by_amount import price_info
 from configs import client_info
 if client_info.TEST_MODE:
-    from clients.scalping_by_amount import mock_stock_api as stock_api
+    from clients.scalping_by_amount.mock import stock_api
+    from clients.scalping_by_amount.mock import datetime
 else:
     from morning_server import stock_api
+    from datetime import datetime
 
 from utils import trade_logger as logger
 import gevent
