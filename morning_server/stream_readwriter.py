@@ -13,6 +13,7 @@ from morning_server import message
 
 READ_PACKET_SIZE=8192
 HEADER_SIZE=8
+HEADER_ID=b'\x02\x03'
 
 # use ReadBuf class for keeping current buf since bytes class is immutable
 class ReadBuffer:
@@ -94,7 +95,7 @@ def create_header(header_type, market_type, method_name, vendor='cybos'):
 def write(sock, header, body):
     msg = {'header': header, 'body': body}
     msg = pickle.dumps(msg)
-    msg = bytes(f"{len(msg):<{HEADER_SIZE}}", 'utf-8') + msg
+    msg = HEADER_ID + (len(msg)).to_bytes(HEADER_SIZE, byteorder='big') + msg
     total_len = len(msg)
     while True:
         try:
@@ -154,17 +155,22 @@ def read(sock, read_buf):
 
     while True:
         #print('BUF len', len(read_buf.buf))
-        if len(read_buf.buf) < HEADER_SIZE:
+        if len(read_buf.buf) < HEADER_SIZE + 2:
             break
+       
+        if read_buf.buf[:len(HEADER_ID)] != HEADER_ID:
+            read_buf.buf = read_buf.buf[len(HEADER_ID):]
+            print('ERROR) Cannot read HEADER_ID, msg len', len(read_buf.buf))
+            continue
         
-        header_len = int(read_buf.buf[:HEADER_SIZE])
+        header_len = int.from_bytes(read_buf.buf[len(HEADER_ID):len(HEADER_ID) + HEADER_SIZE], byteorder='big')
 
         #print('HEADER len', header_len)
-        if len(read_buf.buf) < header_len + HEADER_SIZE:
+        if len(read_buf.buf) < header_len + HEADER_SIZE + len(HEADER_ID):
             break
 
-        data = read_buf.buf[HEADER_SIZE:HEADER_SIZE+header_len]
-        read_buf.buf = read_buf.buf[HEADER_SIZE+header_len:]
+        data = read_buf.buf[len(HEADER_ID)+HEADER_SIZE:len(HEADER_ID)+HEADER_SIZE+header_len]
+        read_buf.buf = read_buf.buf[len(HEADER_ID)+HEADER_SIZE+header_len:]
         #print('LEFT packet', len(read_buf.buf))
         data = pickle.loads(data)
         msg_list.append(data)

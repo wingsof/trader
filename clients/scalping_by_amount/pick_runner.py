@@ -11,31 +11,51 @@ from datetime import timedelta
 from morning.back_data import holidays
 from configs import client_info
 if client_info.TEST_MODE:
-    from clients.scalping_by_amount.mock import stock_api
     from clients.scalping_by_amount.mock import datetime
 else:
-    from morning_server import stock_api
     from datetime import datetime
 
 from morning_server import message
 import gevent
 from gevent.queue import Queue
 from clients.scalping_by_amount import stock_follower
-from clients.scalping_by_amount import pickstock
+from clients.scalping_by_amount import pickstock_experiment as pickstock
 from clients.scalping_by_amount import time
-from configs import db
+import pandas as pd
+import numpy as np
 from pymongo import MongoClient
-from utils import time_converter
-from configs import time_info
 
 
+db_collection = MongoClient('mongodb://127.0.0.1:27017').trade_alarm
 followers = []
 DELTA = 0
 MINIMUM_AMOUNT = 100000000
 candidate_queue = gevent.queue.Queue()
+results = []
 
-def vi_handler(_, data):
-    data = data[0]
+
+def serach_profit(code, start_time, amount, pick_profit):
+    tick_data = list(db_collection[code].find({'date': {'$gte': start_time, '$lte': start_time + timedelta(seconds=300)}}))
+    if len(tick_data) == 0:
+        print('ERROR no tick data')
+
+    price_arr = np.array([d['13'] for d in tick_data])
+    
+    p = price_arr[0]
+    highest = np.amax(price_arr)
+    lowest = np.amin(price_arr)
+    price_std = np.std(price_arr)
+    mean = np.mean(price_arr)
+    highest_profit = (highest - p) / p * 100.
+    lowest_profit = (lowest - p) / p * 100.
+    mean_profit = (mean - p) / p * 100.
+    results.append({'time': start_time, 'tick_len': len(tick_data),
+                    'highest_profit': highest_profit,
+                    'lowest_profit': lowest_profit,
+                    'mean_profit': mean_profit,
+                    'amount': amount,
+                    'pick_profit': pick_profit,
+                    'std': price_std})
 
 
 def data_process():
@@ -65,34 +85,26 @@ def data_process():
                 candidates.append(snapshot)
             picked = picker.pick_one(candidates)
             if picked is not None and datetime.now() <= pick_finish_time:
+                search_profit(code, datetime.now(), picked['amount'], picked['profit'])
                 logger.info('PICKED %s, amount: %d, profit: %f', picked['code'], picked['amount'],
                             picked['profit'])
-                candidate_queue.put_nowait({'code': picked['code'], 'info': picked})
         else:
             if entered:
                 logger.info('QUEUE EXIT')
+                pd.DataFrame(results).to_excel('picker.xlsx')
                 candidate_queue.put_nowait({'code': 'exit', 'info': None})
                 entered = False
                 break
-        time.sleep(0.3)
-
-
-def receive_result(result):
-    logger.warning('TRADE RESULT\n%s', str(result))
-    for fw in followers:
-        fw.receive_result(result)
 
 
 def heart_beat():
     last_processed_time = datetime.now()
-    trading_follower = None
     finish_flag = False
     while True:
         while datetime.now() - last_processed_time < timedelta(seconds=1):
             time.sleep(0.05)
 
         picked_code = None
-        candidates = []
         while not candidate_queue.empty():
             candidates.append(candidate_queue.get())
 
@@ -102,33 +114,17 @@ def heart_beat():
                 finish_flag = True
 
         if finish_flag:
-            if trading_follower is None:
-                logger.warning('FINISH TODAY WORK')
-                break
-            else:
-                logger.warning('SEND FINISH WORK')
-                trading_follower.finish_work()
+            logger.warning('FINISH TODAY WORK')
+            break
         else:
-            if trading_follower is None:
-                if len(candidates) > 0:
-                    picked_code = candidates[-1]
-                    candidates.clear()
-
-            if picked_code is not None and picked_code['code'] == 'exit':
-                finish_flag = True
-
             for fw in followers:
                 fw.process_tick()
-                if picked_code is not None and fw.code == picked_code['code']:
-                    if fw.is_in_market():
-                        trading_follower = fw
-                        fw.start_trading(picked_code['info'])
+                if fw.is_in_market():
+                    fw.start_trading(picked_code['info'])
 
-        if trading_follower is not None:
-            if trading_follower.is_trading_done():
-                trading_follower = None
 
         last_processed_time = datetime.now()
+
 
 def get_yesterday_data(today, market_code):
     yesterday = holidays.get_yesterday(today)
@@ -164,13 +160,6 @@ def start_trader(ready_queue=None):
         sf.subscribe_at_startup()
         followers.append(sf)
 
-    stock_api.subscribe_alarm(morning_client.get_reader(), vi_handler)
-    stock_api.subscribe_trade(morning_client.get_reader(), receive_result)
-
     if ready_queue is not None:
         ready_queue.put_nowait([yl['code'] for yl in yesterday_list])
     gevent.joinall([gevent.spawn(heart_beat), gevent.spawn(data_process)])
-
-
-if __name__ == '__main__':
-    start_trader()

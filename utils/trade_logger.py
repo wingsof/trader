@@ -2,7 +2,11 @@ import logging
 import builtins
 import sys, os
 import logging.handlers
-from datetime import datetime
+from configs import client_info
+if client_info.TEST_MODE:
+    from clients.scalping_by_amount.mock import datetime
+else:
+    from datetime import datetime
 import os.path
 
 
@@ -18,7 +22,7 @@ def _setup_log():
     logg = logging.getLogger('TRADER')
     logg.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('%(levelname)s - %(message)s')
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
     logg.addHandler(stream_handler)
@@ -39,23 +43,23 @@ def _setup_log():
 
 
 def info(msg, *args, **kwargs):
-    _logger.info(msg, *args, *kwargs)
+    _logger.info(str(datetime.now()) + '\t' + msg, *args, *kwargs)
 
 
 def warning(msg, *args, **kwargs):
-    _logger.warning(msg, *args, *kwargs)
+    _logger.warning(str(datetime.now()) + '\t' + msg, *args, *kwargs)
 
 
 def error(msg, *args, **kwargs):
-    _logger.error(msg, *args, *kwargs)
+    _logger.error(str(datetime.now()) + '\t' + msg, *args, *kwargs)
 
 
 def critical(msg, *args, **kwargs):
-    _logger.critical(msg, *args, *kwargs)
+    _logger.critical(str(datetime.now()) + '\t' + msg, *args, *kwargs)
 
 
 def log(msg, *args, **kwargs):
-    _logger.log(msg, *args, *kwargs)
+    _logger.log(str(datetime.now()) + '\t' + msg, *args, *kwargs)
 
 
 _logger = _setup_log()

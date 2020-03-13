@@ -3,7 +3,8 @@ from pymongo import MongoClient
 import sys, signal
 
 
-db = MongoClient('mongodb://' + sys.argv[1] + ':' + sys.argv[2] + '@192.168.0.22:27017')
+#db = MongoClient('mongodb://' + sys.argv[1] + ':' + sys.argv[2] + '@192.168.0.22:27017')
+db = MongoClient('mongodb://127.0.0.1:27017')
 with db:
     stock_db = db['trade_alarm']
     collections = stock_db.collection_names()

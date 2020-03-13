@@ -92,7 +92,7 @@ def start_tick_analysis(code, buy_datetime_arr, sell_datetime_arr, buy_price_arr
     from_datetime =  start_datetime - timedelta(seconds=60)
     until_datetime = sell_datetime_arr[-1]
 
-    db_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
+    db_collection = MongoClient('mongodb://127.0.0.1:27017').trade_alarm
     tick_data = get_tick_data(code, from_datetime, until_datetime, db_collection)
 
     expected_market_type = ord('2')

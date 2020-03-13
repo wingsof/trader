@@ -15,7 +15,7 @@ from clients.scalping_by_amount.mock import stock_api
 from clients.scalping_by_amount.mock import datetime
 from clients.common import morning_client
 from datetime import datetime as rdatetime
-from clients.scalping_by_amount import main
+from clients.scalping_by_amount import pick_runner
 from configs import db
 
 
@@ -23,7 +23,7 @@ ready_queue = gevent.queue.Queue()
 
 
 datetime.current_datetime = rdatetime(2020, 3, 12, 8, 55)
-finish_time = rdatetime(2020, 3, 12, 15, 35)
+finish_time = rdatetime(2020, 3, 12, 15, 20)
 
 stock_api.balance = 10000000
 
@@ -71,10 +71,9 @@ def start_provide_tick():
             datetime.current_datetime += timedelta(seconds=60)
 
         print('progressing', datetime.now(), 'handle', len(all_data), 'ticks')
-    stock_api.out_stocks_sheet()
 
 
 tick_thread = gevent.spawn(start_provide_tick)
-main.start_trader(ready_queue)
+pick_runner.start_trader(ready_queue)
 
 gevent.joinall([tick_thread])

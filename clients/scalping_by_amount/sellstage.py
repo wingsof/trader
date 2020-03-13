@@ -40,6 +40,7 @@ class SellStage:
         self.current_cut_step = -2
         self.immediate_sell_price = 0
         self.order_queue = oq.OrderQueue()
+        self.finalize_orders = []
         self.traded_sheet = []
         self.finish_flag = False
         logger.info('SellStage START, average_price: %d, qty: %d', average_price, qty)
@@ -76,11 +77,13 @@ class SellStage:
         if not self.finish_flag and self.get_status() == tradestatus.SELL_PROGRESSING and self.immediate_sell_price != 0:
             self.finish_flag = True
             order_list = self.order_queue.get_ready_order_list()
+            self.finalize_orders = self.order_queue.get_in_transaction_order_list()
             for order in order_list:
                 order.set_cut_order(self.immediate_sell_price)
+                order_num_org = order.order_number
                 result = stock_api.modify_order(self.reader, order.order_number, self.code_info['code'], order.price)
                 order.order_number = result['order_number'] # new order number
-                logger.warning('MODIFY ORDER RETURN(EXIT): %s', str(result))
+                logger.warning('MODIFY ORDER RETURN(EXIT, %d): %s', order_num_org, str(result))
         else:
             logger.warning('CANNOT DO SELL IMMEDIATELY')
 
@@ -125,21 +128,30 @@ class SellStage:
                 logger.info('CHANGE point price as %d', self.point_price)
                 order.set_cut_order(self.current_bid) # put order status to SELL_ORDER_IN_TRANSACTION
                 result = stock_api.modify_order(self.reader, order.order_number, code, order.price)
+                order_number_org = order.order_number
                 order.order_number = result['order_number'] # new order number
-                logger.warning('MODIFY ORDER RETURN(CUT): %s', str(result))
+                logger.warning('MODIFY ORDER RETURN(CUT, %d): %s', order_number_org, str(result))
 
     def ba_data_handler(self, code, tick_data):
         self.current_bid = tick_data['first_bid_price']
         if self.previous_current_bid != self.current_bid:
             logger.info('FIRST BID CHANGED TO %d', self.current_bid)
 
-        self.immediate_sell_price = price_info.get_immediate_sell_price(tick_data, self.order_queue.get_all_quantity())
+        ba_unit = price_info.get_ask_bid_price_unit(self.point_price, self.code_info['is_kospi'])
+        self.immediate_sell_price = price_info.get_immediate_sell_price(tick_data, self.order_queue.get_all_quantity(), ba_unit)
         self.slots = price_info.create_slots(
                 self.code_info['yesterday_close'],
                 self.current_bid,
                 self.code_info['today_open'],
                 self.code_info['is_kospi'])
-        if self.get_status() == tradestatus.SELL_WAIT:
+
+        if self.finish_flag:
+            if len(self.finalize_orders) > 0:
+                self.finish_flag = False
+                self.sell_immediately()
+                self.previous_current_bid = self.current_bid
+            return
+        elif self.get_status() == tradestatus.SELL_WAIT:
             self.start_sell_order(code)
         elif self.get_status() == tradestatus.SELL_PROGRESSING:
             self.handle_cut_off(code)

@@ -15,7 +15,7 @@ VI_MARK = 4
 TODAY_OPEN_MARK = 5
 
 
-def get_immediate_sell_price(ba_tick, all_qty):
+def get_immediate_sell_price(ba_tick, all_qty, ba_unit):
     prices = [ba_tick['first_bid_price'], ba_tick['second_bid_price'],
                 ba_tick['third_bid_price'], ba_tick['fourth_bid_price'],
                 ba_tick['fifth_bid_price']]
@@ -25,7 +25,7 @@ def get_immediate_sell_price(ba_tick, all_qty):
     for i, r in enumerate(remain):
         all_qty -= r
         if all_qty <= 0:
-            return prices[i]
+            return prices[i] - int(ba_unit * 2)
     return 0
 
 def upper_available_empty_slots(slots):

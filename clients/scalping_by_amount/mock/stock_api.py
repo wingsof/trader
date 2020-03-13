@@ -7,6 +7,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['.
 import gevent
 from clients.scalping_by_amount.mock import datetime
 from clients.scalping_by_amount import tick_analysis
+from clients.scalping_by_amount import time
+from datetime import timedelta
 import pandas as pd
 
 current_order_number = 111111
@@ -48,10 +50,16 @@ def remove_stock(code, price, quantity):
     if buy_quantity == sell_quantity:
         buy_record = current_stocks[code]['buy']
         sell_record = current_stocks[code]['sell']
-        stocks_sheet.append({'time': buy_record[0], 'code': code, 'type': 'buy', 'price': buy_record[1], 'quantity': buy_record[2]})
+        stocks_sheet.append({'time': buy_record[0], 'code': code, 'type': 'buy', 'price': buy_record[1], 'quantity': buy_record[2], 'profit': ''})
 
-        for sr in sell_record:
-            stocks_sheet.append({'time': sr[0], 'code': code, 'type': 'sell', 'price': sr[1], 'quantity': sr[2]})
+        total_sell_amount = sum([s[1] * s[2] for s in sell_record]) * 0.9975
+        total_buy_amount = buy_record[1] * buy_record[2]
+        profit = (total_sell_amount - total_buy_amount) / total_buy_amount * 100
+        for i, sr in enumerate(sell_record):
+            record = {'time': sr[0], 'code': code, 'type': 'sell', 'price': sr[1], 'quantity': sr[2], 'profit': ''}
+            if i == len(sell_record) - 1:
+                record['profit'] = str(float("{0:.2f}".format(profit)))
+            stocks_sheet.append()
         current_stocks.pop(code, None)
 
 
@@ -82,7 +90,8 @@ def out_stocks_sheet():
             sell_prices.append(ss['price'])
         current_code = ss['code']
          
-    df = pd.DataFrame(stocks_sheet).to_excel('trade_sheet.xlsx')
+    if len(stocks_sheet) > 0:
+        pd.DataFrame(stocks_sheet).to_excel(OUT_BASE + os.sep + 'trade_sheet.xlsx')
 
 
 def add_stock(code, price, quantity):
@@ -96,14 +105,13 @@ def set_current_first_bid(code, price):
     global balance
     done_order = []
     for order in order_wait_queue:
-        if order['code'] == code and order['order_type'] == '1' and order['flag'] == '4':
+        if order['code'] == code and order['order_type'] == '1' and (order['flag'] == '4' or order['flag'] == '2'):
             if order['price'] <= price:
                 done_order.append(order)
-                done_order = order
-                send_to_trade_handlers({'flag': 1,
+                send_to_trade_handlers({'flag': '1',
                                         'code': order['code'],
                                         'quantity': order['quantity'],
-                                        'price': order['price'],
+                                        'price': price,
                                         'order_type': '1',
                                         'order_number': order['order_number'],
                                         'total_quantity': 0})
@@ -118,9 +126,9 @@ def send_to_trade_handlers(result):
         handler(result)
 
 
-def send_order_confirm_result(code, price, quantity, is_buy):
+def send_order_confirm_result(code, price, quantity, is_buy, order_time):
     global balance
-    gevent.sleep(1)
+    time.sleep(1)
     order_num = get_order_num()
     print('order_number', order_num)
     confirm_response = {'flag': '4',
@@ -146,8 +154,8 @@ def send_order_confirm_result(code, price, quantity, is_buy):
         order_wait_queue.append(confirm_response)
 
 
-def send_modify_confirm_result(order_num, code, price, quantity, order_type):
-    gevent.sleep(1)
+def send_modify_confirm_result(order_num, code, price, quantity, order_type, order_time):
+    time.sleep(0)
     # Actually first should send flag '4' but not essential
     result = {'flag': '2',
                 'code': code,
@@ -160,7 +168,7 @@ def send_modify_confirm_result(order_num, code, price, quantity, order_type):
 
 
 def send_cancel_confirm_result(order_num, code, price, quantity, order_type, order):
-    gevent.sleep(1)
+    time.sleep(3)
     # Actually first should send flag '4' but not essential
     result = {'flag': '2',
                 'code': code,
@@ -173,7 +181,7 @@ def send_cancel_confirm_result(order_num, code, price, quantity, order_type, ord
 
 
 def order_stock(reader, code, price, quantity, is_buy):
-    gevent.spawn(send_order_confirm_result, code, price, quantity, is_buy)
+    gevent.spawn(send_order_confirm_result, code, price, quantity, is_buy, datetime.now())
     return {'status': 0, 'msg': 'OK'}
 
 
@@ -189,12 +197,12 @@ def modify_order(reader, order_num: int, code, price):
         print('*' * 100, 'ERROR')
         return
     
-    new_num = get_order_num()    
+    new_num = get_order_num()
     previous_order['order_number'] = new_num
     previous_order['flag'] = '2'
     previous_order['price'] = price
 
-    gevent.spawn(send_modify_confirm_result, new_num, code, price, previous_order['quantity'], previous_order['order_type'])
+    gevent.spawn(send_modify_confirm_result, new_num, code, price, previous_order['quantity'], previous_order['order_type'], datetime.now())
     return {'order_number': new_num}
 
 
@@ -219,6 +227,7 @@ def cancel_order(reader, order_num: int, code, amount): # quantity
 
 
 def subscribe_stock(reader, code, tick_data_handler):
+    print('subscribe stock', code)
     if code in tick_handlers:
         tick_handlers[code].append(tick_data_handler)
     else:
@@ -226,22 +235,23 @@ def subscribe_stock(reader, code, tick_data_handler):
 
 
 def subscribe_stock_bidask(reader, code, ba_data_handler):
-    if code in ba_data_handlers:
-        ba_data_handlers[code].append(ba_data_handler)
+    print('subscribe bidask', code)
+    if code in ba_tick_handlers:
+        ba_tick_handlers[code].append(ba_data_handler)
     else:
-        ba_data_handlers[code] = [ba_data_handler]
+        ba_tick_handlers[code] = [ba_data_handler]
 
 
 def send_bidask_data(code, tick):
-    if code in ba_data_handlers:
-        for handler in ba_data_handlers[code]:
-            gevent.spawn(handler, code, tick)
+    if code in ba_tick_handlers:
+        for handler in ba_tick_handlers[code]:
+            gevent.spawn(handler, code, [tick])
 
 
 def send_tick_data(code, tick):
     if code in tick_handlers:
         for handler in tick_handlers[code]:
-            gevent.spawn(handler, code, tick)
+            gevent.spawn(handler, code, [tick])
 
 
 def get_balance(reader):

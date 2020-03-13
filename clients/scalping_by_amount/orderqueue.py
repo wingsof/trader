@@ -53,6 +53,14 @@ class OrderQueue:
                 order_list.append(order)
         return order_list
 
+    def get_in_transaction_order_list(self):
+        order_list = []
+        for order in self.queue:
+            if order.status == tradestatus.SELL_ORDER_IN_TRANSACTION:
+                order_list.append(order)
+        return order_list
+
+
     def add_order(self, price, qty):
         self.queue.append(_OrderItem(price, qty))
 
