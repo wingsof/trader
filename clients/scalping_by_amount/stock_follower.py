@@ -32,6 +32,7 @@ class StockFollower:
         self.market_status = MarketStatus()
         self.avg_prices = []
         self.top_edges = None
+        self.bottom_edges = None
         self.trader = None
         self.ba_waching = False
 
@@ -39,6 +40,7 @@ class StockFollower:
         logger.warning('START TRADING %s', self.code)
         self.trader = trader.Trader(self.reader, code_info, self.market_status)
         self.top_edges = list(price_info.get_peaks(self.avg_prices))
+        self.bottom_edges = list(price_info.get_peaks(self.avg_prices, False))
         if not self.ba_waching:
             self.ba_watching = True
             stock_api.subscribe_stock_bidask(self.reader, self.code, self.ba_data_handler)
@@ -131,6 +133,11 @@ class StockFollower:
             if peaks != self.top_edges:
                 self.top_edges = peaks
                 self.trader.top_edge_detected()
+            
+            bottom_peaks = list(price_info.get_peaks(self.avg_prices, False))
+            if bottom_peaks != self.bottom_edges:
+                self.bottom_edges = peaks
+                self.trader.bottom_edge_detected()
 
     def subscribe_at_startup(self):
         stock_api.subscribe_stock(self.reader, self.code, self.tick_data_handler)

@@ -23,7 +23,7 @@ ready_queue = gevent.queue.Queue()
 
 
 datetime.current_datetime = rdatetime(2020, 3, 12, 8, 55)
-finish_time = rdatetime(2020, 3, 12, 15, 20)
+finish_time = rdatetime(2020, 3, 12, 15, 25)
 
 stock_api.balance = 10000000
 
@@ -43,24 +43,22 @@ def collect_db(code, db_collection, from_time, until_time):
 
 
 def start_provide_tick():
-    global all_data
     db_collection = MongoClient('mongodb://127.0.0.1:27017').trade_alarm
     market_codes = ready_queue.get()
-    print('start_provide_tick', datetime.current_datetime, finish_time)
+    print('start_provide_tick', datetime.current_datetime, finish_time, len(market_codes))
 
     while datetime.now() < finish_time:
         all_data = []
         start_time = datetime.now()
         until_time = datetime.now() + timedelta(seconds=60)
         for code in market_codes:
-            #print('collect tick', code, f"{progress}/{len(market_codes)}")
             all_data.extend(collect_db(code, db_collection, start_time, until_time))
 
         all_data = sorted(all_data, key=lambda x: x['date']) 
 
         for tick in all_data:
             datetime.current_datetime = tick['date']
-
+            print(datetime.now())
             if '68' in tick:
                 stock_api.send_bidask_data(tick['code'], tick)
                 stock_api.set_current_first_bid(tick['code'], tick['4'])

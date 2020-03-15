@@ -43,7 +43,6 @@ def collect_db(code, db_collection, from_time, until_time):
 
 
 def start_provide_tick():
-    global all_data
     db_collection = MongoClient('mongodb://127.0.0.1:27017').trade_alarm
     market_codes = ready_queue.get()
     print('start_provide_tick', datetime.current_datetime, finish_time)

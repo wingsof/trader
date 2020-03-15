@@ -61,6 +61,9 @@ class Trader:
         if isinstance(self.stage, SellStage):
             self.stage.sell_immediately()
 
+    def bottom_edge_detected(self):
+        logger.info('BOTTOM EDGE DETECTED')
+
     def tick_data_handler(self, data):
         if self.stage is not None:
             self.stage.tick_handler(data)

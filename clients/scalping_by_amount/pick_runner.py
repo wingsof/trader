@@ -32,9 +32,10 @@ DELTA = 0
 MINIMUM_AMOUNT = 100000000
 candidate_queue = gevent.queue.Queue()
 results = []
+PICK_SEC = 5
 
 
-def serach_profit(code, start_time, amount, pick_profit):
+def search_profit(code, start_time, amount, pick_profit):
     tick_data = list(db_collection[code].find({'date': {'$gte': start_time, '$lte': start_time + timedelta(seconds=300)}}))
     if len(tick_data) == 0:
         print('ERROR no tick data')
@@ -44,18 +45,33 @@ def serach_profit(code, start_time, amount, pick_profit):
     p = price_arr[0]
     highest = np.amax(price_arr)
     lowest = np.amin(price_arr)
-    price_std = np.std(price_arr)
+
+    highest_index = -1
+    lowest_index = -1 
+    for i, price in enumerate(price_arr):
+        if price == highest and highest_index == -1:
+            highest_index = i
+        if price == lowest and lowest_index == -1:
+            lowest_index = i
+
+        if highest_index >= 0 and lowest_index >= 0:
+            break
+
+    price_std = np.std((price_arr - p) / p * 100.)
     mean = np.mean(price_arr)
     highest_profit = (highest - p) / p * 100.
     lowest_profit = (lowest - p) / p * 100.
     mean_profit = (mean - p) / p * 100.
-    results.append({'time': start_time, 'tick_len': len(tick_data),
+    results.append({'time': start_time,
+                    'tick_len': len(tick_data),
                     'highest_profit': highest_profit,
                     'lowest_profit': lowest_profit,
+                    'highest_arrive_time': (tick_data[highest_index]['date'] - tick_data[0]['date']).total_seconds(),
+                    'lowest_arrive_time': (tick_data[lowest_index]['date'] - tick_data[0]['date']).total_seconds(),
                     'mean_profit': mean_profit,
                     'amount': amount,
                     'pick_profit': pick_profit,
-                    'std': price_std})
+                    'profit_std': price_std})
 
 
 def data_process():
@@ -67,16 +83,17 @@ def data_process():
     entered = False
 
     while True:
+        print('data_process')
         if start_time <= datetime.now() <= done_time:
             entered = True
-            time.sleep(10)
+            time.sleep(PICK_SEC)
 
             candidates = []
             for sf in followers:
-                snapshot = sf.snapshot(10)
+                snapshot = sf.snapshot(PICK_SEC)
                 if (snapshot is None or
                     not sf.is_in_market() or
-                    snapshot['profit'] < 0 or
+                    snapshot['profit'] < 0.5 or
                     snapshot['yesterday_close'] == 0 or
                     snapshot['today_open'] == 0 or
                     snapshot['today_open'] < snapshot['yesterday_close'] or
@@ -85,26 +102,27 @@ def data_process():
                 candidates.append(snapshot)
             picked = picker.pick_one(candidates)
             if picked is not None and datetime.now() <= pick_finish_time:
-                search_profit(code, datetime.now(), picked['amount'], picked['profit'])
+                search_profit(picked['code'], datetime.now(), picked['amount'], picked['profit'])
                 logger.info('PICKED %s, amount: %d, profit: %f', picked['code'], picked['amount'],
                             picked['profit'])
         else:
             if entered:
                 logger.info('QUEUE EXIT')
-                pd.DataFrame(results).to_excel('picker.xlsx')
+                pd.DataFrame(results).to_excel('picker_' + str(PICK_SEC) + '.xlsx')
                 candidate_queue.put_nowait({'code': 'exit', 'info': None})
                 entered = False
                 break
-
+        time.sleep(0.3)
 
 def heart_beat():
     last_processed_time = datetime.now()
     finish_flag = False
     while True:
+        print('heart_beat')
         while datetime.now() - last_processed_time < timedelta(seconds=1):
             time.sleep(0.05)
 
-        picked_code = None
+        candidates = []
         while not candidate_queue.empty():
             candidates.append(candidate_queue.get())
 
@@ -119,8 +137,6 @@ def heart_beat():
         else:
             for fw in followers:
                 fw.process_tick()
-                if fw.is_in_market():
-                    fw.start_trading(picked_code['info'])
 
 
         last_processed_time = datetime.now()
@@ -163,3 +179,8 @@ def start_trader(ready_queue=None):
     if ready_queue is not None:
         ready_queue.put_nowait([yl['code'] for yl in yesterday_list])
     gevent.joinall([gevent.spawn(heart_beat), gevent.spawn(data_process)])
+
+
+if __name__ == '__main__':
+    search_profit('A005930', datetime(2020, 3, 12, 9, 5), 1000000, 1.0)
+    print(results)

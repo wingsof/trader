@@ -56,7 +56,7 @@ def data_process():
                 snapshot = sf.snapshot(10)
                 if (snapshot is None or
                     not sf.is_in_market() or
-                    snapshot['profit'] < 0 or
+                    snapshot['profit'] < 0.5 or
                     snapshot['yesterday_close'] == 0 or
                     snapshot['today_open'] == 0 or
                     snapshot['today_open'] < snapshot['yesterday_close'] or

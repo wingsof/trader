@@ -140,10 +140,19 @@ def moving_average(data_set, periods=3):
     return np.convolve(data_set, weights, mode='valid')
 
 
-def get_peaks(sec_price_list):
+def _get_reversed(s):
+    distance_from_mean = s.mean() - s
+    return distance_from_mean + s.mean()
+
+
+def get_peaks(sec_price_list, is_top=True):
     if len(sec_price_list) < 3:
         return []
-    ma = moving_average(np.array(sec_price_list))
+    if not is_top:
+        prices = _get_reversed(np.array(sec_price_list))
+    else:
+        prices = np.array(sec_price_list)
+    ma = moving_average(prices)
     peaks, _ = _calculate(ma)
     return peaks
 

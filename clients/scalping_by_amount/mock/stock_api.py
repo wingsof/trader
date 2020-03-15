@@ -220,9 +220,7 @@ def cancel_order(reader, order_num: int, code, amount): # quantity
     new_num = get_order_num()    
     previous_order['order_number'] = new_num
     previous_order['flag'] = '2'
-    previous_order['price'] = price
-
-    gevent.spawn(send_cancel_confirm_result, new_num, code, price, previous_order['quantity'], previous_order['order_type'], previous_order)
+    gevent.spawn(send_cancel_confirm_result, new_num, code, previous_order['price'], previous_order['quantity'], previous_order['order_type'], previous_order)
     return {'status': 0, 'msg': 'OK'}
 
 
