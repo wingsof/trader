@@ -22,7 +22,7 @@ import gevent
 
 
 class Trader:
-    BALANCE_DIVIDER = 5
+    BALANCE_DIVIDER = 10
 
     def __init__(self, reader, code_info, market_status):
         self.reader = reader

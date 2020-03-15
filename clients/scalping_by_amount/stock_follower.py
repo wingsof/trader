@@ -136,7 +136,7 @@ class StockFollower:
             
             bottom_peaks = list(price_info.get_peaks(self.avg_prices, False))
             if bottom_peaks != self.bottom_edges:
-                self.bottom_edges = peaks
+                self.bottom_edges = bottom_peaks
                 self.trader.bottom_edge_detected()
 
     def subscribe_at_startup(self):
