@@ -22,33 +22,28 @@ import gevent
 
 
 class Trader:
-    BALANCE_DIVIDER = 10
-
-    def __init__(self, reader, code_info, market_status):
+    def __init__(self, reader, point_price, code_info, market_status):
         self.reader = reader
         self.code_info = code_info
-        self.edge_found = False
-        self.balance = stock_api.get_balance(self.reader)['balance']
-        logger.warning('CURRENT BALANCE %d', self.balance)
-        #if self.balance > 5000000:
-        #    self.balance = 5000000
-        logger.warning('SET BALANCE %d', self.balance)
+        self.point_price = point_price
         self.market_status = market_status
         self.stage = None
 
     def start(self):
         logger.warning('START BUY STAGE %s', self.code_info['code'])
-        self.stage = BuyStage(self.reader, self.code_info, self.market_status, int(self.balance / Trader.BALANCE_DIVIDER))
+        self.stage = BuyStage(self.reader, self.point_price, self.code_info, self.market_status)
 
     def finish_work(self):
         if self.stage is not None and isinstance(self.stage, SellStage):
             self.stage.sell_immediately()
 
     def receive_result(self, result):
-        if 'flag' not in result or 'quantity' not in result:
+        if 'flag' not in result or 'quantity' not in result or 'code' not in result:
             logger.error('RESULT without flag or quantity %s', str(result))
             return
 
+        if result['code'] != self.code_info['code']:
+            return
         #print('receive result', self.code_info['code'])
         if self.stage is None:
             logger.error('RECEIVE RESULT but stage None %s', str(result))
@@ -56,8 +51,7 @@ class Trader:
             self.stage.receive_result(result)
 
     def top_edge_detected(self):
-        logger.info('TOP EDGE DETECTED')
-        self.edge_found = True
+        logger.info('TOP EDGE DETECTED %s', self.code_info['code'])
         if isinstance(self.stage, SellStage):
             self.stage.sell_immediately()
 
@@ -79,9 +73,9 @@ class Trader:
                     self.stage.cancel_remain()
                 elif self.stage.get_status() == tradestatus.BUY_DONE:
                     average_price, qty = self.stage.get_buy_average()
-                    self.stage = SellStage(self.reader, self.code_info, self.market_status, average_price, qty, self.edge_found)
+                    self.stage = SellStage(self.reader, self.code_info, self.market_status, average_price, qty)
             elif isinstance(self.stage, SellStage):
-                if self.stage.get_status() == tradestatus.SELL_DONE:
+                if self.stage.is_finished():
                     self.stage = None
 
     def is_finished(self):

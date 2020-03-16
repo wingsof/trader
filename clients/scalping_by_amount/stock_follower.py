@@ -21,6 +21,10 @@ import gevent
 
 
 class StockFollower:
+    READY = 0
+    WAIT_BOTTOM_PEAK = 1
+    WAIT_OVER_LINE = 2
+
     def __init__(self, reader, code, yesterday_summary, is_kospi):
         self.reader = reader
         self.code = code
@@ -34,17 +38,31 @@ class StockFollower:
         self.top_edges = None
         self.bottom_edges = None
         self.trader = None
+        self.status = StockFollower.READY
         self.ba_waching = False
+        self.code_info = None
+        self.current_price = 0
+        self.point_price = 0
+
+    def get_status(self):
+        return self.status
+
+    def set_status(self, status):
+        if self.status == StockFollower.WAIT_BOTTOM_PEAK and status == StockFollower.WAIT_OVER_LINE:
+            self.trader = trader.Trader(self.reader, self.point_price, self.code_info, self.market_status)
+            self.trader.start()
+        self.status = status
 
     def start_trading(self, code_info):
         logger.warning('START TRADING %s', self.code)
-        self.trader = trader.Trader(self.reader, code_info, self.market_status)
+        self.code_info = code_info
         self.top_edges = list(price_info.get_peaks(self.avg_prices))
         self.bottom_edges = list(price_info.get_peaks(self.avg_prices, False))
+        self.point_price = self.current_price
+        self.set_status(StockFollower.WAIT_BOTTOM_PEAK)
         if not self.ba_waching:
             self.ba_watching = True
             stock_api.subscribe_stock_bidask(self.reader, self.code, self.ba_data_handler)
-        self.trader.start()
 
     def is_in_market(self):
         return self.market_status.is_in_market()
@@ -52,6 +70,7 @@ class StockFollower:
     def finish_work(self):
         if self.trader is not None:
             self.trader.finish_work()
+        self.set_status(StockFollower.READY)
 
     def receive_result(self, result):
         if self.trader is not None:
@@ -73,8 +92,8 @@ class StockFollower:
             # careful not to use code since it has _BA suffix
             self.trader.ba_data_handler(self.code, tick_data)
             if self.trader.is_finished():
+                self.set_status(StockFollower.READY)
                 self.trader = None
-
 
     def tick_data_handler(self, code, data):
         if len(data) != 1:
@@ -84,6 +103,7 @@ class StockFollower:
         tick_data = dt.cybos_stock_tick_convert(tick_data)
         has_change = self.market_status.set_tick_data(tick_data)
 
+        self.current_price = tick_data['current_price']
         # for skipping first tick of in-market data
         if not has_change and self.market_status.is_in_market():
             if self.open_price == 0 and tick_data['start_price'] != 0:
@@ -128,16 +148,22 @@ class StockFollower:
                             'date': datetime.now()})
         self.avg_prices.append(avg_price)
         self.tick_data.clear()
+
+        bottom_peaks = list(price_info.get_peaks(self.avg_prices, False))
+        if bottom_peaks != self.bottom_edges:
+            self.bottom_edges = bottom_peaks
+            if self.get_status() == StockFollower.WAIT_BOTTOM_PEAK:
+                if self.current_price < self.point_price:
+                    self.set_status(StockFollower.WAIT_OVER_LINE)
+                else:
+                    self.set_status(StockFollower.READY)
+
         if self.trader is not None:
             peaks = list(price_info.get_peaks(self.avg_prices))
             if peaks != self.top_edges:
                 self.top_edges = peaks
                 self.trader.top_edge_detected()
             
-            bottom_peaks = list(price_info.get_peaks(self.avg_prices, False))
-            if bottom_peaks != self.bottom_edges:
-                self.bottom_edges = bottom_peaks
-                self.trader.bottom_edge_detected()
 
     def subscribe_at_startup(self):
         stock_api.subscribe_stock(self.reader, self.code, self.tick_data_handler)

@@ -4,7 +4,6 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 2))))
 
-from datetime import datetime
 from clients.scalping_by_amount import tradestatus
 from clients.scalping_by_amount import price_info
 from configs import client_info
@@ -15,14 +14,19 @@ else:
     from morning_server import stock_api
     from datetime import datetime
 
+from datetime import timedelta
 from utils import trade_logger as logger
 import gevent
 
 
+BALANCE_DIVIDER = 10
+TIMEOUT_MIN = 30
+
+
 class BuyStage:
-    def __init__(self, reader, code_info, market_status, balance):
+    def __init__(self, reader, point_price, code_info, market_status):
         self.reader = reader
-        self.balance = balance
+        self.point_price = point_price
         self.code_info = code_info
         self.market_status = market_status
         self.quantity = 0
@@ -31,6 +35,7 @@ class BuyStage:
         self.order_num = 0
         self.order_traded = []
         self.status = -1
+        self.start_time = datetime.now()
         self.set_status(tradestatus.BUY_WAIT)
 
     def get_status(self):
@@ -94,9 +99,14 @@ class BuyStage:
 
     def ba_data_handler(self, code, data):
         self.current_ba_tick = data
-        if self.order_done: #only has one chance
+        if datetime.now() - self.start_time > timedelta(minutes=TIMEOUT_MIN):
+            self.order_done = True
+            self.set_status(tradestatus.BUY_FAIL)
+            return
+        elif self.order_done or data['first_ask_price'] < self.point_price: #only has one chance
             return
 
+        balance = int(stock_api.get_balance(self.reader)['balance'] / BALANCE_DIVIDER)
         self.order_done = True
 
         bid_table = [data['fifth_bid_price'], data['fourth_bid_price'],
@@ -105,14 +115,14 @@ class BuyStage:
         price_table = [(data['first_ask_price'], data['first_ask_remain']),
                         (data['second_ask_price'], data['second_ask_remain']),
                         (data['third_ask_price'], data['third_ask_remain'])]
-        price = self.find_target_price(price_table)
+        price = self.find_target_price(price_table, balance)
         if (price == 0 or
                 #self.is_abnormal_bid_table(bid_table) or
                 price_info.get_price_unit_distance(data['first_bid_price'], data['first_ask_price'], self.code_info['is_kospi']) > 2):
             logger.warning('STOP, BA price is abnormal or cannot find target price %d\nPRICE TABLE: %s\nBID TABLE: %s\nFIRST BID PRICE %d\nFIRST ASK PRICE %d', price, str(price_table), str(bid_table), data['first_bid_price'], data['first_ask_price'])
             self.set_status(tradestatus.BUY_FAIL)
         else:
-            qty = int(self.balance / price)
+            qty = int(balance / price)
             if qty > 0:
                 #qty = 1
                 self.set_order_quantity(qty)
@@ -124,14 +134,13 @@ class BuyStage:
                 else:
                     self.set_status(tradestatus.BUY_ORDER_SEND_DONE)
             else:
-                logger.warning('QUANTITY is 0, balance: %d, price: %d', self.balance, price)
+                logger.warning('QUANTITY is 0, balance: %d, price: %d', balance, price)
                 self.set_status(tradestatus.BUY_FAIL)
 
     def tick_handler(self, data):
         pass
 
-    def find_target_price(self, table):
-        invest = self.balance
+    def find_target_price(self, table, invest):
         table_index = -1
 
         for i, t in enumerate(table):

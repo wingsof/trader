@@ -20,7 +20,7 @@ else:
 from morning_server import message
 import gevent
 from gevent.queue import Queue
-from clients.scalping_by_amount import stock_follower
+from clients.scalping_by_amount.stock_follower import StockFollower
 from clients.scalping_by_amount import pickstock
 from clients.scalping_by_amount import time
 from configs import db
@@ -33,6 +33,7 @@ followers = []
 DELTA = 0
 MINIMUM_AMOUNT = 100000000
 candidate_queue = gevent.queue.Queue()
+PICK_SEC=10
 
 def vi_handler(_, data):
     data = data[0]
@@ -49,11 +50,11 @@ def data_process():
     while True:
         if start_time <= datetime.now() <= done_time:
             entered = True
-            time.sleep(10)
+            time.sleep(PICK_SEC)
 
             candidates = []
             for sf in followers:
-                snapshot = sf.snapshot(10)
+                snapshot = sf.snapshot(PICK_SEC)
                 if (snapshot is None or
                     not sf.is_in_market() or
                     snapshot['profit'] < 0.5 or
@@ -84,14 +85,14 @@ def receive_result(result):
 
 
 def heart_beat():
+    now = datetime.now()
     last_processed_time = datetime.now()
-    trading_follower = None
+    close_time = now.replace(hour=15+DELTA, minute=40, second=3)
     finish_flag = False
     while True:
         while datetime.now() - last_processed_time < timedelta(seconds=1):
             time.sleep(0.05)
 
-        picked_code = None
         candidates = []
         while not candidate_queue.empty():
             candidates.append(candidate_queue.get())
@@ -102,31 +103,22 @@ def heart_beat():
                 finish_flag = True
 
         if finish_flag:
-            if trading_follower is None:
-                logger.warning('FINISH TODAY WORK')
+            if datetime.now() > close_time:
+                logger.warning('EXIT LOOP')
                 break
-            else:
-                logger.warning('SEND FINISH WORK')
-                trading_follower.finish_work()
-        else:
-            if trading_follower is None:
-                if len(candidates) > 0:
-                    picked_code = candidates[-1]
-                    candidates.clear()
-
-            if picked_code is not None and picked_code['code'] == 'exit':
-                finish_flag = True
 
             for fw in followers:
+                if fw.get_status() != StockFollower.READY:
+                    fw.finish_work()
+        else:
+            for fw in followers:
                 fw.process_tick()
-                if picked_code is not None and fw.code == picked_code['code']:
-                    if fw.is_in_market():
-                        trading_follower = fw
-                        fw.start_trading(picked_code['info'])
 
-        if trading_follower is not None:
-            if trading_follower.is_trading_done():
-                trading_follower = None
+                if fw.is_in_market() and fw.get_status() == StockFollower.READY:
+                    for c in candidates:
+                        if c['code'] == fw.code:
+                            fw.start_trading(c['info'])
+            candidates.clear()
 
         last_processed_time = datetime.now()
 
@@ -160,7 +152,7 @@ def start_trader(ready_queue=None):
 
     for yesterday_data in yesterday_list:
         code = yesterday_data['code']
-        sf = stock_follower.StockFollower(morning_client.get_reader(), code, yesterday_data, code in kospi_code)
+        sf = StockFollower(morning_client.get_reader(), code, yesterday_data, code in kospi_code)
         sf.subscribe_at_startup()
         followers.append(sf)
 
