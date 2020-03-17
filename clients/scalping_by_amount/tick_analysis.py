@@ -18,6 +18,11 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
+def _get_reversed(s):
+    distance_from_mean = s.mean() - s
+    return distance_from_mean + s.mean()
+
+
 def calculate(x):
     peaks, _ = find_peaks(x, distance=2)
     prominences = peak_prominences(x, peaks)[0]
@@ -27,7 +32,9 @@ def calculate(x):
     return peaks, prominences
 
 
-def get_peaks(avg_data):
+def get_peaks(avg_data, is_top=True):
+    if not is_top:
+        avg_data = _get_reversed(avg_data)
     peaks, _ = calculate(avg_data)
     return peaks
 
@@ -50,7 +57,7 @@ def get_tick_data(code, from_datetime, until_datetime, db_collection):
     return converted_data
 
 
-def save_to_graph(code, datetime_arr, price_arr, volume_datetime_arr, volume_arr, mavg_datetime_arr, mavg_price_arr, buy_datetime_arr, buy_price_arr, sell_datetime_arr, sell_price_arr, peaks, save_path):
+def save_to_graph(code, trade_starttime, datetime_arr, price_arr, volume_datetime_arr, volume_arr, mavg_datetime_arr, mavg_price_arr, buy_datetime_arr, buy_price_arr, sell_datetime_arr, sell_price_arr, peaks, bottom_peaks, save_path, title):
     shapes = []
     annotations = []
     shapes_y_height = sell_price_arr[0] * 0.003
@@ -68,18 +75,37 @@ def save_to_graph(code, datetime_arr, price_arr, volume_datetime_arr, volume_arr
         p = mavg_price_arr[p]
         shapes.append(dict(type='circle', x0=d-timedelta(seconds=1), x1=d+timedelta(seconds=1), y0=p-shapes_y_height, y1=p+shapes_y_height, xref='x', yref='y', line_color='black'))
 
+    for p in bottom_peaks:
+        d = mavg_datetime_arr[p]
+        p = mavg_price_arr[p]
+        shapes.append(dict(type='circle', x0=d-timedelta(seconds=1), x1=d+timedelta(seconds=1), y0=p-shapes_y_height, y1=p+shapes_y_height, xref='x', yref='y', line_color='orange'))
+
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True)
     fig.add_trace(go.Scatter(x=datetime_arr, y=price_arr, name='price'), row=1, col=1)
     fig.add_trace(go.Scatter(x=mavg_datetime_arr, y=mavg_price_arr, name='mavg', line=dict(color='red')), row=1, col=1)
     fig.add_trace(go.Bar(x=volume_datetime_arr, y=volume_arr,  marker_color='indianred'), row=2, col=1)
-    fig.update_layout(title=code, yaxis_tickformat='d', shapes=shapes, annotations=annotations)
+    fig.add_shape(
+        dict(
+            type='line',
+            x0=trade_starttime-timedelta(seconds=1),
+            x1=trade_starttime+timedelta(seconds=1),
+            y0=np.array(price_arr).min(),
+            y1=np.array(price_arr).max(),
+            line=dict(
+                color="RoyalBlue",
+                width=2
+            )
+        )
+    )
+    fig.update_layout(title=code, yaxis_tickformat='d', shapes=shapes, annotations=annotations, title_text=title)
 
-    filename = morning_client.get_save_filename(save_path, code, 'html')
+    filename = morning_client.get_save_filename(save_path, code + '_' + datetime_arr[0].strftime('%Y%m%d%H%M'), 'html')
+    print('Saved to', filename)
     fig.write_html(filename, auto_open=False)
 
 
 def get_three_sec_tick_avg(tick_data, current_datetime):
-    from_datetime = current_datetime - timedelta(seconds=3)
+    from_datetime = current_datetime - timedelta(seconds=1)
     data = list(filter(lambda x: from_datetime < x['date'] <= current_datetime, tick_data)) 
     if len(data) > 0:
         price_mavg = np.array([d['current_price'] for d in data]).mean()
@@ -87,10 +113,9 @@ def get_three_sec_tick_avg(tick_data, current_datetime):
     return 0
 
 
-def start_tick_analysis(code, buy_datetime_arr, sell_datetime_arr, buy_price_arr, sell_price_arr, save_path):
-    start_datetime = buy_datetime_arr[0]
+def start_tick_analysis(code, start_datetime, buy_datetime_arr, sell_datetime_arr, buy_price_arr, sell_price_arr, save_path, comment=''):
     from_datetime =  start_datetime - timedelta(seconds=60)
-    until_datetime = sell_datetime_arr[-1]
+    until_datetime = sell_datetime_arr[-1] + timedelta(seconds=300)
 
     db_collection = MongoClient('mongodb://127.0.0.1:27017').trade_alarm
     tick_data = get_tick_data(code, from_datetime, until_datetime, db_collection)
@@ -125,4 +150,19 @@ def start_tick_analysis(code, buy_datetime_arr, sell_datetime_arr, buy_price_arr
         current_time += timedelta(seconds=1)
 
     peaks = get_peaks(np.array(mavg_price_arr))
-    save_to_graph(code, datetime_arr, price_arr, volume_datetime_arr, volume_arr, mavg_datetime_arr, mavg_price_arr, buy_datetime_arr, buy_price_arr, sell_datetime_arr, sell_price_arr, peaks, save_path)
+    bottom_peaks = get_peaks(np.array(mavg_price_arr), False)
+    save_to_graph(code, start_datetime, datetime_arr, price_arr, volume_datetime_arr, volume_arr, mavg_datetime_arr, mavg_price_arr, buy_datetime_arr, buy_price_arr, sell_datetime_arr, sell_price_arr, peaks, bottom_peaks, save_path, comment)
+
+
+if __name__ == '__main__':
+    if len(sys.argv) < 7:
+        print('usage:', sys.argv[0], 'code', 'start_time', 'buy_datetime', 'buy_price', 'sell_datetime', 'sell_price')
+        sys.exit(1)
+
+    start_tick_analysis(sys.argv[1],
+                        datetime.strptime(sys.argv[2], '%Y-%m-%d %H:%M:%S.%f'),
+                        [datetime.strptime(sys.argv[3], '%Y-%m-%d %H:%M:%S.%f')],
+                        [datetime.strptime(sys.argv[5], '%Y-%m-%d %H:%M:%S.%f')],
+                        [int(sys.argv[4])],
+                        [int(sys.argv[6])],
+                        os.environ['MORNING_PATH'] + os.sep + 'output' + os.sep + 'my_tick')

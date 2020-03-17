@@ -47,7 +47,20 @@ class StockFollower:
     def get_status(self):
         return self.status
 
+    def status_to_str(self, status):
+        if status == StockFollower.READY:
+            return "READY"
+        elif status == StockFollower.WAIT_BOTTOM_PEAK:
+            return "WAIT_BOTTOM_PEAK"
+        elif status == StockFollower.WAIT_OVER_LINE:
+            return "WAIT_OVER_LINE"
+        return "UNKNOWN"
+
+
     def set_status(self, status):
+        if status != self.status:
+            logger.info('*%s from %s to %s', self.code, self.status_to_str(self.status), self.status_to_str(status))
+
         if self.status == StockFollower.WAIT_BOTTOM_PEAK and status == StockFollower.WAIT_OVER_LINE:
             self.trader = trader.Trader(self.reader, self.point_price, self.code_info, self.market_status)
             self.trader.start()
@@ -55,6 +68,9 @@ class StockFollower:
 
     def start_trading(self, code_info):
         logger.warning('START TRADING %s', self.code)
+        if client_info.TEST_MODE:
+            stock_api.set_start_time(self.code)
+
         self.code_info = code_info
         self.top_edges = list(price_info.get_peaks(self.avg_prices))
         self.bottom_edges = list(price_info.get_peaks(self.avg_prices, False))
@@ -104,12 +120,18 @@ class StockFollower:
         has_change = self.market_status.set_tick_data(tick_data)
 
         self.current_price = tick_data['current_price']
+        if self.get_status() == StockFollower.WAIT_BOTTOM_PEAK and self.current_price > self.point_price:
+            self.point_price = self.current_price
+
         # for skipping first tick of in-market data
         if not has_change and self.market_status.is_in_market():
             if self.open_price == 0 and tick_data['start_price'] != 0:
                 self.open_price = tick_data['start_price']
 
             self.tick_data.append(tick_data)
+        elif (has_change and not self.market_status.is_in_market() and
+                self.get_status() == StockFollower.WAIT_BOTTOM_PEAK):
+            self.set_status(StockFollower.READY)
 
         if self.trader is not None:
             self.trader.tick_data_handler(tick_data)

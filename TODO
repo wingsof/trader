@@ -1,5 +1,14 @@
-* STX+ETX Packet Testing
-* 그래프 나온 부분 확인 후 수정 부분 확인
+* collector 끊어짐 문제
+    * 포트 50001로 변경
+    * NAT Service 로 변경 -> 이후 관찰
+    * 초기 subscribe 이후 broadcasting 만 하는데, 왜 collector로 데이터가 들어왔을까?
+        * VirtualBox 네트워크 설정에 문제가 있는지 확인(하드웨어 주소등..)
+
+* 왜 잠이 올까?
+    * 방향성이 뚜렷하지 않다.
+    * 극단적으로 1초로 설정하여, 사고 빠지는 건?
+
+
 
 * 단일 종목 Simulation 추가 필요, 어떤 Parameter를 넣었을 때, 최대 수익을 볼 수 있을지 빠르게 확인
     * 매도 알고리즘 개선
@@ -258,6 +267,8 @@ Testing Done
 
 Done
 ---------------------------
+* STX+ETX Packet Testing
+* 그래프 나온 부분 확인 후 수정 부분 확인
 * Fake Accout에 시간 필요
 * Child Counting... 언제 끝날지 어떻게 확인?
 * Decision 에서 최종 결정 (BoolAndDecision), Decision은 총 몇개 bool 받는지 인자로 전달

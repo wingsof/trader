@@ -18,7 +18,7 @@ tick_handlers = dict()
 ba_tick_handlers = dict()
 order_wait_queue = []
 current_stocks = dict()
-stocks_sheet = []
+total_amount = 0
 OUT_BASE = os.environ['MORNING_PATH'] + os.sep + 'output' + os.sep + 'my_tick'
 
 def create_directory(path):
@@ -41,6 +41,7 @@ def is_order_in_queue(order_num):
 
 
 def remove_stock(code, price, quantity):
+    global total_amount
     if code not in current_stocks:
         print('ERROR cannot not be in current_stocks when remove') 
         return
@@ -50,55 +51,36 @@ def remove_stock(code, price, quantity):
     if buy_quantity == sell_quantity:
         buy_record = current_stocks[code]['buy']
         sell_record = current_stocks[code]['sell']
-        stocks_sheet.append({'time': buy_record[0], 'code': code, 'type': 'buy', 'price': buy_record[1], 'quantity': buy_record[2], 'profit': ''})
-
         total_sell_amount = sum([s[1] * s[2] for s in sell_record]) * 0.9975
         total_buy_amount = buy_record[1] * buy_record[2]
+        profit_amount = (total_sell_amount - total_buy_amount) 
+        total_amount += profit_amount
+        print('*' * 50, 'CURRENT EARN', total_amount, '*' * 50)
         profit = (total_sell_amount - total_buy_amount) / total_buy_amount * 100
-        for i, sr in enumerate(sell_record):
-            record = {'time': sr[0], 'code': code, 'type': 'sell', 'price': sr[1], 'quantity': sr[2], 'profit': ''}
-            if i == len(sell_record) - 1:
-                record['profit'] = str(float("{0:.2f}".format(profit)))
-            stocks_sheet.append()
+        sell_datetime_arr = [s[0] for s in current_stocks[code]['sell']]
+        sell_price_arr = [s[1] for s in current_stocks[code]['sell']]
+        tick_analysis.start_tick_analysis(code,
+                                    current_stocks[code]['start'],
+                                    [current_stocks[code]['buy'][0]],
+                                    sell_datetime_arr,
+                                    [current_stocks[code]['buy'][1]],
+                                    sell_price_arr,
+                                    os.environ['MORNING_PATH'] + os.sep + 'output' + os.sep + 'my_tick',
+                                    code + '\tprofit:' + str(profit) + '\tprofit amount:' + str(profit_amount))
         current_stocks.pop(code, None)
 
 
-def out_stocks_sheet():
-    current_code = ''
-    buy_datetime_arr = []
-    sell_datetime_arr = []
-    buy_prices = []
-    sell_prices = []
-    create_directory(OUT_BASE)
-    for ss in stocks_sheet:
-        if current_code != ss['code']:
-            if len(buy_datetime_arr) > 0:
-                tick_analysis.start_tick_analysis(current_code,
-                                                    buy_datetime_arr,
-                                                    sell_datetime_arr,
-                                                    buy_prices,
-                                                    sell_prices, OUT_BASE)
-            buy_datetime_arr.clear()
-            sell_datetime_arr.clear()
-            buy_prices.clear()
-            sell_prices.clear()
-        if ss['type'] == 'buy':
-            buy_datetime_arr.append(ss['time'])
-            buy_prices.append(ss['price'])
-        else:
-            sell_datetime_arr.append(ss['time'])
-            sell_prices.append(ss['price'])
-        current_code = ss['code']
-         
-    if len(stocks_sheet) > 0:
-        pd.DataFrame(stocks_sheet).to_excel(OUT_BASE + os.sep + 'trade_sheet.xlsx')
+def set_start_time(code):
+    if code in current_stocks:
+        current_stocks.pop(code, None)
+    current_stocks[code] = {'start': datetime.now(), 'buy': None, 'sell': []}
 
 
 def add_stock(code, price, quantity):
-    if code in current_stocks:
+    if code not in current_stocks:
         print('ERROR cannot be in current_stocks when add')
-
-    current_stocks[code] = {'buy':(datetime.now(), price, quantity), 'sell': []}
+        return
+    current_stocks[code]['buy'] = (datetime.now(), price, quantity)
 
 
 def set_current_first_bid(code, price):

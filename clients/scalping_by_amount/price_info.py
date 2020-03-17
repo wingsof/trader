@@ -130,8 +130,8 @@ def _calculate(x):
     peaks, _ = find_peaks(x, distance=2)
     prominences = peak_prominences(x, peaks)[0]
 
-    peaks = np.extract(prominences > x.mean() * 0.005, peaks)
-    prominences = np.extract(prominences > x.mean() * 0.005, prominences)
+    peaks = np.extract(prominences > x.mean() * 0.004, peaks)
+    prominences = np.extract(prominences > x.mean() * 0.004, prominences)
     return peaks, prominences
 
 

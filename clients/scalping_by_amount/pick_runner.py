@@ -32,7 +32,7 @@ DELTA = 0
 MINIMUM_AMOUNT = 100000000
 candidate_queue = gevent.queue.Queue()
 results = []
-PICK_SEC = 5
+PICK_SEC = 60
 
 
 def search_profit(code, start_time, amount, pick_profit):

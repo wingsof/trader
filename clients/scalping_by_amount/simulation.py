@@ -22,8 +22,8 @@ from configs import db
 ready_queue = gevent.queue.Queue()
 
 
-datetime.current_datetime = rdatetime(2020, 3, 12, 8, 55)
-finish_time = rdatetime(2020, 3, 12, 15, 35)
+datetime.current_datetime = rdatetime(2020, 3, 16, 8, 55)
+finish_time = rdatetime(2020, 3, 16, 15, 35)
 
 stock_api.balance = 10000000
 
@@ -70,7 +70,6 @@ def start_provide_tick():
             datetime.current_datetime += timedelta(seconds=60)
 
         print('progressing', datetime.now(), 'handle', len(all_data), 'ticks')
-    stock_api.out_stocks_sheet()
 
 
 tick_thread = gevent.spawn(start_provide_tick)
