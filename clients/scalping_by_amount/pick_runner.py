@@ -29,10 +29,10 @@ from pymongo import MongoClient
 db_collection = MongoClient('mongodb://127.0.0.1:27017').trade_alarm
 followers = []
 DELTA = 0
-MINIMUM_AMOUNT = 100000000
+PICK_SEC = 60
+MINIMUM_AMOUNT = 100000000 
 candidate_queue = gevent.queue.Queue()
 results = []
-PICK_SEC = 60
 
 
 def search_profit(code, start_time, amount, pick_profit):

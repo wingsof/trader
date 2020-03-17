@@ -24,6 +24,7 @@ class StockFollower:
     READY = 0
     WAIT_BOTTOM_PEAK = 1
     WAIT_OVER_LINE = 2
+    OVER_LINE = 3
 
     def __init__(self, reader, code, yesterday_summary, is_kospi):
         self.reader = reader
@@ -54,14 +55,15 @@ class StockFollower:
             return "WAIT_BOTTOM_PEAK"
         elif status == StockFollower.WAIT_OVER_LINE:
             return "WAIT_OVER_LINE"
+        elif status == StockFollower.OVER_LINE:
+            return "OVER_LINE"
         return "UNKNOWN"
 
 
     def set_status(self, status):
         if status != self.status:
             logger.info('*%s from %s to %s', self.code, self.status_to_str(self.status), self.status_to_str(status))
-
-        if self.status == StockFollower.WAIT_BOTTOM_PEAK and status == StockFollower.WAIT_OVER_LINE:
+        if self.status == StockFollower.WAIT_OVER_LINE and status == StockFollower.OVER_LINE:
             self.trader = trader.Trader(self.reader, self.point_price, self.code_info, self.market_status)
             self.trader.start()
         self.status = status
@@ -97,6 +99,28 @@ class StockFollower:
             return True
         return False
 
+    def get_average_volume_price(self):
+        total_volume = 0
+        total_volume_price = 0
+        for data in self.sec_data:
+            for k, v in data['volume_in_price'].items():
+                total_volume_price += k * v
+                total_volume += v
+
+        if total_volume > 0:
+            return total_volume_price / total_volume
+        return 0
+
+    def is_volume_price_under_average_price(self):
+        current_max_price = max([d['high'] for d in self.sec_data])
+        current_min_price = min([d['close'] for d in self.sec_data])
+        volume_price = self.get_average_volume_price()
+        if volume_price == 0:
+            return False
+        if (current_min_price + current_max_price) / 2 > volume_price:
+            return True
+        return False
+
     def ba_data_handler(self, code, data):
         # Use ba data tick as heartbeat for trading
         if len(data) != 1:
@@ -122,6 +146,11 @@ class StockFollower:
         self.current_price = tick_data['current_price']
         if self.get_status() == StockFollower.WAIT_BOTTOM_PEAK and self.current_price > self.point_price:
             self.point_price = self.current_price
+        elif self.get_status() == StockFollower.WAIT_OVER_LINE and self.current_price > self.point_price:
+            if self.is_volume_price_under_average_price():
+                self.set_status(StockFollower.OVER_LINE)
+            else:
+                self.set_status(StockFollower.READY)
 
         # for skipping first tick of in-market data
         if not has_change and self.market_status.is_in_market():
@@ -130,7 +159,8 @@ class StockFollower:
 
             self.tick_data.append(tick_data)
         elif (has_change and not self.market_status.is_in_market() and
-                self.get_status() == StockFollower.WAIT_BOTTOM_PEAK):
+                (self.get_status() == StockFollower.WAIT_BOTTOM_PEAK or
+                self.get_status() == StockFollower.WAIT_OVER_LINE)):
             self.set_status(StockFollower.READY)
 
         if self.trader is not None:
@@ -164,9 +194,31 @@ class StockFollower:
             return
         amount = sum([d['current_price'] * d['volume'] for d in self.tick_data])
         avg_price = np.array([d['current_price'] for d in self.tick_data]).mean()
+        volume_in_price = dict()
+        buy_volume = 0
+        sell_volume = 0
+        high_price = 0
+        for d in self.tick_data:
+            if d['current_price'] in volume_in_price:
+                volume_in_price[d['current_price']] += d['volume']
+            else:
+                volume_in_price[d['current_price']] = d['volume']
+
+            if d['buy_or_sell'] == '1':
+                buy_volume += d['volume']
+            else:
+                sell_volume += d['volume']
+
+            if d['current_price'] > high_price:
+                high_price = d['current_price']
+
         self.sec_data.append({'amount': amount,
                             'open': self.tick_data[0]['current_price'],
                             'close': self.tick_data[-1]['current_price'],
+                            'high': high_price,
+                            'volume_in_price': volume_in_price,
+                            'buy_volume': buy_volume,
+                            'sell_volume': sell_volume,
                             'date': datetime.now()})
         self.avg_prices.append(avg_price)
         self.tick_data.clear()
