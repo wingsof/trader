@@ -1,6 +1,5 @@
 import time
 import win32ui, win32gui, win32con, win32api
-import winkey
 from PIL import Image
 import datetime
 

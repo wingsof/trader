@@ -1,8 +1,5 @@
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.join(*(['..' + os.sep] * 2)))))
-from configs import client_info
-if len(sys.argv) > 1 and len(sys.argv[1]) > 0:
-    client_info.add_client_name_suffix(sys.argv[1]) 
 
 import time
 from PyQt5.QtCore import QCoreApplication
@@ -234,7 +231,10 @@ def dispatch_message():
                                                     request_trade_handler=handle_trade_request)
 
 
-def run():
+def run(client_type):
+    if client_type is not None:
+        client_info.add_client_name_suffix(client_type) 
+
     app = QCoreApplication([])
     conn = connection.Connection()
     while True:
@@ -267,7 +267,7 @@ def run():
 
     header = stream_readwriter.create_header(message.COLLECTOR, message.MARKET_STOCK, message.COLLECTOR_DATA)
 
-    if len(sys.argv) > 1 and sys.argv[1].startswith('collector'):
+    if client_type is not None and client_type.startswith('collector'):
         if client_info.get_client_capability() & message.CAPABILITY_COLLECT_SUBSCRIBE:
             body = {'capability': message.CAPABILITY_COLLECT_SUBSCRIBE, 'name': client_info.get_client_name()}
             stream_readwriter.write(sock, header, body)
@@ -286,4 +286,4 @@ def run():
 
 
 if __name__ == '__main__':
-    run()
+    run(None)

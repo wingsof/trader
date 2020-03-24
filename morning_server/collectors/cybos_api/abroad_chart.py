@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..' 
 import win32com.client
 from utils import time_converter
 from datetime import datetime, timedelta
-from cybos_api import connection
+from morning_server.collectors.cybos_api import connection
 import time
 
 

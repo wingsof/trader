@@ -1,6 +1,6 @@
-import windep
+from utils.auto import windep
 import time
-import winkey
+from utils.auto import winkey
 import random
 import datetime
 import sys
