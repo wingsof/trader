@@ -18,6 +18,11 @@ from morning_server.collectors import shutdown
 
 order_subscriber = None
 subscribe_alarm = None
+subscribe_stock = dict()
+subscribe_bidask = dict()
+subscribe_subject = dict()
+subscribe_world = dict()
+subscribe_index = dict()
 
 
 def handle_request(sock, header, body):
@@ -229,7 +234,7 @@ def dispatch_message():
                                                     request_trade_handler=handle_trade_request)
 
 
-if __name__ == '__main__':
+def run():
     app = QCoreApplication([])
     conn = connection.Connection()
     while True:
@@ -244,11 +249,6 @@ if __name__ == '__main__':
 
     time.sleep(5)
     print('Connected to CP Server')
-    subscribe_stock = dict()
-    subscribe_bidask = dict()
-    subscribe_subject = dict()
-    subscribe_world = dict()
-    subscribe_index = dict()
 
     while True:
         try:
@@ -283,3 +283,7 @@ if __name__ == '__main__':
             print('HAS TRADE CAPABILITY')
     
     app.exec_()
+
+
+if __name__ == '__main__':
+    run()

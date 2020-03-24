@@ -25,7 +25,7 @@ def send_word(word):
         time.sleep(2)
 
 
-if __name__ == '__main__':
+def run():
     win = windep.WinDep()
     state = 0
     time.sleep(10)
@@ -54,5 +54,8 @@ if __name__ == '__main__':
                 time.sleep(1)
                 winkey.send_key(winkey.VK_CODE['enter'])
         elif state == 2:
-            time.sleep(10)
+            time.sleep(30)
             sys.exit(0)
+
+if __name__ == '__main__':
+    run()
