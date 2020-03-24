@@ -3,7 +3,7 @@ import time
 
 import os
 import sys
-import datetime
+from datetime import datetime
 
 sys.stdout = open(os.environ['MORNING_PATH'] + os.sep + 'logs' + os.sep + datetime.now().strftime('%Y%m%d%H%M') + '.log', 'w')
 sys.stderr = sys.stdout
