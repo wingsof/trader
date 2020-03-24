@@ -67,6 +67,14 @@ def start_vi_follower():
         sf.subscribe_at_startup()
         followers.append(sf)
 
+    kosdaq_index = stock_follower.StockFollower(morning_client.get_reader(), db_collection, 'U201')
+    kosdaq_index.subscribe_at_startup()
+    followers.append(kosdaq_index)
+
+    kospi_index = stock_follower.StockFollower(morning_client.get_reader(), db_collection, 'U001')
+    kospi_index.subscribe_at_startup()
+    followers.append(kospi_index)
+
     print('Start Listening...')
     slack.send_slack_message('START LISTENING')
     stock_api.subscribe_alarm(morning_client.get_reader(), vi_handler)
