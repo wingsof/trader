@@ -27,7 +27,7 @@ def run_subscriber():
         now = datetime.now()
         year, month, day = now.year, now.month, now.day
 
-        is_start_time = datetime(year, month, day, time_info.SUBSCRIBER_START_TIME['hour']) <= now < datetime(year, month, day, time_info.SUBSCRIBER_FINISH_TIME['hour'], time_info.SUBSCRIBER_FINISH_TIME['minute'])
+        is_start_time = datetime(year, month, day, time_info.SUBSCRIBER_START_TIME['hour'], time_info.SUBSCRIBER_START_TIME['minute']) <= now < datetime(year, month, day, time_info.SUBSCRIBER_FINISH_TIME['hour'], time_info.SUBSCRIBER_FINISH_TIME['minute'])
         if not holidays.is_holidays(now.date()) and is_start_time:
             print('Run subscriber')
             subscribe_process = Process(target=main.start_vi_follower)

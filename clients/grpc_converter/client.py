@@ -34,6 +34,21 @@ def get_day_data(stub):
         print(data)
 
 
+def get_minute_data(stub):
+    from_datetime = Timestamp()
+    from_datetime.FromSeconds(int(datetime.timestamp(datetime(2020, 3, 18))))
+    until_datetime = Timestamp()
+    until_datetime.FromSeconds(int(datetime.timestamp(datetime(2020, 3, 20))))
+    query = stock_provider_pb2.StockQuery(code='A005930',
+        from_datetime = from_datetime,
+        until_datetime = until_datetime)
+    response = stub.GetMinuteData(query)
+    print('len', len(response.day_data))
+    for data in response.day_data:
+        print(data)
+
+
+
 def subscribe_stock(code, stub):
     query = stock_provider_pb2.StockCodeQuery(code=code)
     response = stub.SubscribeStock(query)
@@ -54,6 +69,7 @@ def run():
     with grpc.insecure_channel('localhost:50052') as channel:
         _STUB = stock_provider_pb2_grpc.StockStub(channel)
         get_day_data(_STUB)
+        get_minute_data(_STUB)
         subscriber1 = gevent.spawn(subscribe_stock, 'A005930', _STUB)
         subscriber2 = gevent.spawn(subscribe_stock, 'A000660', _STUB)
         subscriber3 = gevent.spawn(subscribe_bidask, 'A005930', _STUB)

@@ -8,6 +8,7 @@ package stock_api;
 service Stock {
 
   rpc GetDayData(StockQuery) returns (CybosDayDatas) {}
+  rpc GetMinuteData(StockQuery) returns (CybosDayDatas) {}
 
   rpc SubscribeStock(StockCodeQuery) returns (stream CybosTickData) {}
   rpc SubscribeBidAsk(StockCodeQuery) returns (stream CybosBidAskTickData) {}

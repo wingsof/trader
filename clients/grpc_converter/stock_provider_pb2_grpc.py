@@ -19,6 +19,11 @@ class StockStub(object):
         request_serializer=stock__provider__pb2.StockQuery.SerializeToString,
         response_deserializer=stock__provider__pb2.CybosDayDatas.FromString,
         )
+    self.GetMinuteData = channel.unary_unary(
+        '/stock_api.Stock/GetMinuteData',
+        request_serializer=stock__provider__pb2.StockQuery.SerializeToString,
+        response_deserializer=stock__provider__pb2.CybosDayDatas.FromString,
+        )
     self.SubscribeStock = channel.unary_stream(
         '/stock_api.Stock/SubscribeStock',
         request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
@@ -36,6 +41,13 @@ class StockServicer(object):
   pass
 
   def GetDayData(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def GetMinuteData(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -61,6 +73,11 @@ def add_StockServicer_to_server(servicer, server):
   rpc_method_handlers = {
       'GetDayData': grpc.unary_unary_rpc_method_handler(
           servicer.GetDayData,
+          request_deserializer=stock__provider__pb2.StockQuery.FromString,
+          response_serializer=stock__provider__pb2.CybosDayDatas.SerializeToString,
+      ),
+      'GetMinuteData': grpc.unary_unary_rpc_method_handler(
+          servicer.GetMinuteData,
           request_deserializer=stock__provider__pb2.StockQuery.FromString,
           response_serializer=stock__provider__pb2.CybosDayDatas.SerializeToString,
       ),

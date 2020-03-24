@@ -52,6 +52,33 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
         return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
 
+    def GetMinuteData(self, request, context):
+        print('GetMinuteData', request)
+        minute_datas = morning_client.get_minute_data(
+            request.code,
+            datetime.fromtimestamp(request.from_datetime.seconds),
+            datetime.fromtimestamp(request.until_datetime.seconds))
+        protoc_converted = []
+        for m in minute_datas:
+            protoc_converted.append(stock_provider_pb2.CybosDayData(
+                time = m['time'],
+                start_price = m['start_price'],
+                highest_price = m['highest_price'],
+                lowest_price = m['lowest_price'],
+                close_price = m['close_price'],
+                volume = m['volume'],
+                amount = m['amount'],
+                cum_sell_volume = m['cum_sell_volume'],
+                cum_buy_volume = m['cum_buy_volume'],
+                foreigner_hold_volume = m['foreigner_hold_volume'],
+                foreigner_hold_rate = m['foreigner_hold_rate'],
+                institution_buy_volume = m['institution_buy_volume'],
+                institution_cum_buy_volume = m['institution_cum_buy_volume']))
+
+        return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
+
+
+
     def handle_bidask_tick(self, code, data):
         if len(data) != 1:
             return

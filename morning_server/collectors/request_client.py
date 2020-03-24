@@ -15,6 +15,7 @@ from morning_server.collectors import shutdown
 
 order_subscriber = None
 subscribe_alarm = None
+account = None
 subscribe_stock = dict()
 subscribe_bidask = dict()
 subscribe_subject = dict()
@@ -224,7 +225,7 @@ _sock = None
 
 @QtCore.pyqtSlot()
 def dispatch_message():
-    global read_buf
+    global read_buf, _sock
     stream_readwriter.dispatch_message_for_collector(_sock, read_buf,
                                                     request_handler=handle_request, 
                                                     subscribe_handler=handle_subscribe, 
@@ -232,6 +233,8 @@ def dispatch_message():
 
 
 def run(client_type):
+    global account, _sock
+
     if client_type is not None:
         client_info.add_client_name_suffix(client_type) 
 
