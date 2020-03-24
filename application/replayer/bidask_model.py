@@ -17,7 +17,7 @@ class BidAskModel(QAbstractTableModel):
 
     def __init__(self):
         super(BidAskModel, self).__init__()
-        self.db = MongoClient(config.MONGO_SERVER).stock
+        self.db = MongoClient(config.MONGO_SERVER).trade_alarm
         self.price_unit_list = []
         self.start_price = 0
         self.markets = {}

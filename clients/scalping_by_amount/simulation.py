@@ -22,8 +22,8 @@ from configs import db
 ready_queue = gevent.queue.Queue()
 
 
-datetime.current_datetime = rdatetime(2020, 3, 16, 8, 55)
-finish_time = rdatetime(2020, 3, 16, 15, 35)
+datetime.current_datetime = rdatetime(2020, 3, 20, 8, 55)
+finish_time = rdatetime(2020, 3, 20, 15, 35)
 
 stock_api.balance = 10000000
 

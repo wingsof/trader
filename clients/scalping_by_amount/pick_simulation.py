@@ -19,11 +19,17 @@ from clients.scalping_by_amount import pick_runner
 from configs import db
 
 
+if len(sys.argv) < 3:
+    print('Usage:', sys.argv[0], '2020-03-20', 'time_interval(seconds)')
+
+target_date = rdatetime.strptime(sys.argv[1], '%Y-%m-%d')
+pick_runner.PICK_SEC = int(sys.argv[2])
+
 ready_queue = gevent.queue.Queue()
 
 
-datetime.current_datetime = rdatetime(2020, 3, 12, 8, 55)
-finish_time = rdatetime(2020, 3, 12, 15, 25)
+datetime.current_datetime = rdatetime(target_date.year, target_date.month, target_date.day, 8, 55)
+finish_time = rdatetime(target_date.year, target_date.month, target_date.day, 15, 20)
 
 stock_api.balance = 10000000
 
@@ -58,7 +64,6 @@ def start_provide_tick():
 
         for tick in all_data:
             datetime.current_datetime = tick['date']
-            print(datetime.now())
             if '68' in tick:
                 stock_api.send_bidask_data(tick['code'], tick)
                 stock_api.set_current_first_bid(tick['code'], tick['4'])

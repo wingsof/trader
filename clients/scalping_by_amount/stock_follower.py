@@ -22,9 +22,7 @@ import gevent
 
 class StockFollower:
     READY = 0
-    WAIT_BOTTOM_PEAK = 1
-    WAIT_OVER_LINE = 2
-    OVER_LINE = 3
+    TRADING = 1
 
     def __init__(self, reader, code, yesterday_summary, is_kospi):
         self.reader = reader
@@ -40,10 +38,10 @@ class StockFollower:
         self.bottom_edges = None
         self.trader = None
         self.status = StockFollower.READY
-        self.ba_waching = False
+        self.current_total_remain_ask = 0
+        self.current_total_remain_bid = 0
         self.code_info = None
         self.current_price = 0
-        self.point_price = 0
 
     def get_status(self):
         return self.status
@@ -51,36 +49,30 @@ class StockFollower:
     def status_to_str(self, status):
         if status == StockFollower.READY:
             return "READY"
-        elif status == StockFollower.WAIT_BOTTOM_PEAK:
-            return "WAIT_BOTTOM_PEAK"
-        elif status == StockFollower.WAIT_OVER_LINE:
-            return "WAIT_OVER_LINE"
-        elif status == StockFollower.OVER_LINE:
-            return "OVER_LINE"
+        elif status == StockFollower.TRADING:
+            return "TRADING"
+
         return "UNKNOWN"
-
-
+    
     def set_status(self, status):
         if status != self.status:
             logger.info('*%s from %s to %s', self.code, self.status_to_str(self.status), self.status_to_str(status))
-        if self.status == StockFollower.WAIT_OVER_LINE and status == StockFollower.OVER_LINE:
-            self.trader = trader.Trader(self.reader, self.point_price, self.code_info, self.market_status)
-            self.trader.start()
+            if self.status == StockFollower.READY:
+                self.trader = None
         self.status = status
+
 
     def start_trading(self, code_info):
         logger.warning('START TRADING %s', self.code)
         if client_info.TEST_MODE:
             stock_api.set_start_time(self.code)
 
+        self.set_status(StockFollower.TRADING)
         self.code_info = code_info
         self.top_edges = list(price_info.get_peaks(self.avg_prices))
         self.bottom_edges = list(price_info.get_peaks(self.avg_prices, False))
-        self.point_price = self.current_price
-        self.set_status(StockFollower.WAIT_BOTTOM_PEAK)
-        if not self.ba_waching:
-            self.ba_watching = True
-            stock_api.subscribe_stock_bidask(self.reader, self.code, self.ba_data_handler)
+        self.trader = trader.Trader(self.reader, self.code_info, self.market_status)
+        self.trader.start()
 
     def is_in_market(self):
         return self.market_status.is_in_market()
@@ -88,16 +80,12 @@ class StockFollower:
     def finish_work(self):
         if self.trader is not None:
             self.trader.finish_work()
-        self.set_status(StockFollower.READY)
+        # set READY and not remove trader since it can have remain works
+        self.status = StockFollower.READY
 
     def receive_result(self, result):
         if self.trader is not None:
             self.trader.receive_result(result)
-
-    def is_trading_done(self):
-        if self.trader is None:
-            return True
-        return False
 
     def get_average_volume_price(self):
         total_volume = 0
@@ -111,16 +99,6 @@ class StockFollower:
             return total_volume_price / total_volume
         return 0
 
-    def is_volume_price_under_average_price(self):
-        current_max_price = max([d['high'] for d in self.sec_data])
-        current_min_price = min([d['close'] for d in self.sec_data])
-        volume_price = self.get_average_volume_price()
-        if volume_price == 0:
-            return False
-        if (current_min_price + current_max_price) / 2 > volume_price:
-            return True
-        return False
-
     def ba_data_handler(self, code, data):
         # Use ba data tick as heartbeat for trading
         if len(data) != 1:
@@ -128,12 +106,13 @@ class StockFollower:
 
         tick_data = data[0]
         tick_data = dt.cybos_stock_ba_tick_convert(tick_data)
+        self.current_total_remain_bid = tick_data['total_bid_remain']
+        self.current_total_remain_ask = tick_data['total_ask_remain']
         if self.trader is not None:
             # careful not to use code since it has _BA suffix
             self.trader.ba_data_handler(self.code, tick_data)
             if self.trader.is_finished():
                 self.set_status(StockFollower.READY)
-                self.trader = None
 
     def tick_data_handler(self, code, data):
         if len(data) != 1:
@@ -144,13 +123,6 @@ class StockFollower:
         has_change = self.market_status.set_tick_data(tick_data)
 
         self.current_price = tick_data['current_price']
-        if self.get_status() == StockFollower.WAIT_BOTTOM_PEAK and self.current_price > self.point_price:
-            self.point_price = self.current_price
-        elif self.get_status() == StockFollower.WAIT_OVER_LINE and self.current_price > self.point_price:
-            if self.is_volume_price_under_average_price():
-                self.set_status(StockFollower.OVER_LINE)
-            else:
-                self.set_status(StockFollower.READY)
 
         # for skipping first tick of in-market data
         if not has_change and self.market_status.is_in_market():
@@ -158,33 +130,56 @@ class StockFollower:
                 self.open_price = tick_data['start_price']
 
             self.tick_data.append(tick_data)
-        elif (has_change and not self.market_status.is_in_market() and
-                (self.get_status() == StockFollower.WAIT_BOTTOM_PEAK or
-                self.get_status() == StockFollower.WAIT_OVER_LINE)):
-            self.set_status(StockFollower.READY)
 
         if self.trader is not None:
             self.trader.tick_data_handler(tick_data)
 
     def snapshot(self, count_of_sec):
-        if len(self.sec_data) == 0:
+        if len(self.sec_data) == 0 and len(self.tick_data) == 0:
             return None
 
-        data = self.sec_data[-count_of_sec:]
         current_close = 0
         amount = 0
+        yesterday_close = 0
+        minute_max_volume = 0
+        buy_volume = 0
+        sell_volume = 0
+        open_price = 0
+        buy_speed = 0
+        sell_speed = 0
+
+        if len(self.sec_data) > 0:
+            data = self.sec_data[-count_of_sec:]
+            current_close = data[-1]['close']
+            amount += sum([d['amount'] for d in data])
+            buy_volume += sum([d['buy_volume'] for d in data])
+            sell_volume += sum([d['sell_volume'] for d in data])
+            open_price = data[0]['open']
+
         if len(self.tick_data):
             current_close = self.tick_data[-1]['current_price']
             amount += sum([d['current_price'] * d['volume'] for d in self.tick_data])
-        else:
-            current_close = data[-1]['close']
+            buy_ticks = filter(lambda d: d['buy_or_sell'] == '1', self.tick_data)
+            sell_ticks = filter(lambda d: d['buy_or_sell'] == '2', self.tick_data)
+            buy_volume += sum([d['volume'] for d in buy_ticks])
+            sell_volume += sum([d['volume'] for d in sell_ticks])
+            if open_price == 0:
+                open_price = self.tick_data[0]['current_price']
 
-        amount += sum([d['amount'] for d in data])
-        profit = (current_close - data[0]['open']) / data[0]['open'] * 100
-        yesterday_close = 0
+        profit = (current_close - open_price) / open_price * 100
+        if self.current_total_remain_ask != 0:
+            buy_speed = self.current_total_remain_ask / buy_volume
+
+        if self.current_total_remain_bid != 0:
+            sell_speed = self.current_total_remain_bid / sell_volume
+
         if self.yesterday_summary is not None:
             yesterday_close = self.yesterday_summary['close_price']
+            minute_max_volume = self.yesterday_summary['minute_max_volume']
         return {'code': self.code, 'amount': amount, 'profit': profit,
+                'minute_max_volume': minute_max_volume,
+                'buy_volume': buy_volume, 'sell_volume': sell_volume,
+                'buy_speed': buy_speed, 'sell_speed': sell_speed,
                 'yesterday_close': yesterday_close, 'today_open': self.open_price,
                 'current_price': current_close, 'is_kospi': self.is_kospi}
 
@@ -204,7 +199,7 @@ class StockFollower:
             else:
                 volume_in_price[d['current_price']] = d['volume']
 
-            if d['buy_or_sell'] == '1':
+            if d['buy_or_sell'] == ord('1'):
                 buy_volume += d['volume']
             else:
                 sell_volume += d['volume']
@@ -223,22 +218,16 @@ class StockFollower:
         self.avg_prices.append(avg_price)
         self.tick_data.clear()
 
-        bottom_peaks = list(price_info.get_peaks(self.avg_prices, False))
-        if bottom_peaks != self.bottom_edges:
-            self.bottom_edges = bottom_peaks
-            if self.get_status() == StockFollower.WAIT_BOTTOM_PEAK:
-                if self.current_price < self.point_price:
-                    self.set_status(StockFollower.WAIT_OVER_LINE)
-                else:
-                    self.set_status(StockFollower.READY)
-
         if self.trader is not None:
             peaks = list(price_info.get_peaks(self.avg_prices))
             if peaks != self.top_edges:
                 self.top_edges = peaks
                 self.trader.top_edge_detected()
-            
+            bottom_peaks = list(price_info.get_peaks(self.avg_prices, False))
+            if bottom_peaks != self.bottom_edges:
+                self.bottom_edges = bottom_peaks
+                self.trader.bottom_edge_detected()
 
     def subscribe_at_startup(self):
         stock_api.subscribe_stock(self.reader, self.code, self.tick_data_handler)
-
+        stock_api.subscribe_stock_bidask(self.reader, self.code, self.ba_data_handler)

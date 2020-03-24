@@ -22,16 +22,15 @@ import gevent
 
 
 class Trader:
-    def __init__(self, reader, point_price, code_info, market_status):
+    def __init__(self, reader, code_info, market_status):
         self.reader = reader
         self.code_info = code_info
-        self.point_price = point_price
         self.market_status = market_status
         self.stage = None
 
     def start(self):
         logger.warning('START BUY STAGE %s', self.code_info['code'])
-        self.stage = BuyStage(self.reader, self.point_price, self.code_info, self.market_status)
+        self.stage = BuyStage(self.reader, self.code_info, self.market_status)
 
     def finish_work(self):
         if self.stage is not None and isinstance(self.stage, SellStage):

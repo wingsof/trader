@@ -22,7 +22,7 @@ class PickStock:
     def pick_one(self, candidates):
         """ keys for candidates
         'code', 'amount', 'profit', 'yesterday_close',
-        'today_open', 'current_price', 'is_kospi'
+        'today_open', 'current_price', 'is_kospi', 'minute_max_volume'
         """
 
         by_amount = sorted(candidates, key=lambda x: x['amount'], reverse=True)

@@ -98,7 +98,7 @@ def set_current_first_bid(code, price):
                                         'order_number': order['order_number'],
                                         'total_quantity': 0})
                 balance += order['price'] * order['quantity'] * 0.997
-                remove_stock(code, order['price'], order['quantity'])            
+                remove_stock(code, price, order['quantity'])            
     for order in done_order:
         order_wait_queue.remove(order)
                 
@@ -110,7 +110,7 @@ def send_to_trade_handlers(result):
 
 def send_order_confirm_result(code, price, quantity, is_buy, order_time):
     global balance
-    time.sleep(1)
+    gevent.sleep()
     order_num = get_order_num()
     print('order_number', order_num)
     confirm_response = {'flag': '4',
@@ -137,7 +137,7 @@ def send_order_confirm_result(code, price, quantity, is_buy, order_time):
 
 
 def send_modify_confirm_result(order_num, code, price, quantity, order_type, order_time):
-    time.sleep(0)
+    gevent.sleep()
     # Actually first should send flag '4' but not essential
     result = {'flag': '2',
                 'code': code,
@@ -150,7 +150,7 @@ def send_modify_confirm_result(order_num, code, price, quantity, order_type, ord
 
 
 def send_cancel_confirm_result(order_num, code, price, quantity, order_type, order):
-    time.sleep(3)
+    gevent.sleep()
     # Actually first should send flag '4' but not essential
     result = {'flag': '2',
                 'code': code,

@@ -33,7 +33,7 @@ followers = []
 DELTA = 0
 MINIMUM_AMOUNT = 100000000
 candidate_queue = gevent.queue.Queue()
-PICK_SEC=10
+PICK_SEC=1
 
 def vi_handler(_, data):
     data = data[0]
@@ -46,11 +46,14 @@ def data_process():
     done_time = now.replace(hour=15+DELTA, minute=10, second=0)
     pick_finish_time = now.replace(hour=15+DELTA, minute=5, second=0)
     entered = False
+    last_processed_time = datetime.now()
 
     while True:
         if start_time <= datetime.now() <= done_time:
             entered = True
-            time.sleep(PICK_SEC)
+
+            while datetime.now() - last_processed_time < timedelta(seconds=PICK_SEC):
+                gevent.sleep()
 
             candidates = []
             for sf in followers:
@@ -60,22 +63,30 @@ def data_process():
                     snapshot['profit'] < 0.5 or
                     snapshot['yesterday_close'] == 0 or
                     snapshot['today_open'] == 0 or
+                    snapshot['minute_max_volume'] / (15/PICK_SEC) > snapshot['buy_volume'] + snapshot['sell_volume'] or
+                    snapshot['sell_volume'] > snapshot['buy_volume'] or
                     snapshot['today_open'] < snapshot['yesterday_close'] or
+                    10000 <= snapshot['current_price'] <= 20000 or
                     snapshot['amount'] < MINIMUM_AMOUNT):
                     continue
                 candidates.append(snapshot)
+            print('candidate size', len(candidates))
+            for c in candidates:
+                print(c['code'], c['buy_volume'], c['sell_volume'])
             picked = picker.pick_one(candidates)
             if picked is not None and datetime.now() <= pick_finish_time:
                 logger.info('PICKED %s, amount: %d, profit: %f', picked['code'], picked['amount'],
                             picked['profit'])
                 candidate_queue.put_nowait({'code': picked['code'], 'info': picked})
+            last_processed_time = datetime.now()
+
         else:
             if entered:
                 logger.info('QUEUE EXIT')
                 candidate_queue.put_nowait({'code': 'exit', 'info': None})
                 entered = False
                 break
-        time.sleep(0.3)
+        time.sleep(0.02)
 
 
 def receive_result(result):
@@ -91,7 +102,7 @@ def heart_beat():
     finish_flag = False
     while True:
         while datetime.now() - last_processed_time < timedelta(seconds=1):
-            time.sleep(0.05)
+            gevent.sleep()
 
         candidates = []
         while not candidate_queue.empty():
@@ -124,6 +135,7 @@ def heart_beat():
 
 def get_yesterday_data(today, market_code):
     yesterday = holidays.get_yesterday(today)
+    one_week_before= holidays.get_date_by_previous_working_day_count(today, 5)
     yesterday_list = []
     for progress, code in enumerate(market_code):
         print('collect yesterday data', f'{progress+1}/{len(market_code)}', end='\r')
@@ -131,6 +143,12 @@ def get_yesterday_data(today, market_code):
         if len(data) == 1:
             data = data[0]
             data['code'] = code
+            min_data = morning_client.get_minute_data(code, one_week_before, yesterday)
+            if len(min_data) > 0:
+                data['minute_max_volume'] = max([d['volume'] for d in min_data])
+            else:
+                data['minute_max_volume'] = 0
+
             yesterday_list.append(data)
     print('')
     return yesterday_list

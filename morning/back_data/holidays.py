@@ -38,6 +38,18 @@ def get_yesterday(today):
     return yesterday
 
 
+def get_date_by_previous_working_day_count(today, count):
+    until_d = today
+    current_d = until_d - timedelta(days=1)
+    while count > 0:
+        if is_holidays(current_d):
+            current_d -= timedelta(days=1)
+            continue
+        current_d -= timedelta(days=1)
+        count -= 1                
+    return current_d
+
+
 def count_of_working_days(from_date, until_date):
     from_d = from_date
     until_d = until_date

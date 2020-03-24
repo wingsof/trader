@@ -20,22 +20,18 @@ import gevent
 
 
 BALANCE_DIVIDER = 10
-TIMEOUT_MIN = 30
 
 
 class BuyStage:
-    def __init__(self, reader, point_price, code_info, market_status):
+    def __init__(self, reader, code_info, market_status):
         self.reader = reader
-        self.point_price = point_price
         self.code_info = code_info
         self.market_status = market_status
         self.quantity = 0
         self.order_done = False
-        self.current_ba_tick = None
         self.order_num = 0
         self.order_traded = []
         self.status = -1
-        self.start_time = datetime.now()
         self.set_status(tradestatus.BUY_WAIT)
 
     def get_status(self):
@@ -98,12 +94,7 @@ class BuyStage:
         return False
 
     def ba_data_handler(self, code, data):
-        self.current_ba_tick = data
-        if datetime.now() - self.start_time > timedelta(minutes=TIMEOUT_MIN):
-            self.order_done = True
-            self.set_status(tradestatus.BUY_FAIL)
-            return
-        elif self.order_done or data['first_ask_price'] < self.point_price: #only has one chance
+        if self.order_done:
             return
 
         balance = int(stock_api.get_balance(self.reader)['balance'] / BALANCE_DIVIDER)
@@ -124,7 +115,6 @@ class BuyStage:
         else:
             qty = int(balance / price)
             if qty > 0:
-                #qty = 1
                 self.set_order_quantity(qty)
                 logger.info('PROCESS BUY ORDER %s, price: %d, qty: %d', code, price, qty)
                 result = stock_api.order_stock(self.reader, code, price, qty, True)

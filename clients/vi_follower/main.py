@@ -31,8 +31,8 @@ def vi_handler(_, data):
 def check_time():
     while True:
         now = datetime.now()
-        if now.hour >= 18 and now.minute >= 35:
-            break
+        #if now.hour >= 18 and now.minute >= 35:
+        #    break
         gevent.sleep(60)
 
 

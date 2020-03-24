@@ -27,8 +27,8 @@ def calculate(x):
     peaks, _ = find_peaks(x, distance=2)
     prominences = peak_prominences(x, peaks)[0]
 
-    peaks = np.extract(prominences > x.mean() * 0.004, peaks)
-    prominences = np.extract(prominences > x.mean() * 0.004, prominences)
+    peaks = np.extract(prominences > x.mean() * 0.008, peaks)
+    prominences = np.extract(prominences > x.mean() * 0.008, prominences)
     return peaks, prominences
 
 
@@ -105,7 +105,7 @@ def save_to_graph(code, trade_starttime, datetime_arr, price_arr, volume_datetim
 
 
 def get_three_sec_tick_avg(tick_data, current_datetime):
-    from_datetime = current_datetime - timedelta(seconds=1)
+    from_datetime = current_datetime - timedelta(seconds=3)
     data = list(filter(lambda x: from_datetime < x['date'] <= current_datetime, tick_data)) 
     if len(data) > 0:
         price_mavg = np.array([d['current_price'] for d in data]).mean()
