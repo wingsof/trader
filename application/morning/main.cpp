@@ -1,7 +1,10 @@
 #include <QApplication>
+#include <memory>
+#include "data_provider.h"
 
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-    return app.exec()
+    DataProvider::getInstance();
+    return app.exec();
 }
