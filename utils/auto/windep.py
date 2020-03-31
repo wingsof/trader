@@ -12,7 +12,7 @@ def enumHandler(h, lParam):
     global title
     if win32gui.IsWindowVisible(h):
         window_title = win32gui.GetWindowText(h).strip()
-        if len(window_title) > 0;
+        if len(window_title) > 0:
             print('title', window_title)
             if title in window_title:
                 hwnd = h
