@@ -49,13 +49,29 @@ def get_minute_data(stub):
         pass#print(data)
 
 
+def start_simulation(stub):
+    from_datetime = Timestamp()
+    from_datetime.FromSeconds(int(datetime.timestamp(datetime(2020, 3, 27, 8, 59))))
+    simulation_argument = stock_provider_pb2.SimulationArgument(from_datetime=from_datetime)
+    response = stub.StartSimulation(simulation_argument) 
+
+
 def tick_subscriber(stub):
     query = Empty()
     i = 0
     response = stub.ListenCybosTickData(query)
     for msg in response:
         i += 1
-        print('tick', i)
+        #print('tick', i)
+
+
+def bidask_subscriber(stub):
+    query = Empty()
+    i = 0
+    response = stub.ListenCybosBidAsk(query)
+    for msg in response:
+        i += 1
+        #print('bidask', i)
 
 
 def subscribe_stock(code, stub):
@@ -68,17 +84,24 @@ def subscribe_bidask(code, stub):
     response = stub.RequestCybosBidAsk(query)
 
 
+def time_listener(stub):
+    query = Empty()
+    i = 0
+    print('ListenCurrentTime')
+    response = stub.ListenCurrentTime(query)
+    for msg in response:
+        print('got message')
+        print(datetime.fromtimestamp(msg.seconds))
+
+
 def run():
     global _STUB
     with grpc.insecure_channel('localhost:50052') as channel:
         _STUB = stock_provider_pb2_grpc.StockStub(channel)
-        get_day_data(_STUB)
-        get_minute_data(_STUB)
-        gevent.sleep(10)
-        subscribe_stock('A005930', _STUB)
-        subscribe_stock('A000660', _STUB)
-        
-        gevent.joinall([gevent.spawn(tick_subscriber, _STUB)])
+        #get_day_data(_STUB)
+        #get_minute_data(_STUB)
+        #start_simulation(_STUB)
+        gevent.joinall([gevent.spawn(tick_subscriber, _STUB), gevent.spawn(bidask_subscriber, _STUB), gevent.spawn(time_listener, _STUB)])
     print('exit')
 
 if __name__ == '__main__':

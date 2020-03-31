@@ -1,10 +1,11 @@
 from gevent import monkey
 monkey.patch_all()
 
-import grpc
 import grpc.experimental.gevent as grpc_gevent
 grpc_gevent.init_gevent()
 
+import grpc
+import gevent
 
 import os
 import sys
@@ -14,19 +15,107 @@ from concurrent import futures
 import stock_provider_pb2_grpc
 import stock_provider_pb2
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from clients.common import morning_client
+from morning.back_data import holidays
+from pymongo import MongoClient
 from morning_server import stock_api
 from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.empty_pb2 import Empty
 from gevent.queue import Queue
 
 
+simulation_done_flag = False
+
+
+def get_yesterday_data(today, market_code):
+    yesterday = holidays.get_yesterday(today)
+    yesterday_list = []
+    for progress, code in enumerate(market_code):
+        print('collect yesterday data', f'{progress+1}/{len(market_code)}', end='\r')
+        data = morning_client.get_past_day_data(code, yesterday, yesterday)
+        if len(data) == 1:
+            data = data[0]
+            data['code'] = code
+            yesterday_list.append(data)
+    print('')
+    return yesterday_list
+
+
+def collect_db(code, db_collection, from_time, until_time):
+    datas = []
+    tick_data = list(db_collection[code].find({'date': {'$gt': from_time, '$lte': until_time}}))
+    for t in tick_data:
+        t['code'] = code
+    ba_data = list(db_collection[code+'_BA'].find({'date': {'$gt': from_time, '$lte': until_time}}))
+
+    for bd in ba_data:
+        bd['code'] = code
+    datas.extend(tick_data)
+    datas.extend(ba_data)
+    return datas
+
+
+def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, time_handler):
+    global simulation_done_flag
+    time_handler(datetime.now())
+    while not simulation_done_flag:
+        data = tick_queue.get()
+
+        print('put ticks', len(data))
+        now = datetime.now()
+        datatime = None
+        for d in data:
+            if datatime is None:
+                datatime = d['date'] - timedelta(seconds=1)
+
+            while d['date'] - datatime > datetime.now() - now:
+                gevent.sleep(0.01)
+
+            if '68' in d:
+                bidask_tick_handler(d['code'], [d])
+            else:
+                stock_tick_handler(d['code'], [d])
+
+            now = datetime.now()
+            datatime = d['date']
+            time_handler(datatime)
+
+
+def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_handler, time_handler):
+    AT_ONCE_SECONDS = 60
+    tick_queue = Queue()
+    db_collection = MongoClient('mongodb://127.0.0.1:27017').trade_alarm
+    market_code = morning_client.get_all_market_code()
+    yesterday_list = get_yesterday_data(simulation_datetime, market_code)
+    yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
+    yesterday_list = yesterday_list[:10]
+    market_codes = [yl['code'] for yl in yesterday_list]
+    finish_time = simulation_datetime.replace(hour=15, minute=20)
+
+    gevent.spawn(deliver_tick, tick_queue, stock_tick_handler, bidask_tick_handler, time_handler)
+    while simulation_datetime <= finish_time:
+        all_data = []
+        print('load data', simulation_datetime, 'data period seconds', AT_ONCE_SECONDS, 'real time', datetime.now())
+        for progress, code in enumerate(market_codes):
+            all_data.extend(collect_db(code, db_collection, simulation_datetime, simulation_datetime + timedelta(seconds=AT_ONCE_SECONDS)))
+
+            print('collect tick data', f'{progress+1}/{len(market_codes)}', end='\r')
+        print('')
+        print('load done', simulation_datetime, 'tick len', len(all_data), 'real time', datetime.now())
+        all_data = sorted(all_data, key=lambda x: x['date']) 
+        tick_queue.put_nowait(all_data)
+        simulation_datetime += timedelta(seconds=AT_ONCE_SECONDS)
+
 
 class StockServicer(stock_provider_pb2_grpc.StockServicer):
     def __init__(self):
+        print('StockService init')
+        self.is_simulation = False
+        self.simulation_datetime = None
         self.stock_subscribe_queue = Queue()
         self.bidask_subscribe_queue = Queue()
+        self.current_time_queue = Queue()
 
     def GetDayData(self, request, context):
         print('GetDayData', request)
@@ -96,7 +185,8 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         if len(data) != 1:
             return
         
-        code = code[:code.index('_')]
+        if '_BA' in code:
+            code = code[:code.index('_')]
 
         data = data[0]
         tick_date = Timestamp()
@@ -132,6 +222,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.bidask_subscribe_queue.put(data)
 
     def handle_stock_tick(self, code, data):
+        #print('handle_stock_stick', data)
         if len(data) != 1:
             return
 
@@ -167,7 +258,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         print('ListenCybosTickData')
         while True:
             data = self.stock_subscribe_queue.get()
-            print('delivered')
+            #print('send tick')
             yield data
         print('Done SubscribeStock')
 
@@ -175,8 +266,33 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         print('ListenCybosBidAsk')
         while True:
             data = self.bidask_subscribe_queue.get()
+            #print('send bidask')
             yield data
         print('Done SubscribeBidAsk')
+
+    def handle_time(self, d):
+        print('handle_time', d)
+        data_date = Timestamp()
+        #data_date = data_date.FromMilliseconds(int(datetime.timestamp(d) * 1000))
+        self.current_time_queue.put(data_date)
+
+    def ListenCurrentTime(self, request, context):
+        print('ListenCurrentTime', 'hello')
+
+        while True:
+            data = self.current_time_queue.get()
+            print('send time')
+            yield data
+        print('Done ListenCurrentTime')
+
+    def StartSimulation(self, request, context):
+        if not self.is_simulation:
+            self.is_simulation = True
+            self.simulation_datetime = datetime.fromtimestamp(request.from_datetime.seconds)
+            gevent.spawn(start_tick_provider, self.simulation_datetime, self.handle_stock_tick, self.handle_bidask_tick, self.handle_time)
+            #self.simulation_run_queue.put_nowait('1')
+            print('Start Simulation Mode', self.simulation_datetime)
+        return Empty()
 
 
 def serve():

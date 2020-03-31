@@ -14,6 +14,10 @@ service Stock {
 
   rpc ListenCybosTickData(google.protobuf.Empty) returns (stream CybosTickData) {}
   rpc ListenCybosBidAsk(google.protobuf.Empty) returns (stream CybosBidAskTickData) {}
+  rpc ListenCurrentTime(google.protobuf.Empty) returns (stream google.protobuf.Timestamp) {}
+
+  rpc StartSimulation(SimulationArgument) returns (google.protobuf.Empty) {}
+  rpc StopSimulation(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }
 
 
@@ -26,6 +30,11 @@ message StockQuery {
     string code = 1;
     google.protobuf.Timestamp from_datetime = 2;
     google.protobuf.Timestamp until_datetime = 3;
+}
+
+
+message SimulationArgument {
+    google.protobuf.Timestamp from_datetime = 1;
 }
 
 
@@ -67,7 +76,7 @@ message CybosTickData {
     bool buy_or_sell = 14;
     uint64 cum_sell_volume_by_price = 15;
     uint64 cum_buy_volume_by_price = 16;
-    uint64 volume = 17;
+    int64 volume = 17;
     uint32 time_with_sec = 18;
     uint32 market_type_exp = 19;
     uint32 market_type = 20;

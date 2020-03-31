@@ -11,10 +11,12 @@ def enumHandler(h, lParam):
     global hwnd
     global title
     if win32gui.IsWindowVisible(h):
-        print(win32gui.GetWindowText(h).strip())
-        if title in win32gui.GetWindowText(h).strip():
-            hwnd = h
-            print("Found window handle: {}".format(h))
+        window_title = win32gui.GetWindowText(h).strip()
+        if len(window_title) > 0;
+            print('title', window_title)
+            if title in window_title:
+                hwnd = h
+                print("Found window handle: {}".format(h))
 
 
 class WinDep:
