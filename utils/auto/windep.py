@@ -58,11 +58,15 @@ class WinDep:
             window_height = b - t
             if (width == -1 and height == -1) or (window_width == width and window_height == height):
             """
-            win32gui.SetForegroundWindow(hwnd)
-            win32gui.ShowWindow(hwnd, 1)
-            hwnd = None
-            title = None
-            return True
+            try:
+                win32gui.SetForegroundWindow(hwnd)
+                win32gui.ShowWindow(hwnd, 1)
+                hwnd = None
+                title = None
+                return True
+            except:
+                print('exception occured')
+                return False
         hwnd = None
         title = None
         return False
