@@ -1,17 +1,19 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 package stock_api;
 
 
 service Stock {
-
   rpc GetDayData(StockQuery) returns (CybosDayDatas) {}
   rpc GetMinuteData(StockQuery) returns (CybosDayDatas) {}
+  rpc RequestCybosTickData(StockCodeQuery) returns (google.protobuf.Empty) {}
+  rpc RequestCybosBidAsk(StockCodeQuery) returns (google.protobuf.Empty) {}
 
-  rpc SubscribeStock(StockCodeQuery) returns (stream CybosTickData) {}
-  rpc SubscribeBidAsk(StockCodeQuery) returns (stream CybosBidAskTickData) {}
+  rpc ListenCybosTickData(google.protobuf.Empty) returns (stream CybosTickData) {}
+  rpc ListenCybosBidAsk(google.protobuf.Empty) returns (stream CybosBidAskTickData) {}
 }
 
 
@@ -28,19 +30,20 @@ message StockQuery {
 
 
 message CybosDayData {
-    uint32 time = 1;
-    uint32 start_price = 2;
-    uint32 highest_price = 3; 
-    uint32 lowest_price = 4;
-    uint32 close_price = 5;
-    uint64 volume = 6;
-    uint64 amount = 7;
-    uint64 cum_sell_volume = 8;
-    uint64 cum_buy_volume = 9;
-    int64 foreigner_hold_volume = 10;
-    float foreigner_hold_rate = 11;
-    int64 institution_buy_volume = 12;
-    int64 institution_cum_buy_volume = 13;
+    uint32 date = 1;
+    uint32 time = 2;
+    uint32 start_price = 3;
+    uint32 highest_price = 4; 
+    uint32 lowest_price = 5;
+    uint32 close_price = 6;
+    uint64 volume = 7;
+    uint64 amount = 8;
+    uint64 cum_sell_volume = 9;
+    uint64 cum_buy_volume = 10;
+    int64 foreigner_hold_volume = 11;
+    float foreigner_hold_rate = 12;
+    int64 institution_buy_volume = 13;
+    int64 institution_cum_buy_volume = 14;
 }
 
 message CybosDayDatas {

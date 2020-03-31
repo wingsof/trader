@@ -33,6 +33,7 @@
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/unknown_field_set.h>
 #include <google/protobuf/timestamp.pb.h>
+#include <google/protobuf/empty.pb.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_stock_5fprovider_2eproto
@@ -497,21 +498,31 @@ class CybosDayData :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kTimeFieldNumber = 1,
-    kStartPriceFieldNumber = 2,
-    kHighestPriceFieldNumber = 3,
-    kLowestPriceFieldNumber = 4,
-    kVolumeFieldNumber = 6,
-    kAmountFieldNumber = 7,
-    kCumSellVolumeFieldNumber = 8,
-    kClosePriceFieldNumber = 5,
-    kForeignerHoldRateFieldNumber = 11,
-    kCumBuyVolumeFieldNumber = 9,
-    kForeignerHoldVolumeFieldNumber = 10,
-    kInstitutionBuyVolumeFieldNumber = 12,
-    kInstitutionCumBuyVolumeFieldNumber = 13,
+    kDateFieldNumber = 1,
+    kTimeFieldNumber = 2,
+    kStartPriceFieldNumber = 3,
+    kHighestPriceFieldNumber = 4,
+    kLowestPriceFieldNumber = 5,
+    kClosePriceFieldNumber = 6,
+    kVolumeFieldNumber = 7,
+    kAmountFieldNumber = 8,
+    kCumSellVolumeFieldNumber = 9,
+    kCumBuyVolumeFieldNumber = 10,
+    kForeignerHoldVolumeFieldNumber = 11,
+    kInstitutionBuyVolumeFieldNumber = 13,
+    kInstitutionCumBuyVolumeFieldNumber = 14,
+    kForeignerHoldRateFieldNumber = 12,
   };
-  // uint32 time = 1;
+  // uint32 date = 1;
+  void clear_date();
+  ::PROTOBUF_NAMESPACE_ID::uint32 date() const;
+  void set_date(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_date() const;
+  void _internal_set_date(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // uint32 time = 2;
   void clear_time();
   ::PROTOBUF_NAMESPACE_ID::uint32 time() const;
   void set_time(::PROTOBUF_NAMESPACE_ID::uint32 value);
@@ -520,7 +531,7 @@ class CybosDayData :
   void _internal_set_time(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // uint32 start_price = 2;
+  // uint32 start_price = 3;
   void clear_start_price();
   ::PROTOBUF_NAMESPACE_ID::uint32 start_price() const;
   void set_start_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
@@ -529,7 +540,7 @@ class CybosDayData :
   void _internal_set_start_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // uint32 highest_price = 3;
+  // uint32 highest_price = 4;
   void clear_highest_price();
   ::PROTOBUF_NAMESPACE_ID::uint32 highest_price() const;
   void set_highest_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
@@ -538,7 +549,7 @@ class CybosDayData :
   void _internal_set_highest_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // uint32 lowest_price = 4;
+  // uint32 lowest_price = 5;
   void clear_lowest_price();
   ::PROTOBUF_NAMESPACE_ID::uint32 lowest_price() const;
   void set_lowest_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
@@ -547,34 +558,7 @@ class CybosDayData :
   void _internal_set_lowest_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // uint64 volume = 6;
-  void clear_volume();
-  ::PROTOBUF_NAMESPACE_ID::uint64 volume() const;
-  void set_volume(::PROTOBUF_NAMESPACE_ID::uint64 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_volume() const;
-  void _internal_set_volume(::PROTOBUF_NAMESPACE_ID::uint64 value);
-  public:
-
-  // uint64 amount = 7;
-  void clear_amount();
-  ::PROTOBUF_NAMESPACE_ID::uint64 amount() const;
-  void set_amount(::PROTOBUF_NAMESPACE_ID::uint64 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_amount() const;
-  void _internal_set_amount(::PROTOBUF_NAMESPACE_ID::uint64 value);
-  public:
-
-  // uint64 cum_sell_volume = 8;
-  void clear_cum_sell_volume();
-  ::PROTOBUF_NAMESPACE_ID::uint64 cum_sell_volume() const;
-  void set_cum_sell_volume(::PROTOBUF_NAMESPACE_ID::uint64 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_cum_sell_volume() const;
-  void _internal_set_cum_sell_volume(::PROTOBUF_NAMESPACE_ID::uint64 value);
-  public:
-
-  // uint32 close_price = 5;
+  // uint32 close_price = 6;
   void clear_close_price();
   ::PROTOBUF_NAMESPACE_ID::uint32 close_price() const;
   void set_close_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
@@ -583,16 +567,34 @@ class CybosDayData :
   void _internal_set_close_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // float foreigner_hold_rate = 11;
-  void clear_foreigner_hold_rate();
-  float foreigner_hold_rate() const;
-  void set_foreigner_hold_rate(float value);
+  // uint64 volume = 7;
+  void clear_volume();
+  ::PROTOBUF_NAMESPACE_ID::uint64 volume() const;
+  void set_volume(::PROTOBUF_NAMESPACE_ID::uint64 value);
   private:
-  float _internal_foreigner_hold_rate() const;
-  void _internal_set_foreigner_hold_rate(float value);
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_volume() const;
+  void _internal_set_volume(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
-  // uint64 cum_buy_volume = 9;
+  // uint64 amount = 8;
+  void clear_amount();
+  ::PROTOBUF_NAMESPACE_ID::uint64 amount() const;
+  void set_amount(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_amount() const;
+  void _internal_set_amount(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // uint64 cum_sell_volume = 9;
+  void clear_cum_sell_volume();
+  ::PROTOBUF_NAMESPACE_ID::uint64 cum_sell_volume() const;
+  void set_cum_sell_volume(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_cum_sell_volume() const;
+  void _internal_set_cum_sell_volume(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // uint64 cum_buy_volume = 10;
   void clear_cum_buy_volume();
   ::PROTOBUF_NAMESPACE_ID::uint64 cum_buy_volume() const;
   void set_cum_buy_volume(::PROTOBUF_NAMESPACE_ID::uint64 value);
@@ -601,7 +603,7 @@ class CybosDayData :
   void _internal_set_cum_buy_volume(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
-  // int64 foreigner_hold_volume = 10;
+  // int64 foreigner_hold_volume = 11;
   void clear_foreigner_hold_volume();
   ::PROTOBUF_NAMESPACE_ID::int64 foreigner_hold_volume() const;
   void set_foreigner_hold_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
@@ -610,7 +612,7 @@ class CybosDayData :
   void _internal_set_foreigner_hold_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
-  // int64 institution_buy_volume = 12;
+  // int64 institution_buy_volume = 13;
   void clear_institution_buy_volume();
   ::PROTOBUF_NAMESPACE_ID::int64 institution_buy_volume() const;
   void set_institution_buy_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
@@ -619,7 +621,7 @@ class CybosDayData :
   void _internal_set_institution_buy_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
-  // int64 institution_cum_buy_volume = 13;
+  // int64 institution_cum_buy_volume = 14;
   void clear_institution_cum_buy_volume();
   ::PROTOBUF_NAMESPACE_ID::int64 institution_cum_buy_volume() const;
   void set_institution_cum_buy_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
@@ -628,24 +630,34 @@ class CybosDayData :
   void _internal_set_institution_cum_buy_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
+  // float foreigner_hold_rate = 12;
+  void clear_foreigner_hold_rate();
+  float foreigner_hold_rate() const;
+  void set_foreigner_hold_rate(float value);
+  private:
+  float _internal_foreigner_hold_rate() const;
+  void _internal_set_foreigner_hold_rate(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:stock_api.CybosDayData)
  private:
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 date_;
   ::PROTOBUF_NAMESPACE_ID::uint32 time_;
   ::PROTOBUF_NAMESPACE_ID::uint32 start_price_;
   ::PROTOBUF_NAMESPACE_ID::uint32 highest_price_;
   ::PROTOBUF_NAMESPACE_ID::uint32 lowest_price_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 close_price_;
   ::PROTOBUF_NAMESPACE_ID::uint64 volume_;
   ::PROTOBUF_NAMESPACE_ID::uint64 amount_;
   ::PROTOBUF_NAMESPACE_ID::uint64 cum_sell_volume_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 close_price_;
-  float foreigner_hold_rate_;
   ::PROTOBUF_NAMESPACE_ID::uint64 cum_buy_volume_;
   ::PROTOBUF_NAMESPACE_ID::int64 foreigner_hold_volume_;
   ::PROTOBUF_NAMESPACE_ID::int64 institution_buy_volume_;
   ::PROTOBUF_NAMESPACE_ID::int64 institution_cum_buy_volume_;
+  float foreigner_hold_rate_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_stock_5fprovider_2eproto;
 };
@@ -1863,7 +1875,27 @@ inline void StockQuery::set_allocated_until_datetime(PROTOBUF_NAMESPACE_ID::Time
 
 // CybosDayData
 
-// uint32 time = 1;
+// uint32 date = 1;
+inline void CybosDayData::clear_date() {
+  date_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosDayData::_internal_date() const {
+  return date_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosDayData::date() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosDayData.date)
+  return _internal_date();
+}
+inline void CybosDayData::_internal_set_date(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  date_ = value;
+}
+inline void CybosDayData::set_date(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_date(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosDayData.date)
+}
+
+// uint32 time = 2;
 inline void CybosDayData::clear_time() {
   time_ = 0u;
 }
@@ -1883,7 +1915,7 @@ inline void CybosDayData::set_time(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.time)
 }
 
-// uint32 start_price = 2;
+// uint32 start_price = 3;
 inline void CybosDayData::clear_start_price() {
   start_price_ = 0u;
 }
@@ -1903,7 +1935,7 @@ inline void CybosDayData::set_start_price(::PROTOBUF_NAMESPACE_ID::uint32 value)
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.start_price)
 }
 
-// uint32 highest_price = 3;
+// uint32 highest_price = 4;
 inline void CybosDayData::clear_highest_price() {
   highest_price_ = 0u;
 }
@@ -1923,7 +1955,7 @@ inline void CybosDayData::set_highest_price(::PROTOBUF_NAMESPACE_ID::uint32 valu
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.highest_price)
 }
 
-// uint32 lowest_price = 4;
+// uint32 lowest_price = 5;
 inline void CybosDayData::clear_lowest_price() {
   lowest_price_ = 0u;
 }
@@ -1943,7 +1975,7 @@ inline void CybosDayData::set_lowest_price(::PROTOBUF_NAMESPACE_ID::uint32 value
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.lowest_price)
 }
 
-// uint32 close_price = 5;
+// uint32 close_price = 6;
 inline void CybosDayData::clear_close_price() {
   close_price_ = 0u;
 }
@@ -1963,7 +1995,7 @@ inline void CybosDayData::set_close_price(::PROTOBUF_NAMESPACE_ID::uint32 value)
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.close_price)
 }
 
-// uint64 volume = 6;
+// uint64 volume = 7;
 inline void CybosDayData::clear_volume() {
   volume_ = PROTOBUF_ULONGLONG(0);
 }
@@ -1983,7 +2015,7 @@ inline void CybosDayData::set_volume(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.volume)
 }
 
-// uint64 amount = 7;
+// uint64 amount = 8;
 inline void CybosDayData::clear_amount() {
   amount_ = PROTOBUF_ULONGLONG(0);
 }
@@ -2003,7 +2035,7 @@ inline void CybosDayData::set_amount(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.amount)
 }
 
-// uint64 cum_sell_volume = 8;
+// uint64 cum_sell_volume = 9;
 inline void CybosDayData::clear_cum_sell_volume() {
   cum_sell_volume_ = PROTOBUF_ULONGLONG(0);
 }
@@ -2023,7 +2055,7 @@ inline void CybosDayData::set_cum_sell_volume(::PROTOBUF_NAMESPACE_ID::uint64 va
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.cum_sell_volume)
 }
 
-// uint64 cum_buy_volume = 9;
+// uint64 cum_buy_volume = 10;
 inline void CybosDayData::clear_cum_buy_volume() {
   cum_buy_volume_ = PROTOBUF_ULONGLONG(0);
 }
@@ -2043,7 +2075,7 @@ inline void CybosDayData::set_cum_buy_volume(::PROTOBUF_NAMESPACE_ID::uint64 val
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.cum_buy_volume)
 }
 
-// int64 foreigner_hold_volume = 10;
+// int64 foreigner_hold_volume = 11;
 inline void CybosDayData::clear_foreigner_hold_volume() {
   foreigner_hold_volume_ = PROTOBUF_LONGLONG(0);
 }
@@ -2063,7 +2095,7 @@ inline void CybosDayData::set_foreigner_hold_volume(::PROTOBUF_NAMESPACE_ID::int
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.foreigner_hold_volume)
 }
 
-// float foreigner_hold_rate = 11;
+// float foreigner_hold_rate = 12;
 inline void CybosDayData::clear_foreigner_hold_rate() {
   foreigner_hold_rate_ = 0;
 }
@@ -2083,7 +2115,7 @@ inline void CybosDayData::set_foreigner_hold_rate(float value) {
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.foreigner_hold_rate)
 }
 
-// int64 institution_buy_volume = 12;
+// int64 institution_buy_volume = 13;
 inline void CybosDayData::clear_institution_buy_volume() {
   institution_buy_volume_ = PROTOBUF_LONGLONG(0);
 }
@@ -2103,7 +2135,7 @@ inline void CybosDayData::set_institution_buy_volume(::PROTOBUF_NAMESPACE_ID::in
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.institution_buy_volume)
 }
 
-// int64 institution_cum_buy_volume = 13;
+// int64 institution_cum_buy_volume = 14;
 inline void CybosDayData::clear_institution_cum_buy_volume() {
   institution_cum_buy_volume_ = PROTOBUF_LONGLONG(0);
 }

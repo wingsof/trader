@@ -17,6 +17,7 @@ import stock_provider_pb2
 from datetime import datetime
 
 from google.protobuf.timestamp_pb2 import Timestamp
+from google.protobuf.empty_pb2 import Empty
 
 _STUB = None
 
@@ -45,23 +46,26 @@ def get_minute_data(stub):
     response = stub.GetMinuteData(query)
     print('len', len(response.day_data))
     for data in response.day_data:
-        print(data)
+        pass#print(data)
 
+
+def tick_subscriber(stub):
+    query = Empty()
+    i = 0
+    response = stub.ListenCybosTickData(query)
+    for msg in response:
+        i += 1
+        print('tick', i)
 
 
 def subscribe_stock(code, stub):
     query = stock_provider_pb2.StockCodeQuery(code=code)
-    response = stub.SubscribeStock(query)
-    for msg in response:
-        pass
-        #print('subscribe', msg)
+    response = stub.RequestCybosTickData(query)
 
 
 def subscribe_bidask(code, stub):
     query = stock_provider_pb2.StockCodeQuery(code=code)
-    response = stub.SubscribeBidAsk(query)
-    for msg in response:
-        print('biask', msg)
+    response = stub.RequestCybosBidAsk(query)
 
 
 def run():
@@ -70,11 +74,11 @@ def run():
         _STUB = stock_provider_pb2_grpc.StockStub(channel)
         get_day_data(_STUB)
         get_minute_data(_STUB)
-        subscriber1 = gevent.spawn(subscribe_stock, 'A005930', _STUB)
-        subscriber2 = gevent.spawn(subscribe_stock, 'A000660', _STUB)
-        subscriber3 = gevent.spawn(subscribe_bidask, 'A005930', _STUB)
+        gevent.sleep(10)
+        subscribe_stock('A005930', _STUB)
+        subscribe_stock('A000660', _STUB)
         
-        gevent.joinall([subscriber1, subscriber2, subscriber3])
+        gevent.joinall([gevent.spawn(tick_subscriber, _STUB)])
     print('exit')
 
 if __name__ == '__main__':

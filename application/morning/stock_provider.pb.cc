@@ -154,6 +154,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_stock_5fprovider_2eproto::offs
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::stock_api::CybosDayData, date_),
   PROTOBUF_FIELD_OFFSET(::stock_api::CybosDayData, time_),
   PROTOBUF_FIELD_OFFSET(::stock_api::CybosDayData, start_price_),
   PROTOBUF_FIELD_OFFSET(::stock_api::CybosDayData, highest_price_),
@@ -239,9 +240,9 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 0, -1, sizeof(::stock_api::StockCodeQuery)},
   { 6, -1, sizeof(::stock_api::StockQuery)},
   { 14, -1, sizeof(::stock_api::CybosDayData)},
-  { 32, -1, sizeof(::stock_api::CybosDayDatas)},
-  { 38, -1, sizeof(::stock_api::CybosTickData)},
-  { 66, -1, sizeof(::stock_api::CybosBidAskTickData)},
+  { 33, -1, sizeof(::stock_api::CybosDayDatas)},
+  { 39, -1, sizeof(::stock_api::CybosTickData)},
+  { 67, -1, sizeof(::stock_api::CybosBidAskTickData)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -255,63 +256,69 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 
 const char descriptor_table_protodef_stock_5fprovider_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\024stock_provider.proto\022\tstock_api\032\037googl"
-  "e/protobuf/timestamp.proto\"\036\n\016StockCodeQ"
-  "uery\022\014\n\004code\030\001 \001(\t\"\201\001\n\nStockQuery\022\014\n\004cod"
-  "e\030\001 \001(\t\0221\n\rfrom_datetime\030\002 \001(\0132\032.google."
-  "protobuf.Timestamp\0222\n\016until_datetime\030\003 \001"
-  "(\0132\032.google.protobuf.Timestamp\"\304\002\n\014Cybos"
-  "DayData\022\014\n\004time\030\001 \001(\r\022\023\n\013start_price\030\002 \001"
-  "(\r\022\025\n\rhighest_price\030\003 \001(\r\022\024\n\014lowest_pric"
-  "e\030\004 \001(\r\022\023\n\013close_price\030\005 \001(\r\022\016\n\006volume\030\006"
-  " \001(\004\022\016\n\006amount\030\007 \001(\004\022\027\n\017cum_sell_volume\030"
-  "\010 \001(\004\022\026\n\016cum_buy_volume\030\t \001(\004\022\035\n\025foreign"
-  "er_hold_volume\030\n \001(\003\022\033\n\023foreigner_hold_r"
-  "ate\030\013 \001(\002\022\036\n\026institution_buy_volume\030\014 \001("
-  "\003\022\"\n\032institution_cum_buy_volume\030\r \001(\003\":\n"
-  "\rCybosDayDatas\022)\n\010day_data\030\001 \003(\0132\027.stock"
-  "_api.CybosDayData\"\246\004\n\rCybosTickData\022-\n\tt"
-  "ick_date\030\001 \001(\0132\032.google.protobuf.Timesta"
-  "mp\022\014\n\004code\030\002 \001(\t\022\024\n\014company_name\030\003 \001(\t\022\026"
-  "\n\016yesterday_diff\030\004 \001(\005\022\014\n\004time\030\005 \001(\r\022\023\n\013"
-  "start_price\030\006 \001(\r\022\025\n\rhighest_price\030\007 \001(\r"
-  "\022\024\n\014lowest_price\030\010 \001(\r\022\021\n\task_price\030\t \001("
-  "\r\022\021\n\tbid_price\030\n \001(\r\022\022\n\ncum_volume\030\013 \001(\004"
-  "\022\022\n\ncum_amount\030\014 \001(\004\022\025\n\rcurrent_price\030\r "
-  "\001(\r\022\023\n\013buy_or_sell\030\016 \001(\010\022 \n\030cum_sell_vol"
-  "ume_by_price\030\017 \001(\004\022\037\n\027cum_buy_volume_by_"
-  "price\030\020 \001(\004\022\016\n\006volume\030\021 \001(\004\022\025\n\rtime_with"
-  "_sec\030\022 \001(\r\022\027\n\017market_type_exp\030\023 \001(\r\022\023\n\013m"
-  "arket_type\030\024 \001(\r\022\027\n\017out_time_volume\030\025 \001("
-  "\004\022\027\n\017cum_sell_volume\030\026 \001(\004\022\026\n\016cum_buy_vo"
-  "lume\030\027 \001(\004\"\360\005\n\023CybosBidAskTickData\022-\n\tti"
-  "ck_date\030\001 \001(\0132\032.google.protobuf.Timestam"
-  "p\022\014\n\004code\030\002 \001(\t\022\014\n\004time\030\003 \001(\r\022\016\n\006volume\030"
-  "\004 \001(\004\022\027\n\017first_ask_price\030\005 \001(\r\022\027\n\017first_"
-  "bid_price\030\006 \001(\r\022\030\n\020first_ask_remain\030\007 \001("
-  "\r\022\030\n\020first_bid_remain\030\010 \001(\r\022\030\n\020second_as"
-  "k_price\030\t \001(\r\022\030\n\020second_bid_price\030\n \001(\r\022"
-  "\031\n\021second_ask_remain\030\013 \001(\r\022\031\n\021second_bid"
-  "_remain\030\014 \001(\r\022\027\n\017third_ask_price\030\r \001(\r\022\027"
-  "\n\017third_bid_price\030\016 \001(\r\022\030\n\020third_ask_rem"
-  "ain\030\017 \001(\r\022\030\n\020third_bid_remain\030\020 \001(\r\022\030\n\020f"
-  "ourth_ask_price\030\021 \001(\r\022\030\n\020fourth_bid_pric"
-  "e\030\022 \001(\r\022\031\n\021fourth_ask_remain\030\023 \001(\r\022\031\n\021fo"
-  "urth_bid_remain\030\024 \001(\r\022\027\n\017fifth_ask_price"
-  "\030\025 \001(\r\022\027\n\017fifth_bid_price\030\026 \001(\r\022\030\n\020fifth"
-  "_ask_remain\030\027 \001(\r\022\030\n\020fifth_bid_remain\030\030 "
-  "\001(\r\022\030\n\020total_ask_remain\030\031 \001(\004\022\030\n\020total_b"
-  "id_remain\030\032 \001(\004\022!\n\031out_time_total_ask_re"
-  "main\030\033 \001(\003\022!\n\031out_time_total_bid_remain\030"
-  "\034 \001(\0032\251\002\n\005Stock\022\?\n\nGetDayData\022\025.stock_ap"
-  "i.StockQuery\032\030.stock_api.CybosDayDatas\"\000"
-  "\022B\n\rGetMinuteData\022\025.stock_api.StockQuery"
-  "\032\030.stock_api.CybosDayDatas\"\000\022I\n\016Subscrib"
-  "eStock\022\031.stock_api.StockCodeQuery\032\030.stoc"
-  "k_api.CybosTickData\"\0000\001\022P\n\017SubscribeBidA"
-  "sk\022\031.stock_api.StockCodeQuery\032\036.stock_ap"
-  "i.CybosBidAskTickData\"\0000\001b\006proto3"
+  "e/protobuf/timestamp.proto\032\033google/proto"
+  "buf/empty.proto\"\036\n\016StockCodeQuery\022\014\n\004cod"
+  "e\030\001 \001(\t\"\201\001\n\nStockQuery\022\014\n\004code\030\001 \001(\t\0221\n\r"
+  "from_datetime\030\002 \001(\0132\032.google.protobuf.Ti"
+  "mestamp\0222\n\016until_datetime\030\003 \001(\0132\032.google"
+  ".protobuf.Timestamp\"\322\002\n\014CybosDayData\022\014\n\004"
+  "date\030\001 \001(\r\022\014\n\004time\030\002 \001(\r\022\023\n\013start_price\030"
+  "\003 \001(\r\022\025\n\rhighest_price\030\004 \001(\r\022\024\n\014lowest_p"
+  "rice\030\005 \001(\r\022\023\n\013close_price\030\006 \001(\r\022\016\n\006volum"
+  "e\030\007 \001(\004\022\016\n\006amount\030\010 \001(\004\022\027\n\017cum_sell_volu"
+  "me\030\t \001(\004\022\026\n\016cum_buy_volume\030\n \001(\004\022\035\n\025fore"
+  "igner_hold_volume\030\013 \001(\003\022\033\n\023foreigner_hol"
+  "d_rate\030\014 \001(\002\022\036\n\026institution_buy_volume\030\r"
+  " \001(\003\022\"\n\032institution_cum_buy_volume\030\016 \001(\003"
+  "\":\n\rCybosDayDatas\022)\n\010day_data\030\001 \003(\0132\027.st"
+  "ock_api.CybosDayData\"\246\004\n\rCybosTickData\022-"
+  "\n\ttick_date\030\001 \001(\0132\032.google.protobuf.Time"
+  "stamp\022\014\n\004code\030\002 \001(\t\022\024\n\014company_name\030\003 \001("
+  "\t\022\026\n\016yesterday_diff\030\004 \001(\005\022\014\n\004time\030\005 \001(\r\022"
+  "\023\n\013start_price\030\006 \001(\r\022\025\n\rhighest_price\030\007 "
+  "\001(\r\022\024\n\014lowest_price\030\010 \001(\r\022\021\n\task_price\030\t"
+  " \001(\r\022\021\n\tbid_price\030\n \001(\r\022\022\n\ncum_volume\030\013 "
+  "\001(\004\022\022\n\ncum_amount\030\014 \001(\004\022\025\n\rcurrent_price"
+  "\030\r \001(\r\022\023\n\013buy_or_sell\030\016 \001(\010\022 \n\030cum_sell_"
+  "volume_by_price\030\017 \001(\004\022\037\n\027cum_buy_volume_"
+  "by_price\030\020 \001(\004\022\016\n\006volume\030\021 \001(\004\022\025\n\rtime_w"
+  "ith_sec\030\022 \001(\r\022\027\n\017market_type_exp\030\023 \001(\r\022\023"
+  "\n\013market_type\030\024 \001(\r\022\027\n\017out_time_volume\030\025"
+  " \001(\004\022\027\n\017cum_sell_volume\030\026 \001(\004\022\026\n\016cum_buy"
+  "_volume\030\027 \001(\004\"\360\005\n\023CybosBidAskTickData\022-\n"
+  "\ttick_date\030\001 \001(\0132\032.google.protobuf.Times"
+  "tamp\022\014\n\004code\030\002 \001(\t\022\014\n\004time\030\003 \001(\r\022\016\n\006volu"
+  "me\030\004 \001(\004\022\027\n\017first_ask_price\030\005 \001(\r\022\027\n\017fir"
+  "st_bid_price\030\006 \001(\r\022\030\n\020first_ask_remain\030\007"
+  " \001(\r\022\030\n\020first_bid_remain\030\010 \001(\r\022\030\n\020second"
+  "_ask_price\030\t \001(\r\022\030\n\020second_bid_price\030\n \001"
+  "(\r\022\031\n\021second_ask_remain\030\013 \001(\r\022\031\n\021second_"
+  "bid_remain\030\014 \001(\r\022\027\n\017third_ask_price\030\r \001("
+  "\r\022\027\n\017third_bid_price\030\016 \001(\r\022\030\n\020third_ask_"
+  "remain\030\017 \001(\r\022\030\n\020third_bid_remain\030\020 \001(\r\022\030"
+  "\n\020fourth_ask_price\030\021 \001(\r\022\030\n\020fourth_bid_p"
+  "rice\030\022 \001(\r\022\031\n\021fourth_ask_remain\030\023 \001(\r\022\031\n"
+  "\021fourth_bid_remain\030\024 \001(\r\022\027\n\017fifth_ask_pr"
+  "ice\030\025 \001(\r\022\027\n\017fifth_bid_price\030\026 \001(\r\022\030\n\020fi"
+  "fth_ask_remain\030\027 \001(\r\022\030\n\020fifth_bid_remain"
+  "\030\030 \001(\r\022\030\n\020total_ask_remain\030\031 \001(\004\022\030\n\020tota"
+  "l_bid_remain\030\032 \001(\004\022!\n\031out_time_total_ask"
+  "_remain\030\033 \001(\003\022!\n\031out_time_total_bid_rema"
+  "in\030\034 \001(\0032\302\003\n\005Stock\022\?\n\nGetDayData\022\025.stock"
+  "_api.StockQuery\032\030.stock_api.CybosDayData"
+  "s\"\000\022B\n\rGetMinuteData\022\025.stock_api.StockQu"
+  "ery\032\030.stock_api.CybosDayDatas\"\000\022K\n\024Reque"
+  "stCybosTickData\022\031.stock_api.StockCodeQue"
+  "ry\032\026.google.protobuf.Empty\"\000\022I\n\022RequestC"
+  "ybosBidAsk\022\031.stock_api.StockCodeQuery\032\026."
+  "google.protobuf.Empty\"\000\022K\n\023ListenCybosTi"
+  "ckData\022\026.google.protobuf.Empty\032\030.stock_a"
+  "pi.CybosTickData\"\0000\001\022O\n\021ListenCybosBidAs"
+  "k\022\026.google.protobuf.Empty\032\036.stock_api.Cy"
+  "bosBidAskTickData\"\0000\001b\006proto3"
   ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_stock_5fprovider_2eproto_deps[1] = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_stock_5fprovider_2eproto_deps[2] = {
+  &::descriptor_table_google_2fprotobuf_2fempty_2eproto,
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_stock_5fprovider_2eproto_sccs[6] = {
@@ -325,8 +332,8 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_sto
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_stock_5fprovider_2eproto_once;
 static bool descriptor_table_stock_5fprovider_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_stock_5fprovider_2eproto = {
-  &descriptor_table_stock_5fprovider_2eproto_initialized, descriptor_table_protodef_stock_5fprovider_2eproto, "stock_provider.proto", 2233,
-  &descriptor_table_stock_5fprovider_2eproto_once, descriptor_table_stock_5fprovider_2eproto_sccs, descriptor_table_stock_5fprovider_2eproto_deps, 6, 1,
+  &descriptor_table_stock_5fprovider_2eproto_initialized, descriptor_table_protodef_stock_5fprovider_2eproto, "stock_provider.proto", 2429,
+  &descriptor_table_stock_5fprovider_2eproto_once, descriptor_table_stock_5fprovider_2eproto_sccs, descriptor_table_stock_5fprovider_2eproto_deps, 6, 2,
   schemas, file_default_instances, TableStruct_stock_5fprovider_2eproto::offsets,
   file_level_metadata_stock_5fprovider_2eproto, 6, file_level_enum_descriptors_stock_5fprovider_2eproto, file_level_service_descriptors_stock_5fprovider_2eproto,
 };
@@ -851,16 +858,16 @@ CybosDayData::CybosDayData(const CybosDayData& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       _internal_metadata_(nullptr) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::memcpy(&time_, &from.time_,
-    static_cast<size_t>(reinterpret_cast<char*>(&institution_cum_buy_volume_) -
-    reinterpret_cast<char*>(&time_)) + sizeof(institution_cum_buy_volume_));
+  ::memcpy(&date_, &from.date_,
+    static_cast<size_t>(reinterpret_cast<char*>(&foreigner_hold_rate_) -
+    reinterpret_cast<char*>(&date_)) + sizeof(foreigner_hold_rate_));
   // @@protoc_insertion_point(copy_constructor:stock_api.CybosDayData)
 }
 
 void CybosDayData::SharedCtor() {
-  ::memset(&time_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&institution_cum_buy_volume_) -
-      reinterpret_cast<char*>(&time_)) + sizeof(institution_cum_buy_volume_));
+  ::memset(&date_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&foreigner_hold_rate_) -
+      reinterpret_cast<char*>(&date_)) + sizeof(foreigner_hold_rate_));
 }
 
 CybosDayData::~CybosDayData() {
@@ -886,9 +893,9 @@ void CybosDayData::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&time_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&institution_cum_buy_volume_) -
-      reinterpret_cast<char*>(&time_)) + sizeof(institution_cum_buy_volume_));
+  ::memset(&date_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&foreigner_hold_rate_) -
+      reinterpret_cast<char*>(&date_)) + sizeof(foreigner_hold_rate_));
   _internal_metadata_.Clear();
 }
 
@@ -899,93 +906,100 @@ const char* CybosDayData::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // uint32 time = 1;
+      // uint32 date = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          date_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // uint32 time = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
           time_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // uint32 start_price = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+      // uint32 start_price = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
           start_price_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // uint32 highest_price = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+      // uint32 highest_price = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
           highest_price_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // uint32 lowest_price = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
+      // uint32 lowest_price = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
           lowest_price_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // uint32 close_price = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
+      // uint32 close_price = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
           close_price_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // uint64 volume = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
+      // uint64 volume = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 56)) {
           volume_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // uint64 amount = 7;
-      case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 56)) {
+      // uint64 amount = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
           amount_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // uint64 cum_sell_volume = 8;
-      case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+      // uint64 cum_sell_volume = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 72)) {
           cum_sell_volume_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // uint64 cum_buy_volume = 9;
-      case 9:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 72)) {
+      // uint64 cum_buy_volume = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 80)) {
           cum_buy_volume_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // int64 foreigner_hold_volume = 10;
-      case 10:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 80)) {
+      // int64 foreigner_hold_volume = 11;
+      case 11:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 88)) {
           foreigner_hold_volume_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // float foreigner_hold_rate = 11;
-      case 11:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 93)) {
+      // float foreigner_hold_rate = 12;
+      case 12:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 101)) {
           foreigner_hold_rate_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else goto handle_unusual;
         continue;
-      // int64 institution_buy_volume = 12;
-      case 12:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 96)) {
+      // int64 institution_buy_volume = 13;
+      case 13:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 104)) {
           institution_buy_volume_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // int64 institution_cum_buy_volume = 13;
-      case 13:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 104)) {
+      // int64 institution_cum_buy_volume = 14;
+      case 14:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 112)) {
           institution_cum_buy_volume_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
@@ -1016,82 +1030,88 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // uint32 time = 1;
+  // uint32 date = 1;
+  if (this->date() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_date(), target);
+  }
+
+  // uint32 time = 2;
   if (this->time() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_time(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(2, this->_internal_time(), target);
   }
 
-  // uint32 start_price = 2;
+  // uint32 start_price = 3;
   if (this->start_price() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(2, this->_internal_start_price(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(3, this->_internal_start_price(), target);
   }
 
-  // uint32 highest_price = 3;
+  // uint32 highest_price = 4;
   if (this->highest_price() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(3, this->_internal_highest_price(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(4, this->_internal_highest_price(), target);
   }
 
-  // uint32 lowest_price = 4;
+  // uint32 lowest_price = 5;
   if (this->lowest_price() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(4, this->_internal_lowest_price(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(5, this->_internal_lowest_price(), target);
   }
 
-  // uint32 close_price = 5;
+  // uint32 close_price = 6;
   if (this->close_price() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(5, this->_internal_close_price(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(6, this->_internal_close_price(), target);
   }
 
-  // uint64 volume = 6;
+  // uint64 volume = 7;
   if (this->volume() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(6, this->_internal_volume(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(7, this->_internal_volume(), target);
   }
 
-  // uint64 amount = 7;
+  // uint64 amount = 8;
   if (this->amount() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(7, this->_internal_amount(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(8, this->_internal_amount(), target);
   }
 
-  // uint64 cum_sell_volume = 8;
+  // uint64 cum_sell_volume = 9;
   if (this->cum_sell_volume() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(8, this->_internal_cum_sell_volume(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(9, this->_internal_cum_sell_volume(), target);
   }
 
-  // uint64 cum_buy_volume = 9;
+  // uint64 cum_buy_volume = 10;
   if (this->cum_buy_volume() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(9, this->_internal_cum_buy_volume(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(10, this->_internal_cum_buy_volume(), target);
   }
 
-  // int64 foreigner_hold_volume = 10;
+  // int64 foreigner_hold_volume = 11;
   if (this->foreigner_hold_volume() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(10, this->_internal_foreigner_hold_volume(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(11, this->_internal_foreigner_hold_volume(), target);
   }
 
-  // float foreigner_hold_rate = 11;
+  // float foreigner_hold_rate = 12;
   if (!(this->foreigner_hold_rate() <= 0 && this->foreigner_hold_rate() >= 0)) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(11, this->_internal_foreigner_hold_rate(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(12, this->_internal_foreigner_hold_rate(), target);
   }
 
-  // int64 institution_buy_volume = 12;
+  // int64 institution_buy_volume = 13;
   if (this->institution_buy_volume() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(12, this->_internal_institution_buy_volume(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(13, this->_internal_institution_buy_volume(), target);
   }
 
-  // int64 institution_cum_buy_volume = 13;
+  // int64 institution_cum_buy_volume = 14;
   if (this->institution_cum_buy_volume() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(13, this->_internal_institution_cum_buy_volume(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(14, this->_internal_institution_cum_buy_volume(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1110,93 +1130,100 @@ size_t CybosDayData::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // uint32 time = 1;
+  // uint32 date = 1;
+  if (this->date() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->_internal_date());
+  }
+
+  // uint32 time = 2;
   if (this->time() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
         this->_internal_time());
   }
 
-  // uint32 start_price = 2;
+  // uint32 start_price = 3;
   if (this->start_price() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
         this->_internal_start_price());
   }
 
-  // uint32 highest_price = 3;
+  // uint32 highest_price = 4;
   if (this->highest_price() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
         this->_internal_highest_price());
   }
 
-  // uint32 lowest_price = 4;
+  // uint32 lowest_price = 5;
   if (this->lowest_price() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
         this->_internal_lowest_price());
   }
 
-  // uint64 volume = 6;
-  if (this->volume() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
-        this->_internal_volume());
-  }
-
-  // uint64 amount = 7;
-  if (this->amount() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
-        this->_internal_amount());
-  }
-
-  // uint64 cum_sell_volume = 8;
-  if (this->cum_sell_volume() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
-        this->_internal_cum_sell_volume());
-  }
-
-  // uint32 close_price = 5;
+  // uint32 close_price = 6;
   if (this->close_price() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
         this->_internal_close_price());
   }
 
-  // float foreigner_hold_rate = 11;
-  if (!(this->foreigner_hold_rate() <= 0 && this->foreigner_hold_rate() >= 0)) {
-    total_size += 1 + 4;
+  // uint64 volume = 7;
+  if (this->volume() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_volume());
   }
 
-  // uint64 cum_buy_volume = 9;
+  // uint64 amount = 8;
+  if (this->amount() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_amount());
+  }
+
+  // uint64 cum_sell_volume = 9;
+  if (this->cum_sell_volume() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_cum_sell_volume());
+  }
+
+  // uint64 cum_buy_volume = 10;
   if (this->cum_buy_volume() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
         this->_internal_cum_buy_volume());
   }
 
-  // int64 foreigner_hold_volume = 10;
+  // int64 foreigner_hold_volume = 11;
   if (this->foreigner_hold_volume() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64Size(
         this->_internal_foreigner_hold_volume());
   }
 
-  // int64 institution_buy_volume = 12;
+  // int64 institution_buy_volume = 13;
   if (this->institution_buy_volume() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64Size(
         this->_internal_institution_buy_volume());
   }
 
-  // int64 institution_cum_buy_volume = 13;
+  // int64 institution_cum_buy_volume = 14;
   if (this->institution_cum_buy_volume() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64Size(
         this->_internal_institution_cum_buy_volume());
+  }
+
+  // float foreigner_hold_rate = 12;
+  if (!(this->foreigner_hold_rate() <= 0 && this->foreigner_hold_rate() >= 0)) {
+    total_size += 1 + 4;
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1230,6 +1257,9 @@ void CybosDayData::MergeFrom(const CybosDayData& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (from.date() != 0) {
+    _internal_set_date(from._internal_date());
+  }
   if (from.time() != 0) {
     _internal_set_time(from._internal_time());
   }
@@ -1242,6 +1272,9 @@ void CybosDayData::MergeFrom(const CybosDayData& from) {
   if (from.lowest_price() != 0) {
     _internal_set_lowest_price(from._internal_lowest_price());
   }
+  if (from.close_price() != 0) {
+    _internal_set_close_price(from._internal_close_price());
+  }
   if (from.volume() != 0) {
     _internal_set_volume(from._internal_volume());
   }
@@ -1250,12 +1283,6 @@ void CybosDayData::MergeFrom(const CybosDayData& from) {
   }
   if (from.cum_sell_volume() != 0) {
     _internal_set_cum_sell_volume(from._internal_cum_sell_volume());
-  }
-  if (from.close_price() != 0) {
-    _internal_set_close_price(from._internal_close_price());
-  }
-  if (!(from.foreigner_hold_rate() <= 0 && from.foreigner_hold_rate() >= 0)) {
-    _internal_set_foreigner_hold_rate(from._internal_foreigner_hold_rate());
   }
   if (from.cum_buy_volume() != 0) {
     _internal_set_cum_buy_volume(from._internal_cum_buy_volume());
@@ -1268,6 +1295,9 @@ void CybosDayData::MergeFrom(const CybosDayData& from) {
   }
   if (from.institution_cum_buy_volume() != 0) {
     _internal_set_institution_cum_buy_volume(from._internal_institution_cum_buy_volume());
+  }
+  if (!(from.foreigner_hold_rate() <= 0 && from.foreigner_hold_rate() >= 0)) {
+    _internal_set_foreigner_hold_rate(from._internal_foreigner_hold_rate());
   }
 }
 
@@ -1292,19 +1322,20 @@ bool CybosDayData::IsInitialized() const {
 void CybosDayData::InternalSwap(CybosDayData* other) {
   using std::swap;
   _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(date_, other->date_);
   swap(time_, other->time_);
   swap(start_price_, other->start_price_);
   swap(highest_price_, other->highest_price_);
   swap(lowest_price_, other->lowest_price_);
+  swap(close_price_, other->close_price_);
   swap(volume_, other->volume_);
   swap(amount_, other->amount_);
   swap(cum_sell_volume_, other->cum_sell_volume_);
-  swap(close_price_, other->close_price_);
-  swap(foreigner_hold_rate_, other->foreigner_hold_rate_);
   swap(cum_buy_volume_, other->cum_buy_volume_);
   swap(foreigner_hold_volume_, other->foreigner_hold_volume_);
   swap(institution_buy_volume_, other->institution_buy_volume_);
   swap(institution_cum_buy_volume_, other->institution_cum_buy_volume_);
+  swap(foreigner_hold_rate_, other->foreigner_hold_rate_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata CybosDayData::GetMetadata() const {

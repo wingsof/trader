@@ -24,8 +24,10 @@ namespace stock_api {
 static const char* Stock_method_names[] = {
   "/stock_api.Stock/GetDayData",
   "/stock_api.Stock/GetMinuteData",
-  "/stock_api.Stock/SubscribeStock",
-  "/stock_api.Stock/SubscribeBidAsk",
+  "/stock_api.Stock/RequestCybosTickData",
+  "/stock_api.Stock/RequestCybosBidAsk",
+  "/stock_api.Stock/ListenCybosTickData",
+  "/stock_api.Stock/ListenCybosBidAsk",
 };
 
 std::unique_ptr< Stock::Stub> Stock::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -37,8 +39,10 @@ std::unique_ptr< Stock::Stub> Stock::NewStub(const std::shared_ptr< ::grpc::Chan
 Stock::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
   : channel_(channel), rpcmethod_GetDayData_(Stock_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_GetMinuteData_(Stock_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SubscribeStock_(Stock_method_names[2], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_SubscribeBidAsk_(Stock_method_names[3], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_RequestCybosTickData_(Stock_method_names[2], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_RequestCybosBidAsk_(Stock_method_names[3], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ListenCybosTickData_(Stock_method_names[4], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_ListenCybosBidAsk_(Stock_method_names[5], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   {}
 
 ::grpc::Status Stock::Stub::GetDayData(::grpc::ClientContext* context, const ::stock_api::StockQuery& request, ::stock_api::CybosDayDatas* response) {
@@ -97,36 +101,92 @@ void Stock::Stub::experimental_async::GetMinuteData(::grpc::ClientContext* conte
   return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::CybosDayDatas>::Create(channel_.get(), cq, rpcmethod_GetMinuteData_, context, request, false);
 }
 
-::grpc::ClientReader< ::stock_api::CybosTickData>* Stock::Stub::SubscribeStockRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request) {
-  return ::grpc_impl::internal::ClientReaderFactory< ::stock_api::CybosTickData>::Create(channel_.get(), rpcmethod_SubscribeStock_, context, request);
+::grpc::Status Stock::Stub::RequestCybosTickData(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_RequestCybosTickData_, context, request, response);
 }
 
-void Stock::Stub::experimental_async::SubscribeStock(::grpc::ClientContext* context, ::stock_api::StockCodeQuery* request, ::grpc::experimental::ClientReadReactor< ::stock_api::CybosTickData>* reactor) {
-  ::grpc_impl::internal::ClientCallbackReaderFactory< ::stock_api::CybosTickData>::Create(stub_->channel_.get(), stub_->rpcmethod_SubscribeStock_, context, request, reactor);
+void Stock::Stub::experimental_async::RequestCybosTickData(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_RequestCybosTickData_, context, request, response, std::move(f));
 }
 
-::grpc::ClientAsyncReader< ::stock_api::CybosTickData>* Stock::Stub::AsyncSubscribeStockRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq, void* tag) {
-  return ::grpc_impl::internal::ClientAsyncReaderFactory< ::stock_api::CybosTickData>::Create(channel_.get(), cq, rpcmethod_SubscribeStock_, context, request, true, tag);
+void Stock::Stub::experimental_async::RequestCybosTickData(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_RequestCybosTickData_, context, request, response, std::move(f));
 }
 
-::grpc::ClientAsyncReader< ::stock_api::CybosTickData>* Stock::Stub::PrepareAsyncSubscribeStockRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncReaderFactory< ::stock_api::CybosTickData>::Create(channel_.get(), cq, rpcmethod_SubscribeStock_, context, request, false, nullptr);
+void Stock::Stub::experimental_async::RequestCybosTickData(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_RequestCybosTickData_, context, request, response, reactor);
 }
 
-::grpc::ClientReader< ::stock_api::CybosBidAskTickData>* Stock::Stub::SubscribeBidAskRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request) {
-  return ::grpc_impl::internal::ClientReaderFactory< ::stock_api::CybosBidAskTickData>::Create(channel_.get(), rpcmethod_SubscribeBidAsk_, context, request);
+void Stock::Stub::experimental_async::RequestCybosTickData(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_RequestCybosTickData_, context, request, response, reactor);
 }
 
-void Stock::Stub::experimental_async::SubscribeBidAsk(::grpc::ClientContext* context, ::stock_api::StockCodeQuery* request, ::grpc::experimental::ClientReadReactor< ::stock_api::CybosBidAskTickData>* reactor) {
-  ::grpc_impl::internal::ClientCallbackReaderFactory< ::stock_api::CybosBidAskTickData>::Create(stub_->channel_.get(), stub_->rpcmethod_SubscribeBidAsk_, context, request, reactor);
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* Stock::Stub::AsyncRequestCybosTickDataRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::google::protobuf::Empty>::Create(channel_.get(), cq, rpcmethod_RequestCybosTickData_, context, request, true);
 }
 
-::grpc::ClientAsyncReader< ::stock_api::CybosBidAskTickData>* Stock::Stub::AsyncSubscribeBidAskRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq, void* tag) {
-  return ::grpc_impl::internal::ClientAsyncReaderFactory< ::stock_api::CybosBidAskTickData>::Create(channel_.get(), cq, rpcmethod_SubscribeBidAsk_, context, request, true, tag);
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* Stock::Stub::PrepareAsyncRequestCybosTickDataRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::google::protobuf::Empty>::Create(channel_.get(), cq, rpcmethod_RequestCybosTickData_, context, request, false);
 }
 
-::grpc::ClientAsyncReader< ::stock_api::CybosBidAskTickData>* Stock::Stub::PrepareAsyncSubscribeBidAskRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncReaderFactory< ::stock_api::CybosBidAskTickData>::Create(channel_.get(), cq, rpcmethod_SubscribeBidAsk_, context, request, false, nullptr);
+::grpc::Status Stock::Stub::RequestCybosBidAsk(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_RequestCybosBidAsk_, context, request, response);
+}
+
+void Stock::Stub::experimental_async::RequestCybosBidAsk(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_RequestCybosBidAsk_, context, request, response, std::move(f));
+}
+
+void Stock::Stub::experimental_async::RequestCybosBidAsk(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_RequestCybosBidAsk_, context, request, response, std::move(f));
+}
+
+void Stock::Stub::experimental_async::RequestCybosBidAsk(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_RequestCybosBidAsk_, context, request, response, reactor);
+}
+
+void Stock::Stub::experimental_async::RequestCybosBidAsk(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_RequestCybosBidAsk_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* Stock::Stub::AsyncRequestCybosBidAskRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::google::protobuf::Empty>::Create(channel_.get(), cq, rpcmethod_RequestCybosBidAsk_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* Stock::Stub::PrepareAsyncRequestCybosBidAskRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::google::protobuf::Empty>::Create(channel_.get(), cq, rpcmethod_RequestCybosBidAsk_, context, request, false);
+}
+
+::grpc::ClientReader< ::stock_api::CybosTickData>* Stock::Stub::ListenCybosTickDataRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request) {
+  return ::grpc_impl::internal::ClientReaderFactory< ::stock_api::CybosTickData>::Create(channel_.get(), rpcmethod_ListenCybosTickData_, context, request);
+}
+
+void Stock::Stub::experimental_async::ListenCybosTickData(::grpc::ClientContext* context, ::google::protobuf::Empty* request, ::grpc::experimental::ClientReadReactor< ::stock_api::CybosTickData>* reactor) {
+  ::grpc_impl::internal::ClientCallbackReaderFactory< ::stock_api::CybosTickData>::Create(stub_->channel_.get(), stub_->rpcmethod_ListenCybosTickData_, context, request, reactor);
+}
+
+::grpc::ClientAsyncReader< ::stock_api::CybosTickData>* Stock::Stub::AsyncListenCybosTickDataRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc_impl::internal::ClientAsyncReaderFactory< ::stock_api::CybosTickData>::Create(channel_.get(), cq, rpcmethod_ListenCybosTickData_, context, request, true, tag);
+}
+
+::grpc::ClientAsyncReader< ::stock_api::CybosTickData>* Stock::Stub::PrepareAsyncListenCybosTickDataRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncReaderFactory< ::stock_api::CybosTickData>::Create(channel_.get(), cq, rpcmethod_ListenCybosTickData_, context, request, false, nullptr);
+}
+
+::grpc::ClientReader< ::stock_api::CybosBidAskTickData>* Stock::Stub::ListenCybosBidAskRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request) {
+  return ::grpc_impl::internal::ClientReaderFactory< ::stock_api::CybosBidAskTickData>::Create(channel_.get(), rpcmethod_ListenCybosBidAsk_, context, request);
+}
+
+void Stock::Stub::experimental_async::ListenCybosBidAsk(::grpc::ClientContext* context, ::google::protobuf::Empty* request, ::grpc::experimental::ClientReadReactor< ::stock_api::CybosBidAskTickData>* reactor) {
+  ::grpc_impl::internal::ClientCallbackReaderFactory< ::stock_api::CybosBidAskTickData>::Create(stub_->channel_.get(), stub_->rpcmethod_ListenCybosBidAsk_, context, request, reactor);
+}
+
+::grpc::ClientAsyncReader< ::stock_api::CybosBidAskTickData>* Stock::Stub::AsyncListenCybosBidAskRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc_impl::internal::ClientAsyncReaderFactory< ::stock_api::CybosBidAskTickData>::Create(channel_.get(), cq, rpcmethod_ListenCybosBidAsk_, context, request, true, tag);
+}
+
+::grpc::ClientAsyncReader< ::stock_api::CybosBidAskTickData>* Stock::Stub::PrepareAsyncListenCybosBidAskRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncReaderFactory< ::stock_api::CybosBidAskTickData>::Create(channel_.get(), cq, rpcmethod_ListenCybosBidAsk_, context, request, false, nullptr);
 }
 
 Stock::Service::Service() {
@@ -142,14 +202,24 @@ Stock::Service::Service() {
           std::mem_fn(&Stock::Service::GetMinuteData), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[2],
-      ::grpc::internal::RpcMethod::SERVER_STREAMING,
-      new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::stock_api::StockCodeQuery, ::stock_api::CybosTickData>(
-          std::mem_fn(&Stock::Service::SubscribeStock), this)));
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
+          std::mem_fn(&Stock::Service::RequestCybosTickData), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
+          std::mem_fn(&Stock::Service::RequestCybosBidAsk), this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      Stock_method_names[4],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
-      new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::stock_api::StockCodeQuery, ::stock_api::CybosBidAskTickData>(
-          std::mem_fn(&Stock::Service::SubscribeBidAsk), this)));
+      new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::google::protobuf::Empty, ::stock_api::CybosTickData>(
+          std::mem_fn(&Stock::Service::ListenCybosTickData), this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      Stock_method_names[5],
+      ::grpc::internal::RpcMethod::SERVER_STREAMING,
+      new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::google::protobuf::Empty, ::stock_api::CybosBidAskTickData>(
+          std::mem_fn(&Stock::Service::ListenCybosBidAsk), this)));
 }
 
 Stock::Service::~Service() {
@@ -169,14 +239,28 @@ Stock::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status Stock::Service::SubscribeStock(::grpc::ServerContext* context, const ::stock_api::StockCodeQuery* request, ::grpc::ServerWriter< ::stock_api::CybosTickData>* writer) {
+::grpc::Status Stock::Service::RequestCybosTickData(::grpc::ServerContext* context, const ::stock_api::StockCodeQuery* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status Stock::Service::RequestCybosBidAsk(::grpc::ServerContext* context, const ::stock_api::StockCodeQuery* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status Stock::Service::ListenCybosTickData(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::grpc::ServerWriter< ::stock_api::CybosTickData>* writer) {
   (void) context;
   (void) request;
   (void) writer;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status Stock::Service::SubscribeBidAsk(::grpc::ServerContext* context, const ::stock_api::StockCodeQuery* request, ::grpc::ServerWriter< ::stock_api::CybosBidAskTickData>* writer) {
+::grpc::Status Stock::Service::ListenCybosBidAsk(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::grpc::ServerWriter< ::stock_api::CybosBidAskTickData>* writer) {
   (void) context;
   (void) request;
   (void) writer;

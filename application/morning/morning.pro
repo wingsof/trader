@@ -19,5 +19,5 @@ PKGCONFIG += grpc++
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-SOURCES += main.cpp stock_provider.grpc.pb.cc stock_provider.pb.cc data_provider.cpp
-HEADERS += stock_provider.grpc.pb.h stock_provider.pb.h data_provider.h
+SOURCES += main.cpp stock_provider.grpc.pb.cc stock_provider.pb.cc data_provider.cpp tick_thread.cpp bidask_thread.cpp
+HEADERS += stock_provider.grpc.pb.h stock_provider.pb.h data_provider.h tick_thread.h bidask_thread.h

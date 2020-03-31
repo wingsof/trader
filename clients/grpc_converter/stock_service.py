@@ -18,14 +18,15 @@ from datetime import datetime
 from clients.common import morning_client
 from morning_server import stock_api
 from google.protobuf.timestamp_pb2 import Timestamp
+from google.protobuf.empty_pb2 import Empty
 from gevent.queue import Queue
 
 
 
 class StockServicer(stock_provider_pb2_grpc.StockServicer):
     def __init__(self):
-        self.stock_subscribe_dict = dict()
-        self.bidask_subscribe_dict = dict()
+        self.stock_subscribe_queue = Queue()
+        self.bidask_subscribe_queue = Queue()
 
     def GetDayData(self, request, context):
         print('GetDayData', request)
@@ -36,6 +37,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         protoc_converted = []
         for d in day_datas:
             protoc_converted.append(stock_provider_pb2.CybosDayData(
+                date = d['0'],
                 time = d['time'],
                 start_price = d['start_price'],
                 highest_price = d['highest_price'],
@@ -78,6 +80,17 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
 
 
+    def RequestCybosTickData(self, request, context):
+        stock_api.subscribe_stock(morning_client.get_reader(),
+                                request.code, self.handle_stock_tick)
+        print('Start SubscribeStock', request.code)
+        return Empty()
+
+    def RequestCybosBidAsk(self, request, context):
+        stock_api.subscribe_stock_bidask(morning_client.get_reader(),
+                                        request.code, self.handle_bidask_tick)
+        print('Start Subscribe BidAsk', request.code)
+        return Empty()
 
     def handle_bidask_tick(self, code, data):
         if len(data) != 1:
@@ -85,93 +98,84 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         
         code = code[:code.index('_')]
 
-        if code in self.bidask_subscribe_dict:
-            data = data[0]
-            tick_date = Timestamp()
-            tick_date = tick_date.FromMilliseconds(int(datetime.timestamp(data['date']) * 1000))
-            data = stock_provider_pb2.CybosBidAskTickData(tick_date=tick_date,
-                                                        code=data['0'],
-                                                        time=data['1'],
-                                                        volume=data['2'],
-                                                        first_ask_price=data['3'],
-                                                        first_bid_price=data['4'],
-                                                        first_ask_remain=data['5'],
-                                                        first_bid_remain=data['6'],
-                                                        second_ask_price=data['7'],
-                                                        second_bid_price=data['8'],
-                                                        second_ask_remain=data['9'],
-                                                        second_bid_remain=data['10'],
-                                                        third_ask_price=data['11'],
-                                                        third_bid_price=data['12'],
-                                                        third_ask_remain=data['13'],
-                                                        third_bid_remain=data['14'],
-                                                        fourth_ask_price=data['15'],
-                                                        fourth_bid_price=data['16'],
-                                                        fourth_ask_remain=data['17'],
-                                                        fourth_bid_remain=data['18'],
-                                                        fifth_ask_price=data['19'],
-                                                        fifth_bid_price=data['20'],
-                                                        fifth_ask_remain=data['21'],
-                                                        fifth_bid_remain=data['22'],
-                                                        total_ask_remain=data['23'],
-                                                        total_bid_remain=data['24'],
-                                                        out_time_total_ask_remain=data['25'],
-                                                        out_time_total_bid_remain=data['26'])
-            self.bidask_subscribe_dict[code].put(data)
+        data = data[0]
+        tick_date = Timestamp()
+        tick_date = tick_date.FromMilliseconds(int(datetime.timestamp(data['date']) * 1000))
+        data = stock_provider_pb2.CybosBidAskTickData(tick_date=tick_date,
+                                                    code=data['0'],
+                                                    time=data['1'],
+                                                    volume=data['2'],
+                                                    first_ask_price=data['3'],
+                                                    first_bid_price=data['4'],
+                                                    first_ask_remain=data['5'],
+                                                    first_bid_remain=data['6'],
+                                                    second_ask_price=data['7'],
+                                                    second_bid_price=data['8'],
+                                                    second_ask_remain=data['9'],
+                                                    second_bid_remain=data['10'],
+                                                    third_ask_price=data['11'],
+                                                    third_bid_price=data['12'],
+                                                    third_ask_remain=data['13'],
+                                                    third_bid_remain=data['14'],
+                                                    fourth_ask_price=data['15'],
+                                                    fourth_bid_price=data['16'],
+                                                    fourth_ask_remain=data['17'],
+                                                    fourth_bid_remain=data['18'],
+                                                    fifth_ask_price=data['19'],
+                                                    fifth_bid_price=data['20'],
+                                                    fifth_ask_remain=data['21'],
+                                                    fifth_bid_remain=data['22'],
+                                                    total_ask_remain=data['23'],
+                                                    total_bid_remain=data['24'],
+                                                    out_time_total_ask_remain=data['25'],
+                                                    out_time_total_bid_remain=data['26'])
+        self.bidask_subscribe_queue.put(data)
 
     def handle_stock_tick(self, code, data):
         if len(data) != 1:
             return
 
-        if code in self.stock_subscribe_dict:
-            data = data[0]
-            tick_date = Timestamp()
-            tick_date = tick_date.FromMilliseconds(int(datetime.timestamp(data['date']) * 1000))
-            data = stock_provider_pb2.CybosTickData(tick_date=tick_date,
-                                                    code=data['0'],
-                                                    company_name=data['1'],
-                                                    yesterday_diff=data['2'],
-                                                    time=data['3'],
-                                                    start_price=data['4'],
-                                                    highest_price=data['5'],
-                                                    lowest_price=data['6'],
-                                                    ask_price=data['7'],
-                                                    bid_price=data['8'],
-                                                    cum_volume=data['9'],
-                                                    cum_amount=data['10'],
-                                                    current_price=data['13'],
-                                                    buy_or_sell=(data['14'] == ord('1')),
-                                                    cum_sell_volume_by_price=data['15'],
-                                                    cum_buy_volume_by_price=data['16'],
-                                                    volume=data['17'],
-                                                    time_with_sec=data['18'],
-                                                    market_type_exp=data['19'],
-                                                    market_type=data['20'],
-                                                    out_time_volume=data['21'],
-                                                    cum_sell_volume=data['27'],
-                                                    cum_buy_volume=data['28'])
-            self.stock_subscribe_dict[code].put(data)
+        data = data[0]
+        tick_date = Timestamp()
+        tick_date = tick_date.FromMilliseconds(int(datetime.timestamp(data['date']) * 1000))
+        data = stock_provider_pb2.CybosTickData(tick_date=tick_date,
+                                                code=data['0'],
+                                                company_name=data['1'],
+                                                yesterday_diff=data['2'],
+                                                time=data['3'],
+                                                start_price=data['4'],
+                                                highest_price=data['5'],
+                                                lowest_price=data['6'],
+                                                ask_price=data['7'],
+                                                bid_price=data['8'],
+                                                cum_volume=data['9'],
+                                                cum_amount=data['10'],
+                                                current_price=data['13'],
+                                                buy_or_sell=(data['14'] == ord('1')),
+                                                cum_sell_volume_by_price=data['15'],
+                                                cum_buy_volume_by_price=data['16'],
+                                                volume=data['17'],
+                                                time_with_sec=data['18'],
+                                                market_type_exp=data['19'],
+                                                market_type=data['20'],
+                                                out_time_volume=data['21'],
+                                                cum_sell_volume=data['27'],
+                                                cum_buy_volume=data['28'])
+        self.stock_subscribe_queue.put(data)
 
-    def SubscribeStock(self, request, context):
-        if request.code not in self.stock_subscribe_dict:
-            self.stock_subscribe_dict[request.code] = Queue()
-            stock_api.subscribe_stock(morning_client.get_reader(),
-                                    request.code, self.handle_stock_tick)
-            print('Start SubscribeStock', request.code)
-            while True:
-                data = self.stock_subscribe_dict[request.code].get()
-                yield data
+    def ListenCybosTickData(self, request, context):
+        print('ListenCybosTickData')
+        while True:
+            data = self.stock_subscribe_queue.get()
+            print('delivered')
+            yield data
         print('Done SubscribeStock')
 
-    def SubscribeBidAsk(self, request, context):
-        if request.code not in self.bidask_subscribe_dict:
-            self.bidask_subscribe_dict[request.code] = Queue()
-            stock_api.subscribe_stock_bidask(morning_client.get_reader(),
-                                            request.code, self.handle_bidask_tick)
-            print('Start Subscribe BidAsk', request.code)
-            while True:
-                data = self.bidask_subscribe_dict[request.code].get()
-                yield data
+    def ListenCybosBidAsk(self, request, context):
+        print('ListenCybosBidAsk')
+        while True:
+            data = self.bidask_subscribe_queue.get()
+            yield data
         print('Done SubscribeBidAsk')
 
 
