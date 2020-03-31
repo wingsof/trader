@@ -9,9 +9,10 @@ title = ''
 
 def enumHandler(h, lParam):
     global hwnd
+    global title
     if win32gui.IsWindowVisible(h):
-        #print(win32gui.GetWindowText(h))
-        if title in win32gui.GetWindowText(h):
+        print(win32gui.GetWindowText(h).strip())
+        if title in win32gui.GetWindowText(h).strip():
             hwnd = h
             print("Found window handle: {}".format(h))
 
@@ -49,16 +50,17 @@ class WinDep:
         title = name
         win32gui.EnumWindows(enumHandler, None)
         if hwnd is not None:
+            """
             l, t, r, b = win32gui.GetWindowRect(hwnd)
             window_width = r - l
             window_height = b - t
-            print('****************OK')
             if (width == -1 and height == -1) or (window_width == width and window_height == height):
-                win32gui.SetForegroundWindow(hwnd)
-                win32gui.ShowWindow(hwnd, 1)
-                hwnd = None
-                title = None
-                return True
+            """
+            win32gui.SetForegroundWindow(hwnd)
+            win32gui.ShowWindow(hwnd, 1)
+            hwnd = None
+            title = None
+            return True
         hwnd = None
         title = None
         return False

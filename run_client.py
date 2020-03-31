@@ -5,8 +5,8 @@ import os
 import sys
 from datetime import datetime
 
-sys.stdout = open(os.environ['MORNING_PATH'] + os.sep + 'logs' + os.sep + datetime.now().strftime('%Y%m%d%H%M') + '.log', 'w')
-sys.stderr = sys.stdout
+#sys.stdout = open(os.environ['MORNING_PATH'] + os.sep + 'logs' + os.sep + datetime.now().strftime('%Y%m%d%H%M') + '.log', 'w')
+#sys.stderr = sys.stdout
 
 from multiprocessing import Process
 from utils.auto import auto
