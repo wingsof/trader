@@ -1,0 +1,17 @@
+
+
+0.1
+------------------------------
+* can see tick graph and Bid Ask table
+* can see minute graph and day graph
+* tick, minute and day graph can see what price is average price (20/40/80/120)
+* tick, minute and day graph can see highest price within (5/20/60/90 days)
+* can see list of stocks which amounts top or bull stocks in short time
+* can order stock (buy and sell manually)
+* can see stock list bought
+* graph screen should be changed by following selection from bought list or list of stocks
+
+
+0.2
+--------------------------
+* auto cut, auto buy

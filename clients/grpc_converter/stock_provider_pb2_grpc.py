@@ -36,6 +36,11 @@ class StockStub(object):
         request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
+    self.RequestCybosSubject = channel.unary_unary(
+        '/stock_api.Stock/RequestCybosSubject',
+        request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
     self.ListenCybosTickData = channel.unary_stream(
         '/stock_api.Stock/ListenCybosTickData',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -50,6 +55,11 @@ class StockStub(object):
         '/stock_api.Stock/ListenCurrentTime',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_timestamp__pb2.Timestamp.FromString,
+        )
+    self.ListenCybosSubject = channel.unary_stream(
+        '/stock_api.Stock/ListenCybosSubject',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=stock__provider__pb2.CybosSubjectTickData.FromString,
         )
     self.StartSimulation = channel.unary_unary(
         '/stock_api.Stock/StartSimulation',
@@ -95,6 +105,13 @@ class StockServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def RequestCybosSubject(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def ListenCybosTickData(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -110,6 +127,13 @@ class StockServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def ListenCurrentTime(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def ListenCybosSubject(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -153,6 +177,11 @@ def add_StockServicer_to_server(servicer, server):
           request_deserializer=stock__provider__pb2.StockCodeQuery.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
+      'RequestCybosSubject': grpc.unary_unary_rpc_method_handler(
+          servicer.RequestCybosSubject,
+          request_deserializer=stock__provider__pb2.StockCodeQuery.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
       'ListenCybosTickData': grpc.unary_stream_rpc_method_handler(
           servicer.ListenCybosTickData,
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
@@ -167,6 +196,11 @@ def add_StockServicer_to_server(servicer, server):
           servicer.ListenCurrentTime,
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=google_dot_protobuf_dot_timestamp__pb2.Timestamp.SerializeToString,
+      ),
+      'ListenCybosSubject': grpc.unary_stream_rpc_method_handler(
+          servicer.ListenCybosSubject,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=stock__provider__pb2.CybosSubjectTickData.SerializeToString,
       ),
       'StartSimulation': grpc.unary_unary_rpc_method_handler(
           servicer.StartSimulation,

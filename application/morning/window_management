@@ -17,4 +17,5 @@ NASDQA | JAPAN(1)   ||각각 손절가등 ||            ||                  ||
         * 금일 Minute, 
     * TICK
         * 이전 1분부터 Tracking, 1초 단위로 Tick
-
+        * 단일 매도, 단일 매수 표사ㅣ
+        * 이평선 가격 표시

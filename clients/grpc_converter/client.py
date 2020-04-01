@@ -16,15 +16,15 @@ import stock_provider_pb2_grpc
 import stock_provider_pb2
 from datetime import datetime
 
-from google.protobuf.timestamp_pb2 import Timestamp
+from google.protobuf import timestamp_pb2
 from google.protobuf.empty_pb2 import Empty
 
 _STUB = None
 
 def get_day_data(stub):
-    from_datetime = Timestamp()
+    from_datetime = timestamp_pb2.Timestamp()
     from_datetime.FromSeconds(int(datetime.timestamp(datetime(2020, 3, 18))))
-    until_datetime = Timestamp()
+    until_datetime = timestamp_pb2.Timestamp()
     until_datetime.FromSeconds(int(datetime.timestamp(datetime(2020, 3, 20))))
     query = stock_provider_pb2.StockQuery(code='A005930',
         from_datetime = from_datetime,
@@ -36,9 +36,9 @@ def get_day_data(stub):
 
 
 def get_minute_data(stub):
-    from_datetime = Timestamp()
+    from_datetime = timestamp_pb2.Timestamp()
     from_datetime.FromSeconds(int(datetime.timestamp(datetime(2020, 3, 18))))
-    until_datetime = Timestamp()
+    until_datetime = timestamp_pb2.Timestamp()
     until_datetime.FromSeconds(int(datetime.timestamp(datetime(2020, 3, 20))))
     query = stock_provider_pb2.StockQuery(code='A005930',
         from_datetime = from_datetime,
@@ -50,8 +50,8 @@ def get_minute_data(stub):
 
 
 def start_simulation(stub):
-    from_datetime = Timestamp()
-    from_datetime.FromSeconds(int(datetime.timestamp(datetime(2020, 3, 27, 8, 59))))
+    from_datetime = timestamp_pb2.Timestamp()
+    from_datetime.FromDatetime(datetime(2020, 3, 27, 8, 59))
     simulation_argument = stock_provider_pb2.SimulationArgument(from_datetime=from_datetime)
     response = stub.StartSimulation(simulation_argument) 
 
@@ -62,7 +62,7 @@ def tick_subscriber(stub):
     response = stub.ListenCybosTickData(query)
     for msg in response:
         i += 1
-        #print('tick', i)
+        print('tick', i)
 
 
 def bidask_subscriber(stub):
@@ -71,7 +71,16 @@ def bidask_subscriber(stub):
     response = stub.ListenCybosBidAsk(query)
     for msg in response:
         i += 1
-        #print('bidask', i)
+        print('bidask', i)
+
+
+def subject_subscriber(stub):
+    query = Empty()
+    i = 0
+    response = stub.ListenCybosSubject(query)
+    for msg in response:
+        i += 1
+        print('subject', i)
 
 
 def subscribe_stock(code, stub):
@@ -90,8 +99,7 @@ def time_listener(stub):
     print('ListenCurrentTime')
     response = stub.ListenCurrentTime(query)
     for msg in response:
-        print('got message')
-        print(datetime.fromtimestamp(msg.seconds))
+        pass #print(msg.ToDatetime())
 
 
 def run():
@@ -100,8 +108,8 @@ def run():
         _STUB = stock_provider_pb2_grpc.StockStub(channel)
         #get_day_data(_STUB)
         #get_minute_data(_STUB)
-        #start_simulation(_STUB)
-        gevent.joinall([gevent.spawn(tick_subscriber, _STUB), gevent.spawn(bidask_subscriber, _STUB), gevent.spawn(time_listener, _STUB)])
+        start_simulation(_STUB)
+        gevent.joinall([gevent.spawn(tick_subscriber, _STUB), gevent.spawn(bidask_subscriber, _STUB), gevent.spawn(subject_subscriber, _STUB), gevent.spawn(time_listener, _STUB)])
     print('exit')
 
 if __name__ == '__main__':

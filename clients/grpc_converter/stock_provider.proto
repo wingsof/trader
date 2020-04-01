@@ -11,10 +11,12 @@ service Stock {
   rpc GetMinuteData(StockQuery) returns (CybosDayDatas) {}
   rpc RequestCybosTickData(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosBidAsk(StockCodeQuery) returns (google.protobuf.Empty) {}
+  rpc RequestCybosSubject(StockCodeQuery) returns (google.protobuf.Empty) {}
 
   rpc ListenCybosTickData(google.protobuf.Empty) returns (stream CybosTickData) {}
   rpc ListenCybosBidAsk(google.protobuf.Empty) returns (stream CybosBidAskTickData) {}
   rpc ListenCurrentTime(google.protobuf.Empty) returns (stream google.protobuf.Timestamp) {}
+  rpc ListenCybosSubject(google.protobuf.Empty) returns (stream CybosSubjectTickData) {}
 
   rpc StartSimulation(SimulationArgument) returns (google.protobuf.Empty) {}
   rpc StopSimulation(google.protobuf.Empty) returns (google.protobuf.Empty) {}
@@ -58,6 +60,20 @@ message CybosDayData {
 message CybosDayDatas {
     repeated CybosDayData day_data = 1;
 }
+
+
+message CybosSubjectTickData {
+    google.protobuf.Timestamp tick_date = 1;
+    uint32 time = 2;
+    string name = 3;
+    string code = 4;
+    string company_name = 5;
+    bool buy_or_sell = 6;
+    uint64 volume = 7;
+    int64 total_volume = 8;
+    int64 foreigner_total_volume = 9;
+}
+
 
 message CybosTickData {
     google.protobuf.Timestamp tick_date = 1;

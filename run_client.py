@@ -36,7 +36,7 @@ if __name__ == '__main__':
     login_process = Process(target=auto.run)
     login_process.start()
     login_process.join()
-    time.sleep(120)
+    time.sleep(240)
 
     gen_com_process = Process(target=cybos_com_gen.run)
     gen_com_process.start()

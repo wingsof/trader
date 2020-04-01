@@ -51,12 +51,18 @@ def collect_db(code, db_collection, from_time, until_time):
 
     for bd in ba_data:
         bd['code'] = code
+
+    subject_data = list(db_collection[code+'_S'].find({'date': {'$gt': from_time, '$lte': until_time}}))
+    for sd in subject_data:
+        sd['code'] = code
+
     datas.extend(tick_data)
     datas.extend(ba_data)
+    datas.extend(subject_data)
     return datas
 
 
-def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, time_handler):
+def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler):
     global simulation_done_flag
     time_handler(datetime.now())
     while not simulation_done_flag:
@@ -72,7 +78,9 @@ def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, time_handl
             while d['date'] - datatime > datetime.now() - now:
                 gevent.sleep(0.01)
 
-            if '68' in d:
+            if '9' not in d:
+                subject_tick_handler(d['code'], [d])
+            elif '68' in d:
                 bidask_tick_handler(d['code'], [d])
             else:
                 stock_tick_handler(d['code'], [d])
@@ -82,7 +90,7 @@ def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, time_handl
             time_handler(datatime)
 
 
-def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_handler, time_handler):
+def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler):
     AT_ONCE_SECONDS = 60
     tick_queue = Queue()
     db_collection = MongoClient('mongodb://127.0.0.1:27017').trade_alarm
@@ -93,7 +101,7 @@ def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_han
     market_codes = [yl['code'] for yl in yesterday_list]
     finish_time = simulation_datetime.replace(hour=15, minute=20)
 
-    gevent.spawn(deliver_tick, tick_queue, stock_tick_handler, bidask_tick_handler, time_handler)
+    gevent.spawn(deliver_tick, tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler)
     while simulation_datetime <= finish_time:
         all_data = []
         print('load data', simulation_datetime, 'data period seconds', AT_ONCE_SECONDS, 'real time', datetime.now())
@@ -112,9 +120,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
     def __init__(self):
         print('StockService init')
         self.is_simulation = False
-        self.simulation_datetime = None
         self.stock_subscribe_queue = Queue()
         self.bidask_subscribe_queue = Queue()
+        self.subject_subscribe_queue = Queue()
         self.current_time_queue = Queue()
 
     def GetDayData(self, request, context):
@@ -181,6 +189,13 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         print('Start Subscribe BidAsk', request.code)
         return Empty()
 
+    def RequestCybosSubject(self, request, context):
+        stock_api.subscribe_stock_subject(morning_client.get_reader(),
+                                        request.code, self.handle_subject_tick) 
+        print('Start Subscribe Subject', request.code)
+        return Empty()
+
+
     def handle_bidask_tick(self, code, data):
         if len(data) != 1:
             return
@@ -190,7 +205,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
         data = data[0]
         tick_date = Timestamp()
-        tick_date = tick_date.FromMilliseconds(int(datetime.timestamp(data['date']) * 1000))
+        tick_date.FromDatetime(data['date'])
         data = stock_provider_pb2.CybosBidAskTickData(tick_date=tick_date,
                                                     code=data['0'],
                                                     time=data['1'],
@@ -219,7 +234,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                     total_bid_remain=data['24'],
                                                     out_time_total_ask_remain=data['25'],
                                                     out_time_total_bid_remain=data['26'])
-        self.bidask_subscribe_queue.put(data)
+        self.bidask_subscribe_queue.put_nowait(data)
 
     def handle_stock_tick(self, code, data):
         #print('handle_stock_stick', data)
@@ -228,7 +243,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
         data = data[0]
         tick_date = Timestamp()
-        tick_date = tick_date.FromMilliseconds(int(datetime.timestamp(data['date']) * 1000))
+        tick_date.FromDatetime(data['date'])
         data = stock_provider_pb2.CybosTickData(tick_date=tick_date,
                                                 code=data['0'],
                                                 company_name=data['1'],
@@ -252,7 +267,26 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 out_time_volume=data['21'],
                                                 cum_sell_volume=data['27'],
                                                 cum_buy_volume=data['28'])
-        self.stock_subscribe_queue.put(data)
+        self.stock_subscribe_queue.put_nowait(data)
+
+    def handle_subject_tick(self, code, data):
+        if len(data) != 1:
+            return
+
+        data = data[0]
+        tick_date = Timestamp()
+        tick_date.FromDatetime(data['date'])
+        data = stock_provider_pb2.CybosSubjectTickData(tick_date=tick_date,
+                                                        time=data['0'],
+                                                        name=data['1'],
+                                                        code=data['2'],
+                                                        company_name=data['3'],
+                                                        buy_or_sell=(data['4'] == ord('2')),
+                                                        volume=data['5'],
+                                                        total_volume=data['6'],
+                                                        foreigner_total_volume=data['8'])
+        self.subject_subscribe_queue.put_nowait(data)
+
 
     def ListenCybosTickData(self, request, context):
         print('ListenCybosTickData')
@@ -270,28 +304,33 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             yield data
         print('Done SubscribeBidAsk')
 
+    def ListenCybosSubject(self, request, context):
+        print('ListenCybosSubject')
+
+        while True:
+            data = self.subject_subscribe_queue.get()
+            yield data
+        print('Done ListenCybosSubject')
+
     def handle_time(self, d):
-        print('handle_time', d)
         data_date = Timestamp()
-        #data_date = data_date.FromMilliseconds(int(datetime.timestamp(d) * 1000))
+        data_date.FromDatetime(d)
         self.current_time_queue.put(data_date)
 
     def ListenCurrentTime(self, request, context):
-        print('ListenCurrentTime', 'hello')
+        print('ListenCurrentTime')
 
         while True:
             data = self.current_time_queue.get()
-            print('send time')
             yield data
         print('Done ListenCurrentTime')
 
     def StartSimulation(self, request, context):
         if not self.is_simulation:
             self.is_simulation = True
-            self.simulation_datetime = datetime.fromtimestamp(request.from_datetime.seconds)
-            gevent.spawn(start_tick_provider, self.simulation_datetime, self.handle_stock_tick, self.handle_bidask_tick, self.handle_time)
-            #self.simulation_run_queue.put_nowait('1')
-            print('Start Simulation Mode', self.simulation_datetime)
+            simulation_datetime = request.from_datetime.ToDatetime()
+            gevent.spawn(start_tick_provider, simulation_datetime, self.handle_stock_tick, self.handle_bidask_tick, self.handle_subject_tick, self.handle_time)
+            print('Start Simulation Mode', simulation_datetime)
         return Empty()
 
 
