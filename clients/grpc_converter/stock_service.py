@@ -325,6 +325,16 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             yield data
         print('Done ListenCurrentTime')
 
+    def GetYesterdayTopAmountCodes(self, request, context):
+        print('GetYesterdayTopAmountCodes')
+        market_code = morning_client.get_all_market_code()
+        yesterday_list = get_yesterday_data(datetime.now(), market_code)
+        yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
+        yesterday_list = yesterday_list[:1000]
+        market_codes = [yl['code'] for yl in yesterday_list]
+        print('Done GetYesterdayTopAmountCodes')
+        return stock_provider_pb2.CodeList(codelist=market_codes)
+
     def StartSimulation(self, request, context):
         if not self.is_simulation:
             self.is_simulation = True

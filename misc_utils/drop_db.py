@@ -28,3 +28,15 @@ def drop2():
             else:
                 print(c)
 
+
+def drop3():
+    db = MongoClient('mongodb://' + sys.argv[1] + ':' + sys.argv[2] + '@192.168.0.22:27017')
+    with db:
+        stock_db = db['stock']
+        collections = stock_db.collection_names()
+        for c in collections:
+            if c.find('_') == -1 or c.endswith('_BA'):
+                stock_db[c].drop()
+            else:
+                print('not dropped', c)
+

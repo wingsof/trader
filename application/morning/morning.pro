@@ -7,9 +7,13 @@ CONFIG += link_pkgconfig
 TARGET = morning
 INCLUDEPATH += .
 QT += widgets
+QT += charts
 #LIBS += -L/usr/local/lib
 PKGCONFIG += protobuf
 PKGCONFIG += grpc++
+
+OBJECTS_DIR=generated_files
+MOC_DIR=generated_files
 
 # You can make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -28,7 +32,14 @@ SOURCES += main.cpp \
            stock_server/subject_thread.cpp \
            stock_server/time_thread.cpp \
            stock_server/time_info.cpp \
-           view/mainwindow.cpp
+           stock_model/stockmodel.cpp \
+           view/mainwindow.cpp \
+           view/statusbar.cpp \
+           view/tick_view/tickwindow.cpp \
+           view/bull_card/bullcard.cpp \
+           view/bull_card/bulltable.cpp \
+           view/bull_card/bullmodel.cpp \
+           view/bull_card/bullwidget.cpp
 
 HEADERS += stock_server/stock_provider.grpc.pb.h \
            stock_server/stock_provider.pb.h \
@@ -38,4 +49,11 @@ HEADERS += stock_server/stock_provider.grpc.pb.h \
            stock_server/subject_thread.h \
            stock_server/time_thread.h \
            stock_server/time_info.h \
-           view/mainwindow.h
+           stock_model/stockmodel.h \
+           view/mainwindow.h \
+           view/statusbar.h \
+           view/tick_view/tickwindow.h \
+           view/bull_card/bullcard.h \
+           view/bull_card/bulltable.h \
+           view/bull_card/bullmodel.h \
+           view/bull_card/bullwidget.h

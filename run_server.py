@@ -34,9 +34,7 @@ def run_subscriber():
             subscribe_process.start()
             subscribe_process.join()
             time.sleep(600)
-            validate_process = Process(target=data_validation.start_validation)
-            validate_process.start()
-            validate_process.join()
+            print('Done subscriber')
 
 
 def start_server(is_vbox_on):

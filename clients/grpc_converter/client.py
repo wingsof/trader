@@ -106,10 +106,12 @@ def run():
     global _STUB
     with grpc.insecure_channel('localhost:50052') as channel:
         _STUB = stock_provider_pb2_grpc.StockStub(channel)
+        result = _STUB.GetYesterdayTopAmountCodes(Empty())
+        print('codes', result.codelist)
         #get_day_data(_STUB)
         #get_minute_data(_STUB)
-        start_simulation(_STUB)
-        gevent.joinall([gevent.spawn(tick_subscriber, _STUB), gevent.spawn(bidask_subscriber, _STUB), gevent.spawn(subject_subscriber, _STUB), gevent.spawn(time_listener, _STUB)])
+        #start_simulation(_STUB)
+        #gevent.joinall([gevent.spawn(tick_subscriber, _STUB), gevent.spawn(bidask_subscriber, _STUB), gevent.spawn(subject_subscriber, _STUB), gevent.spawn(time_listener, _STUB)])
     print('exit')
 
 if __name__ == '__main__':

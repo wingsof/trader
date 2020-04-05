@@ -49,7 +49,7 @@ struct TableStruct_stock_5fprovider_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[8]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[9]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -57,6 +57,9 @@ struct TableStruct_stock_5fprovider_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_stock_5fprovider_2eproto;
 namespace stock_api {
+class CodeList;
+class CodeListDefaultTypeInternal;
+extern CodeListDefaultTypeInternal _CodeList_default_instance_;
 class CybosBidAskTickData;
 class CybosBidAskTickDataDefaultTypeInternal;
 extern CybosBidAskTickDataDefaultTypeInternal _CybosBidAskTickData_default_instance_;
@@ -83,6 +86,7 @@ class StockQueryDefaultTypeInternal;
 extern StockQueryDefaultTypeInternal _StockQuery_default_instance_;
 }  // namespace stock_api
 PROTOBUF_NAMESPACE_OPEN
+template<> ::stock_api::CodeList* Arena::CreateMaybeMessage<::stock_api::CodeList>(Arena*);
 template<> ::stock_api::CybosBidAskTickData* Arena::CreateMaybeMessage<::stock_api::CybosBidAskTickData>(Arena*);
 template<> ::stock_api::CybosDayData* Arena::CreateMaybeMessage<::stock_api::CybosDayData>(Arena*);
 template<> ::stock_api::CybosDayDatas* Arena::CreateMaybeMessage<::stock_api::CybosDayDatas>(Arena*);
@@ -231,6 +235,149 @@ class StockCodeQuery :
 };
 // -------------------------------------------------------------------
 
+class CodeList :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.CodeList) */ {
+ public:
+  CodeList();
+  virtual ~CodeList();
+
+  CodeList(const CodeList& from);
+  CodeList(CodeList&& from) noexcept
+    : CodeList() {
+    *this = ::std::move(from);
+  }
+
+  inline CodeList& operator=(const CodeList& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CodeList& operator=(CodeList&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const CodeList& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const CodeList* internal_default_instance() {
+    return reinterpret_cast<const CodeList*>(
+               &_CodeList_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    1;
+
+  friend void swap(CodeList& a, CodeList& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CodeList* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline CodeList* New() const final {
+    return CreateMaybeMessage<CodeList>(nullptr);
+  }
+
+  CodeList* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<CodeList>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const CodeList& from);
+  void MergeFrom(const CodeList& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CodeList* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "stock_api.CodeList";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
+    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kCodelistFieldNumber = 1,
+  };
+  // repeated string codelist = 1;
+  int codelist_size() const;
+  private:
+  int _internal_codelist_size() const;
+  public:
+  void clear_codelist();
+  const std::string& codelist(int index) const;
+  std::string* mutable_codelist(int index);
+  void set_codelist(int index, const std::string& value);
+  void set_codelist(int index, std::string&& value);
+  void set_codelist(int index, const char* value);
+  void set_codelist(int index, const char* value, size_t size);
+  std::string* add_codelist();
+  void add_codelist(const std::string& value);
+  void add_codelist(std::string&& value);
+  void add_codelist(const char* value);
+  void add_codelist(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& codelist() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_codelist();
+  private:
+  const std::string& _internal_codelist(int index) const;
+  std::string* _internal_add_codelist();
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.CodeList)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> codelist_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_stock_5fprovider_2eproto;
+};
+// -------------------------------------------------------------------
+
 class StockQuery :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.StockQuery) */ {
  public:
@@ -273,7 +420,7 @@ class StockQuery :
                &_StockQuery_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    2;
 
   friend void swap(StockQuery& a, StockQuery& b) {
     a.Swap(&b);
@@ -442,7 +589,7 @@ class SimulationArgument :
                &_SimulationArgument_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(SimulationArgument& a, SimulationArgument& b) {
     a.Swap(&b);
@@ -576,7 +723,7 @@ class CybosDayData :
                &_CybosDayData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(CybosDayData& a, CybosDayData& b) {
     a.Swap(&b);
@@ -847,7 +994,7 @@ class CybosDayDatas :
                &_CybosDayDatas_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(CybosDayDatas& a, CybosDayDatas& b) {
     a.Swap(&b);
@@ -984,7 +1131,7 @@ class CybosSubjectTickData :
                &_CybosSubjectTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(CybosSubjectTickData& a, CybosSubjectTickData& b) {
     a.Swap(&b);
@@ -1227,7 +1374,7 @@ class CybosTickData :
                &_CybosTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(CybosTickData& a, CybosTickData& b) {
     a.Swap(&b);
@@ -1617,7 +1764,7 @@ class CybosBidAskTickData :
                &_CybosBidAskTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(CybosBidAskTickData& a, CybosBidAskTickData& b) {
     a.Swap(&b);
@@ -2080,6 +2227,84 @@ inline void StockCodeQuery::set_allocated_code(std::string* code) {
   }
   code_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), code);
   // @@protoc_insertion_point(field_set_allocated:stock_api.StockCodeQuery.code)
+}
+
+// -------------------------------------------------------------------
+
+// CodeList
+
+// repeated string codelist = 1;
+inline int CodeList::_internal_codelist_size() const {
+  return codelist_.size();
+}
+inline int CodeList::codelist_size() const {
+  return _internal_codelist_size();
+}
+inline void CodeList::clear_codelist() {
+  codelist_.Clear();
+}
+inline std::string* CodeList::add_codelist() {
+  // @@protoc_insertion_point(field_add_mutable:stock_api.CodeList.codelist)
+  return _internal_add_codelist();
+}
+inline const std::string& CodeList::_internal_codelist(int index) const {
+  return codelist_.Get(index);
+}
+inline const std::string& CodeList::codelist(int index) const {
+  // @@protoc_insertion_point(field_get:stock_api.CodeList.codelist)
+  return _internal_codelist(index);
+}
+inline std::string* CodeList::mutable_codelist(int index) {
+  // @@protoc_insertion_point(field_mutable:stock_api.CodeList.codelist)
+  return codelist_.Mutable(index);
+}
+inline void CodeList::set_codelist(int index, const std::string& value) {
+  // @@protoc_insertion_point(field_set:stock_api.CodeList.codelist)
+  codelist_.Mutable(index)->assign(value);
+}
+inline void CodeList::set_codelist(int index, std::string&& value) {
+  // @@protoc_insertion_point(field_set:stock_api.CodeList.codelist)
+  codelist_.Mutable(index)->assign(std::move(value));
+}
+inline void CodeList::set_codelist(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  codelist_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:stock_api.CodeList.codelist)
+}
+inline void CodeList::set_codelist(int index, const char* value, size_t size) {
+  codelist_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:stock_api.CodeList.codelist)
+}
+inline std::string* CodeList::_internal_add_codelist() {
+  return codelist_.Add();
+}
+inline void CodeList::add_codelist(const std::string& value) {
+  codelist_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:stock_api.CodeList.codelist)
+}
+inline void CodeList::add_codelist(std::string&& value) {
+  codelist_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:stock_api.CodeList.codelist)
+}
+inline void CodeList::add_codelist(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  codelist_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:stock_api.CodeList.codelist)
+}
+inline void CodeList::add_codelist(const char* value, size_t size) {
+  codelist_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:stock_api.CodeList.codelist)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+CodeList::codelist() const {
+  // @@protoc_insertion_point(field_list:stock_api.CodeList.codelist)
+  return codelist_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+CodeList::mutable_codelist() {
+  // @@protoc_insertion_point(field_mutable_list:stock_api.CodeList.codelist)
+  return &codelist_;
 }
 
 // -------------------------------------------------------------------
@@ -4202,6 +4427,8 @@ inline void CybosBidAskTickData::set_out_time_total_bid_remain(::PROTOBUF_NAMESP
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

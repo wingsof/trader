@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <QObject>
+#include <QStringList>
 #include <time.h>
 #include <unordered_map>
 #include <any>
@@ -21,6 +22,8 @@ using stock_api::CybosSubjectTickData;
 class DataProvider : public QObject {
 Q_OBJECT
 public:
+    enum class DataType { STOCK_TICK, BIDASK_TICK, SUBJECT_TICK };
+
     DataProvider();
     ~DataProvider();
 
@@ -28,6 +31,7 @@ public:
     void requestStockTick(const std::string &code);
     void requestBidAskTick(const std::string &code);
     void requestSubjectTick(const std::string &code);
+    QStringList requestYesterdayTopAmount();
     void startSimulation(time_t from_time);
     static DataProvider & getInstance() {
         static DataProvider provider;

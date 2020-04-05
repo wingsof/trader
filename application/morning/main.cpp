@@ -1,8 +1,8 @@
 #include <QApplication>
 #include <memory>
-#include "stock_server/data_provider.h"
 #include "stock_server/stock_provider.grpc.pb.h"
 #include "view/mainwindow.h"
+#include "stock_model/stockmodel.h"
 #include <time.h>
 
 using stock_api::CybosTickData;
@@ -32,7 +32,8 @@ int main(int argc, char *argv[]) {
     qRegisterMetaType<CybosSubjectTickData>("CybosSubjectTickData");
     qRegisterMetaType<Timestamp>("Timestamp");
     QApplication app(argc, argv);
-    MainWindow main;
+    StockModel model;
+    MainWindow main(model);
     main.show();
     return app.exec();
 }

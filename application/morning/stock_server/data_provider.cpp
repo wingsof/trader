@@ -28,6 +28,7 @@ using stock_api::StockCodeQuery;
 using stock_api::StockQuery;
 using stock_api::CybosDayDatas;
 using stock_api::CybosDayData;
+using stock_api::CodeList;
 using stock_api::SimulationArgument;
 
 
@@ -115,4 +116,17 @@ void DataProvider::requestStockDayData(const std::string &code, time_t from_date
         CybosDayData d = data.day_data(i);
         std::cout << "price: " << d.start_price() << "\ttime: " << d.date() << std::endl;
     }
+}
+
+
+QStringList DataProvider::requestYesterdayTopAmount() {
+    ClientContext context;
+    CodeList data;
+    Empty empty;
+    stub_->GetYesterdayTopAmountCodes(&context, empty, &data);
+    QStringList codeList;
+    for (int i = 0; i < data.codelist_size(); ++i) {
+        codeList.append(QString::fromStdString(data.codelist(i)));
+    }
+    return codeList;
 }
