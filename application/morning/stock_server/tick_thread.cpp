@@ -41,7 +41,7 @@ void TickThread::run() {
         stub_->ListenCybosTickData(&context, empty)); 
     while (reader->Read(&data)) {
         emit tickArrived(new CybosTickData(data));
-        std::cout << "Tick Data" << "current price: " << data.current_price() << "\tcum_volume: " << data.cum_volume() << std::endl;
+        //std::cout << "Tick Data" << "current price: " << data.current_price() << "\tcum_volume: " << data.cum_volume() << std::endl;
     }
     Status status = reader->Finish();
     if (status.ok()) {

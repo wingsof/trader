@@ -64,7 +64,6 @@ def collect_db(code, db_collection, from_time, until_time):
 
 def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler):
     global simulation_done_flag
-    time_handler(datetime.now())
     while not simulation_done_flag:
         data = tick_queue.get()
 
@@ -266,7 +265,8 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 market_type=data['20'],
                                                 out_time_volume=data['21'],
                                                 cum_sell_volume=data['27'],
-                                                cum_buy_volume=data['28'])
+                                                cum_buy_volume=data['28'],
+                                                is_kospi=morning_client.is_kospi_code(code))
         self.stock_subscribe_queue.put_nowait(data)
 
     def handle_subject_tick(self, code, data):

@@ -41,7 +41,7 @@ void BidAskThread::run() {
         stub_->ListenCybosBidAsk(&context, empty)); 
     while (reader->Read(&data)) {
         emit tickArrived(new CybosBidAskTickData(data));
-        std::cout << "BidAsk Data" << "first ask: " << data.first_ask_price() << "\tfirst_bid: " << data.first_bid_price() << std::endl;
+        //std::cout << "BidAsk Data" << "first ask: " << data.first_ask_price() << "\tfirst_bid: " << data.first_bid_price() << std::endl;
     }
     Status status = reader->Finish();
     if (status.ok()) {

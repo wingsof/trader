@@ -35,10 +35,10 @@ BullCard::~BullCard() {}
 
 
 void BullCard::refresh() {
-
+    bullmodel->refresh();
 }
 
 
 void BullCard::next() {
-    
+    bullmodel->next(); 
 }

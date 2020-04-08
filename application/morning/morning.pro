@@ -27,10 +27,13 @@ SOURCES += main.cpp \
            stock_server/stock_provider.grpc.pb.cc \
            stock_server/stock_provider.pb.cc \
            stock_server/data_provider.cpp \
+           stock_server/stock_object.cpp \
            stock_server/tick_thread.cpp \
            stock_server/bidask_thread.cpp \
            stock_server/subject_thread.cpp \
            stock_server/time_thread.cpp \
+           stock_server/plugin/chooser/chooserplugin.cpp \
+           stock_server/plugin/chooser/topamount.cpp \
            stock_server/time_info.cpp \
            stock_model/stockmodel.cpp \
            view/mainwindow.cpp \
@@ -39,21 +42,25 @@ SOURCES += main.cpp \
            view/bull_card/bullcard.cpp \
            view/bull_card/bulltable.cpp \
            view/bull_card/bullmodel.cpp \
-           view/bull_card/bullwidget.cpp
+           util/morning_timer.cpp
 
 HEADERS += stock_server/stock_provider.grpc.pb.h \
            stock_server/stock_provider.pb.h \
            stock_server/data_provider.h \
+           stock_server/stock_object.h \
            stock_server/tick_thread.h \
            stock_server/bidask_thread.h \
            stock_server/subject_thread.h \
            stock_server/time_thread.h \
            stock_server/time_info.h \
+           stock_server/plugin/chooser/chooserplugin.h \
+           stock_server/plugin/chooser/topamount.h \
            stock_model/stockmodel.h \
+           stock_model/chart_creator.h \
            view/mainwindow.h \
            view/statusbar.h \
            view/tick_view/tickwindow.h \
            view/bull_card/bullcard.h \
            view/bull_card/bulltable.h \
            view/bull_card/bullmodel.h \
-           view/bull_card/bullwidget.h
+           util/morning_timer.h

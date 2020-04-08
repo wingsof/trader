@@ -34,7 +34,6 @@ void TimeThread::run() {
         stub_->ListenCurrentTime(&context, empty)); 
     while (reader->Read(&data)) {
         emit timeInfoArrived(new Timestamp(data));
-        std::cout << "Time Data" << std::endl;
     }
     Status status = reader->Finish();
     if (status.ok()) {

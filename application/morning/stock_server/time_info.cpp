@@ -6,7 +6,7 @@
 using google::protobuf::util::TimeUtil;
 
 TimeInfo::TimeInfo() 
-: QObject(0){
+: QObject(0), isSimulation(false) {
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), SLOT(sendTimeInfo()));
     timer->setInterval(1000);
@@ -15,7 +15,10 @@ TimeInfo::TimeInfo()
 
 void TimeInfo::timeInfoArrived(Timestamp *ts) {
     long msec = TimeUtil::TimestampToMilliseconds(*ts);    
-    currentDateTime = QDateTime::fromMSecsSinceEpoch(msec, Qt::UTC);
+    QDateTime receiveTime = QDateTime::fromMSecsSinceEpoch(msec, Qt::UTC);
+    if (currentDateTime.isValid() and currentDateTime.time().minute() != receiveTime.time().minute())
+        qWarning() << "current time " << currentDateTime;
+    currentDateTime = receiveTime;
 }
 
 void TimeInfo::sendTimeInfo() {
@@ -25,4 +28,12 @@ void TimeInfo::sendTimeInfo() {
     else {
         emit timeChanged(QDateTime::currentDateTime());
     }
+}
+
+
+QDateTime TimeInfo::getCurrentDateTime() {
+    if (currentDateTime.isValid())
+        return currentDateTime;
+    
+    return QDateTime::currentDateTime();
 }

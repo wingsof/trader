@@ -1453,10 +1453,11 @@ class CybosTickData :
     kCumAmountFieldNumber = 12,
     kCumSellVolumeByPriceFieldNumber = 15,
     kCumBuyVolumeByPriceFieldNumber = 16,
-    kBuyOrSellFieldNumber = 14,
-    kTimeWithSecFieldNumber = 18,
     kVolumeFieldNumber = 17,
+    kTimeWithSecFieldNumber = 18,
     kMarketTypeExpFieldNumber = 19,
+    kBuyOrSellFieldNumber = 14,
+    kIsKospiFieldNumber = 24,
     kMarketTypeFieldNumber = 20,
     kOutTimeVolumeFieldNumber = 21,
     kCumSellVolumeFieldNumber = 22,
@@ -1617,13 +1618,13 @@ class CybosTickData :
   void _internal_set_cum_buy_volume_by_price(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
-  // bool buy_or_sell = 14;
-  void clear_buy_or_sell();
-  bool buy_or_sell() const;
-  void set_buy_or_sell(bool value);
+  // int64 volume = 17;
+  void clear_volume();
+  ::PROTOBUF_NAMESPACE_ID::int64 volume() const;
+  void set_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
   private:
-  bool _internal_buy_or_sell() const;
-  void _internal_set_buy_or_sell(bool value);
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_volume() const;
+  void _internal_set_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
   // uint32 time_with_sec = 18;
@@ -1635,15 +1636,6 @@ class CybosTickData :
   void _internal_set_time_with_sec(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // int64 volume = 17;
-  void clear_volume();
-  ::PROTOBUF_NAMESPACE_ID::int64 volume() const;
-  void set_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::int64 _internal_volume() const;
-  void _internal_set_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
-  public:
-
   // uint32 market_type_exp = 19;
   void clear_market_type_exp();
   ::PROTOBUF_NAMESPACE_ID::uint32 market_type_exp() const;
@@ -1651,6 +1643,24 @@ class CybosTickData :
   private:
   ::PROTOBUF_NAMESPACE_ID::uint32 _internal_market_type_exp() const;
   void _internal_set_market_type_exp(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // bool buy_or_sell = 14;
+  void clear_buy_or_sell();
+  bool buy_or_sell() const;
+  void set_buy_or_sell(bool value);
+  private:
+  bool _internal_buy_or_sell() const;
+  void _internal_set_buy_or_sell(bool value);
+  public:
+
+  // bool is_kospi = 24;
+  void clear_is_kospi();
+  bool is_kospi() const;
+  void set_is_kospi(bool value);
+  private:
+  bool _internal_is_kospi() const;
+  void _internal_set_is_kospi(bool value);
   public:
 
   // uint32 market_type = 20;
@@ -1709,10 +1719,11 @@ class CybosTickData :
   ::PROTOBUF_NAMESPACE_ID::uint64 cum_amount_;
   ::PROTOBUF_NAMESPACE_ID::uint64 cum_sell_volume_by_price_;
   ::PROTOBUF_NAMESPACE_ID::uint64 cum_buy_volume_by_price_;
-  bool buy_or_sell_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 time_with_sec_;
   ::PROTOBUF_NAMESPACE_ID::int64 volume_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 time_with_sec_;
   ::PROTOBUF_NAMESPACE_ID::uint32 market_type_exp_;
+  bool buy_or_sell_;
+  bool is_kospi_;
   ::PROTOBUF_NAMESPACE_ID::uint32 market_type_;
   ::PROTOBUF_NAMESPACE_ID::uint64 out_time_volume_;
   ::PROTOBUF_NAMESPACE_ID::uint64 cum_sell_volume_;
@@ -3783,6 +3794,26 @@ inline void CybosTickData::_internal_set_cum_buy_volume(::PROTOBUF_NAMESPACE_ID:
 inline void CybosTickData::set_cum_buy_volume(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   _internal_set_cum_buy_volume(value);
   // @@protoc_insertion_point(field_set:stock_api.CybosTickData.cum_buy_volume)
+}
+
+// bool is_kospi = 24;
+inline void CybosTickData::clear_is_kospi() {
+  is_kospi_ = false;
+}
+inline bool CybosTickData::_internal_is_kospi() const {
+  return is_kospi_;
+}
+inline bool CybosTickData::is_kospi() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosTickData.is_kospi)
+  return _internal_is_kospi();
+}
+inline void CybosTickData::_internal_set_is_kospi(bool value) {
+  
+  is_kospi_ = value;
+}
+inline void CybosTickData::set_is_kospi(bool value) {
+  _internal_set_is_kospi(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosTickData.is_kospi)
 }
 
 // -------------------------------------------------------------------

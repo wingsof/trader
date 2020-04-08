@@ -26,16 +26,21 @@ import os.path
 
 _message_reader = None
 MAVG=20
+_kosdaq_code = None
+_kospi_code = None
 
 def get_market_code(market_type=message.KOSDAQ):
     return stock_api.request_stock_code(get_reader(), market_type)
 
 def get_all_market_code():
+    global _kosdaq_code, _kospi_code
     market_code = []
     kosdaq_code = get_market_code()
     kospi_code = get_market_code(message.KOSPI)
     market_code.extend(kosdaq_code)
     market_code.extend(kospi_code)
+    _kospi_code = kospi_code
+    _kosdaq_code = kosdaq_code
     market_code = list(dict.fromkeys(market_code))
     return list(filter(lambda x: len(x) > 0 and x[1:].isdigit(), market_code))
 
@@ -44,6 +49,13 @@ def get_reader():
         setup()
 
     return _message_reader
+
+
+def is_kospi_code(code):
+    global _kospi_code
+    if _kospi_code is not None and code in _kospi_code:
+        return True
+    return False
 
 
 def get_save_filename(path, filename, ext):

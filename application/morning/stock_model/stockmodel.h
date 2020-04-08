@@ -4,8 +4,10 @@
 
 #include <QObject>
 #include "stock_server/data_provider.h"
-#include <QDate>
+#include <QDateTime>
 
+
+class StockObject;
 
 class StockModel : public QObject {
 Q_OBJECT
@@ -13,11 +15,18 @@ public:
     StockModel();
     ~StockModel();
 
+    DataProvider & getProvider() { return provider; }
+    QString getCompanyName(const QString &code);
+    qreal getCurrentProfit(const QString &code);
+
+    QPixmap * createTickChart(const QString &code, int beforeDuration) const;
+
 private:
     DataProvider & provider;     
+    StockObject * getStockObject(const QString &code) const;
 
 private slots:
-    void startSimulation(const QDate &);
+    void startSimulation(QDateTime);
 };
 
 #endif

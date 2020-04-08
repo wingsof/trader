@@ -11,6 +11,11 @@
 #include "subject_thread.h"
 #include "time_info.h"
 #include "time_thread.h"
+#include "stock_object.h"
+#include "plugin/chooser/topamount.h"
+#include "util/morning_timer.h"
+#include "stock_server/plugin/chooser/chooserplugin.h"
+#include <QDebug>
 
 
 using grpc::Channel;
@@ -34,6 +39,16 @@ using stock_api::SimulationArgument;
 
 DataProvider::DataProvider()
 : QObject(0), stub_(Stock::NewStub(grpc::CreateChannel("localhost:50052", grpc::InsecureChannelCredentials()))){
+    chooserPlugin = new TopAmount(&object_map);
+    tickHandleTimer = new MorningTimer(1000, this);
+}
+
+
+DataProvider::~DataProvider() {
+}
+
+
+void DataProvider::startListenTicks() {
     TickThread * tthread = new TickThread(stub_);
     QObject::connect(tthread, SIGNAL(tickArrived(CybosTickData *)), SLOT(stockTickHandler(CybosTickData *)));
     tthread->start();
@@ -42,25 +57,47 @@ DataProvider::DataProvider()
     bthread->start();
     SubjectThread * sthread = new SubjectThread(stub_);
     QObject::connect(sthread, SIGNAL(tickArrived(CybosSubjectTickData *)), SLOT(subjectTickHandler(CybosSubjectTickData *)));
+    // Caution: Timer should be created after set simulation time since morning timer read from it
+    connect(tickHandleTimer, SIGNAL(timeout()), SLOT(processTick()));
+    tickHandleTimer->start();
+    chooserPlugin->start();
 }
 
 
-DataProvider::~DataProvider() {
+void DataProvider::processTick() {
+    qWarning() << "processTick : " << TimeInfo::getInstance().getCurrentDateTime();
+    QMapIterator<QString, StockObject *> i(object_map);
+    while (i.hasNext()) {
+        StockObject * sobj = i.next().value();
+        sobj->processTickData();
+    }
+}
+
+
+void DataProvider::createStockObject(const QString &code) {
+    if (!object_map.contains(code))
+        object_map[code] = new StockObject(code, this);
 }
 
 
 void DataProvider::stockTickHandler(CybosTickData * data) {
-    std::cout << "Tick Arrived" << std::endl;
+    QString code_str(QString::fromStdString(data->code()));
+    createStockObject(code_str);
+    object_map[code_str]->handleTickData(data);
 }
 
 
 void DataProvider::bidAskTickHandler(CybosBidAskTickData *data) {
-    std::cout << "BidAsk Arrived" << std::endl;
+    QString code_str(QString::fromStdString(data->code()));
+    createStockObject(code_str);
+    object_map[code_str]->handleBidAskData(data);
 }
 
 
 void DataProvider::subjectTickHandler(CybosSubjectTickData *data) {
-    std::cout << "Subject Arrived" << std::endl;
+    QString code_str(QString::fromStdString(data->code()));
+    createStockObject(code_str);
+    object_map[code_str]->handleSubjectData(data);
 }
 
 
@@ -90,15 +127,26 @@ void DataProvider::requestSubjectTick(const std::string &code) {
     stub_->RequestCybosSubject(&context, code_query, &empty);
 }
 
+
 void DataProvider::startSimulation(time_t from_time) {
     ClientContext context;
     Empty empty;
     SimulationArgument sa;
-    sa.set_allocated_from_datetime(new Timestamp(TimeUtil::TimeTToTimestamp(from_time)));
+    Timestamp * ts = new Timestamp(TimeUtil::TimeTToTimestamp(from_time));
+    sa.set_allocated_from_datetime(ts);
     TimeThread * tthread = new TimeThread(stub_);
     connect(tthread, SIGNAL(timeInfoArrived(Timestamp *)), &(TimeInfo::getInstance()), SLOT(timeInfoArrived(Timestamp *)));
     tthread->start();
+    TimeInfo::getInstance().timeInfoArrived(ts);
     stub_->StartSimulation(&context, sa, &empty);
+    startListenTicks();
+}
+
+
+StockObject * DataProvider::getStockObject(const QString &code) {
+    if (object_map.contains(code))
+        return object_map[code];
+    return NULL;
 }
 
 

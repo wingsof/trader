@@ -106,6 +106,7 @@ message CybosTickData {
     uint64 out_time_volume = 21;
     uint64 cum_sell_volume = 22;
     uint64 cum_buy_volume = 23;
+    bool is_kospi = 24;
 }
 
 message CybosBidAskTickData {

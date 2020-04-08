@@ -1,6 +1,7 @@
 #include "statusbar.h"
 #include <QPushButton>
 #include <QDate>
+#include <QTime>
 #include <QDebug>
 
 
@@ -39,5 +40,5 @@ void StatusBar::dateSelected(const QDate &d) {
 
 void StatusBar::prepareSimulation() {
     simulationAction->setEnabled(false);
-    emit startSimulation(simulationDate); 
+    emit startSimulation(QDateTime(simulationDate, QTime(9, 10))); 
 }

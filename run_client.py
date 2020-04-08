@@ -16,18 +16,17 @@ from morning_server.collectors import request_client
 
 def run_request_client():
     while True:
-        request_process = Process(target=request_client.run, args=(None,))
-        request_process.start()
-        request_process.join()
+        print('Run request client')
+        request_client.run(None)
+        print('Done - request client')
         time.sleep(10)
 
 
 def run_collector(num):
     while True:
         print('Run collector', num)
-        collector_process = Process(target=request_client.run, args=('collector' + str(num),))
-        collector_process.start()
-        collector_process.join()
+        request_client.run('collector' + str(num))
+        print('Done - collector', num)
         time.sleep(10)
 
 
@@ -50,7 +49,7 @@ if __name__ == '__main__':
     processes = [rclient, collector1, collector2]
     for p in processes:
         p.start()
-        time.sleep(10)
+        time.sleep(30)
 
     rclient.join()
     collector1.join()

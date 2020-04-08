@@ -13,7 +13,7 @@ MainWindow::MainWindow(StockModel &_model, QWidget *parent)
     TickWindow *w = new TickWindow;
     BullCard *bc = new BullCard(model);
     StatusBar * sb = new StatusBar;
-    connect(sb, SIGNAL(startSimulation(const QDate &)), &model, SLOT(startSimulation(const QDate &)));
+    connect(sb, SIGNAL(startSimulation(QDateTime)), &model, SLOT(startSimulation(QDateTime)));
 
     QMdiSubWindow *s1 = mdiArea->addSubWindow(w);
     s1->setWindowFlags( (Qt::CustomizeWindowHint | Qt::WindowTitleHint) & ~Qt::WindowMinMaxButtonsHint & ~Qt::WindowCloseButtonHint );

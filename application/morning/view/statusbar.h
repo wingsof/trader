@@ -46,7 +46,7 @@ private slots:
     void prepareSimulation();
 
 signals:
-    void startSimulation(const QDate &);
+    void startSimulation(QDateTime);
 };
 
 

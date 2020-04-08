@@ -17,13 +17,21 @@ public:
         return timeInfo;
     }
 
-private slots:
+    void setSimulationTime(Timestamp *);
+
+public slots:
     void timeInfoArrived(Timestamp *);
+
+private slots:
     void sendTimeInfo();
 
 private:
     QTimer * timer;
     QDateTime currentDateTime;
+    bool isSimulation;
+
+public:
+    QDateTime getCurrentDateTime();
 
 signals:
     void timeChanged(QDateTime);
