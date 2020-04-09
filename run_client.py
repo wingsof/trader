@@ -16,7 +16,10 @@ from misc_utils import cybos_com_gen
 if __name__ == '__main__':
     ready_filename = os.environ['MORNING_PATH'] + os.sep + 'READY'
 
-    os.remove(ready_filename)
+    try:
+        os.remove(ready_filename)
+    except:
+        print('READY file not exist')
 
     time.sleep(120)
     login_process = Process(target=auto.run)
