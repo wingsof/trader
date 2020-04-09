@@ -11,6 +11,10 @@ set _time=%h%_%m%_%s%
 set "_time=%_time: =%"
 set filename="%year%%mon%%day%_%_time%_col2.log"
 
-"C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\python.exe" "C:\workspace\trader\morning_server\collectors\request_client.py" collector2 > "C:\workspace\trader\logs\%filename%" 2>&1
+timeout /t 30 /nobreak > NUL
+
+IF EXIST C:\workspace\trader\READY (
+    "C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\python.exe" "C:\workspace\trader\morning_server\collectors\request_client.py" collector2 > "C:\workspace\trader\logs\%filename%" 2>&1
+) 
 
 goto loop

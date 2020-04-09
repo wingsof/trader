@@ -11,26 +11,13 @@ from datetime import datetime
 from multiprocessing import Process
 from utils.auto import auto
 from misc_utils import cybos_com_gen
-from morning_server.collectors import request_client
-
-
-def run_request_client():
-    while True:
-        print('Run request client')
-        request_client.run(None)
-        print('Done - request client')
-        time.sleep(10)
-
-
-def run_collector(num):
-    while True:
-        print('Run collector', num)
-        request_client.run('collector' + str(num))
-        print('Done - collector', num)
-        time.sleep(10)
 
 
 if __name__ == '__main__':
+    ready_filename = os.environ['MORNING_PATH'] + os.sep + 'READY'
+
+    os.remove(ready_filename)
+
     time.sleep(120)
     login_process = Process(target=auto.run)
     login_process.start()
@@ -41,16 +28,4 @@ if __name__ == '__main__':
     gen_com_process.start()
     gen_com_process.join()
 
-    time.sleep(10)
-    
-    rclient = Process(target=run_request_client)
-    collector1 = Process(target=run_collector, args=(1,))
-    collector2 = Process(target=run_collector, args=(2,))
-    processes = [rclient, collector1, collector2]
-    for p in processes:
-        p.start()
-        time.sleep(30)
-
-    rclient.join()
-    collector1.join()
-    collector2.join()
+    open(ready_filename, 'w+')
