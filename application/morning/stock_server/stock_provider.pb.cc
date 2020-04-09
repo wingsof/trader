@@ -401,7 +401,7 @@ const char descriptor_table_protodef_stock_5fprovider_2eproto[] PROTOBUF_SECTION
   "in\030\027 \001(\r\022\030\n\020fifth_bid_remain\030\030 \001(\r\022\030\n\020to"
   "tal_ask_remain\030\031 \001(\004\022\030\n\020total_bid_remain"
   "\030\032 \001(\004\022!\n\031out_time_total_ask_remain\030\033 \001("
-  "\003\022!\n\031out_time_total_bid_remain\030\034 \001(\0032\213\007\n"
+  "\003\022!\n\031out_time_total_bid_remain\030\034 \001(\0032\217\007\n"
   "\005Stock\022\?\n\nGetDayData\022\025.stock_api.StockQu"
   "ery\032\030.stock_api.CybosDayDatas\"\000\022B\n\rGetMi"
   "nuteData\022\025.stock_api.StockQuery\032\030.stock_"
@@ -411,20 +411,20 @@ const char descriptor_table_protodef_stock_5fprovider_2eproto[] PROTOBUF_SECTION
   ".stock_api.StockCodeQuery\032\026.google.proto"
   "buf.Empty\"\000\022J\n\023RequestCybosSubject\022\031.sto"
   "ck_api.StockCodeQuery\032\026.google.protobuf."
-  "Empty\"\000\022K\n\032GetYesterdayTopAmountCodes\022\026."
-  "google.protobuf.Empty\032\023.stock_api.CodeLi"
-  "st\"\000\022K\n\023ListenCybosTickData\022\026.google.pro"
-  "tobuf.Empty\032\030.stock_api.CybosTickData\"\0000"
-  "\001\022O\n\021ListenCybosBidAsk\022\026.google.protobuf"
-  ".Empty\032\036.stock_api.CybosBidAskTickData\"\000"
-  "0\001\022K\n\021ListenCurrentTime\022\026.google.protobu"
-  "f.Empty\032\032.google.protobuf.Timestamp\"\0000\001\022"
-  "Q\n\022ListenCybosSubject\022\026.google.protobuf."
-  "Empty\032\037.stock_api.CybosSubjectTickData\"\000"
-  "0\001\022J\n\017StartSimulation\022\035.stock_api.Simula"
-  "tionArgument\032\026.google.protobuf.Empty\"\000\022B"
-  "\n\016StopSimulation\022\026.google.protobuf.Empty"
-  "\032\026.google.protobuf.Empty\"\000b\006proto3"
+  "Empty\"\000\022O\n\032GetYesterdayTopAmountCodes\022\032."
+  "google.protobuf.Timestamp\032\023.stock_api.Co"
+  "deList\"\000\022K\n\023ListenCybosTickData\022\026.google"
+  ".protobuf.Empty\032\030.stock_api.CybosTickDat"
+  "a\"\0000\001\022O\n\021ListenCybosBidAsk\022\026.google.prot"
+  "obuf.Empty\032\036.stock_api.CybosBidAskTickDa"
+  "ta\"\0000\001\022K\n\021ListenCurrentTime\022\026.google.pro"
+  "tobuf.Empty\032\032.google.protobuf.Timestamp\""
+  "\0000\001\022Q\n\022ListenCybosSubject\022\026.google.proto"
+  "buf.Empty\032\037.stock_api.CybosSubjectTickDa"
+  "ta\"\0000\001\022J\n\017StartSimulation\022\035.stock_api.Si"
+  "mulationArgument\032\026.google.protobuf.Empty"
+  "\"\000\022B\n\016StopSimulation\022\026.google.protobuf.E"
+  "mpty\032\026.google.protobuf.Empty\"\000b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_stock_5fprovider_2eproto_deps[2] = {
   &::descriptor_table_google_2fprotobuf_2fempty_2eproto,
@@ -444,7 +444,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_sto
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_stock_5fprovider_2eproto_once;
 static bool descriptor_table_stock_5fprovider_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_stock_5fprovider_2eproto = {
-  &descriptor_table_stock_5fprovider_2eproto_initialized, descriptor_table_protodef_stock_5fprovider_2eproto, "stock_provider.proto", 3234,
+  &descriptor_table_stock_5fprovider_2eproto_initialized, descriptor_table_protodef_stock_5fprovider_2eproto, "stock_provider.proto", 3238,
   &descriptor_table_stock_5fprovider_2eproto_once, descriptor_table_stock_5fprovider_2eproto_sccs, descriptor_table_stock_5fprovider_2eproto_deps, 9, 2,
   schemas, file_default_instances, TableStruct_stock_5fprovider_2eproto::offsets,
   file_level_metadata_stock_5fprovider_2eproto, 9, file_level_enum_descriptors_stock_5fprovider_2eproto, file_level_service_descriptors_stock_5fprovider_2eproto,

@@ -5,6 +5,7 @@
 #include <memory>
 #include <QObject>
 #include <QStringList>
+#include <QDateTime>
 #include <QMap>
 #include <QTimer>
 #include <time.h>
@@ -16,6 +17,7 @@
 using stock_api::CybosTickData;
 using stock_api::CybosBidAskTickData;
 using stock_api::CybosSubjectTickData;
+using stock_api::CybosDayDatas;
 
 class StockObject;
 class MorningTimer;
@@ -24,16 +26,14 @@ class ChooserPlugin;
 class DataProvider : public QObject {
 Q_OBJECT
 public:
-    enum class DataType { STOCK_TICK, BIDASK_TICK, SUBJECT_TICK };
-
     DataProvider();
     ~DataProvider();
 
-    void requestStockDayData(const std::string &code, time_t from_date, time_t until_date);
+    CybosDayDatas * requestStockDayData(const std::string &code, time_t from_date, time_t until_date);
     void requestStockTick(const std::string &code);
     void requestBidAskTick(const std::string &code);
     void requestSubjectTick(const std::string &code);
-    QStringList requestYesterdayTopAmount();
+    QStringList requestYesterdayTopAmount(const QDateTime &dt);
     void startSimulation(time_t from_time);
     void startListenTicks();
 

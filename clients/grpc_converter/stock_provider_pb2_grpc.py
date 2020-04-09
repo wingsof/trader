@@ -43,7 +43,7 @@ class StockStub(object):
         )
     self.GetYesterdayTopAmountCodes = channel.unary_unary(
         '/stock_api.Stock/GetYesterdayTopAmountCodes',
-        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        request_serializer=google_dot_protobuf_dot_timestamp__pb2.Timestamp.SerializeToString,
         response_deserializer=stock__provider__pb2.CodeList.FromString,
         )
     self.ListenCybosTickData = channel.unary_stream(
@@ -196,7 +196,7 @@ def add_StockServicer_to_server(servicer, server):
       ),
       'GetYesterdayTopAmountCodes': grpc.unary_unary_rpc_method_handler(
           servicer.GetYesterdayTopAmountCodes,
-          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          request_deserializer=google_dot_protobuf_dot_timestamp__pb2.Timestamp.FromString,
           response_serializer=stock__provider__pb2.CodeList.SerializeToString,
       ),
       'ListenCybosTickData': grpc.unary_stream_rpc_method_handler(

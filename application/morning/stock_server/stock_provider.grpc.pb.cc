@@ -197,11 +197,11 @@ void Stock::Stub::experimental_async::RequestCybosSubject(::grpc::ClientContext*
   return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::google::protobuf::Empty>::Create(channel_.get(), cq, rpcmethod_RequestCybosSubject_, context, request, false);
 }
 
-::grpc::Status Stock::Stub::GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::stock_api::CodeList* response) {
+::grpc::Status Stock::Stub::GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::stock_api::CodeList* response) {
   return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_GetYesterdayTopAmountCodes_, context, request, response);
 }
 
-void Stock::Stub::experimental_async::GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::stock_api::CodeList* response, std::function<void(::grpc::Status)> f) {
+void Stock::Stub::experimental_async::GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp* request, ::stock_api::CodeList* response, std::function<void(::grpc::Status)> f) {
   ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GetYesterdayTopAmountCodes_, context, request, response, std::move(f));
 }
 
@@ -209,7 +209,7 @@ void Stock::Stub::experimental_async::GetYesterdayTopAmountCodes(::grpc::ClientC
   ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GetYesterdayTopAmountCodes_, context, request, response, std::move(f));
 }
 
-void Stock::Stub::experimental_async::GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::stock_api::CodeList* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+void Stock::Stub::experimental_async::GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp* request, ::stock_api::CodeList* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
   ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_GetYesterdayTopAmountCodes_, context, request, response, reactor);
 }
 
@@ -217,11 +217,11 @@ void Stock::Stub::experimental_async::GetYesterdayTopAmountCodes(::grpc::ClientC
   ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_GetYesterdayTopAmountCodes_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>* Stock::Stub::AsyncGetYesterdayTopAmountCodesRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>* Stock::Stub::AsyncGetYesterdayTopAmountCodesRaw(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::grpc::CompletionQueue* cq) {
   return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::CodeList>::Create(channel_.get(), cq, rpcmethod_GetYesterdayTopAmountCodes_, context, request, true);
 }
 
-::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>* Stock::Stub::PrepareAsyncGetYesterdayTopAmountCodesRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>* Stock::Stub::PrepareAsyncGetYesterdayTopAmountCodesRaw(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::grpc::CompletionQueue* cq) {
   return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::CodeList>::Create(channel_.get(), cq, rpcmethod_GetYesterdayTopAmountCodes_, context, request, false);
 }
 
@@ -374,7 +374,7 @@ Stock::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[5],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::google::protobuf::Empty, ::stock_api::CodeList>(
+      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::google::protobuf::Timestamp, ::stock_api::CodeList>(
           std::mem_fn(&Stock::Service::GetYesterdayTopAmountCodes), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[6],
@@ -446,7 +446,7 @@ Stock::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status Stock::Service::GetYesterdayTopAmountCodes(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::stock_api::CodeList* response) {
+::grpc::Status Stock::Service::GetYesterdayTopAmountCodes(::grpc::ServerContext* context, const ::google::protobuf::Timestamp* request, ::stock_api::CodeList* response) {
   (void) context;
   (void) request;
   (void) response;

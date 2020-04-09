@@ -24,7 +24,7 @@ StockModel::~StockModel() {}
 
 
 StockObject * StockModel::getStockObject(const QString &code) const {
-    return DataProvider::getInstance().getStockObject(code);
+    return provider.getStockObject(code);
 }
 
 QString StockModel::getCompanyName(const QString &code) {
@@ -65,8 +65,5 @@ QPixmap * StockModel::createTickChart(const QString &code, int beforeDuration) c
 
 
 void StockModel::startSimulation(QDateTime dt) {
-    DataProvider::getInstance().startSimulation(dt.toTime_t());
+    provider.startSimulation(dt.toTime_t());
 }
-
-
-

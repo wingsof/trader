@@ -1,3 +1,0 @@
-
-
-MONGO_SERVER = 'mongodb://192.168.0.22:27017'

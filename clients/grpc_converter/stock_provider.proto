@@ -13,7 +13,7 @@ service Stock {
   rpc RequestCybosBidAsk(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosSubject(StockCodeQuery) returns (google.protobuf.Empty) {}
 
-  rpc GetYesterdayTopAmountCodes(google.protobuf.Empty) returns (CodeList) {}
+  rpc GetYesterdayTopAmountCodes(google.protobuf.Timestamp) returns (CodeList) {}
 
   rpc ListenCybosTickData(google.protobuf.Empty) returns (stream CybosTickData) {}
   rpc ListenCybosBidAsk(google.protobuf.Empty) returns (stream CybosBidAskTickData) {}

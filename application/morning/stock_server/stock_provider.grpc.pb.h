@@ -71,11 +71,11 @@ class Stock final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncRequestCybosSubject(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncRequestCybosSubjectRaw(context, request, cq));
     }
-    virtual ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::stock_api::CodeList* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CodeList>> AsyncGetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+    virtual ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::stock_api::CodeList* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CodeList>> AsyncGetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CodeList>>(AsyncGetYesterdayTopAmountCodesRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CodeList>> PrepareAsyncGetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CodeList>> PrepareAsyncGetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CodeList>>(PrepareAsyncGetYesterdayTopAmountCodesRaw(context, request, cq));
     }
     std::unique_ptr< ::grpc::ClientReaderInterface< ::stock_api::CybosTickData>> ListenCybosTickData(::grpc::ClientContext* context, const ::google::protobuf::Empty& request) {
@@ -191,12 +191,12 @@ class Stock final {
       #else
       virtual void RequestCybosSubject(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::stock_api::CodeList* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp* request, ::stock_api::CodeList* response, std::function<void(::grpc::Status)>) = 0;
       virtual void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CodeList* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::stock_api::CodeList* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp* request, ::stock_api::CodeList* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::stock_api::CodeList* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp* request, ::stock_api::CodeList* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       virtual void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CodeList* response, ::grpc::ClientUnaryReactor* reactor) = 0;
@@ -266,8 +266,8 @@ class Stock final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncRequestCybosBidAskRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncRequestCybosSubjectRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncRequestCybosSubjectRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CodeList>* AsyncGetYesterdayTopAmountCodesRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CodeList>* PrepareAsyncGetYesterdayTopAmountCodesRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CodeList>* AsyncGetYesterdayTopAmountCodesRaw(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CodeList>* PrepareAsyncGetYesterdayTopAmountCodesRaw(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientReaderInterface< ::stock_api::CybosTickData>* ListenCybosTickDataRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request) = 0;
     virtual ::grpc::ClientAsyncReaderInterface< ::stock_api::CybosTickData>* AsyncListenCybosTickDataRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
     virtual ::grpc::ClientAsyncReaderInterface< ::stock_api::CybosTickData>* PrepareAsyncListenCybosTickDataRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) = 0;
@@ -323,11 +323,11 @@ class Stock final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncRequestCybosSubject(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncRequestCybosSubjectRaw(context, request, cq));
     }
-    ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::stock_api::CodeList* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>> AsyncGetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+    ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::stock_api::CodeList* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>> AsyncGetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>>(AsyncGetYesterdayTopAmountCodesRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>> PrepareAsyncGetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>> PrepareAsyncGetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>>(PrepareAsyncGetYesterdayTopAmountCodesRaw(context, request, cq));
     }
     std::unique_ptr< ::grpc::ClientReader< ::stock_api::CybosTickData>> ListenCybosTickData(::grpc::ClientContext* context, const ::google::protobuf::Empty& request) {
@@ -443,12 +443,12 @@ class Stock final {
       #else
       void RequestCybosSubject(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::stock_api::CodeList* response, std::function<void(::grpc::Status)>) override;
+      void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp* request, ::stock_api::CodeList* response, std::function<void(::grpc::Status)>) override;
       void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CodeList* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::stock_api::CodeList* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp* request, ::stock_api::CodeList* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::stock_api::CodeList* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp* request, ::stock_api::CodeList* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       void GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CodeList* response, ::grpc::ClientUnaryReactor* reactor) override;
@@ -520,8 +520,8 @@ class Stock final {
     ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncRequestCybosBidAskRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncRequestCybosSubjectRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncRequestCybosSubjectRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>* AsyncGetYesterdayTopAmountCodesRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>* PrepareAsyncGetYesterdayTopAmountCodesRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>* AsyncGetYesterdayTopAmountCodesRaw(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>* PrepareAsyncGetYesterdayTopAmountCodesRaw(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientReader< ::stock_api::CybosTickData>* ListenCybosTickDataRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request) override;
     ::grpc::ClientAsyncReader< ::stock_api::CybosTickData>* AsyncListenCybosTickDataRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq, void* tag) override;
     ::grpc::ClientAsyncReader< ::stock_api::CybosTickData>* PrepareAsyncListenCybosTickDataRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) override;
@@ -562,7 +562,7 @@ class Stock final {
     virtual ::grpc::Status RequestCybosTickData(::grpc::ServerContext* context, const ::stock_api::StockCodeQuery* request, ::google::protobuf::Empty* response);
     virtual ::grpc::Status RequestCybosBidAsk(::grpc::ServerContext* context, const ::stock_api::StockCodeQuery* request, ::google::protobuf::Empty* response);
     virtual ::grpc::Status RequestCybosSubject(::grpc::ServerContext* context, const ::stock_api::StockCodeQuery* request, ::google::protobuf::Empty* response);
-    virtual ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::stock_api::CodeList* response);
+    virtual ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ServerContext* context, const ::google::protobuf::Timestamp* request, ::stock_api::CodeList* response);
     virtual ::grpc::Status ListenCybosTickData(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::grpc::ServerWriter< ::stock_api::CybosTickData>* writer);
     virtual ::grpc::Status ListenCybosBidAsk(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::grpc::ServerWriter< ::stock_api::CybosBidAskTickData>* writer);
     virtual ::grpc::Status ListenCurrentTime(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::grpc::ServerWriter< ::google::protobuf::Timestamp>* writer);
@@ -682,11 +682,11 @@ class Stock final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::stock_api::CodeList* /*response*/) override {
+    ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ServerContext* /*context*/, const ::google::protobuf::Timestamp* /*request*/, ::stock_api::CodeList* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestGetYesterdayTopAmountCodes(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncResponseWriter< ::stock_api::CodeList>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestGetYesterdayTopAmountCodes(::grpc::ServerContext* context, ::google::protobuf::Timestamp* request, ::grpc::ServerAsyncResponseWriter< ::stock_api::CodeList>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -1058,38 +1058,38 @@ class Stock final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(5,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>(
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Timestamp, ::stock_api::CodeList>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::google::protobuf::Empty* request, ::stock_api::CodeList* response) { return this->GetYesterdayTopAmountCodes(context, request, response); }));}
+                     context, const ::google::protobuf::Timestamp* request, ::stock_api::CodeList* response) { return this->GetYesterdayTopAmountCodes(context, request, response); }));}
     void SetMessageAllocatorFor_GetYesterdayTopAmountCodes(
-        ::grpc::experimental::MessageAllocator< ::google::protobuf::Empty, ::stock_api::CodeList>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::google::protobuf::Timestamp, ::stock_api::CodeList>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(5);
     #endif
-      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>*>(handler)
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Timestamp, ::stock_api::CodeList>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_GetYesterdayTopAmountCodes() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::stock_api::CodeList* /*response*/) override {
+    ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ServerContext* /*context*/, const ::google::protobuf::Timestamp* /*request*/, ::stock_api::CodeList* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* GetYesterdayTopAmountCodes(
-      ::grpc::CallbackServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::stock_api::CodeList* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::google::protobuf::Timestamp* /*request*/, ::stock_api::CodeList* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* GetYesterdayTopAmountCodes(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::stock_api::CodeList* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::google::protobuf::Timestamp* /*request*/, ::stock_api::CodeList* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -1441,7 +1441,7 @@ class Stock final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::stock_api::CodeList* /*response*/) override {
+    ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ServerContext* /*context*/, const ::google::protobuf::Timestamp* /*request*/, ::stock_api::CodeList* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1660,7 +1660,7 @@ class Stock final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::stock_api::CodeList* /*response*/) override {
+    ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ServerContext* /*context*/, const ::google::protobuf::Timestamp* /*request*/, ::stock_api::CodeList* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -2003,7 +2003,7 @@ class Stock final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::stock_api::CodeList* /*response*/) override {
+    ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ServerContext* /*context*/, const ::google::protobuf::Timestamp* /*request*/, ::stock_api::CodeList* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -2351,18 +2351,18 @@ class Stock final {
    public:
     WithStreamedUnaryMethod_GetYesterdayTopAmountCodes() {
       ::grpc::Service::MarkMethodStreamed(5,
-        new ::grpc::internal::StreamedUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>(std::bind(&WithStreamedUnaryMethod_GetYesterdayTopAmountCodes<BaseClass>::StreamedGetYesterdayTopAmountCodes, this, std::placeholders::_1, std::placeholders::_2)));
+        new ::grpc::internal::StreamedUnaryHandler< ::google::protobuf::Timestamp, ::stock_api::CodeList>(std::bind(&WithStreamedUnaryMethod_GetYesterdayTopAmountCodes<BaseClass>::StreamedGetYesterdayTopAmountCodes, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_GetYesterdayTopAmountCodes() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::stock_api::CodeList* /*response*/) override {
+    ::grpc::Status GetYesterdayTopAmountCodes(::grpc::ServerContext* /*context*/, const ::google::protobuf::Timestamp* /*request*/, ::stock_api::CodeList* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedGetYesterdayTopAmountCodes(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::google::protobuf::Empty,::stock_api::CodeList>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedGetYesterdayTopAmountCodes(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::google::protobuf::Timestamp,::stock_api::CodeList>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_StartSimulation : public BaseClass {

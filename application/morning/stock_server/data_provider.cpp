@@ -31,7 +31,6 @@ using google::protobuf::Empty;
 using stock_api::Stock;
 using stock_api::StockCodeQuery;
 using stock_api::StockQuery;
-using stock_api::CybosDayDatas;
 using stock_api::CybosDayData;
 using stock_api::CodeList;
 using stock_api::SimulationArgument;
@@ -150,28 +149,31 @@ StockObject * DataProvider::getStockObject(const QString &code) {
 }
 
 
-void DataProvider::requestStockDayData(const std::string &code, time_t from_date, time_t until_date) {
+CybosDayDatas * DataProvider::requestStockDayData(const std::string &code, time_t from_date, time_t until_date) {
     ClientContext context;
-    CybosDayDatas data;
+    CybosDayDatas * data = new CybosDayDatas;
     StockQuery stock_query;
     stock_query.set_code(code);
     Timestamp *from_timestamp = new Timestamp(TimeUtil::TimeTToTimestamp(from_date));
     Timestamp *until_timestamp = new Timestamp(TimeUtil::TimeTToTimestamp(until_date));
     stock_query.set_allocated_from_datetime(from_timestamp);
     stock_query.set_allocated_until_datetime(until_timestamp);
-    stub_->GetDayData(&context, stock_query, &data);
+    stub_->GetDayData(&context, stock_query, data);
+    return data;
+    /*
     for (int i = 0; i < data.day_data_size(); ++i) {
         CybosDayData d = data.day_data(i);
         std::cout << "price: " << d.start_price() << "\ttime: " << d.date() << std::endl;
     }
+    */
 }
 
 
-QStringList DataProvider::requestYesterdayTopAmount() {
+QStringList DataProvider::requestYesterdayTopAmount(const QDateTime &dt) {
     ClientContext context;
     CodeList data;
-    Empty empty;
-    stub_->GetYesterdayTopAmountCodes(&context, empty, &data);
+    Timestamp request_timestamp(TimeUtil::TimeTToTimestamp(dt.toTime_t()));
+    stub_->GetYesterdayTopAmountCodes(&context, request_timestamp, &data);
     QStringList codeList;
     for (int i = 0; i < data.codelist_size(); ++i) {
         codeList.append(QString::fromStdString(data.codelist(i)));
