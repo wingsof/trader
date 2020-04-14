@@ -22,6 +22,7 @@ using stock_api::CybosDayDatas;
 class StockObject;
 class MorningTimer;
 class ChooserPlugin;
+class DayDataProvider;
 
 class DataProvider : public QObject {
 Q_OBJECT
@@ -34,7 +35,8 @@ public:
     void requestBidAskTick(const std::string &code);
     void requestSubjectTick(const std::string &code);
     QStringList requestYesterdayTopAmount(const QDateTime &dt);
-    void startSimulation(time_t from_time);
+    void requestDayData(const QString &code);
+    void startSimulation(const QDateTime & from_time);
     void startListenTicks();
 
     static DataProvider & getInstance() {
@@ -54,6 +56,7 @@ private:
     void createStockObject(const QString &code);
     ChooserPlugin * chooserPlugin;
     MorningTimer * tickHandleTimer;
+    DayDataProvider * dayDataProvider = NULL;
 
 private slots:
     void stockTickHandler(CybosTickData *);

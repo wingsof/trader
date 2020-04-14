@@ -15,6 +15,7 @@
 #include "plugin/chooser/topamount.h"
 #include "util/morning_timer.h"
 #include "stock_server/plugin/chooser/chooserplugin.h"
+#include "stock_server/daydata_provider.h"
 #include <QDebug>
 
 
@@ -75,7 +76,7 @@ void DataProvider::processTick() {
 
 void DataProvider::createStockObject(const QString &code) {
     if (!object_map.contains(code))
-        object_map[code] = new StockObject(code, this);
+        object_map[code] = new StockObject(code, dayDataProvider, this);
 }
 
 
@@ -127,18 +128,24 @@ void DataProvider::requestSubjectTick(const std::string &code) {
 }
 
 
-void DataProvider::startSimulation(time_t from_time) {
+void DataProvider::startSimulation(const QDateTime &from_time) {
     ClientContext context;
     Empty empty;
     SimulationArgument sa;
-    Timestamp * ts = new Timestamp(TimeUtil::TimeTToTimestamp(from_time));
+    Timestamp * ts = new Timestamp(TimeUtil::TimeTToTimestamp(from_time.toTime_t()));
     sa.set_allocated_from_datetime(ts);
     TimeThread * tthread = new TimeThread(stub_);
     connect(tthread, SIGNAL(timeInfoArrived(Timestamp *)), &(TimeInfo::getInstance()), SLOT(timeInfoArrived(Timestamp *)));
     tthread->start();
     TimeInfo::getInstance().timeInfoArrived(ts);
     stub_->StartSimulation(&context, sa, &empty);
+    dayDataProvider = new DayDataProvider(stub_, from_time.addDays(-180), from_time.addDays(-1));
     startListenTicks();
+}
+
+void DataProvider::requestDayData(const QString &code) {
+    if (dayDataProvider != NULL)
+        dayDataProvider->requestDayData(code);
 }
 
 

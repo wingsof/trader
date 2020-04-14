@@ -6,6 +6,7 @@
 #include <time.h>
 
 using stock_api::CybosTickData;
+using stock_api::CybosDayDatas;
 using stock_api::CybosBidAskTickData;
 using google::protobuf::Timestamp;
 
@@ -28,6 +29,7 @@ time_t convertDateToTime(int year,
 int main(int argc, char *argv[]) {
     setenv("TZ", "UTC", 1);
     qRegisterMetaType<CybosTickData>("CybosTickData");
+    qRegisterMetaType<CybosDayDatas>("CybosDayDatas");
     qRegisterMetaType<CybosBidAskTickData>("CybosBidAskTickData");
     qRegisterMetaType<CybosSubjectTickData>("CybosSubjectTickData");
     qRegisterMetaType<Timestamp>("Timestamp");

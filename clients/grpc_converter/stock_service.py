@@ -125,7 +125,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.current_time_queue = Queue()
 
     def GetDayData(self, request, context):
-        print('GetDayData', request)
+        print('GetDayData', request.code, datetime.fromtimestamp(request.from_datetime.seconds), datetime.fromtimestamp(request.until_datetime.seconds))
         day_datas = morning_client.get_past_day_data(
             request.code,
             datetime.fromtimestamp(request.from_datetime.seconds),

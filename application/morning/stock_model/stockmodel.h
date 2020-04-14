@@ -21,12 +21,19 @@ public:
 
     QPixmap * createTickChart(const QString &code, int beforeDuration) const;
 
+    StockObject * getStockObject(const QString &code) const;
+    void setCurrentCode(const QString &code);
+
 private:
     DataProvider & provider;     
-    StockObject * getStockObject(const QString &code) const;
+    
+    QString currentCode;
 
 private slots:
     void startSimulation(QDateTime);
+
+signals:
+    void currentCodeChanged(const QString &);
 };
 
 #endif

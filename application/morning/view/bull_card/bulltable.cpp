@@ -22,7 +22,6 @@ public:
     }
     
     void paint(QPainter *painter, const QStyleOptionViewItem & vitem, const QModelIndex &index) const override{
-        qWarning() << "Delegate paint : " << index;
         const BullModel * model = qobject_cast<const BullModel *>(index.model());
         QString code = model->getCode(index.row(), index.column());
         if (code.length() > 0) {

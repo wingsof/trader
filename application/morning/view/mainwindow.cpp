@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include <QMdiArea>
 #include <QMdiSubWindow>
-#include "tick_view/tickwindow.h"
+#include "day_view/daywindow.h"
 #include "stock_model/stockmodel.h"
 #include "view/statusbar.h"
 #include "view/bull_card/bullcard.h"
@@ -10,7 +10,7 @@
 MainWindow::MainWindow(StockModel &_model, QWidget *parent)
 : QMainWindow(parent), model(_model) {
     QMdiArea * mdiArea = new QMdiArea;
-    TickWindow *w = new TickWindow;
+    DayWindow *w = new DayWindow(model);
     BullCard *bc = new BullCard(model);
     StatusBar * sb = new StatusBar;
     connect(sb, SIGNAL(startSimulation(QDateTime)), &model, SLOT(startSimulation(QDateTime)));

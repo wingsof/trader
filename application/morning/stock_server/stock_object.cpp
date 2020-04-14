@@ -1,22 +1,49 @@
 #include "stock_object.h"
 #include "stock_server/time_info.h"
 #include <QDebug>
-
+#include "daydata_provider.h"
 
 using stock_api::CybosTickData;
+
 using stock_api::CybosBidAskTickData;
 using stock_api::CybosSubjectTickData;
 
 
-StockObject::StockObject(const QString &_code, QObject *p)
-: QObject(p), code(_code) {
+StockObject::StockObject(const QString &_code, DayDataProvider * d, QObject *p)
+: QObject(p), code(_code), dayDataProvider(d) {
     lastMinuteIndex = 0;
     isKospi = false;
+    dayDatas = NULL;
+    connect((QObject *)dayDataProvider, SIGNAL(dataReady(QString, CybosDayDatas *)),
+            this, SLOT(receiveDayData(QString, CybosDayDatas *)));
+    dayDataProvider->requestDayData(code);
     qWarning() << "StockObject created: " << code;
 }
 
 
 StockObject::~StockObject() {}
+
+
+void StockObject::receiveDayData(QString _code, CybosDayDatas * data) {
+    if (_code == code) {
+        dayDatas = data;
+        emit readyDayData(code);
+        //qWarning() << "receiveDayData " << code << ", count : " << data->day_data_size();
+    }
+}
+
+
+void StockObject::connectToDayWindow(QObject * obj) {
+    if (!dayWindowConnected) {
+        connect(this, SIGNAL(readyDayData(QString)), obj, SLOT(dayDataArrived(QString)));
+        dayWindowConnected = true;
+    }
+}
+
+
+CybosDayDatas * StockObject::getDayDatas() {
+    return dayDatas;
+}
 
 
 void StockObject::handleTickData(CybosTickData *data) {

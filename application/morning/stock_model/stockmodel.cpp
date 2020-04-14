@@ -27,6 +27,15 @@ StockObject * StockModel::getStockObject(const QString &code) const {
     return provider.getStockObject(code);
 }
 
+
+void StockModel::setCurrentCode(const QString &code) {
+    if (code != currentCode) {
+        currentCode = code;
+        emit currentCodeChanged(currentCode);
+    }
+}
+
+
 QString StockModel::getCompanyName(const QString &code) {
     StockObject *obj = getStockObject(code);
     if (obj) 
@@ -65,5 +74,5 @@ QPixmap * StockModel::createTickChart(const QString &code, int beforeDuration) c
 
 
 void StockModel::startSimulation(QDateTime dt) {
-    provider.startSimulation(dt.toTime_t());
+    provider.startSimulation(dt);
 }

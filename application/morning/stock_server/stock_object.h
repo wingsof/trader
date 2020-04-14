@@ -9,6 +9,10 @@
 #include "stock_provider.pb.h"
 
 
+class DayDataProvider;
+using stock_api::CybosDayDatas;
+
+
 class StockObject : public QObject {
 Q_OBJECT
 public:
@@ -27,7 +31,7 @@ public:
 public:
     enum MarketType { PRE_MARKET=49, IN_MARKET=50 };
 
-    StockObject(const QString &_code, QObject *p=0);
+    StockObject(const QString &_code, DayDataProvider *d, QObject *p=0);
     ~StockObject();
 
     void handleTickData(stock_api::CybosTickData *data);
@@ -45,6 +49,8 @@ public:
     const unsigned int getTodayHigh() { return todayHigh; }
     const unsigned int getTodayLow() { return todayLow; }
     const unsigned int getCurrentPrice() { return currentPrice; }
+    CybosDayDatas * getDayDatas();
+    void connectToDayWindow(QObject *obj);
 
 private:
     QString code;
@@ -58,6 +64,11 @@ private:
     QString companyName;
     bool isKospi;
 
+    bool dayWindowConnected = false;
+
+    DayDataProvider * dayDataProvider;
+    CybosDayDatas * dayDatas;
+
     QList<stock_api::CybosTickData *> tickData;
     QList<StockObject::PeriodTickData *> periodTickData;
     QList<StockObject::PeriodTickData *> minuteData;
@@ -65,6 +76,12 @@ private:
 
     void createMinuteData();
     void clearTickData();
+
+private slots:
+    void receiveDayData(QString, CybosDayDatas *);
+
+signals:
+    void readyDayData(QString);
 };
 
 

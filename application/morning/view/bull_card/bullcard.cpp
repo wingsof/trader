@@ -23,6 +23,7 @@ BullCard::BullCard(StockModel & _model, QWidget *p)
 
     table = new BullTable;
     bullmodel = new BullModel(model);
+    connect(table, SIGNAL(clicked(const QModelIndex &)), bullmodel, SLOT(codeSelected(const QModelIndex &)));
     table->setModel(bullmodel);
 
     layout->addLayout(menuLayout);

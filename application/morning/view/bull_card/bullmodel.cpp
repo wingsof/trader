@@ -98,6 +98,15 @@ void BullModel::codePicked(QStringList codes) {
 }
 
 
+void BullModel::codeSelected(const QModelIndex &index) {
+    if (!index.isValid())
+        return;
+    QString code = getCode(index.row(), index.column());
+    if (code.length() > 0)
+        stockModel.setCurrentCode(code);
+}
+
+
 QVariant BullModel::data(const QModelIndex &index, int role) const {
     if (!index.isValid()) 
         return QVariant();
