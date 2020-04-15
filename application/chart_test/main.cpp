@@ -1,9 +1,10 @@
 #include <QApplication>
 #include "testwidget.h"
+#include "qwt_widget.h"
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-    TestWidget w;
+    QwtTestWidget w;
     w.show();
 
     app.exec();

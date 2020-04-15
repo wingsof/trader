@@ -6,6 +6,10 @@
 #include <QDebug>
 #include <QPen>
 
+
+int COUNT=10;
+
+
 TestWidget::TestWidget(QWidget *p)
 : QWidget(p) {
     //resize(150, 70);
@@ -13,7 +17,7 @@ TestWidget::TestWidget(QWidget *p)
     QVBoxLayout * layout = new QVBoxLayout;
     chart = new QChart;
     candleSeries = new QCandlestickSeries;
-    candleSeries->setUseOpenGL(true);
+    candleSeries->setUseOpenGL(false);
     //addTestData();
     candleSeries->setIncreasingColor(QColor(Qt::red));
     candleSeries->setDecreasingColor(QColor(Qt::blue));
@@ -55,16 +59,18 @@ TestWidget::TestWidget(QWidget *p)
 void TestWidget::addTestData() {
     candleSeries->clear();
     QDateTime dt = QDateTime::currentDateTime();
-    bool result = candleSeries->append(new QCandlestickSet(100, 110, 90, 110, dt.addDays(-10).toMSecsSinceEpoch()));
-    qWarning() << "append result " << result;
-    candleSeries->append(new QCandlestickSet(110, 120, 100, 120, dt.addDays(-9).toMSecsSinceEpoch()));
-    candleSeries->append(new QCandlestickSet(120, 130, 110, 130, dt.addDays(-8).toMSecsSinceEpoch()));
-    candleSeries->append(new QCandlestickSet(130, 140, 120, 140, dt.addDays(-7).toMSecsSinceEpoch()));
-    candleSeries->append(new QCandlestickSet(140, 150, 130, 150, dt.addDays(-6).toMSecsSinceEpoch()));
-    candleSeries->append(new QCandlestickSet(150, 160, 140, 160, dt.addDays(-4).toMSecsSinceEpoch()));
-    candleSeries->append(new QCandlestickSet(160, 170, 150, 170, dt.addDays(-3).toMSecsSinceEpoch()));
-    candleSeries->append(new QCandlestickSet(170, 180, 160, 180, dt.addDays(-2).toMSecsSinceEpoch()));
-    candleSeries->append(new QCandlestickSet(180, 190, 170, 190, dt.addDays(-1).toMSecsSinceEpoch()));
+    for (int i = 0; i < COUNT; ++i) {
+        candleSeries->append(new QCandlestickSet(100, 110, 90, 110, dt.addDays(-10 * (i+1)).toMSecsSinceEpoch()));
+        candleSeries->append(new QCandlestickSet(110, 120, 100, 120, dt.addDays(-9 * (i+1)).toMSecsSinceEpoch()));
+        candleSeries->append(new QCandlestickSet(120, 130, 110, 130, dt.addDays(-8 * (i+1)).toMSecsSinceEpoch()));
+        candleSeries->append(new QCandlestickSet(130, 140, 120, 140, dt.addDays(-7 * (i+1)).toMSecsSinceEpoch()));
+        candleSeries->append(new QCandlestickSet(140, 150, 130, 150, dt.addDays(-6 * (i+1)).toMSecsSinceEpoch()));
+        candleSeries->append(new QCandlestickSet(150, 160, 140, 160, dt.addDays(-5 * (i+1)).toMSecsSinceEpoch()));
+        candleSeries->append(new QCandlestickSet(160, 170, 150, 170, dt.addDays(-4 * (i+1)).toMSecsSinceEpoch()));
+        candleSeries->append(new QCandlestickSet(170, 180, 160, 180, dt.addDays(-3 * (i+1)).toMSecsSinceEpoch()));
+        candleSeries->append(new QCandlestickSet(180, 190, 170, 190, dt.addDays(-2 * (i+1)).toMSecsSinceEpoch()));
+        candleSeries->append(new QCandlestickSet(150, 160, 140, 160, dt.addDays(-1 * (i+1)).toMSecsSinceEpoch()));
+    }
 }
 
 
@@ -76,8 +82,8 @@ void TestWidget::addData() {
     QDateTime dt = QDateTime::currentDateTime();
     QBarCategoryAxis * axis = qobject_cast<QBarCategoryAxis*>(chart->axisX());
     axis->clear();
-    for (int i = -9; i < 0; ++i) {
-        axis->append(dt.addDays(i).toString("yyyy/MM/dd"));
+    for (int i = -10 * COUNT; i < 0; ++i) {
+        axis->append(QString::number(i));//dt.addDays(i).toString("yyyy/MM/dd"));
     }
     
     chart->axisY()->setRange(50, 200);

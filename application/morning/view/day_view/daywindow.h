@@ -26,7 +26,7 @@ private:
     QString currentCode;
     QChart *chart;
     QChartView *view;
-    QDateTimeAxis *datetimeAxis;
+    QBarCategoryAxis *datetimeAxis;
 
     void createCandleData(CybosDayDatas * data);
 
