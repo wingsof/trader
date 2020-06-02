@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='stock_api',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x14stock_provider.proto\x12\tstock_api\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\x1e\n\x0eStockCodeQuery\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\"\x1c\n\x08\x43odeList\x12\x10\n\x08\x63odelist\x18\x01 \x03(\t\"\x81\x01\n\nStockQuery\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x31\n\rfrom_datetime\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x32\n\x0euntil_datetime\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"G\n\x12SimulationArgument\x12\x31\n\rfrom_datetime\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"\xd2\x02\n\x0c\x43ybosDayData\x12\x0c\n\x04\x64\x61te\x18\x01 \x01(\r\x12\x0c\n\x04time\x18\x02 \x01(\r\x12\x13\n\x0bstart_price\x18\x03 \x01(\r\x12\x15\n\rhighest_price\x18\x04 \x01(\r\x12\x14\n\x0clowest_price\x18\x05 \x01(\r\x12\x13\n\x0b\x63lose_price\x18\x06 \x01(\r\x12\x0e\n\x06volume\x18\x07 \x01(\x04\x12\x0e\n\x06\x61mount\x18\x08 \x01(\x04\x12\x17\n\x0f\x63um_sell_volume\x18\t \x01(\x04\x12\x16\n\x0e\x63um_buy_volume\x18\n \x01(\x04\x12\x1d\n\x15\x66oreigner_hold_volume\x18\x0b \x01(\x03\x12\x1b\n\x13\x66oreigner_hold_rate\x18\x0c \x01(\x02\x12\x1e\n\x16institution_buy_volume\x18\r \x01(\x03\x12\"\n\x1ainstitution_cum_buy_volume\x18\x0e \x01(\x03\":\n\rCybosDayDatas\x12)\n\x08\x64\x61y_data\x18\x01 \x03(\x0b\x32\x17.stock_api.CybosDayData\"\xe0\x01\n\x14\x43ybosSubjectTickData\x12-\n\ttick_date\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0c\n\x04time\x18\x02 \x01(\r\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0c\n\x04\x63ode\x18\x04 \x01(\t\x12\x14\n\x0c\x63ompany_name\x18\x05 \x01(\t\x12\x13\n\x0b\x62uy_or_sell\x18\x06 \x01(\x08\x12\x0e\n\x06volume\x18\x07 \x01(\x04\x12\x14\n\x0ctotal_volume\x18\x08 \x01(\x03\x12\x1e\n\x16\x66oreigner_total_volume\x18\t \x01(\x03\"\xb8\x04\n\rCybosTickData\x12-\n\ttick_date\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x14\n\x0c\x63ompany_name\x18\x03 \x01(\t\x12\x16\n\x0eyesterday_diff\x18\x04 \x01(\x05\x12\x0c\n\x04time\x18\x05 \x01(\r\x12\x13\n\x0bstart_price\x18\x06 \x01(\r\x12\x15\n\rhighest_price\x18\x07 \x01(\r\x12\x14\n\x0clowest_price\x18\x08 \x01(\r\x12\x11\n\task_price\x18\t \x01(\r\x12\x11\n\tbid_price\x18\n \x01(\r\x12\x12\n\ncum_volume\x18\x0b \x01(\x04\x12\x12\n\ncum_amount\x18\x0c \x01(\x04\x12\x15\n\rcurrent_price\x18\r \x01(\r\x12\x13\n\x0b\x62uy_or_sell\x18\x0e \x01(\x08\x12 \n\x18\x63um_sell_volume_by_price\x18\x0f \x01(\x04\x12\x1f\n\x17\x63um_buy_volume_by_price\x18\x10 \x01(\x04\x12\x0e\n\x06volume\x18\x11 \x01(\x03\x12\x15\n\rtime_with_sec\x18\x12 \x01(\r\x12\x17\n\x0fmarket_type_exp\x18\x13 \x01(\r\x12\x13\n\x0bmarket_type\x18\x14 \x01(\r\x12\x17\n\x0fout_time_volume\x18\x15 \x01(\x04\x12\x17\n\x0f\x63um_sell_volume\x18\x16 \x01(\x04\x12\x16\n\x0e\x63um_buy_volume\x18\x17 \x01(\x04\x12\x10\n\x08is_kospi\x18\x18 \x01(\x08\"\xf0\x05\n\x13\x43ybosBidAskTickData\x12-\n\ttick_date\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x0c\n\x04time\x18\x03 \x01(\r\x12\x0e\n\x06volume\x18\x04 \x01(\x04\x12\x17\n\x0f\x66irst_ask_price\x18\x05 \x01(\r\x12\x17\n\x0f\x66irst_bid_price\x18\x06 \x01(\r\x12\x18\n\x10\x66irst_ask_remain\x18\x07 \x01(\r\x12\x18\n\x10\x66irst_bid_remain\x18\x08 \x01(\r\x12\x18\n\x10second_ask_price\x18\t \x01(\r\x12\x18\n\x10second_bid_price\x18\n \x01(\r\x12\x19\n\x11second_ask_remain\x18\x0b \x01(\r\x12\x19\n\x11second_bid_remain\x18\x0c \x01(\r\x12\x17\n\x0fthird_ask_price\x18\r \x01(\r\x12\x17\n\x0fthird_bid_price\x18\x0e \x01(\r\x12\x18\n\x10third_ask_remain\x18\x0f \x01(\r\x12\x18\n\x10third_bid_remain\x18\x10 \x01(\r\x12\x18\n\x10\x66ourth_ask_price\x18\x11 \x01(\r\x12\x18\n\x10\x66ourth_bid_price\x18\x12 \x01(\r\x12\x19\n\x11\x66ourth_ask_remain\x18\x13 \x01(\r\x12\x19\n\x11\x66ourth_bid_remain\x18\x14 \x01(\r\x12\x17\n\x0f\x66ifth_ask_price\x18\x15 \x01(\r\x12\x17\n\x0f\x66ifth_bid_price\x18\x16 \x01(\r\x12\x18\n\x10\x66ifth_ask_remain\x18\x17 \x01(\r\x12\x18\n\x10\x66ifth_bid_remain\x18\x18 \x01(\r\x12\x18\n\x10total_ask_remain\x18\x19 \x01(\x04\x12\x18\n\x10total_bid_remain\x18\x1a \x01(\x04\x12!\n\x19out_time_total_ask_remain\x18\x1b \x01(\x03\x12!\n\x19out_time_total_bid_remain\x18\x1c \x01(\x03\x32\x8f\x07\n\x05Stock\x12?\n\nGetDayData\x12\x15.stock_api.StockQuery\x1a\x18.stock_api.CybosDayDatas\"\x00\x12\x42\n\rGetMinuteData\x12\x15.stock_api.StockQuery\x1a\x18.stock_api.CybosDayDatas\"\x00\x12K\n\x14RequestCybosTickData\x12\x19.stock_api.StockCodeQuery\x1a\x16.google.protobuf.Empty\"\x00\x12I\n\x12RequestCybosBidAsk\x12\x19.stock_api.StockCodeQuery\x1a\x16.google.protobuf.Empty\"\x00\x12J\n\x13RequestCybosSubject\x12\x19.stock_api.StockCodeQuery\x1a\x16.google.protobuf.Empty\"\x00\x12O\n\x1aGetYesterdayTopAmountCodes\x12\x1a.google.protobuf.Timestamp\x1a\x13.stock_api.CodeList\"\x00\x12K\n\x13ListenCybosTickData\x12\x16.google.protobuf.Empty\x1a\x18.stock_api.CybosTickData\"\x00\x30\x01\x12O\n\x11ListenCybosBidAsk\x12\x16.google.protobuf.Empty\x1a\x1e.stock_api.CybosBidAskTickData\"\x00\x30\x01\x12K\n\x11ListenCurrentTime\x12\x16.google.protobuf.Empty\x1a\x1a.google.protobuf.Timestamp\"\x00\x30\x01\x12Q\n\x12ListenCybosSubject\x12\x16.google.protobuf.Empty\x1a\x1f.stock_api.CybosSubjectTickData\"\x00\x30\x01\x12J\n\x0fStartSimulation\x12\x1d.stock_api.SimulationArgument\x1a\x16.google.protobuf.Empty\"\x00\x12\x42\n\x0eStopSimulation\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x14stock_provider.proto\x12\tstock_api\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\x1e\n\x0eStockCodeQuery\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\"\x1c\n\x08\x43odeList\x12\x10\n\x08\x63odelist\x18\x01 \x03(\t\"\x81\x01\n\nStockQuery\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x31\n\rfrom_datetime\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x32\n\x0euntil_datetime\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"a\n\x0fPastMinuteQuery\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x15\n\rcount_of_days\x18\x02 \x01(\r\x12)\n\x05today\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"G\n\x12SimulationArgument\x12\x31\n\rfrom_datetime\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"\xd2\x02\n\x0c\x43ybosDayData\x12\x0c\n\x04\x64\x61te\x18\x01 \x01(\r\x12\x0c\n\x04time\x18\x02 \x01(\r\x12\x13\n\x0bstart_price\x18\x03 \x01(\r\x12\x15\n\rhighest_price\x18\x04 \x01(\r\x12\x14\n\x0clowest_price\x18\x05 \x01(\r\x12\x13\n\x0b\x63lose_price\x18\x06 \x01(\r\x12\x0e\n\x06volume\x18\x07 \x01(\x04\x12\x0e\n\x06\x61mount\x18\x08 \x01(\x04\x12\x17\n\x0f\x63um_sell_volume\x18\t \x01(\x04\x12\x16\n\x0e\x63um_buy_volume\x18\n \x01(\x04\x12\x1d\n\x15\x66oreigner_hold_volume\x18\x0b \x01(\x03\x12\x1b\n\x13\x66oreigner_hold_rate\x18\x0c \x01(\x02\x12\x1e\n\x16institution_buy_volume\x18\r \x01(\x03\x12\"\n\x1ainstitution_cum_buy_volume\x18\x0e \x01(\x03\":\n\rCybosDayDatas\x12)\n\x08\x64\x61y_data\x18\x01 \x03(\x0b\x32\x17.stock_api.CybosDayData\"\xe0\x01\n\x14\x43ybosSubjectTickData\x12-\n\ttick_date\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0c\n\x04time\x18\x02 \x01(\r\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0c\n\x04\x63ode\x18\x04 \x01(\t\x12\x14\n\x0c\x63ompany_name\x18\x05 \x01(\t\x12\x13\n\x0b\x62uy_or_sell\x18\x06 \x01(\x08\x12\x0e\n\x06volume\x18\x07 \x01(\x04\x12\x14\n\x0ctotal_volume\x18\x08 \x01(\x03\x12\x1e\n\x16\x66oreigner_total_volume\x18\t \x01(\x03\"\xb8\x04\n\rCybosTickData\x12-\n\ttick_date\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x14\n\x0c\x63ompany_name\x18\x03 \x01(\t\x12\x16\n\x0eyesterday_diff\x18\x04 \x01(\x05\x12\x0c\n\x04time\x18\x05 \x01(\r\x12\x13\n\x0bstart_price\x18\x06 \x01(\r\x12\x15\n\rhighest_price\x18\x07 \x01(\r\x12\x14\n\x0clowest_price\x18\x08 \x01(\r\x12\x11\n\task_price\x18\t \x01(\r\x12\x11\n\tbid_price\x18\n \x01(\r\x12\x12\n\ncum_volume\x18\x0b \x01(\x04\x12\x12\n\ncum_amount\x18\x0c \x01(\x04\x12\x15\n\rcurrent_price\x18\r \x01(\r\x12\x13\n\x0b\x62uy_or_sell\x18\x0e \x01(\x08\x12 \n\x18\x63um_sell_volume_by_price\x18\x0f \x01(\x04\x12\x1f\n\x17\x63um_buy_volume_by_price\x18\x10 \x01(\x04\x12\x0e\n\x06volume\x18\x11 \x01(\x03\x12\x15\n\rtime_with_sec\x18\x12 \x01(\r\x12\x17\n\x0fmarket_type_exp\x18\x13 \x01(\r\x12\x13\n\x0bmarket_type\x18\x14 \x01(\r\x12\x17\n\x0fout_time_volume\x18\x15 \x01(\x04\x12\x17\n\x0f\x63um_sell_volume\x18\x16 \x01(\x04\x12\x16\n\x0e\x63um_buy_volume\x18\x17 \x01(\x04\x12\x10\n\x08is_kospi\x18\x18 \x01(\x08\"\xf0\x05\n\x13\x43ybosBidAskTickData\x12-\n\ttick_date\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0c\n\x04\x63ode\x18\x02 \x01(\t\x12\x0c\n\x04time\x18\x03 \x01(\r\x12\x0e\n\x06volume\x18\x04 \x01(\x04\x12\x17\n\x0f\x66irst_ask_price\x18\x05 \x01(\r\x12\x17\n\x0f\x66irst_bid_price\x18\x06 \x01(\r\x12\x18\n\x10\x66irst_ask_remain\x18\x07 \x01(\r\x12\x18\n\x10\x66irst_bid_remain\x18\x08 \x01(\r\x12\x18\n\x10second_ask_price\x18\t \x01(\r\x12\x18\n\x10second_bid_price\x18\n \x01(\r\x12\x19\n\x11second_ask_remain\x18\x0b \x01(\r\x12\x19\n\x11second_bid_remain\x18\x0c \x01(\r\x12\x17\n\x0fthird_ask_price\x18\r \x01(\r\x12\x17\n\x0fthird_bid_price\x18\x0e \x01(\r\x12\x18\n\x10third_ask_remain\x18\x0f \x01(\r\x12\x18\n\x10third_bid_remain\x18\x10 \x01(\r\x12\x18\n\x10\x66ourth_ask_price\x18\x11 \x01(\r\x12\x18\n\x10\x66ourth_bid_price\x18\x12 \x01(\r\x12\x19\n\x11\x66ourth_ask_remain\x18\x13 \x01(\r\x12\x19\n\x11\x66ourth_bid_remain\x18\x14 \x01(\r\x12\x17\n\x0f\x66ifth_ask_price\x18\x15 \x01(\r\x12\x17\n\x0f\x66ifth_bid_price\x18\x16 \x01(\r\x12\x18\n\x10\x66ifth_ask_remain\x18\x17 \x01(\r\x12\x18\n\x10\x66ifth_bid_remain\x18\x18 \x01(\r\x12\x18\n\x10total_ask_remain\x18\x19 \x01(\x04\x12\x18\n\x10total_bid_remain\x18\x1a \x01(\x04\x12!\n\x19out_time_total_ask_remain\x18\x1b \x01(\x03\x12!\n\x19out_time_total_bid_remain\x18\x1c \x01(\x03\x32\xdc\x07\n\x05Stock\x12?\n\nGetDayData\x12\x15.stock_api.StockQuery\x1a\x18.stock_api.CybosDayDatas\"\x00\x12\x42\n\rGetMinuteData\x12\x15.stock_api.StockQuery\x1a\x18.stock_api.CybosDayDatas\"\x00\x12K\n\x11GetPastMinuteData\x12\x1a.stock_api.PastMinuteQuery\x1a\x18.stock_api.CybosDayDatas\"\x00\x12K\n\x14RequestCybosTickData\x12\x19.stock_api.StockCodeQuery\x1a\x16.google.protobuf.Empty\"\x00\x12I\n\x12RequestCybosBidAsk\x12\x19.stock_api.StockCodeQuery\x1a\x16.google.protobuf.Empty\"\x00\x12J\n\x13RequestCybosSubject\x12\x19.stock_api.StockCodeQuery\x1a\x16.google.protobuf.Empty\"\x00\x12O\n\x1aGetYesterdayTopAmountCodes\x12\x1a.google.protobuf.Timestamp\x1a\x13.stock_api.CodeList\"\x00\x12K\n\x13ListenCybosTickData\x12\x16.google.protobuf.Empty\x1a\x18.stock_api.CybosTickData\"\x00\x30\x01\x12O\n\x11ListenCybosBidAsk\x12\x16.google.protobuf.Empty\x1a\x1e.stock_api.CybosBidAskTickData\"\x00\x30\x01\x12K\n\x11ListenCurrentTime\x12\x16.google.protobuf.Empty\x1a\x1a.google.protobuf.Timestamp\"\x00\x30\x01\x12Q\n\x12ListenCybosSubject\x12\x16.google.protobuf.Empty\x1a\x1f.stock_api.CybosSubjectTickData\"\x00\x30\x01\x12J\n\x0fStartSimulation\x12\x1d.stock_api.SimulationArgument\x1a\x16.google.protobuf.Empty\"\x00\x12\x42\n\x0eStopSimulation\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -134,6 +134,51 @@ _STOCKQUERY = _descriptor.Descriptor(
 )
 
 
+_PASTMINUTEQUERY = _descriptor.Descriptor(
+  name='PastMinuteQuery',
+  full_name='stock_api.PastMinuteQuery',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='code', full_name='stock_api.PastMinuteQuery.code', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='count_of_days', full_name='stock_api.PastMinuteQuery.count_of_days', index=1,
+      number=2, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='today', full_name='stock_api.PastMinuteQuery.today', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=291,
+  serialized_end=388,
+)
+
+
 _SIMULATIONARGUMENT = _descriptor.Descriptor(
   name='SimulationArgument',
   full_name='stock_api.SimulationArgument',
@@ -160,8 +205,8 @@ _SIMULATIONARGUMENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=291,
-  serialized_end=362,
+  serialized_start=390,
+  serialized_end=461,
 )
 
 
@@ -282,8 +327,8 @@ _CYBOSDAYDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=365,
-  serialized_end=703,
+  serialized_start=464,
+  serialized_end=802,
 )
 
 
@@ -313,8 +358,8 @@ _CYBOSDAYDATAS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=705,
-  serialized_end=763,
+  serialized_start=804,
+  serialized_end=862,
 )
 
 
@@ -400,8 +445,8 @@ _CYBOSSUBJECTTICKDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=766,
-  serialized_end=990,
+  serialized_start=865,
+  serialized_end=1089,
 )
 
 
@@ -592,8 +637,8 @@ _CYBOSTICKDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=993,
-  serialized_end=1561,
+  serialized_start=1092,
+  serialized_end=1660,
 )
 
 
@@ -812,12 +857,13 @@ _CYBOSBIDASKTICKDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1564,
-  serialized_end=2316,
+  serialized_start=1663,
+  serialized_end=2415,
 )
 
 _STOCKQUERY.fields_by_name['from_datetime'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _STOCKQUERY.fields_by_name['until_datetime'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
+_PASTMINUTEQUERY.fields_by_name['today'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _SIMULATIONARGUMENT.fields_by_name['from_datetime'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _CYBOSDAYDATAS.fields_by_name['day_data'].message_type = _CYBOSDAYDATA
 _CYBOSSUBJECTTICKDATA.fields_by_name['tick_date'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
@@ -826,6 +872,7 @@ _CYBOSBIDASKTICKDATA.fields_by_name['tick_date'].message_type = google_dot_proto
 DESCRIPTOR.message_types_by_name['StockCodeQuery'] = _STOCKCODEQUERY
 DESCRIPTOR.message_types_by_name['CodeList'] = _CODELIST
 DESCRIPTOR.message_types_by_name['StockQuery'] = _STOCKQUERY
+DESCRIPTOR.message_types_by_name['PastMinuteQuery'] = _PASTMINUTEQUERY
 DESCRIPTOR.message_types_by_name['SimulationArgument'] = _SIMULATIONARGUMENT
 DESCRIPTOR.message_types_by_name['CybosDayData'] = _CYBOSDAYDATA
 DESCRIPTOR.message_types_by_name['CybosDayDatas'] = _CYBOSDAYDATAS
@@ -854,6 +901,13 @@ StockQuery = _reflection.GeneratedProtocolMessageType('StockQuery', (_message.Me
   # @@protoc_insertion_point(class_scope:stock_api.StockQuery)
   })
 _sym_db.RegisterMessage(StockQuery)
+
+PastMinuteQuery = _reflection.GeneratedProtocolMessageType('PastMinuteQuery', (_message.Message,), {
+  'DESCRIPTOR' : _PASTMINUTEQUERY,
+  '__module__' : 'stock_provider_pb2'
+  # @@protoc_insertion_point(class_scope:stock_api.PastMinuteQuery)
+  })
+_sym_db.RegisterMessage(PastMinuteQuery)
 
 SimulationArgument = _reflection.GeneratedProtocolMessageType('SimulationArgument', (_message.Message,), {
   'DESCRIPTOR' : _SIMULATIONARGUMENT,
@@ -905,8 +959,8 @@ _STOCK = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=2319,
-  serialized_end=3230,
+  serialized_start=2418,
+  serialized_end=3406,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetDayData',
@@ -927,9 +981,18 @@ _STOCK = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
+    name='GetPastMinuteData',
+    full_name='stock_api.Stock.GetPastMinuteData',
+    index=2,
+    containing_service=None,
+    input_type=_PASTMINUTEQUERY,
+    output_type=_CYBOSDAYDATAS,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
     name='RequestCybosTickData',
     full_name='stock_api.Stock.RequestCybosTickData',
-    index=2,
+    index=3,
     containing_service=None,
     input_type=_STOCKCODEQUERY,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
@@ -938,7 +1001,7 @@ _STOCK = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='RequestCybosBidAsk',
     full_name='stock_api.Stock.RequestCybosBidAsk',
-    index=3,
+    index=4,
     containing_service=None,
     input_type=_STOCKCODEQUERY,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
@@ -947,7 +1010,7 @@ _STOCK = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='RequestCybosSubject',
     full_name='stock_api.Stock.RequestCybosSubject',
-    index=4,
+    index=5,
     containing_service=None,
     input_type=_STOCKCODEQUERY,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
@@ -956,7 +1019,7 @@ _STOCK = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='GetYesterdayTopAmountCodes',
     full_name='stock_api.Stock.GetYesterdayTopAmountCodes',
-    index=5,
+    index=6,
     containing_service=None,
     input_type=google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP,
     output_type=_CODELIST,
@@ -965,7 +1028,7 @@ _STOCK = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='ListenCybosTickData',
     full_name='stock_api.Stock.ListenCybosTickData',
-    index=6,
+    index=7,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_CYBOSTICKDATA,
@@ -974,7 +1037,7 @@ _STOCK = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='ListenCybosBidAsk',
     full_name='stock_api.Stock.ListenCybosBidAsk',
-    index=7,
+    index=8,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_CYBOSBIDASKTICKDATA,
@@ -983,7 +1046,7 @@ _STOCK = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='ListenCurrentTime',
     full_name='stock_api.Stock.ListenCurrentTime',
-    index=8,
+    index=9,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP,
@@ -992,7 +1055,7 @@ _STOCK = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='ListenCybosSubject',
     full_name='stock_api.Stock.ListenCybosSubject',
-    index=9,
+    index=10,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=_CYBOSSUBJECTTICKDATA,
@@ -1001,7 +1064,7 @@ _STOCK = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='StartSimulation',
     full_name='stock_api.Stock.StartSimulation',
-    index=10,
+    index=11,
     containing_service=None,
     input_type=_SIMULATIONARGUMENT,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
@@ -1010,7 +1073,7 @@ _STOCK = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='StopSimulation',
     full_name='stock_api.Stock.StopSimulation',
-    index=11,
+    index=12,
     containing_service=None,
     input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,

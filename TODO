@@ -1,4 +1,20 @@
+* 현재 진행 사항(2020/04/23)
+    * Chart Library 까지 직접 개발해야 되는 문제
+        * 들어야 하는 시간에 비해 기존 HTS와 큰 차이가 현재 없다
+        * 차라리 BULL 항목들을 나열하고 테이블에서 클릭시 Clipboard 복사 형태
+            * 복사 후 HTS에 코드 입력하는 형태
+        * 위의 BULL 항목과 HTS 비교 후 
+    * 원 목표는 Replay 가능한 HTS
+        * 구현해보니 막상 Chart Library 에 공수가 너무 많이 들어감
+    * Chart Library 에 집중하기 보다는 HTS와 혼용하여 활용할 방안
+        * HTS 와 혼용시 Replay 가 되지 않음
+        * 간단한 Bar 형태와 Realtime으로 Display 가능한 Chart 만 개발?
 
+
+* Client 개선
+    1. 안내 html popup 창이 뜨는 시점을 connected라고 판단하고 auto를 종료
+    2. connected가 일정 시간 되지 않는 경우 reboot 진행
+    3. start한 vm 이 다 연결된 경우 vi_follower 실행
 
 
 * Picker 검증 진행

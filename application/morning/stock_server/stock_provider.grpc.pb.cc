@@ -24,6 +24,7 @@ namespace stock_api {
 static const char* Stock_method_names[] = {
   "/stock_api.Stock/GetDayData",
   "/stock_api.Stock/GetMinuteData",
+  "/stock_api.Stock/GetPastMinuteData",
   "/stock_api.Stock/RequestCybosTickData",
   "/stock_api.Stock/RequestCybosBidAsk",
   "/stock_api.Stock/RequestCybosSubject",
@@ -45,16 +46,17 @@ std::unique_ptr< Stock::Stub> Stock::NewStub(const std::shared_ptr< ::grpc::Chan
 Stock::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
   : channel_(channel), rpcmethod_GetDayData_(Stock_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_GetMinuteData_(Stock_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_RequestCybosTickData_(Stock_method_names[2], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_RequestCybosBidAsk_(Stock_method_names[3], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_RequestCybosSubject_(Stock_method_names[4], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetYesterdayTopAmountCodes_(Stock_method_names[5], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ListenCybosTickData_(Stock_method_names[6], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_ListenCybosBidAsk_(Stock_method_names[7], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_ListenCurrentTime_(Stock_method_names[8], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_ListenCybosSubject_(Stock_method_names[9], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_StartSimulation_(Stock_method_names[10], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_StopSimulation_(Stock_method_names[11], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetPastMinuteData_(Stock_method_names[2], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_RequestCybosTickData_(Stock_method_names[3], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_RequestCybosBidAsk_(Stock_method_names[4], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_RequestCybosSubject_(Stock_method_names[5], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetYesterdayTopAmountCodes_(Stock_method_names[6], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ListenCybosTickData_(Stock_method_names[7], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_ListenCybosBidAsk_(Stock_method_names[8], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_ListenCurrentTime_(Stock_method_names[9], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_ListenCybosSubject_(Stock_method_names[10], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_StartSimulation_(Stock_method_names[11], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_StopSimulation_(Stock_method_names[12], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status Stock::Stub::GetDayData(::grpc::ClientContext* context, const ::stock_api::StockQuery& request, ::stock_api::CybosDayDatas* response) {
@@ -111,6 +113,34 @@ void Stock::Stub::experimental_async::GetMinuteData(::grpc::ClientContext* conte
 
 ::grpc::ClientAsyncResponseReader< ::stock_api::CybosDayDatas>* Stock::Stub::PrepareAsyncGetMinuteDataRaw(::grpc::ClientContext* context, const ::stock_api::StockQuery& request, ::grpc::CompletionQueue* cq) {
   return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::CybosDayDatas>::Create(channel_.get(), cq, rpcmethod_GetMinuteData_, context, request, false);
+}
+
+::grpc::Status Stock::Stub::GetPastMinuteData(::grpc::ClientContext* context, const ::stock_api::PastMinuteQuery& request, ::stock_api::CybosDayDatas* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_GetPastMinuteData_, context, request, response);
+}
+
+void Stock::Stub::experimental_async::GetPastMinuteData(::grpc::ClientContext* context, const ::stock_api::PastMinuteQuery* request, ::stock_api::CybosDayDatas* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GetPastMinuteData_, context, request, response, std::move(f));
+}
+
+void Stock::Stub::experimental_async::GetPastMinuteData(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CybosDayDatas* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GetPastMinuteData_, context, request, response, std::move(f));
+}
+
+void Stock::Stub::experimental_async::GetPastMinuteData(::grpc::ClientContext* context, const ::stock_api::PastMinuteQuery* request, ::stock_api::CybosDayDatas* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_GetPastMinuteData_, context, request, response, reactor);
+}
+
+void Stock::Stub::experimental_async::GetPastMinuteData(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CybosDayDatas* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_GetPastMinuteData_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::stock_api::CybosDayDatas>* Stock::Stub::AsyncGetPastMinuteDataRaw(::grpc::ClientContext* context, const ::stock_api::PastMinuteQuery& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::CybosDayDatas>::Create(channel_.get(), cq, rpcmethod_GetPastMinuteData_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::stock_api::CybosDayDatas>* Stock::Stub::PrepareAsyncGetPastMinuteDataRaw(::grpc::ClientContext* context, const ::stock_api::PastMinuteQuery& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::CybosDayDatas>::Create(channel_.get(), cq, rpcmethod_GetPastMinuteData_, context, request, false);
 }
 
 ::grpc::Status Stock::Stub::RequestCybosTickData(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::google::protobuf::Empty* response) {
@@ -359,50 +389,55 @@ Stock::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[2],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
-          std::mem_fn(&Stock::Service::RequestCybosTickData), this)));
+      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::PastMinuteQuery, ::stock_api::CybosDayDatas>(
+          std::mem_fn(&Stock::Service::GetPastMinuteData), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[3],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
-          std::mem_fn(&Stock::Service::RequestCybosBidAsk), this)));
+          std::mem_fn(&Stock::Service::RequestCybosTickData), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[4],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
-          std::mem_fn(&Stock::Service::RequestCybosSubject), this)));
+          std::mem_fn(&Stock::Service::RequestCybosBidAsk), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[5],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
+          std::mem_fn(&Stock::Service::RequestCybosSubject), this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      Stock_method_names[6],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< Stock::Service, ::google::protobuf::Timestamp, ::stock_api::CodeList>(
           std::mem_fn(&Stock::Service::GetYesterdayTopAmountCodes), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Stock_method_names[6],
+      Stock_method_names[7],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::google::protobuf::Empty, ::stock_api::CybosTickData>(
           std::mem_fn(&Stock::Service::ListenCybosTickData), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Stock_method_names[7],
+      Stock_method_names[8],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::google::protobuf::Empty, ::stock_api::CybosBidAskTickData>(
           std::mem_fn(&Stock::Service::ListenCybosBidAsk), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Stock_method_names[8],
+      Stock_method_names[9],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::google::protobuf::Empty, ::google::protobuf::Timestamp>(
           std::mem_fn(&Stock::Service::ListenCurrentTime), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Stock_method_names[9],
+      Stock_method_names[10],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::google::protobuf::Empty, ::stock_api::CybosSubjectTickData>(
           std::mem_fn(&Stock::Service::ListenCybosSubject), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Stock_method_names[10],
+      Stock_method_names[11],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::SimulationArgument, ::google::protobuf::Empty>(
           std::mem_fn(&Stock::Service::StartSimulation), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Stock_method_names[11],
+      Stock_method_names[12],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< Stock::Service, ::google::protobuf::Empty, ::google::protobuf::Empty>(
           std::mem_fn(&Stock::Service::StopSimulation), this)));
@@ -419,6 +454,13 @@ Stock::Service::~Service() {
 }
 
 ::grpc::Status Stock::Service::GetMinuteData(::grpc::ServerContext* context, const ::stock_api::StockQuery* request, ::stock_api::CybosDayDatas* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status Stock::Service::GetPastMinuteData(::grpc::ServerContext* context, const ::stock_api::PastMinuteQuery* request, ::stock_api::CybosDayDatas* response) {
   (void) context;
   (void) request;
   (void) response;

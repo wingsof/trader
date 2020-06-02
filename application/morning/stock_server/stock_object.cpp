@@ -2,6 +2,7 @@
 #include "stock_server/time_info.h"
 #include <QDebug>
 #include "daydata_provider.h"
+#include "minutedata_provider.h"
 
 using stock_api::CybosTickData;
 
@@ -9,14 +10,20 @@ using stock_api::CybosBidAskTickData;
 using stock_api::CybosSubjectTickData;
 
 
-StockObject::StockObject(const QString &_code, DayDataProvider * d, QObject *p)
-: QObject(p), code(_code), dayDataProvider(d) {
+StockObject::StockObject(const QString &_code, DayDataProvider * d, MinuteDataProvider * m, QObject *p)
+: QObject(p), code(_code), dayDataProvider(d),
+  minuteDataProvider(m) {
     lastMinuteIndex = 0;
     isKospi = false;
     dayDatas = NULL;
     connect((QObject *)dayDataProvider, SIGNAL(dataReady(QString, CybosDayDatas *)),
             this, SLOT(receiveDayData(QString, CybosDayDatas *)));
     dayDataProvider->requestDayData(code);
+
+    connect((QObject *)minuteDataProvider, SIGNAL(dataReady(QString, CybosDayDatas *)),
+            this, SLOT(receiveMinuteData(QString, CybosDayDatas *)));
+    minuteDataProvider->requestMinuteData(code);
+
     qWarning() << "StockObject created: " << code;
 }
 
@@ -33,6 +40,14 @@ void StockObject::receiveDayData(QString _code, CybosDayDatas * data) {
 }
 
 
+void StockObject::receiveMinuteData(QString _code, CybosDayDatas * data) {
+    if (_code == code) {
+        pastMinuteDatas = data;
+        emit readyPastMinuteData(code);
+    }
+}
+
+
 void StockObject::connectToDayWindow(QObject * obj) {
     if (!dayWindowConnected) {
         connect(this, SIGNAL(readyDayData(QString)), obj, SLOT(dayDataArrived(QString)));
@@ -41,8 +56,21 @@ void StockObject::connectToDayWindow(QObject * obj) {
 }
 
 
+void StockObject::connectToMinuteWindow(QObject *obj) {
+    if (!minuteWindowConnected) {
+        connect(this, SIGNAL(readyPastMinuteData(QString)), obj, SLOT(pastMinuteDataArrived(QString)));
+        minuteWindowConnected = false;
+    }
+}
+
+
 CybosDayDatas * StockObject::getDayDatas() {
     return dayDatas;
+}
+
+
+CybosDayDatas * StockObject::getPastMinuteDatas() {
+    return pastMinuteDatas;
 }
 
 
@@ -65,8 +93,16 @@ void StockObject::handleTickData(CybosTickData *data) {
             companyName = QString::fromStdString(data->company_name());
         }
 
-        currentPrice = data->current_price();
+        setCurrentPrice(data->current_price());
         tickData.append(data);
+    }
+}
+
+
+void StockObject::setCurrentPrice(unsigned int price) {
+    if (currentPrice != price) {
+        currentPrice = price;
+        emit currentPriceChanged(code, currentPrice);
     }
 }
 
@@ -93,12 +129,15 @@ QList<StockObject::PeriodTickData *> StockObject::getPeriodData(const QDateTime 
 }
 
 
+const QList<StockObject::PeriodTickData *> & StockObject::getMinuteData() {
+    return minuteData;
+}
+
+
 void StockObject::createMinuteData() {
     PeriodTickData * first = periodTickData.at(lastMinuteIndex);
     PeriodTickData * last = periodTickData.last();
-    if (first->date.msecsTo(last->date) >= 1000 * 60 * 60) {
-        lastMinuteIndex = periodTickData.count();
-        long total_prices = 0;
+    if (first->date.msecsTo(last->date) >= 1000 * 60) {
         StockObject::PeriodTickData * ptd = new StockObject::PeriodTickData;
         ptd->open = first->open;
         ptd->close = last->close;
@@ -117,8 +156,11 @@ void StockObject::createMinuteData() {
             if (data->high > ptd->high)
                 ptd->high = data->high;
         } 
+        lastMinuteIndex = periodTickData.count();
         minuteData.append(ptd);
+        emit minuteDataUpdated(code, ptd);
     }
+    // Handle minute realtime data using currentPrice
 }
 
 

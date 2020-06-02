@@ -9,6 +9,7 @@ package stock_api;
 service Stock {
   rpc GetDayData(StockQuery) returns (CybosDayDatas) {}
   rpc GetMinuteData(StockQuery) returns (CybosDayDatas) {}
+  rpc GetPastMinuteData(PastMinuteQuery) returns (CybosDayDatas) {}
   rpc RequestCybosTickData(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosBidAsk(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosSubject(StockCodeQuery) returns (google.protobuf.Empty) {}
@@ -39,6 +40,13 @@ message StockQuery {
     string code = 1;
     google.protobuf.Timestamp from_datetime = 2;
     google.protobuf.Timestamp until_datetime = 3;
+}
+
+
+message PastMinuteQuery {
+    string code = 1;
+    uint32 count_of_days = 2;
+    google.protobuf.Timestamp today = 3;
 }
 
 

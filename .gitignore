@@ -22,3 +22,6 @@ Makefile
 moc*.*
 *.log.*
 .qmake*
+application/chart_test/chart
+application/morning/morning
+application/chart_test/performance_comparison/chartlib_compare

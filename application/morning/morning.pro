@@ -33,6 +33,7 @@ SOURCES += main.cpp \
            stock_server/subject_thread.cpp \
            stock_server/time_thread.cpp \
            stock_server/daydata_provider.cpp \
+           stock_server/minutedata_provider.cpp \
            stock_server/plugin/chooser/chooserplugin.cpp \
            stock_server/plugin/chooser/topamount.cpp \
            stock_server/time_info.cpp \
@@ -41,6 +42,9 @@ SOURCES += main.cpp \
            view/statusbar.cpp \
            view/tick_view/tickwindow.cpp \
            view/day_view/daywindow.cpp \
+           view/minute_view/pastminutechart.cpp \
+           view/minute_view/realtimeminutechart.cpp \
+           view/minute_view/minutewindow.cpp \
            view/bull_card/bullcard.cpp \
            view/bull_card/bulltable.cpp \
            view/bull_card/bullmodel.cpp \
@@ -56,6 +60,7 @@ HEADERS += stock_server/stock_provider.grpc.pb.h \
            stock_server/time_thread.h \
            stock_server/time_info.h \
            stock_server/daydata_provider.h \
+           stock_server/minutedata_provider.h \
            stock_server/plugin/chooser/chooserplugin.h \
            stock_server/plugin/chooser/topamount.h \
            stock_model/stockmodel.h \
@@ -64,6 +69,9 @@ HEADERS += stock_server/stock_provider.grpc.pb.h \
            view/statusbar.h \
            view/tick_view/tickwindow.h \
            view/day_view/daywindow.h \
+           view/minute_view/pastminutechart.h \
+           view/minute_view/realtimeminutechart.h \
+           view/minute_view/minutewindow.h \
            view/bull_card/bullcard.h \
            view/bull_card/bulltable.h \
            view/bull_card/bullmodel.h \
