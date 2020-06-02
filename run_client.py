@@ -11,6 +11,7 @@ from datetime import datetime
 from multiprocessing import Process
 from utils.auto import auto
 from misc_utils import cybos_com_gen
+from morning_server.collectors import shutdown
 
 
 if __name__ == '__main__':
@@ -21,11 +22,15 @@ if __name__ == '__main__':
     except:
         print('READY file not exist')
 
-    time.sleep(120)
     login_process = Process(target=auto.run)
     login_process.start()
     login_process.join()
-    time.sleep(240)
+
+    if login_process.exitcode != 0:
+        shutdown.go_shutdown(1)
+        time.sleep(10)
+
+    time.sleep(10)
 
     gen_com_process = Process(target=cybos_com_gen.run)
     gen_com_process.start()

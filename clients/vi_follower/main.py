@@ -32,7 +32,7 @@ def check_time():
     while True:
         now = datetime.now()
         if now.hour >= 18 and now.minute >= 35:
-            break
+            sys.exit(0)
         gevent.sleep(60)
 
 

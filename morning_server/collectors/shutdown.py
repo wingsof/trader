@@ -20,9 +20,9 @@ def AdjustPrivilege(priv, enable = 1):
     win32security.AdjustTokenPrivileges(htoken, 0, newPrivileges)
 
 
-def go_shutdown():
+def go_shutdown(is_reboot=0):
     AdjustPrivilege(SE_SHUTDOWN_NAME)
-    win32api.InitiateSystemShutdown(None, 'Shutdown msg from API Server', 10, 1, 0)
+    win32api.InitiateSystemShutdown(None, 'Shutdown msg from API Server', 10, 1, is_reboot)
 
 
 if __name__ == '__main__':

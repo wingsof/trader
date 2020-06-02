@@ -3,6 +3,7 @@ import time
 from utils.auto import winkey
 import random
 import datetime
+from datetime import timedelta
 import sys
 import win32clipboard
 
@@ -28,7 +29,7 @@ def send_word(word):
 def run():
     win = windep.WinDep()
     state = 0
-    time.sleep(10)
+    notice_wait_time = None
     while True:
         time.sleep(1)
 
@@ -39,7 +40,7 @@ def run():
         elif state == 1:
             if win.starter_found():
                 state = 2
-                time.sleep(20)
+                time.sleep(10)
                 win32clipboard.OpenClipboard()
                 win32clipboard.EmptyClipboard()
                 win32clipboard.SetClipboardText(client_info.get_client_password())
@@ -54,7 +55,14 @@ def run():
                 time.sleep(1)
                 winkey.send_key(winkey.VK_CODE['enter'])
         elif state == 2:
-            time.sleep(30)
+            if notice_wait_time is None:
+                notice_wait_time = datetime.datetime.now()
+
+            if win.popup_notice_found():
+                state = 3
+            elif datetime.datetime.now() - notice_wait_time > timedelta(seconds=60):
+                sys.exit(1)
+        elif state == 3:
             sys.exit(0)
 
 if __name__ == '__main__':

@@ -44,6 +44,10 @@ class WinDep:
         if self.window_found('CREON', 408, 221):
             return True
             
+    def popup_notice_found(self):
+        if not self.window_found('Starter'):
+            return True
+        return False
 
     def window_found(self, name, width=-1, height=-1):
         global hwnd
@@ -70,30 +74,3 @@ class WinDep:
         hwnd = None
         title = None
         return False
-
-    def capture(self):
-        dataBitMap = win32ui.CreateBitmap()
-        w_handle_DC = win32gui.GetWindowDC(hwnd)
-        windowDC = win32ui.CreateDCFromHandle(w_handle_DC)
-        memDC = windowDC.CreateCompatibleDC()
-        dataBitMap.CreateCompatibleBitmap(windowDC, self.window_width, self.window_height)
-        memDC.SelectObject(dataBitMap)
-        memDC.BitBlt((0, 0), (self.window_width, self.window_height), windowDC, (0, 0), win32con.SRCCOPY)
-        bmpinfo = dataBitMap.GetInfo()
-        bmpstr = dataBitMap.GetBitmapBits(True)
-        im = Image.frombuffer(
-            'RGB',
-            (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
-            bmpstr, 'raw', 'BGRX', 0, 1)
-
-        windowDC.DeleteDC()
-        memDC.DeleteDC()
-        win32gui.ReleaseDC(hwnd, w_handle_DC)
-        win32gui.DeleteObject(dataBitMap.GetHandle())
-        # print("Took ", (datetime.datetime.now() - self.capture_time).total_seconds(), " s")
-        self.capture_time = datetime.datetime.now()
-        return im
-
-if __name__ == '__main__':
-    win = WinDep()
-    win.capture().save('capture.png')

@@ -23,7 +23,7 @@ def run_subscriber():
     while True:
         print('Run subscriber Wait')
 
-        time.sleep(900) # wait until virtual machine is on
+        time.sleep(600) # wait until virtual machine is on
         now = datetime.now()
         year, month, day = now.year, now.month, now.day
 

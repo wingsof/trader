@@ -6,7 +6,7 @@ TIME_DELTA = 0
 
 VBOX_CHECK_INTERVAL = 60 # 1 minute
 
-SUBSCRIBER_START_TIME = {'hour': 7, 'minute': 25}
+SUBSCRIBER_START_TIME = {'hour': 7, 'minute': 30}
 SUBSCRIBER_FINISH_TIME = {'hour': 18, 'minute': 30}
 
 VBOX_TURN_OFF_FROM_TIME = {'hour': 5, 'minute': 0}
