@@ -3,19 +3,40 @@
 
                                       BUY Setting: Bet당 금액 or 잔액의 xx%
 -----------------------------------------------------------
-DAY                 || 주체 매수    || bull   정보|| 시간 외 정보     ||  
-MINUTE              || BA(Open 가격)||1 sec, 5 sec, 10 sec 1min, today||
-TICK                || 거래 증권사  ||            ||                  ||   
-KOSPI| KOSDAQ       || 보유 종목    || VI 정보    || 금일 손익        || 
-NASDQA | JAPAN(1)   ||각각 손절가등 ||            ||                  ||  
+DAY                 || Bid Ask                                 || bull   정보                    ||  
+MINUTE              || 거래 증권사/거래주체                    ||                                ||
+TICK                ||                                         ||            ||                  ||   
+KOSPI| KOSDAQ       || 거래 정보(매수 종목, 관심 종목..        || VI 정보    || 금일 손익        || 
+NASDQA | JAPAN(1)   ||                                         ||            ||                  || 
 -----------------------------------------------------------
 
 
 * Graph
     * DAY
     * MINUTE
-        * 금일 Minute, 
+        * 금일 Minute (어제 Minute 연결)
     * TICK
         * 이전 1분부터 Tracking, 1초 단위로 Tick
-        * 단일 매도, 단일 매수 표사ㅣ
+        * 단일 매도, 단일 매수 표시
         * 이평선 가격 표시
+
+* 거래 정보 Table
+    * 현재 매수 종목
+    * 관심 종목(관심 종목은 어떻게 등록?, bidask 에 추가 메뉴, 가격을 더블 클릭하는 경우 자동으로 추가될 수 있게)
+    * 관심 종목의 경우 삭제 가능
+    * code company name 현재 가격을 columne 에 표시하고, multiple row 로 buy 및 sell을 걸 수 있음
+    * buy 나 sell 을 누르는 경우, 아래 row 를 추가하여 조건에 맞게 예약이나 즉시로 선택할 수 있음
+    * Table Column
+        * code
+        * company name
+        * current price
+        * profit which compare to open price
+        * hold quantity
+        * buy
+            * by amount
+            * by volume
+            * balance 10%, 20%, 30%, 40%, 50%
+            * Run: buy now, buy by price
+        * sell
+            * by volume
+            * by percentage of hold volume (10%, 20%, 30%.., remain)

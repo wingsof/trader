@@ -23,6 +23,7 @@ class StockObject;
 class MorningTimer;
 class ChooserPlugin;
 class DayDataProvider;
+class MinuteDataProvider;
 
 class DataProvider : public QObject {
 Q_OBJECT
@@ -35,7 +36,10 @@ public:
     void requestBidAskTick(const std::string &code);
     void requestSubjectTick(const std::string &code);
     QStringList requestYesterdayTopAmount(const QDateTime &dt);
+
     void requestDayData(const QString &code);
+    void requestMinuteData(const QString &code);
+
     void startSimulation(const QDateTime & from_time);
     void startListenTicks();
 
@@ -54,9 +58,10 @@ private:
 
 private:
     void createStockObject(const QString &code);
-    ChooserPlugin * chooserPlugin;
-    MorningTimer * tickHandleTimer;
-    DayDataProvider * dayDataProvider = NULL;
+    ChooserPlugin *         chooserPlugin;
+    MorningTimer *          tickHandleTimer;
+    DayDataProvider *       dayDataProvider     = NULL;
+    MinuteDataProvider *    minuteDataProvider  = NULL;
 
 private slots:
     void stockTickHandler(CybosTickData *);

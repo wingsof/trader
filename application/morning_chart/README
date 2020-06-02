@@ -1,0 +1,12 @@
+* Req
+    - Draw Daily / Minute candlestick with volumes
+    - Can draw line chart by sharing X axis
+
+
+* Step
+1.
+    - Draw X, Y axis line
+    - Draw 1 days minute chart (candle)
+    - Input: Data
+        * calculate unit distance to draw candlestick and determine x axis label
+        * what pixel width is given to 1 unit

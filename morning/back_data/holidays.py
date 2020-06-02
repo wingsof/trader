@@ -40,12 +40,9 @@ def get_yesterday(today):
 
 def get_date_by_previous_working_day_count(today, count):
     until_d = today
-    current_d = until_d - timedelta(days=1)
+    current_d = today
     while count > 0:
-        if is_holidays(current_d):
-            current_d -= timedelta(days=1)
-            continue
-        current_d -= timedelta(days=1)
+        current_d = get_yesterday(current_d)
         count -= 1                
     return current_d
 

@@ -10,6 +10,7 @@
 
 
 class DayDataProvider;
+class MinuteDataProvider;
 using stock_api::CybosDayDatas;
 
 
@@ -31,7 +32,7 @@ public:
 public:
     enum MarketType { PRE_MARKET=49, IN_MARKET=50 };
 
-    StockObject(const QString &_code, DayDataProvider *d, QObject *p=0);
+    StockObject(const QString &_code, DayDataProvider *d, MinuteDataProvider *m, QObject *p=0);
     ~StockObject();
 
     void handleTickData(stock_api::CybosTickData *data);
@@ -49,12 +50,18 @@ public:
     const unsigned int getTodayHigh() { return todayHigh; }
     const unsigned int getTodayLow() { return todayLow; }
     const unsigned int getCurrentPrice() { return currentPrice; }
+
     CybosDayDatas * getDayDatas();
+    const QList<StockObject::PeriodTickData *> & getMinuteData();
+    CybosDayDatas * getPastMinuteDatas();
+
     void connectToDayWindow(QObject *obj);
+    void connectToMinuteWindow(QObject *obj);
 
 private:
     QString code;
     unsigned int currentPrice = 0;
+
     unsigned int openPrice = 0;
     unsigned int yesterdayClose = 0;
     unsigned int todayHigh = 0;
@@ -65,9 +72,13 @@ private:
     bool isKospi;
 
     bool dayWindowConnected = false;
+    bool minuteWindowConnected = false;
 
     DayDataProvider * dayDataProvider;
+    MinuteDataProvider * minuteDataProvider;
+
     CybosDayDatas * dayDatas;
+    CybosDayDatas * pastMinuteDatas;
 
     QList<stock_api::CybosTickData *> tickData;
     QList<StockObject::PeriodTickData *> periodTickData;
@@ -77,11 +88,18 @@ private:
     void createMinuteData();
     void clearTickData();
 
+    void setCurrentPrice(unsigned int price);
+
 private slots:
     void receiveDayData(QString, CybosDayDatas *);
+    void receiveMinuteData(QString, CybosDayDatas *);
 
 signals:
     void readyDayData(QString);
+    void readyPastMinuteData(QString);
+    void minuteDataUpdated(QString, StockObject::PeriodTickData *);
+
+    void currentPriceChanged(QString, unsigned int);
 };
 
 

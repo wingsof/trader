@@ -26,6 +26,11 @@ class StockStub(object):
         request_serializer=stock__provider__pb2.StockQuery.SerializeToString,
         response_deserializer=stock__provider__pb2.CybosDayDatas.FromString,
         )
+    self.GetPastMinuteData = channel.unary_unary(
+        '/stock_api.Stock/GetPastMinuteData',
+        request_serializer=stock__provider__pb2.PastMinuteQuery.SerializeToString,
+        response_deserializer=stock__provider__pb2.CybosDayDatas.FromString,
+        )
     self.RequestCybosTickData = channel.unary_unary(
         '/stock_api.Stock/RequestCybosTickData',
         request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
@@ -90,6 +95,13 @@ class StockServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def GetMinuteData(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def GetPastMinuteData(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -177,6 +189,11 @@ def add_StockServicer_to_server(servicer, server):
       'GetMinuteData': grpc.unary_unary_rpc_method_handler(
           servicer.GetMinuteData,
           request_deserializer=stock__provider__pb2.StockQuery.FromString,
+          response_serializer=stock__provider__pb2.CybosDayDatas.SerializeToString,
+      ),
+      'GetPastMinuteData': grpc.unary_unary_rpc_method_handler(
+          servicer.GetPastMinuteData,
+          request_deserializer=stock__provider__pb2.PastMinuteQuery.FromString,
           response_serializer=stock__provider__pb2.CybosDayDatas.SerializeToString,
       ),
       'RequestCybosTickData': grpc.unary_unary_rpc_method_handler(

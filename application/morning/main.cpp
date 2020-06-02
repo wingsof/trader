@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <memory>
 #include "stock_server/stock_provider.grpc.pb.h"
+#include "stock_server/stock_object.h"
 #include "view/mainwindow.h"
 #include "stock_model/stockmodel.h"
 #include <time.h>
@@ -32,7 +33,9 @@ int main(int argc, char *argv[]) {
     qRegisterMetaType<CybosDayDatas>("CybosDayDatas");
     qRegisterMetaType<CybosBidAskTickData>("CybosBidAskTickData");
     qRegisterMetaType<CybosSubjectTickData>("CybosSubjectTickData");
+    qRegisterMetaType<CybosSubjectTickData>("CybosSubjectTickData");
     qRegisterMetaType<Timestamp>("Timestamp");
+    qRegisterMetaType<StockObject::PeriodTickData>("StockObject::PeriodData");
     QApplication app(argc, argv);
     StockModel model;
     MainWindow main(model);

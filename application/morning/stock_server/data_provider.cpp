@@ -16,6 +16,7 @@
 #include "util/morning_timer.h"
 #include "stock_server/plugin/chooser/chooserplugin.h"
 #include "stock_server/daydata_provider.h"
+#include "stock_server/minutedata_provider.h"
 #include <QDebug>
 
 
@@ -76,7 +77,7 @@ void DataProvider::processTick() {
 
 void DataProvider::createStockObject(const QString &code) {
     if (!object_map.contains(code))
-        object_map[code] = new StockObject(code, dayDataProvider, this);
+        object_map[code] = new StockObject(code, dayDataProvider, minuteDataProvider, this);
 }
 
 
@@ -140,12 +141,20 @@ void DataProvider::startSimulation(const QDateTime &from_time) {
     TimeInfo::getInstance().timeInfoArrived(ts);
     stub_->StartSimulation(&context, sa, &empty);
     dayDataProvider = new DayDataProvider(stub_, from_time.addDays(-180), from_time.addDays(-1));
+
+    minuteDataProvider = new MinuteDataProvider(stub_, from_time, 2);
     startListenTicks();
 }
 
 void DataProvider::requestDayData(const QString &code) {
     if (dayDataProvider != NULL)
         dayDataProvider->requestDayData(code);
+}
+
+
+void DataProvider::requestMinuteData(const QString &code) {
+    if (minuteDataProvider != NULL)
+        minuteDataProvider->requestMinuteData(code);
 }
 
 

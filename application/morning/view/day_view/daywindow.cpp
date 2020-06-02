@@ -25,9 +25,9 @@ DayWindow::DayWindow(StockModel &model, QWidget *parent)
 
     QValueAxis *priceAxis = new QValueAxis;
     priceAxis->setTickCount(10);
-    datetimeAxis = new QBarCategoryAxis;
-    //QDateTime dt = QDateTime::currentDateTime();
-    //datetimeAxis->setRange(dt.addDays(-180), dt);
+    datetimeAxis = new QDateTimeAxis;
+    QDateTime dt = QDateTime::currentDateTime();
+    datetimeAxis->setRange(dt.addDays(-180), dt);
     
     chart->addAxis(priceAxis, Qt::AlignLeft);
     chart->addAxis(datetimeAxis, Qt::AlignBottom);
@@ -38,7 +38,7 @@ DayWindow::DayWindow(StockModel &model, QWidget *parent)
     candleSeries->attachAxis(datetimeAxis);
     view = new QChartView(chart, this);
     view->setRenderHint(QPainter::Antialiasing);
-    view->resize(2048, 1000);
+    view->resize(800, 480);
 }
 
 
@@ -47,7 +47,7 @@ void DayWindow::createCandleData(CybosDayDatas *data) {
     QDateTime fromDate;
     QDateTime untilDate;
     candleSeries->clear();
-    datetimeAxis->clear();
+    //datetimeAxis->clear();
     int max_price = 0;
     int min_price = 100000000;
     for (int i = 0; i < data->day_data_size(); ++i) {
@@ -71,10 +71,10 @@ void DayWindow::createCandleData(CybosDayDatas *data) {
                                 d.start_price(), d.highest_price(),
                                 d.lowest_price(), d.close_price(),
                                 dt.toMSecsSinceEpoch()));
-        datetimeAxis->append(dt.toString("yyyy/MM/dd"));
+        //datetimeAxis->append(dt.toString("yyyy/MM/dd"));
     }
     if (data->day_data_size() > 0) {
-        //chart->axisX()->setRange(fromDate, untilDate);
+        chart->axisX()->setRange(fromDate, untilDate);
         chart->axisY()->setRange(min_price * 0.9, max_price * 1.1);
         qobject_cast<QValueAxis*>(chart->axisY())->applyNiceNumbers();
     }

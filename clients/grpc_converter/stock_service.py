@@ -94,6 +94,7 @@ def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_han
     tick_queue = Queue()
     db_collection = MongoClient('mongodb://127.0.0.1:27017').trade_alarm
     market_code = morning_client.get_all_market_code()
+    print('market_code', market_code)
     yesterday_list = get_yesterday_data(simulation_datetime, market_code)
     yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
     yesterday_list = yesterday_list[:10]
@@ -159,6 +160,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         protoc_converted = []
         for m in minute_datas:
             protoc_converted.append(stock_provider_pb2.CybosDayData(
+                date = m['0'],
                 time = m['time'],
                 start_price = m['start_price'],
                 highest_price = m['highest_price'],
@@ -175,6 +177,33 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
         return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
 
+    def GetPastMinuteData(self, request, context):
+        print('GetPastMinuteData', request)
+        today = datetime.fromtimestamp(request.today.seconds)
+        yesterday = holidays.get_yesterday(today)
+        from_date = holidays.get_date_by_previous_working_day_count(yesterday, request.count_of_days - 1)
+        print('GetPastMinuteData', from_date, yesterday)
+        minute_datas = morning_client.get_minute_data(request.code, from_date, yesterday)
+        protoc_converted = []
+        for m in minute_datas:
+            protoc_converted.append(stock_provider_pb2.CybosDayData(
+                date = m['0'],
+                time = m['time'],
+                start_price = m['start_price'],
+                highest_price = m['highest_price'],
+                lowest_price = m['lowest_price'],
+                close_price = m['close_price'],
+                volume = m['volume'],
+                amount = m['amount'],
+                cum_sell_volume = m['cum_sell_volume'],
+                cum_buy_volume = m['cum_buy_volume'],
+                foreigner_hold_volume = m['foreigner_hold_volume'],
+                foreigner_hold_rate = m['foreigner_hold_rate'],
+                institution_buy_volume = m['institution_buy_volume'],
+                institution_cum_buy_volume = m['institution_cum_buy_volume']))
+
+        return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
+      
 
     def RequestCybosTickData(self, request, context):
         stock_api.subscribe_stock(morning_client.get_reader(),
