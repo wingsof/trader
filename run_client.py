@@ -22,6 +22,7 @@ if __name__ == '__main__':
     except:
         print('READY file not exist')
 
+    time.sleep(30) # wait until other startup program is started
     login_process = Process(target=auto.run)
     login_process.start()
     login_process.join()
