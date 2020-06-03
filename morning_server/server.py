@@ -38,7 +38,7 @@ morning_stat = morning_stats.MorningStats(client_manager.collectors)
 
 def handle_collector(sock, header, body):
     logger.info('HANDLE COLLECTOR %s\n%s', header, body)
-    client_manager.add_collector(sock, header, body)
+    client_manager.add_client(sock, header, body)
 
 def handle_response(sock, header, body):
     logger.info('HANDLE RESPONSE %s', header)
@@ -193,6 +193,8 @@ def vbox_control():
             logger.info('START TURN ON VBOX')
             vbox_on = True
             vbox_controller.start_machine()
+        elif not is_turn_off_time:
+            pass
 
         gevent.sleep(VBOX_CHECK_INTERVAL)
 

@@ -1,18 +1,38 @@
 import virtualbox
 import time
 import gevent
+from datetime import datetime, timedelta
 
 
 class _Machine:
     def __init__(self, vbox, vm_name):
         self.vbox = vbox
         self.vm_name = vm_name
+        self.client_name = ''
         self.session = virtualbox.Session()
+        self.client_ready = False
+        self.launch_time = datetime.now()
         vm = self.vbox.find_machine(self.vm_name)
         vm.launch_vm_process(self.session, 'gui', '')
 
+    def set_client_ready(self):
+        self.client_ready = True
+        
+    def is_client_ready(self):
+        return self.client_ready
+
     def stop(self):
         self.session.console.power_down()
+
+    def is_over_time(self):
+        if datetime.now() - self.launch_time > timedelta(seconds=600):
+            return True
+        return False 
+
+    def reboot(self):
+        self.stop()
+        # wait until session status is OFF
+        # restart again
 
 
 class VBoxControl:

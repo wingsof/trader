@@ -27,6 +27,7 @@ def _get_client_info():
             _client_info['mongo_id'] = ''
             _client_info['mongo_password'] = ''
             _client_info['server_ip'] = 'localhost'
+            _client_info['collector_count'] = 0
     return _client_info
 
 
@@ -50,6 +51,10 @@ def get_client_capability():
     subscribe = 2 if 'subscribe' in capability else 0
     trade = 4 if 'trade' in capability else 0
     return request | subscribe | trade
+
+
+def get_collector_count():
+    return _get_client_info()['collector_count']
 
 def get_mongo_id():
     return _get_client_info()['mongo_id']

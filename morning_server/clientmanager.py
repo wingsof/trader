@@ -73,6 +73,7 @@ class ClientManager:
         self.code_subscribe_info = dict()
         self.vendors = [message.CYBOS, message.KIWOOM]
         self.trade_subscribe_sockets = dict()
+        self.client_connection_status = dict()
         for v in self.vendors:
             self.trade_subscribe_sockets[v] = []
 
@@ -161,8 +162,35 @@ class ClientManager:
         self._handle_code_subscribe_info_disconnection(sock)
         self._handle_trade_subscribe_disconnection(sock)
 
-    def add_collector(self, sock, header, body):
-        self.collectors.append(_Collector(sock, body['name'], body['capability'], header['vendor']))
+    def add_client(self, sock, header, body):
+        cap = body['capability']
+        self.collectors.append(_Collector(sock, body['name'], cap, header['vendor']))
+        client_name = body['name'].split('_')[0]
+        if body['client_count_info'] is not None:
+            self.client_connection_status[client_name] = body['client_count_info']
+
+        if client_name in self.client_connection_status:
+            key = ''
+            if cap == message.CAPABILITY_COLLECT_SUBSCRIBE:
+                key = 'collector_count'
+            elif cap == message.CAPABILITY_TRADE:
+                key = 'trade_count'
+            elif cap == message.CAPABILITY_REQUEST_RESPONSE:
+                key = 'request_count'
+
+            if len(key) > 0:
+                self.client_connection_status[client_name][key] -= 1
+
+    def is_client_connection_succeeded(self, client_name):
+        if client_name in self.client_connection_status:
+            keys = self.client_connection_status[client_name].keys()
+            for k in keys:
+                if self.client_connection_status[client_name][k] > 0:
+                    return False
+            return True
+
+        return False
+
 
     def get_vendor_collector(self, vendor):
         collectors = []

@@ -1,3 +1,19 @@
+* 2020/06/03
+    1. windows setting 에서 welcome off
+    2. config 파일에서 collector_count 추가
+    3. run client 신규 코드 테스트
+    4. vbox reboot testing
+    4. server test and insert code which rebooting client when client is not connected and timed out
+
+
+* Priority
+    * Client 안정화
+        - disable welcome screen - Settings -> System -> Notifications & actions -> Turn off "show me the windows welcome experience.."
+        - vi_follower 시작 시점을 client가 다 연결된 경우
+        - table로 client 별 request / subscribe 갯수 coding 및 확인
+    * Simulation Data Reading performance
+
+
 * Client 안정화
     - 특정 시간내에 CP 연결이 되지 않는 경우 reboot 진행
     - 등록된 Client 가 다 연결되었는지 확인하는 Logic

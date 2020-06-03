@@ -10,10 +10,8 @@ from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code, abroad_chart, investor_7254, stock_today_data
 from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance, trade_subject, world_subscribe, index_subscribe, stock_alarm
 from configs import client_info
-if len(sys.argv) > 1 and len(sys.argv[1]) > 0:
-    client_info.add_client_name_suffix(sys.argv[1]) 
-
-
+#if len(sys.argv) > 1 and len(sys.argv[1]) > 0:
+#    client_info.add_client_name_suffix(sys.argv[1]) 
 
 from morning_server.collectors import shutdown
 
@@ -237,7 +235,7 @@ def dispatch_message():
                                                     request_trade_handler=handle_trade_request)
 
 
-def run():
+def run(client_name, client_type, client_index, client_count_info):
     global account, _sock
 
     app = QCoreApplication([])
@@ -252,7 +250,6 @@ def run():
         except:
             print('Error while trying to server')
 
-    time.sleep(5)
     print('Connected to CP Server')
 
     while True:
@@ -272,24 +269,25 @@ def run():
 
     header = stream_readwriter.create_header(message.COLLECTOR, message.MARKET_STOCK, message.COLLECTOR_DATA)
 
-    if len(sys.argv) > 1 and sys.argv[1].startswith('collector'):
-        if client_info.get_client_capability() & message.CAPABILITY_COLLECT_SUBSCRIBE:
-            body = {'capability': message.CAPABILITY_COLLECT_SUBSCRIBE, 'name': client_info.get_client_name()}
-            stream_readwriter.write(sock, header, body)
-    else:
-        if client_info.get_client_capability() & message.CAPABILITY_TRADE:
-            body = {'capability': message.CAPABILITY_TRADE, 'name': client_info.get_client_name()}
-        else:
-            body = {'capability': message.CAPABILITY_REQUEST_RESPONSE, 'name': client_info.get_client_name()}
+    body = {'client_count_info': client_count_info}
+    if client_type == message.CAPABILITY_TRADE:
+        body['capability'] = message.CAPABILITY_TRADE
+        body['name'] = client_name + '_TR' + str(client_index)
+    elif client_type == message.CAPABILITY_REQUEST_RESPONSE:
+        body['capability'] = message.CAPABILITY_REQUEST_RESPONSE
+        body['name'] = client_name + '_REQ' + str(client_index)
+    elif client_type == message.CAPABILITY_COLLECT_SUBSCRIBE:
+        body['capability'] = message.CAPABILITY_COLLECT_SUBSCRIBE
+        body['name'] = client_name + '_COL' + str(client_index)
 
-        stream_readwriter.write(sock, header, body)
+    stream_readwriter.write(sock, header, body)
 
-        if body['capability'] & message.CAPABILITY_TRADE:
-            account = trade_util.TradeUtil()
-            print('HAS TRADE CAPABILITY')
+    if body['capability'] & message.CAPABILITY_TRADE:
+        account = trade_util.TradeUtil()
+        print('HAS TRADE CAPABILITY')
     
     app.exec_()
 
 
 if __name__ == '__main__':
-    run()
+    pass
