@@ -53,7 +53,6 @@ class VBoxControl:
     def __init__(self):
         self.vbox = virtualbox.VirtualBox()
         self.vbox_list = [vm.name for vm in self.vbox.machines]
-        self.vbox_list = self.vbox_list[:3]
         self.vbox_machines = []
         self.names = {'win64': 'nnnlife',
                       'win64-trader': 'hhhlife',
