@@ -108,7 +108,7 @@ def start_validation(codes=[]):
             yesterday_list.append(data)
     print('')
     yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
-    yesterday_list = yesterday_list[:300]
+    yesterday_list = yesterday_list[:1000]
     failed_tick_codes = []
     failed_ba_tick_codes = []
     # 1. validate yesterday_list :100's today tick data
@@ -133,6 +133,7 @@ def start_validation(codes=[]):
         print('TICK BA ALL SUCCESS')
 
     # 2. validate today alarm tick data 
+    """
     alarm_list = get_alarm_list(today)
     alarm_failed_codes = []
     if len(alarm_list) > 0:
@@ -152,6 +153,7 @@ def start_validation(codes=[]):
     else:
         send_slack_message('NO ALARM TODAY')
         print('NO ALARM TODAY')
+    """
     sys.exit(0)
 
 if __name__ == '__main__':

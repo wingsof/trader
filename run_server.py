@@ -12,6 +12,7 @@ from morning.back_data import holidays
 from clients.vi_data_validation import data_validation_only_tick as data_validation
 from datetime import datetime
 from multiprocessing import Process
+import multiprocessing
 from morning_server import server
 from configs import time_info
 
@@ -48,18 +49,19 @@ def start_server(is_vbox_on):
 
 
 if __name__ == '__main__':
+    multiprocessing.set_start_method('spawn')
     if len(sys.argv) > 1 and sys.argv[1] == 'vbox':
         vbox_on = True
 
-    log_server = Process(target=logger_server.start_log_server)
-    log_server.start()
+    #log_server = Process(target=logger_server.start_log_server)
+    #log_server.start()
 
     api_server = Process(target=start_server, args=(vbox_on,))
-    subscriber = Process(target=run_subscriber)
+    #subscriber = Process(target=run_subscriber)
 
     api_server.start()
-    subscriber.start()
+    #subscriber.start()
 
     api_server.join()
-    subscriber.join()
-    log_server.join()
+    #subscriber.join()
+    #log_server.join()

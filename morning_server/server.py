@@ -4,7 +4,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from datetime import datetime
+from datetime import datetime, date
 
 from utils import logger_server, logger
 from pymongo import MongoClient
@@ -39,6 +39,15 @@ morning_stat = morning_stats.MorningStats(client_manager.collectors)
 def handle_collector(sock, header, body):
     logger.info('HANDLE COLLECTOR %s\n%s', header, body)
     client_manager.add_client(sock, header, body)
+    if body['capability'] == message.CAPABILITY_TRADE or body['capability'] == message.CAPABILITY_REQUEST_RESPONSE:
+        gevent.sleep(3)
+        logger.info('SEND TEST PACKET to %s', body['name'])
+        test_header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.DAY_DATA)
+        test_header['code'] = 'A005930'
+        test_header['from'] = date(2020, 6, 1)
+        test_header['until'] = date(2020, 6, 4)
+        test_body = []
+        stream_write(sock, test_header, body)
 
 def handle_response(sock, header, body):
     logger.info('HANDLE RESPONSE %s', header)
@@ -193,8 +202,16 @@ def vbox_control():
             logger.info('START TURN ON VBOX')
             vbox_on = True
             vbox_controller.start_machine()
-        elif not is_turn_off_time:
-            pass
+        elif not is_turn_off_time and vbox_on:
+            client_names = vbox_controller.get_client_names_not_connected()
+            if len(client_names) > 0:
+                print('not connected clients', client_names)
+
+            for c in client_names:
+                if client_manager.is_client_connection_succeeded(c):
+                    vbox_controller.set_ready(c)
+                elif vbox_controller.is_over_time(c):
+                    vbox_controller.reboot_vm(c)
 
         gevent.sleep(VBOX_CHECK_INTERVAL)
 

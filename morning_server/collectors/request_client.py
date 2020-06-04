@@ -10,8 +10,6 @@ from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code, abroad_chart, investor_7254, stock_today_data
 from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance, trade_subject, world_subscribe, index_subscribe, stock_alarm
 from configs import client_info
-#if len(sys.argv) > 1 and len(sys.argv[1]) > 0:
-#    client_info.add_client_name_suffix(sys.argv[1]) 
 
 from morning_server.collectors import shutdown
 
@@ -255,6 +253,7 @@ def run(client_name, client_type, client_index, client_count_info):
     while True:
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
             sock.connect(server_address)
             print('Connected to apiserver')
