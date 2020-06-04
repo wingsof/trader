@@ -35,8 +35,8 @@ class ClientRunner(threading.Thread):
 
 
 if __name__ == '__main__':
-    #time.sleep(30) # wait until other startup program is started
     multiprocessing.set_start_method('spawn')
+    time.sleep(600) # wait until other startup program is started
     login_process = Process(target=auto.run)
     login_process.start()
     login_process.join()
