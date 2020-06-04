@@ -10,6 +10,7 @@ from datetime import datetime
 #sys.stderr = sys.stdout
 
 from multiprocessing import Process
+import multiprocessing
 from utils.auto import auto
 from misc_utils import cybos_com_gen
 from morning_server.collectors import shutdown
