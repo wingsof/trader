@@ -57,11 +57,11 @@ if __name__ == '__main__':
     #log_server.start()
 
     api_server = Process(target=start_server, args=(vbox_on,))
-    #subscriber = Process(target=run_subscriber)
+    subscriber = Process(target=run_subscriber)
 
     api_server.start()
-    #subscriber.start()
+    subscriber.start()
 
     api_server.join()
-    #subscriber.join()
+    subscriber.join()
     #log_server.join()

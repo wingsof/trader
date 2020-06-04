@@ -28,7 +28,7 @@ class _Machine:
         self.session.console.power_down()
 
     def is_over_time(self):
-        if datetime.now() - self.launch_time > timedelta(seconds=600):
+        if datetime.now() - self.launch_time > timedelta(seconds=1200):
             return True
         return False 
 

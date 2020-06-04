@@ -36,7 +36,7 @@ class ClientRunner(threading.Thread):
 
 if __name__ == '__main__':
     multiprocessing.set_start_method('spawn')
-    time.sleep(600) # wait until other startup program is started
+    time.sleep(600) # wait until dhcp related packet is finished
     login_process = Process(target=auto.run)
     login_process.start()
     login_process.join()

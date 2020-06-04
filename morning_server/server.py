@@ -202,6 +202,7 @@ def vbox_control():
             logger.info('START TURN ON VBOX')
             vbox_on = True
             vbox_controller.start_machine()
+        """
         elif not is_turn_off_time and vbox_on:
             client_names = vbox_controller.get_client_names_not_connected()
             if len(client_names) > 0:
@@ -212,7 +213,7 @@ def vbox_control():
                     vbox_controller.set_ready(c)
                 elif vbox_controller.is_over_time(c):
                     vbox_controller.reboot_vm(c)
-
+        """
         gevent.sleep(VBOX_CHECK_INTERVAL)
 
 
