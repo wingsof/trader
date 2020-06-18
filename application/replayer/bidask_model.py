@@ -17,7 +17,8 @@ class BidAskModel(QAbstractTableModel):
 
     def __init__(self):
         super(BidAskModel, self).__init__()
-        self.db = MongoClient(config.MONGO_SERVER).trade_alarm
+        self.db_realtime = MongoClient(config.MONGO_SERVER).trade_alarm
+        self.db = MongoClient(config.MONGO_SERVER).stock
         self.price_unit_list = []
         self.start_price = 0
         self.markets = {}
@@ -152,12 +153,12 @@ class BidAskModel(QAbstractTableModel):
             return
 
         condition = {'date': {'$gt': dt, '$lt': dt + timedelta(days=1)}}
-        realtime_cursor = self.db[code].find(condition)
+        realtime_cursor = self.db_realtime[code].find(condition)
         if realtime_cursor.count() == 0:
             print('cannot find today tick datas', code, dt)
             return
         
-        bidask_cursor = self.db[code + '_BA'].find(condition)
+        bidask_cursor = self.db_realtime[code + '_BA'].find(condition)
         if bidask_cursor.count() == 0:
             print('cannot find bid ask spread', code, dt)
             return

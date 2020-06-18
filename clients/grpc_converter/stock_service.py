@@ -25,7 +25,8 @@ from google.protobuf.empty_pb2 import Empty
 from gevent.queue import Queue
 
 
-simulation_done_flag = False
+simulation_progressing = [False, False, False]
+TIME_SPEED = 10
 
 
 def get_yesterday_data(today, market_code):
@@ -42,88 +43,94 @@ def get_yesterday_data(today, market_code):
     return yesterday_list
 
 
-def collect_db(code, db_collection, from_time, until_time):
-    datas = []
-    tick_data = list(db_collection[code].find({'date': {'$gt': from_time, '$lte': until_time}}))
-    for t in tick_data:
-        t['code'] = code
-    ba_data = list(db_collection[code+'_BA'].find({'date': {'$gt': from_time, '$lte': until_time}}))
-
-    for bd in ba_data:
-        bd['code'] = code
-
-    subject_data = list(db_collection[code+'_S'].find({'date': {'$gt': from_time, '$lte': until_time}}))
-    for sd in subject_data:
-        sd['code'] = code
-
-    datas.extend(tick_data)
-    datas.extend(ba_data)
-    datas.extend(subject_data)
-    return datas
+def collect_db(db, from_time, until_time):
+    collection_name = 'T' + from_time.strftime('%Y%m%d')
+    return list(db[collection_name].find({'date': {'$gt': from_time, '$lte': until_time}}))
 
 
 def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler):
-    global simulation_done_flag
-    while not simulation_done_flag:
-        data = tick_queue.get()
+    global simulation_progressing
+
+    simulation_progressing[2] = True
+    while simulation_progressing[0]:
+        try:
+            data = tick_queue.get(True, 1)
+        except gevent.queue.Empty as ge:
+            print('deliver tick queue empty', simulation_progressing)
+            continue
 
         print('put ticks', len(data))
         now = datetime.now()
         datatime = None
+        timeadjust = timedelta(seconds=0)
         for d in data:
+            if not simulation_progressing[0]:
+                break
+
             if datatime is None:
                 datatime = d['date'] - timedelta(seconds=1)
+            
+            while (d['date'] - datatime) * TIME_SPEED > datetime.now() - now:
+                gevent.sleep()
 
-            while d['date'] - datatime > datetime.now() - now:
-                gevent.sleep(0.01)
+            timeadjust = (datetime.now() - now) - (d['date'] - datatime) * TIME_SPEED
 
-            if '9' not in d:
+            if d['type'] == 'subject':
                 subject_tick_handler(d['code'], [d])
-            elif '68' in d:
+            elif d['type'] == 'bidask':
                 bidask_tick_handler(d['code'], [d])
             else:
                 stock_tick_handler(d['code'], [d])
 
+            datatime = d['date'] - timeadjust
             now = datetime.now()
-            datatime = d['date']
-            time_handler(datatime)
+            #time_handler(datatime)
+    simulation_progressing[2] = False
+    print('exit deliver tick')
 
 
 def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler):
+    global simulation_progressing
     AT_ONCE_SECONDS = 60
-    tick_queue = Queue()
-    db_collection = MongoClient('mongodb://127.0.0.1:27017').trade_alarm
-    market_code = morning_client.get_all_market_code()
-    print('market_code', market_code)
-    yesterday_list = get_yesterday_data(simulation_datetime, market_code)
-    yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
-    yesterday_list = yesterday_list[:10]
-    market_codes = [yl['code'] for yl in yesterday_list]
-    finish_time = simulation_datetime.replace(hour=15, minute=20)
+    tick_queue = Queue(3)
+    db = MongoClient('mongodb://127.0.0.1:27017').trade_alarm
+    finish_time = simulation_datetime.replace(hour=15, minute=30)
+    simulation_progressing[1] = True
 
     gevent.spawn(deliver_tick, tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler)
-    while simulation_datetime <= finish_time:
-        all_data = []
+    while simulation_datetime <= finish_time and simulation_progressing[0]:
         print('load data', simulation_datetime, 'data period seconds', AT_ONCE_SECONDS, 'real time', datetime.now())
-        for progress, code in enumerate(market_codes):
-            all_data.extend(collect_db(code, db_collection, simulation_datetime, simulation_datetime + timedelta(seconds=AT_ONCE_SECONDS)))
+        data = collect_db(db, simulation_datetime, simulation_datetime + timedelta(seconds=AT_ONCE_SECONDS))
 
-            print('collect tick data', f'{progress+1}/{len(market_codes)}', end='\r')
-        print('')
-        print('load done', simulation_datetime, 'tick len', len(all_data), 'real time', datetime.now())
-        all_data = sorted(all_data, key=lambda x: x['date']) 
-        tick_queue.put_nowait(all_data)
+        while True:
+            try:
+                #print('Before put the data in the queue')
+                tick_queue.put(data, True, 1)
+                #print('After put the data in the queue')
+                break
+            except gevent.queue.Full as ge:
+                #print('Queue Full', simulation_progressing)
+                if not simulation_progressing[0]:
+                    print('Queue Full and exit simulation')
+                    break
+
         simulation_datetime += timedelta(seconds=AT_ONCE_SECONDS)
+        gevent.sleep()
+        print('load done', simulation_datetime, 'tick len', len(data), 'real time', datetime.now())
+    simulation_progressing[1] = False
 
 
 class StockServicer(stock_provider_pb2_grpc.StockServicer):
     def __init__(self):
         print('StockService init')
-        self.is_simulation = False
-        self.stock_subscribe_queue = Queue()
-        self.bidask_subscribe_queue = Queue()
-        self.subject_subscribe_queue = Queue()
-        self.current_time_queue = Queue()
+        self.stock_subscribe_clients = []
+        self.bidask_subscribe_cilents = []
+        self.subject_subscribe_clients = []
+        self.current_time_subscribe_clients = []
+        self.current_stock_selection_subscribe_clients = []
+        self.current_stock_code = ""
+        self.current_stock_count_of_days = 0
+        self.current_stock_until_time = None
 
     def GetDayData(self, request, context):
         print('GetDayData', request.code, datetime.fromtimestamp(request.from_datetime.seconds), datetime.fromtimestamp(request.until_datetime.seconds))
@@ -223,6 +230,15 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         print('Start Subscribe Subject', request.code)
         return Empty()
 
+    def SetCurrentStock(self, request, context):
+        self.current_stock_code = request.code
+        self.current_stock_count_of_days = request.count_of_days
+        self.current_stock_until_time = request.until_datetime
+
+        for q in self.current_stock_selection_subscribe_clients:
+            q.put_nowait((request.code, request.count_of_days, request.until_datetime))
+        print('SetCurrentStock', request.code, request.count_of_days, request.until_datetime)
+        return Empty()
 
     def handle_bidask_tick(self, code, data):
         if len(data) != 1:
@@ -234,35 +250,28 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         data = data[0]
         tick_date = Timestamp()
         tick_date.FromDatetime(data['date'])
-        data = stock_provider_pb2.CybosBidAskTickData(tick_date=tick_date,
-                                                    code=data['0'],
+        bidask = stock_provider_pb2.CybosBidAskTickData(tick_date=tick_date,
+                                                    code=data['code'],
                                                     time=data['1'],
                                                     volume=data['2'],
-                                                    first_ask_price=data['3'],
-                                                    first_bid_price=data['4'],
-                                                    first_ask_remain=data['5'],
-                                                    first_bid_remain=data['6'],
-                                                    second_ask_price=data['7'],
-                                                    second_bid_price=data['8'],
-                                                    second_ask_remain=data['9'],
-                                                    second_bid_remain=data['10'],
-                                                    third_ask_price=data['11'],
-                                                    third_bid_price=data['12'],
-                                                    third_ask_remain=data['13'],
-                                                    third_bid_remain=data['14'],
-                                                    fourth_ask_price=data['15'],
-                                                    fourth_bid_price=data['16'],
-                                                    fourth_ask_remain=data['17'],
-                                                    fourth_bid_remain=data['18'],
-                                                    fifth_ask_price=data['19'],
-                                                    fifth_bid_price=data['20'],
-                                                    fifth_ask_remain=data['21'],
-                                                    fifth_bid_remain=data['22'],
                                                     total_ask_remain=data['23'],
                                                     total_bid_remain=data['24'],
                                                     out_time_total_ask_remain=data['25'],
                                                     out_time_total_bid_remain=data['26'])
-        self.bidask_subscribe_queue.put_nowait(data)
+        for i in range(3, 19+1, 4):
+            bidask.ask_prices.append(data[str(i)])
+            bidask.bid_prices.append(data[str(i+1)])
+            bidask.ask_remains.append(data[str(i+2)])
+            bidask.bid_remains.append(data[str(i+3)])
+
+        for i in range(27, 43+1, 4):
+            bidask.ask_prices.append(data[str(i)])
+            bidask.bid_prices.append(data[str(i+1)])
+            bidask.ask_remains.append(data[str(i+2)])
+            bidask.bid_remains.append(data[str(i+3)])
+
+        for q in self.bidask_subscribe_cilents:
+            q.put_nowait(bidask)
 
     def handle_stock_tick(self, code, data):
         #print('handle_stock_stick', data)
@@ -273,7 +282,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         tick_date = Timestamp()
         tick_date.FromDatetime(data['date'])
         data = stock_provider_pb2.CybosTickData(tick_date=tick_date,
-                                                code=data['0'],
+                                                code=data['code'],
                                                 company_name=data['1'],
                                                 yesterday_diff=data['2'],
                                                 time=data['3'],
@@ -296,7 +305,8 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 cum_sell_volume=data['27'],
                                                 cum_buy_volume=data['28'],
                                                 is_kospi=morning_client.is_kospi_code(code))
-        self.stock_subscribe_queue.put_nowait(data)
+        for q in self.stock_subscribe_clients:
+            q.put_nowait(data)
 
     def handle_subject_tick(self, code, data):
         if len(data) != 1:
@@ -308,51 +318,97 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         data = stock_provider_pb2.CybosSubjectTickData(tick_date=tick_date,
                                                         time=data['0'],
                                                         name=data['1'],
-                                                        code=data['2'],
+                                                        code=data['code'],
                                                         company_name=data['3'],
                                                         buy_or_sell=(data['4'] == ord('2')),
                                                         volume=data['5'],
                                                         total_volume=data['6'],
                                                         foreigner_total_volume=data['8'])
-        self.subject_subscribe_queue.put_nowait(data)
+        for q in self.subject_subscribe_clients:
+            q.put_nowait(data)
 
+    def ListenCurrentStock(self, request, context):
+        print('Run Listen Current Stock', len(self.current_stock_selection_subscribe_clients))
+        q = Queue()
+        self.current_stock_selection_subscribe_clients.append(q)
+
+        if len(self.current_stock_code) > 0:
+            yield stock_provider_pb2.StockSelection(code=self.current_stock_code,
+                                                    count_of_days=self.current_stock_count_of_days,
+                                                    until_datetime=self.current_stock_until_time)
+
+        while context.is_active():
+            try:
+                data = q.get(True, 1)
+                yield stock_provider_pb2.StockSelection(code=data[0], count_of_days=data[1], until_datetime=data[2])
+            except gevent.queue.Empty as ge:
+                pass
+        self.current_stock_selection_subscribe_clients.remove(q)
+        print('Done ListenCurrentStock', len(self.current_stock_selection_subscribe_clients)) 
 
     def ListenCybosTickData(self, request, context):
-        print('ListenCybosTickData')
-        while True:
-            data = self.stock_subscribe_queue.get()
-            #print('send tick')
-            yield data
-        print('Done SubscribeStock')
+        print('ListenCybosTickData', len(self.stock_subscribe_clients))
+        q = Queue()
+        self.stock_subscribe_clients.append(q)
+
+        while context.is_active():
+            try:
+                data = q.get(True, 1)
+                yield data
+            except gevent.queue.Empty as ge:
+                pass
+        self.stock_subscribe_clients.remove(q)
+        print('Done SubscribeStock', len(self.stock_subscribe_clients))
 
     def ListenCybosBidAsk(self, request, context):
-        print('ListenCybosBidAsk')
-        while True:
-            data = self.bidask_subscribe_queue.get()
-            #print('send bidask')
-            yield data
-        print('Done SubscribeBidAsk')
+        print('ListenCybosBidAsk', len(self.bidask_subscribe_cilents))
+        q = Queue()
+        self.bidask_subscribe_cilents.append(q)
+
+        while context.is_active():
+            try:
+                data = q.get(True, 1)
+                yield data
+            except gevent.queue.Empty as ge:
+                pass
+
+        self.bidask_subscribe_cilents.remove(q)
+        print('Done SubscribeBidAsk', len(self.bidask_subscribe_cilents))
 
     def ListenCybosSubject(self, request, context):
-        print('ListenCybosSubject')
-
-        while True:
-            data = self.subject_subscribe_queue.get()
-            yield data
-        print('Done ListenCybosSubject')
+        print('ListenCybosSubject', len(self.subject_subscribe_clients))
+        q = Queue()
+        self.subject_subscribe_clients.append(q)
+        while context.is_active():
+            try:
+                data = q.get(True, 1)
+                yield data
+            except gevent.queue.Empty as ge:
+                pass
+        
+        self.subject_subscribe_clients.remove(q)
+        print('Done ListenCybosSubject', len(self.subject_subscribe_clients))
 
     def handle_time(self, d):
         data_date = Timestamp()
         data_date.FromDatetime(d)
-        self.current_time_queue.put(data_date)
+        for q in self.current_time_subscribe_clients:
+            q.put(data_date)
 
     def ListenCurrentTime(self, request, context):
-        print('ListenCurrentTime')
+        print('ListenCurrentTime', len(self.current_time_subscribe_clients))
+        q = Queue()
+        self.current_time_subscribe_clients.append(q)
 
-        while True:
-            data = self.current_time_queue.get()
-            yield data
-        print('Done ListenCurrentTime')
+        while context.is_active():
+            try:
+                data = q.get(True, 1)
+                yield data
+            except gevent.queue.Empty as ge:
+                pass
+
+        self.current_time_subscribe_clients.remove(q)
+        print('Done ListenCurrentTime', len(self.current_time_subscribe_clients))
 
     def GetYesterdayTopAmountCodes(self, request, context):
         market_code = morning_client.get_all_market_code()
@@ -366,12 +422,22 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return stock_provider_pb2.CodeList(codelist=market_codes)
 
     def StartSimulation(self, request, context):
-        if not self.is_simulation:
-            self.is_simulation = True
+        global simulation_progressing
+        triggered = False
+
+        if not any(simulation_progressing):
+            simulation_progressing[0] = True
+            triggered = True
             simulation_datetime = request.from_datetime.ToDatetime()
             gevent.spawn(start_tick_provider, simulation_datetime, self.handle_stock_tick, self.handle_bidask_tick, self.handle_subject_tick, self.handle_time)
             print('Start Simulation Mode', simulation_datetime)
-        return Empty()
+            while context.is_active():
+                gevent.sleep(1)
+
+        if triggered:
+            simulation_progressing[0] = False
+            print('Stop Simulation Mode')
+        yield Empty()
 
 
 def serve():

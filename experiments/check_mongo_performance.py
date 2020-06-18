@@ -18,6 +18,16 @@ from gevent.queue import Queue
 
 
 # check_mongo_performance.py "2020/03/25 09:02" took  0:00:24.764038
+# load done tick len 48742 real time 2020-06-04 14:49:45.223657  took 0:00:08.916987, just have 2020/3/11 data in db, it is much faster
+# test1: copy 1 more days to mongodb and re-measure time (3/12)
+#   * load done tick len 48742 real time 2020-06-04 15:58:00.676326  took 0:00:31.452220
+# test2: set date as index and measure time
+#   * load done tick len 48742 real time 2020-06-04 16:06:12.708876  took 0:00:03.753992
+# test3: create 1 day data and set date as index and test performance
+#   * not set as index: load done tick len 52026 real time 2020-06-04 17:20:09.219083  took 0:00:06.708520
+#   * set as index: load done tick len 52026 real time 2020-06-04 17:23:52.252392  took 0:00:00.522798
+
+
 
 def get_yesterday_data(today, market_code):
     yesterday = holidays.get_yesterday(today)
@@ -62,7 +72,7 @@ def start_tick_provider(simulation_datetime):
     all_data = []
     yesterday_list = get_yesterday_data(simulation_datetime, market_code)
     yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
-    yesterday_list = yesterday_list[:10]
+    yesterday_list = yesterday_list[:1000]
     market_codes = [yl['code'] for yl in yesterday_list]
 
     load_start_time = datetime.now()
@@ -73,12 +83,28 @@ def start_tick_provider(simulation_datetime):
     print('')
     load_finish_time = datetime.now()
     all_data = sorted(all_data, key=lambda x: x['date'])
-    print('load done', 'tick len', len(all_data), 'real time', load_finish_time, ' diff', load_finish_time - load_start_time)
+    print('load done', 'tick len', len(all_data), 'real time', load_finish_time, ' took', load_finish_time - load_start_time)
+
+
+def start_tick_provider2(simulation_datetime):
+    AT_ONCE_SECONDS = 60
+    tick_queue = Queue()
+    db_collection = MongoClient('mongodb://127.0.0.1:27017').trade_alarm
+    all_data = []
+
+    load_start_time = datetime.now()
+    print('load data', simulation_datetime, 'real time', load_start_time)
+    time_str = 'T' + simulation_datetime.strftime('%Y%m%d')
+    datas = list(db_collection[time_str].find({'date': {'$gt': simulation_datetime, '$lte': simulation_datetime + timedelta(seconds=AT_ONCE_SECONDS)}}))
+    datas = sorted(datas, key=lambda x: x['date'])
+    load_finish_time = datetime.now()
+    print('load done', 'tick len', len(datas), 'real time', load_finish_time, ' took', load_finish_time - load_start_time)
+
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('usage:', sys.argv[0], 'datetime(2019/9/2 11:52)')
     else:
         simulation_datetime = datetime.strptime(sys.argv[1], '%Y/%m/%d %H:%M')
-        start_tick_provider(simulation_datetime)
+        start_tick_provider2(simulation_datetime)
 

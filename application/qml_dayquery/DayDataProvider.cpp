@@ -1,8 +1,31 @@
-#include "daydata_provider.h"
+#include "DayDataProvider.h"
 #include <QThread>
+#include <iostream>
+#include <grpc/grpc.h>
+#include <grpcpp/channel.h>
+#include <grpcpp/client_context.h>
+#include <grpcpp/create_channel.h>
+#include <grpcpp/security/credentials.h>
+//#include "stock_provider.grpc.pb.h"
 #include <google/protobuf/util/time_util.h>
 #include <QDebug>
 
+using grpc::Channel;
+using grpc::ClientContext;
+using grpc::ClientReader;
+using grpc::ClientReaderWriter;
+using grpc::ClientWriter;
+using grpc::Status;
+using google::protobuf::util::TimeUtil;
+using google::protobuf::Timestamp;
+using google::protobuf::Empty;
+
+using stock_api::Stock;
+using stock_api::StockCodeQuery;
+using stock_api::StockQuery;
+using stock_api::CybosDayData;
+using stock_api::CodeList;
+using stock_api::SimulationArgument;
 
 using grpc::ClientContext;
 using stock_api::StockQuery;
@@ -13,7 +36,6 @@ DayDataCollector::DayDataCollector(std::shared_ptr<stock_api::Stock::Stub> stub,
                         const QDateTime &_fromTime,
                         const QDateTime &_untilTime)
 : QObject(0), stub_(stub), code(_code){
-    qWarning() << "DayDataCollector " << code;
     fromTime = new Timestamp(TimeUtil::TimeTToTimestamp(_fromTime.toTime_t()));
     untilTime = new Timestamp(TimeUtil::TimeTToTimestamp(_untilTime.toTime_t()));
 }
@@ -30,32 +52,25 @@ void DayDataCollector::process() {
 }
 
 
-DayDataProvider::DayDataProvider(std::shared_ptr<stock_api::Stock::Stub> stub,
-                                const QDateTime &_fromTime,
-                                const QDateTime &_untilTime)
+DayDataProvider::DayDataProvider()
 : QObject(0) {
-    fromTime = _fromTime;
-    untilTime = _untilTime;
-    stub_ = stub;
+    stub_ = Stock::NewStub(grpc::CreateChannel("localhost:50052", grpc::InsecureChannelCredentials()));
 }
 
 
-void DayDataProvider::requestDayData(const QString &code) {
-    qWarning() << "requestDayData " << code;
-    if (dayDatas.contains(code)) {
-        emit dataReady(code, dayDatas[code]);
-        return;
-    }
-    
-    waitingCodes.append(code);
+void DayDataProvider::requestDayData(const QString &code,
+                                    int countOfDays,
+                                    const QDateTime &untilTime) {
+    QDateTime fromTime = untilTime.addDays(-countOfDays);
+    waitingQueue.append(DayDataQuery(code, fromTime, untilTime));
     checkWaitingList();
 }
 
 
 void DayDataProvider::dataReceived(QString code, CybosDayDatas *data) {
-    dayDatas[code] = data;
     isProcessing = false;
-    emit dataReady(code, dayDatas[code]);
+    qWarning() << "provider data received : " << data->day_data_size();
+    emit dataReady(code, data);
     checkWaitingList();
 }
 
@@ -63,13 +78,13 @@ void DayDataProvider::dataReceived(QString code, CybosDayDatas *data) {
 void DayDataProvider::checkWaitingList() {
     if (isProcessing)
         return;
-    qWarning() << "checkWatiingList " << waitingCodes.count();
-    if (waitingCodes.count() > 0) {
+
+    if (waitingQueue.count() > 0) {
         isProcessing = true;
-        QString code = waitingCodes.first();
-        waitingCodes.removeFirst();
+        DayDataQuery query = waitingQueue.first();
+        waitingQueue.removeFirst();
         QThread * thread = new QThread;
-        DayDataCollector * worker = new DayDataCollector(stub_ ,code, fromTime, untilTime);
+        DayDataCollector * worker = new DayDataCollector(stub_ ,query.getCode(), query.getFromTime(), query.getUntilTime());
         worker->moveToThread(thread);
         connect(thread, SIGNAL(started()), worker, SLOT(process()));
         connect(worker, SIGNAL(finished(QString, CybosDayDatas*)), this, SLOT(dataReceived(QString, CybosDayDatas*)));

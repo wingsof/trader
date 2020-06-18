@@ -13,15 +13,18 @@ service Stock {
   rpc RequestCybosTickData(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosBidAsk(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosSubject(StockCodeQuery) returns (google.protobuf.Empty) {}
+  rpc SetCurrentStock(StockSelection) returns (google.protobuf.Empty) {}
 
   rpc GetYesterdayTopAmountCodes(google.protobuf.Timestamp) returns (CodeList) {}
+
+  rpc ListenCurrentStock(google.protobuf.Empty) returns (stream StockSelection) {}
 
   rpc ListenCybosTickData(google.protobuf.Empty) returns (stream CybosTickData) {}
   rpc ListenCybosBidAsk(google.protobuf.Empty) returns (stream CybosBidAskTickData) {}
   rpc ListenCurrentTime(google.protobuf.Empty) returns (stream google.protobuf.Timestamp) {}
   rpc ListenCybosSubject(google.protobuf.Empty) returns (stream CybosSubjectTickData) {}
 
-  rpc StartSimulation(SimulationArgument) returns (google.protobuf.Empty) {}
+  rpc StartSimulation(SimulationArgument) returns (stream google.protobuf.Empty) {}
   rpc StopSimulation(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }
 
@@ -39,6 +42,13 @@ message CodeList {
 message StockQuery {
     string code = 1;
     google.protobuf.Timestamp from_datetime = 2;
+    google.protobuf.Timestamp until_datetime = 3;
+}
+
+
+message StockSelection {
+    string code = 1;
+    uint32 count_of_days = 2;
     google.protobuf.Timestamp until_datetime = 3;
 }
 
@@ -122,28 +132,12 @@ message CybosBidAskTickData {
     string code = 2;
     uint32 time = 3;
     uint64 volume = 4;
-    uint32 first_ask_price = 5;
-    uint32 first_bid_price = 6;
-    uint32 first_ask_remain = 7;
-    uint32 first_bid_remain = 8;
-    uint32 second_ask_price = 9;
-    uint32 second_bid_price = 10;
-    uint32 second_ask_remain = 11;
-    uint32 second_bid_remain = 12;
-    uint32 third_ask_price = 13;
-    uint32 third_bid_price = 14;
-    uint32 third_ask_remain = 15;
-    uint32 third_bid_remain = 16;
-    uint32 fourth_ask_price = 17;
-    uint32 fourth_bid_price = 18;
-    uint32 fourth_ask_remain = 19;
-    uint32 fourth_bid_remain = 20;
-    uint32 fifth_ask_price = 21;
-    uint32 fifth_bid_price = 22;
-    uint32 fifth_ask_remain = 23;
-    uint32 fifth_bid_remain = 24;
-    uint64 total_ask_remain = 25;
-    uint64 total_bid_remain = 26;
-    int64 out_time_total_ask_remain = 27;
-    int64 out_time_total_bid_remain = 28;
+    repeated int32 ask_prices = 5;
+    repeated int32 bid_prices = 6;
+    repeated uint32 ask_remains = 7;
+    repeated uint32 bid_remains = 8;
+    uint64 total_ask_remain = 9;
+    uint64 total_bid_remain = 10;
+    int64 out_time_total_ask_remain = 11;
+    int64 out_time_total_bid_remain = 12;
 }

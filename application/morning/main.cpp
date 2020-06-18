@@ -1,4 +1,7 @@
-#include <QApplication>
+#include <QGuiApplication>
+#include <QQmlEngine>
+#include <QQuickView>
+
 #include <memory>
 #include "stock_server/stock_provider.grpc.pb.h"
 #include "stock_server/stock_object.h"
@@ -33,12 +36,17 @@ int main(int argc, char *argv[]) {
     qRegisterMetaType<CybosDayDatas>("CybosDayDatas");
     qRegisterMetaType<CybosBidAskTickData>("CybosBidAskTickData");
     qRegisterMetaType<CybosSubjectTickData>("CybosSubjectTickData");
-    qRegisterMetaType<CybosSubjectTickData>("CybosSubjectTickData");
     qRegisterMetaType<Timestamp>("Timestamp");
     qRegisterMetaType<StockObject::PeriodTickData>("StockObject::PeriodData");
-    QApplication app(argc, argv);
-    StockModel model;
-    MainWindow main(model);
-    main.show();
+
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+    QGuiApplication app(argc, argv);
+    QQuickView view;
+    view.connect(view.engine(), &QQmlEngine::quit, &app, &QCoreApplication::quit);
+    //view.setSource(QUrl("qrc:/resources/morning/morning.qml"));
+    view.setSource(QUrl("./morning.qml"));
+    view.setResizeMode(QQuickView::SizeRootObjectToView);
+    view.show();
     return app.exec();
 }

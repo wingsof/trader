@@ -13,6 +13,7 @@ def drop1():
         for c in collections:
             if c.startswith('A') or c == 'alarm' or c== 'test':
                 stock_db[c].drop()
+                print('drop', c)
             else:
                 print(c)
 
@@ -35,8 +36,10 @@ def drop3():
         stock_db = db['stock']
         collections = stock_db.collection_names()
         for c in collections:
-            if c.find('_') == -1 or c.endswith('_BA'):
+            if c.startswith('A') and '_BA' in c:
                 stock_db[c].drop()
             else:
                 print('not dropped', c)
 
+
+drop1()

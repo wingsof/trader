@@ -2173,35 +2173,107 @@ class CybosBidAskTickData :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kAskPricesFieldNumber = 5,
+    kBidPricesFieldNumber = 6,
+    kAskRemainsFieldNumber = 7,
+    kBidRemainsFieldNumber = 8,
     kCodeFieldNumber = 2,
     kTickDateFieldNumber = 1,
     kVolumeFieldNumber = 4,
+    kTotalAskRemainFieldNumber = 9,
+    kTotalBidRemainFieldNumber = 10,
+    kOutTimeTotalAskRemainFieldNumber = 11,
+    kOutTimeTotalBidRemainFieldNumber = 12,
     kTimeFieldNumber = 3,
-    kFirstAskPriceFieldNumber = 5,
-    kFirstBidPriceFieldNumber = 6,
-    kFirstAskRemainFieldNumber = 7,
-    kFirstBidRemainFieldNumber = 8,
-    kSecondAskPriceFieldNumber = 9,
-    kSecondBidPriceFieldNumber = 10,
-    kSecondAskRemainFieldNumber = 11,
-    kSecondBidRemainFieldNumber = 12,
-    kThirdAskPriceFieldNumber = 13,
-    kThirdBidPriceFieldNumber = 14,
-    kThirdAskRemainFieldNumber = 15,
-    kThirdBidRemainFieldNumber = 16,
-    kFourthAskPriceFieldNumber = 17,
-    kFourthBidPriceFieldNumber = 18,
-    kFourthAskRemainFieldNumber = 19,
-    kFourthBidRemainFieldNumber = 20,
-    kFifthAskPriceFieldNumber = 21,
-    kFifthBidPriceFieldNumber = 22,
-    kFifthAskRemainFieldNumber = 23,
-    kTotalAskRemainFieldNumber = 25,
-    kTotalBidRemainFieldNumber = 26,
-    kOutTimeTotalAskRemainFieldNumber = 27,
-    kOutTimeTotalBidRemainFieldNumber = 28,
-    kFifthBidRemainFieldNumber = 24,
   };
+  // repeated int32 ask_prices = 5;
+  int ask_prices_size() const;
+  private:
+  int _internal_ask_prices_size() const;
+  public:
+  void clear_ask_prices();
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_ask_prices(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+      _internal_ask_prices() const;
+  void _internal_add_ask_prices(::PROTOBUF_NAMESPACE_ID::int32 value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+      _internal_mutable_ask_prices();
+  public:
+  ::PROTOBUF_NAMESPACE_ID::int32 ask_prices(int index) const;
+  void set_ask_prices(int index, ::PROTOBUF_NAMESPACE_ID::int32 value);
+  void add_ask_prices(::PROTOBUF_NAMESPACE_ID::int32 value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+      ask_prices() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+      mutable_ask_prices();
+
+  // repeated int32 bid_prices = 6;
+  int bid_prices_size() const;
+  private:
+  int _internal_bid_prices_size() const;
+  public:
+  void clear_bid_prices();
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_bid_prices(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+      _internal_bid_prices() const;
+  void _internal_add_bid_prices(::PROTOBUF_NAMESPACE_ID::int32 value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+      _internal_mutable_bid_prices();
+  public:
+  ::PROTOBUF_NAMESPACE_ID::int32 bid_prices(int index) const;
+  void set_bid_prices(int index, ::PROTOBUF_NAMESPACE_ID::int32 value);
+  void add_bid_prices(::PROTOBUF_NAMESPACE_ID::int32 value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+      bid_prices() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+      mutable_bid_prices();
+
+  // repeated uint32 ask_remains = 7;
+  int ask_remains_size() const;
+  private:
+  int _internal_ask_remains_size() const;
+  public:
+  void clear_ask_remains();
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_ask_remains(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >&
+      _internal_ask_remains() const;
+  void _internal_add_ask_remains(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >*
+      _internal_mutable_ask_remains();
+  public:
+  ::PROTOBUF_NAMESPACE_ID::uint32 ask_remains(int index) const;
+  void set_ask_remains(int index, ::PROTOBUF_NAMESPACE_ID::uint32 value);
+  void add_ask_remains(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >&
+      ask_remains() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >*
+      mutable_ask_remains();
+
+  // repeated uint32 bid_remains = 8;
+  int bid_remains_size() const;
+  private:
+  int _internal_bid_remains_size() const;
+  public:
+  void clear_bid_remains();
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_bid_remains(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >&
+      _internal_bid_remains() const;
+  void _internal_add_bid_remains(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >*
+      _internal_mutable_bid_remains();
+  public:
+  ::PROTOBUF_NAMESPACE_ID::uint32 bid_remains(int index) const;
+  void set_bid_remains(int index, ::PROTOBUF_NAMESPACE_ID::uint32 value);
+  void add_bid_remains(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >&
+      bid_remains() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >*
+      mutable_bid_remains();
+
   // string code = 2;
   void clear_code();
   const std::string& code() const;
@@ -2242,6 +2314,42 @@ class CybosBidAskTickData :
   void _internal_set_volume(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
+  // uint64 total_ask_remain = 9;
+  void clear_total_ask_remain();
+  ::PROTOBUF_NAMESPACE_ID::uint64 total_ask_remain() const;
+  void set_total_ask_remain(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_total_ask_remain() const;
+  void _internal_set_total_ask_remain(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // uint64 total_bid_remain = 10;
+  void clear_total_bid_remain();
+  ::PROTOBUF_NAMESPACE_ID::uint64 total_bid_remain() const;
+  void set_total_bid_remain(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_total_bid_remain() const;
+  void _internal_set_total_bid_remain(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // int64 out_time_total_ask_remain = 11;
+  void clear_out_time_total_ask_remain();
+  ::PROTOBUF_NAMESPACE_ID::int64 out_time_total_ask_remain() const;
+  void set_out_time_total_ask_remain(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_out_time_total_ask_remain() const;
+  void _internal_set_out_time_total_ask_remain(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 out_time_total_bid_remain = 12;
+  void clear_out_time_total_bid_remain();
+  ::PROTOBUF_NAMESPACE_ID::int64 out_time_total_bid_remain() const;
+  void set_out_time_total_bid_remain(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_out_time_total_bid_remain() const;
+  void _internal_set_out_time_total_bid_remain(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
   // uint32 time = 3;
   void clear_time();
   ::PROTOBUF_NAMESPACE_ID::uint32 time() const;
@@ -2251,255 +2359,27 @@ class CybosBidAskTickData :
   void _internal_set_time(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // uint32 first_ask_price = 5;
-  void clear_first_ask_price();
-  ::PROTOBUF_NAMESPACE_ID::uint32 first_ask_price() const;
-  void set_first_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_first_ask_price() const;
-  void _internal_set_first_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 first_bid_price = 6;
-  void clear_first_bid_price();
-  ::PROTOBUF_NAMESPACE_ID::uint32 first_bid_price() const;
-  void set_first_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_first_bid_price() const;
-  void _internal_set_first_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 first_ask_remain = 7;
-  void clear_first_ask_remain();
-  ::PROTOBUF_NAMESPACE_ID::uint32 first_ask_remain() const;
-  void set_first_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_first_ask_remain() const;
-  void _internal_set_first_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 first_bid_remain = 8;
-  void clear_first_bid_remain();
-  ::PROTOBUF_NAMESPACE_ID::uint32 first_bid_remain() const;
-  void set_first_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_first_bid_remain() const;
-  void _internal_set_first_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 second_ask_price = 9;
-  void clear_second_ask_price();
-  ::PROTOBUF_NAMESPACE_ID::uint32 second_ask_price() const;
-  void set_second_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_second_ask_price() const;
-  void _internal_set_second_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 second_bid_price = 10;
-  void clear_second_bid_price();
-  ::PROTOBUF_NAMESPACE_ID::uint32 second_bid_price() const;
-  void set_second_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_second_bid_price() const;
-  void _internal_set_second_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 second_ask_remain = 11;
-  void clear_second_ask_remain();
-  ::PROTOBUF_NAMESPACE_ID::uint32 second_ask_remain() const;
-  void set_second_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_second_ask_remain() const;
-  void _internal_set_second_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 second_bid_remain = 12;
-  void clear_second_bid_remain();
-  ::PROTOBUF_NAMESPACE_ID::uint32 second_bid_remain() const;
-  void set_second_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_second_bid_remain() const;
-  void _internal_set_second_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 third_ask_price = 13;
-  void clear_third_ask_price();
-  ::PROTOBUF_NAMESPACE_ID::uint32 third_ask_price() const;
-  void set_third_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_third_ask_price() const;
-  void _internal_set_third_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 third_bid_price = 14;
-  void clear_third_bid_price();
-  ::PROTOBUF_NAMESPACE_ID::uint32 third_bid_price() const;
-  void set_third_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_third_bid_price() const;
-  void _internal_set_third_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 third_ask_remain = 15;
-  void clear_third_ask_remain();
-  ::PROTOBUF_NAMESPACE_ID::uint32 third_ask_remain() const;
-  void set_third_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_third_ask_remain() const;
-  void _internal_set_third_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 third_bid_remain = 16;
-  void clear_third_bid_remain();
-  ::PROTOBUF_NAMESPACE_ID::uint32 third_bid_remain() const;
-  void set_third_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_third_bid_remain() const;
-  void _internal_set_third_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 fourth_ask_price = 17;
-  void clear_fourth_ask_price();
-  ::PROTOBUF_NAMESPACE_ID::uint32 fourth_ask_price() const;
-  void set_fourth_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_fourth_ask_price() const;
-  void _internal_set_fourth_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 fourth_bid_price = 18;
-  void clear_fourth_bid_price();
-  ::PROTOBUF_NAMESPACE_ID::uint32 fourth_bid_price() const;
-  void set_fourth_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_fourth_bid_price() const;
-  void _internal_set_fourth_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 fourth_ask_remain = 19;
-  void clear_fourth_ask_remain();
-  ::PROTOBUF_NAMESPACE_ID::uint32 fourth_ask_remain() const;
-  void set_fourth_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_fourth_ask_remain() const;
-  void _internal_set_fourth_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 fourth_bid_remain = 20;
-  void clear_fourth_bid_remain();
-  ::PROTOBUF_NAMESPACE_ID::uint32 fourth_bid_remain() const;
-  void set_fourth_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_fourth_bid_remain() const;
-  void _internal_set_fourth_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 fifth_ask_price = 21;
-  void clear_fifth_ask_price();
-  ::PROTOBUF_NAMESPACE_ID::uint32 fifth_ask_price() const;
-  void set_fifth_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_fifth_ask_price() const;
-  void _internal_set_fifth_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 fifth_bid_price = 22;
-  void clear_fifth_bid_price();
-  ::PROTOBUF_NAMESPACE_ID::uint32 fifth_bid_price() const;
-  void set_fifth_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_fifth_bid_price() const;
-  void _internal_set_fifth_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 fifth_ask_remain = 23;
-  void clear_fifth_ask_remain();
-  ::PROTOBUF_NAMESPACE_ID::uint32 fifth_ask_remain() const;
-  void set_fifth_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_fifth_ask_remain() const;
-  void _internal_set_fifth_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint64 total_ask_remain = 25;
-  void clear_total_ask_remain();
-  ::PROTOBUF_NAMESPACE_ID::uint64 total_ask_remain() const;
-  void set_total_ask_remain(::PROTOBUF_NAMESPACE_ID::uint64 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_total_ask_remain() const;
-  void _internal_set_total_ask_remain(::PROTOBUF_NAMESPACE_ID::uint64 value);
-  public:
-
-  // uint64 total_bid_remain = 26;
-  void clear_total_bid_remain();
-  ::PROTOBUF_NAMESPACE_ID::uint64 total_bid_remain() const;
-  void set_total_bid_remain(::PROTOBUF_NAMESPACE_ID::uint64 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_total_bid_remain() const;
-  void _internal_set_total_bid_remain(::PROTOBUF_NAMESPACE_ID::uint64 value);
-  public:
-
-  // int64 out_time_total_ask_remain = 27;
-  void clear_out_time_total_ask_remain();
-  ::PROTOBUF_NAMESPACE_ID::int64 out_time_total_ask_remain() const;
-  void set_out_time_total_ask_remain(::PROTOBUF_NAMESPACE_ID::int64 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::int64 _internal_out_time_total_ask_remain() const;
-  void _internal_set_out_time_total_ask_remain(::PROTOBUF_NAMESPACE_ID::int64 value);
-  public:
-
-  // int64 out_time_total_bid_remain = 28;
-  void clear_out_time_total_bid_remain();
-  ::PROTOBUF_NAMESPACE_ID::int64 out_time_total_bid_remain() const;
-  void set_out_time_total_bid_remain(::PROTOBUF_NAMESPACE_ID::int64 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::int64 _internal_out_time_total_bid_remain() const;
-  void _internal_set_out_time_total_bid_remain(::PROTOBUF_NAMESPACE_ID::int64 value);
-  public:
-
-  // uint32 fifth_bid_remain = 24;
-  void clear_fifth_bid_remain();
-  ::PROTOBUF_NAMESPACE_ID::uint32 fifth_bid_remain() const;
-  void set_fifth_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_fifth_bid_remain() const;
-  void _internal_set_fifth_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
   // @@protoc_insertion_point(class_scope:stock_api.CybosBidAskTickData)
  private:
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 > ask_prices_;
+  mutable std::atomic<int> _ask_prices_cached_byte_size_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 > bid_prices_;
+  mutable std::atomic<int> _bid_prices_cached_byte_size_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 > ask_remains_;
+  mutable std::atomic<int> _ask_remains_cached_byte_size_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 > bid_remains_;
+  mutable std::atomic<int> _bid_remains_cached_byte_size_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr code_;
   PROTOBUF_NAMESPACE_ID::Timestamp* tick_date_;
   ::PROTOBUF_NAMESPACE_ID::uint64 volume_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 time_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 first_ask_price_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 first_bid_price_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 first_ask_remain_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 first_bid_remain_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 second_ask_price_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 second_bid_price_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 second_ask_remain_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 second_bid_remain_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 third_ask_price_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 third_bid_price_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 third_ask_remain_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 third_bid_remain_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 fourth_ask_price_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 fourth_bid_price_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 fourth_ask_remain_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 fourth_bid_remain_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 fifth_ask_price_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 fifth_bid_price_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 fifth_ask_remain_;
   ::PROTOBUF_NAMESPACE_ID::uint64 total_ask_remain_;
   ::PROTOBUF_NAMESPACE_ID::uint64 total_bid_remain_;
   ::PROTOBUF_NAMESPACE_ID::int64 out_time_total_ask_remain_;
   ::PROTOBUF_NAMESPACE_ID::int64 out_time_total_bid_remain_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 fifth_bid_remain_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 time_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_stock_5fprovider_2eproto;
 };
@@ -4587,407 +4467,195 @@ inline void CybosBidAskTickData::set_volume(::PROTOBUF_NAMESPACE_ID::uint64 valu
   // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.volume)
 }
 
-// uint32 first_ask_price = 5;
-inline void CybosBidAskTickData::clear_first_ask_price() {
-  first_ask_price_ = 0u;
+// repeated int32 ask_prices = 5;
+inline int CybosBidAskTickData::_internal_ask_prices_size() const {
+  return ask_prices_.size();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_first_ask_price() const {
-  return first_ask_price_;
+inline int CybosBidAskTickData::ask_prices_size() const {
+  return _internal_ask_prices_size();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::first_ask_price() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.first_ask_price)
-  return _internal_first_ask_price();
+inline void CybosBidAskTickData::clear_ask_prices() {
+  ask_prices_.Clear();
 }
-inline void CybosBidAskTickData::_internal_set_first_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  first_ask_price_ = value;
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosBidAskTickData::_internal_ask_prices(int index) const {
+  return ask_prices_.Get(index);
 }
-inline void CybosBidAskTickData::set_first_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_first_ask_price(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.first_ask_price)
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosBidAskTickData::ask_prices(int index) const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.ask_prices)
+  return _internal_ask_prices(index);
 }
-
-// uint32 first_bid_price = 6;
-inline void CybosBidAskTickData::clear_first_bid_price() {
-  first_bid_price_ = 0u;
+inline void CybosBidAskTickData::set_ask_prices(int index, ::PROTOBUF_NAMESPACE_ID::int32 value) {
+  ask_prices_.Set(index, value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.ask_prices)
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_first_bid_price() const {
-  return first_bid_price_;
+inline void CybosBidAskTickData::_internal_add_ask_prices(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  ask_prices_.Add(value);
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::first_bid_price() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.first_bid_price)
-  return _internal_first_bid_price();
+inline void CybosBidAskTickData::add_ask_prices(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_add_ask_prices(value);
+  // @@protoc_insertion_point(field_add:stock_api.CybosBidAskTickData.ask_prices)
 }
-inline void CybosBidAskTickData::_internal_set_first_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  first_bid_price_ = value;
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+CybosBidAskTickData::_internal_ask_prices() const {
+  return ask_prices_;
 }
-inline void CybosBidAskTickData::set_first_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_first_bid_price(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.first_bid_price)
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+CybosBidAskTickData::ask_prices() const {
+  // @@protoc_insertion_point(field_list:stock_api.CybosBidAskTickData.ask_prices)
+  return _internal_ask_prices();
 }
-
-// uint32 first_ask_remain = 7;
-inline void CybosBidAskTickData::clear_first_ask_remain() {
-  first_ask_remain_ = 0u;
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+CybosBidAskTickData::_internal_mutable_ask_prices() {
+  return &ask_prices_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_first_ask_remain() const {
-  return first_ask_remain_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::first_ask_remain() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.first_ask_remain)
-  return _internal_first_ask_remain();
-}
-inline void CybosBidAskTickData::_internal_set_first_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  first_ask_remain_ = value;
-}
-inline void CybosBidAskTickData::set_first_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_first_ask_remain(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.first_ask_remain)
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+CybosBidAskTickData::mutable_ask_prices() {
+  // @@protoc_insertion_point(field_mutable_list:stock_api.CybosBidAskTickData.ask_prices)
+  return _internal_mutable_ask_prices();
 }
 
-// uint32 first_bid_remain = 8;
-inline void CybosBidAskTickData::clear_first_bid_remain() {
-  first_bid_remain_ = 0u;
+// repeated int32 bid_prices = 6;
+inline int CybosBidAskTickData::_internal_bid_prices_size() const {
+  return bid_prices_.size();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_first_bid_remain() const {
-  return first_bid_remain_;
+inline int CybosBidAskTickData::bid_prices_size() const {
+  return _internal_bid_prices_size();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::first_bid_remain() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.first_bid_remain)
-  return _internal_first_bid_remain();
+inline void CybosBidAskTickData::clear_bid_prices() {
+  bid_prices_.Clear();
 }
-inline void CybosBidAskTickData::_internal_set_first_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  first_bid_remain_ = value;
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosBidAskTickData::_internal_bid_prices(int index) const {
+  return bid_prices_.Get(index);
 }
-inline void CybosBidAskTickData::set_first_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_first_bid_remain(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.first_bid_remain)
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosBidAskTickData::bid_prices(int index) const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.bid_prices)
+  return _internal_bid_prices(index);
 }
-
-// uint32 second_ask_price = 9;
-inline void CybosBidAskTickData::clear_second_ask_price() {
-  second_ask_price_ = 0u;
+inline void CybosBidAskTickData::set_bid_prices(int index, ::PROTOBUF_NAMESPACE_ID::int32 value) {
+  bid_prices_.Set(index, value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.bid_prices)
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_second_ask_price() const {
-  return second_ask_price_;
+inline void CybosBidAskTickData::_internal_add_bid_prices(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  bid_prices_.Add(value);
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::second_ask_price() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.second_ask_price)
-  return _internal_second_ask_price();
+inline void CybosBidAskTickData::add_bid_prices(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_add_bid_prices(value);
+  // @@protoc_insertion_point(field_add:stock_api.CybosBidAskTickData.bid_prices)
 }
-inline void CybosBidAskTickData::_internal_set_second_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  second_ask_price_ = value;
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+CybosBidAskTickData::_internal_bid_prices() const {
+  return bid_prices_;
 }
-inline void CybosBidAskTickData::set_second_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_second_ask_price(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.second_ask_price)
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+CybosBidAskTickData::bid_prices() const {
+  // @@protoc_insertion_point(field_list:stock_api.CybosBidAskTickData.bid_prices)
+  return _internal_bid_prices();
 }
-
-// uint32 second_bid_price = 10;
-inline void CybosBidAskTickData::clear_second_bid_price() {
-  second_bid_price_ = 0u;
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+CybosBidAskTickData::_internal_mutable_bid_prices() {
+  return &bid_prices_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_second_bid_price() const {
-  return second_bid_price_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::second_bid_price() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.second_bid_price)
-  return _internal_second_bid_price();
-}
-inline void CybosBidAskTickData::_internal_set_second_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  second_bid_price_ = value;
-}
-inline void CybosBidAskTickData::set_second_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_second_bid_price(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.second_bid_price)
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+CybosBidAskTickData::mutable_bid_prices() {
+  // @@protoc_insertion_point(field_mutable_list:stock_api.CybosBidAskTickData.bid_prices)
+  return _internal_mutable_bid_prices();
 }
 
-// uint32 second_ask_remain = 11;
-inline void CybosBidAskTickData::clear_second_ask_remain() {
-  second_ask_remain_ = 0u;
+// repeated uint32 ask_remains = 7;
+inline int CybosBidAskTickData::_internal_ask_remains_size() const {
+  return ask_remains_.size();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_second_ask_remain() const {
-  return second_ask_remain_;
+inline int CybosBidAskTickData::ask_remains_size() const {
+  return _internal_ask_remains_size();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::second_ask_remain() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.second_ask_remain)
-  return _internal_second_ask_remain();
+inline void CybosBidAskTickData::clear_ask_remains() {
+  ask_remains_.Clear();
 }
-inline void CybosBidAskTickData::_internal_set_second_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  second_ask_remain_ = value;
+inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_ask_remains(int index) const {
+  return ask_remains_.Get(index);
 }
-inline void CybosBidAskTickData::set_second_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_second_ask_remain(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.second_ask_remain)
+inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::ask_remains(int index) const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.ask_remains)
+  return _internal_ask_remains(index);
 }
-
-// uint32 second_bid_remain = 12;
-inline void CybosBidAskTickData::clear_second_bid_remain() {
-  second_bid_remain_ = 0u;
+inline void CybosBidAskTickData::set_ask_remains(int index, ::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  ask_remains_.Set(index, value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.ask_remains)
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_second_bid_remain() const {
-  return second_bid_remain_;
+inline void CybosBidAskTickData::_internal_add_ask_remains(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  ask_remains_.Add(value);
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::second_bid_remain() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.second_bid_remain)
-  return _internal_second_bid_remain();
+inline void CybosBidAskTickData::add_ask_remains(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_add_ask_remains(value);
+  // @@protoc_insertion_point(field_add:stock_api.CybosBidAskTickData.ask_remains)
 }
-inline void CybosBidAskTickData::_internal_set_second_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  second_bid_remain_ = value;
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >&
+CybosBidAskTickData::_internal_ask_remains() const {
+  return ask_remains_;
 }
-inline void CybosBidAskTickData::set_second_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_second_bid_remain(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.second_bid_remain)
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >&
+CybosBidAskTickData::ask_remains() const {
+  // @@protoc_insertion_point(field_list:stock_api.CybosBidAskTickData.ask_remains)
+  return _internal_ask_remains();
 }
-
-// uint32 third_ask_price = 13;
-inline void CybosBidAskTickData::clear_third_ask_price() {
-  third_ask_price_ = 0u;
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >*
+CybosBidAskTickData::_internal_mutable_ask_remains() {
+  return &ask_remains_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_third_ask_price() const {
-  return third_ask_price_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::third_ask_price() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.third_ask_price)
-  return _internal_third_ask_price();
-}
-inline void CybosBidAskTickData::_internal_set_third_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  third_ask_price_ = value;
-}
-inline void CybosBidAskTickData::set_third_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_third_ask_price(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.third_ask_price)
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >*
+CybosBidAskTickData::mutable_ask_remains() {
+  // @@protoc_insertion_point(field_mutable_list:stock_api.CybosBidAskTickData.ask_remains)
+  return _internal_mutable_ask_remains();
 }
 
-// uint32 third_bid_price = 14;
-inline void CybosBidAskTickData::clear_third_bid_price() {
-  third_bid_price_ = 0u;
+// repeated uint32 bid_remains = 8;
+inline int CybosBidAskTickData::_internal_bid_remains_size() const {
+  return bid_remains_.size();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_third_bid_price() const {
-  return third_bid_price_;
+inline int CybosBidAskTickData::bid_remains_size() const {
+  return _internal_bid_remains_size();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::third_bid_price() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.third_bid_price)
-  return _internal_third_bid_price();
+inline void CybosBidAskTickData::clear_bid_remains() {
+  bid_remains_.Clear();
 }
-inline void CybosBidAskTickData::_internal_set_third_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  third_bid_price_ = value;
+inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_bid_remains(int index) const {
+  return bid_remains_.Get(index);
 }
-inline void CybosBidAskTickData::set_third_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_third_bid_price(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.third_bid_price)
+inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::bid_remains(int index) const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.bid_remains)
+  return _internal_bid_remains(index);
 }
-
-// uint32 third_ask_remain = 15;
-inline void CybosBidAskTickData::clear_third_ask_remain() {
-  third_ask_remain_ = 0u;
+inline void CybosBidAskTickData::set_bid_remains(int index, ::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  bid_remains_.Set(index, value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.bid_remains)
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_third_ask_remain() const {
-  return third_ask_remain_;
+inline void CybosBidAskTickData::_internal_add_bid_remains(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  bid_remains_.Add(value);
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::third_ask_remain() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.third_ask_remain)
-  return _internal_third_ask_remain();
+inline void CybosBidAskTickData::add_bid_remains(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_add_bid_remains(value);
+  // @@protoc_insertion_point(field_add:stock_api.CybosBidAskTickData.bid_remains)
 }
-inline void CybosBidAskTickData::_internal_set_third_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  third_ask_remain_ = value;
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >&
+CybosBidAskTickData::_internal_bid_remains() const {
+  return bid_remains_;
 }
-inline void CybosBidAskTickData::set_third_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_third_ask_remain(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.third_ask_remain)
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >&
+CybosBidAskTickData::bid_remains() const {
+  // @@protoc_insertion_point(field_list:stock_api.CybosBidAskTickData.bid_remains)
+  return _internal_bid_remains();
 }
-
-// uint32 third_bid_remain = 16;
-inline void CybosBidAskTickData::clear_third_bid_remain() {
-  third_bid_remain_ = 0u;
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >*
+CybosBidAskTickData::_internal_mutable_bid_remains() {
+  return &bid_remains_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_third_bid_remain() const {
-  return third_bid_remain_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::third_bid_remain() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.third_bid_remain)
-  return _internal_third_bid_remain();
-}
-inline void CybosBidAskTickData::_internal_set_third_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  third_bid_remain_ = value;
-}
-inline void CybosBidAskTickData::set_third_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_third_bid_remain(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.third_bid_remain)
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint32 >*
+CybosBidAskTickData::mutable_bid_remains() {
+  // @@protoc_insertion_point(field_mutable_list:stock_api.CybosBidAskTickData.bid_remains)
+  return _internal_mutable_bid_remains();
 }
 
-// uint32 fourth_ask_price = 17;
-inline void CybosBidAskTickData::clear_fourth_ask_price() {
-  fourth_ask_price_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_fourth_ask_price() const {
-  return fourth_ask_price_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::fourth_ask_price() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.fourth_ask_price)
-  return _internal_fourth_ask_price();
-}
-inline void CybosBidAskTickData::_internal_set_fourth_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  fourth_ask_price_ = value;
-}
-inline void CybosBidAskTickData::set_fourth_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_fourth_ask_price(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.fourth_ask_price)
-}
-
-// uint32 fourth_bid_price = 18;
-inline void CybosBidAskTickData::clear_fourth_bid_price() {
-  fourth_bid_price_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_fourth_bid_price() const {
-  return fourth_bid_price_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::fourth_bid_price() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.fourth_bid_price)
-  return _internal_fourth_bid_price();
-}
-inline void CybosBidAskTickData::_internal_set_fourth_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  fourth_bid_price_ = value;
-}
-inline void CybosBidAskTickData::set_fourth_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_fourth_bid_price(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.fourth_bid_price)
-}
-
-// uint32 fourth_ask_remain = 19;
-inline void CybosBidAskTickData::clear_fourth_ask_remain() {
-  fourth_ask_remain_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_fourth_ask_remain() const {
-  return fourth_ask_remain_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::fourth_ask_remain() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.fourth_ask_remain)
-  return _internal_fourth_ask_remain();
-}
-inline void CybosBidAskTickData::_internal_set_fourth_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  fourth_ask_remain_ = value;
-}
-inline void CybosBidAskTickData::set_fourth_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_fourth_ask_remain(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.fourth_ask_remain)
-}
-
-// uint32 fourth_bid_remain = 20;
-inline void CybosBidAskTickData::clear_fourth_bid_remain() {
-  fourth_bid_remain_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_fourth_bid_remain() const {
-  return fourth_bid_remain_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::fourth_bid_remain() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.fourth_bid_remain)
-  return _internal_fourth_bid_remain();
-}
-inline void CybosBidAskTickData::_internal_set_fourth_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  fourth_bid_remain_ = value;
-}
-inline void CybosBidAskTickData::set_fourth_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_fourth_bid_remain(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.fourth_bid_remain)
-}
-
-// uint32 fifth_ask_price = 21;
-inline void CybosBidAskTickData::clear_fifth_ask_price() {
-  fifth_ask_price_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_fifth_ask_price() const {
-  return fifth_ask_price_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::fifth_ask_price() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.fifth_ask_price)
-  return _internal_fifth_ask_price();
-}
-inline void CybosBidAskTickData::_internal_set_fifth_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  fifth_ask_price_ = value;
-}
-inline void CybosBidAskTickData::set_fifth_ask_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_fifth_ask_price(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.fifth_ask_price)
-}
-
-// uint32 fifth_bid_price = 22;
-inline void CybosBidAskTickData::clear_fifth_bid_price() {
-  fifth_bid_price_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_fifth_bid_price() const {
-  return fifth_bid_price_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::fifth_bid_price() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.fifth_bid_price)
-  return _internal_fifth_bid_price();
-}
-inline void CybosBidAskTickData::_internal_set_fifth_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  fifth_bid_price_ = value;
-}
-inline void CybosBidAskTickData::set_fifth_bid_price(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_fifth_bid_price(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.fifth_bid_price)
-}
-
-// uint32 fifth_ask_remain = 23;
-inline void CybosBidAskTickData::clear_fifth_ask_remain() {
-  fifth_ask_remain_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_fifth_ask_remain() const {
-  return fifth_ask_remain_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::fifth_ask_remain() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.fifth_ask_remain)
-  return _internal_fifth_ask_remain();
-}
-inline void CybosBidAskTickData::_internal_set_fifth_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  fifth_ask_remain_ = value;
-}
-inline void CybosBidAskTickData::set_fifth_ask_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_fifth_ask_remain(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.fifth_ask_remain)
-}
-
-// uint32 fifth_bid_remain = 24;
-inline void CybosBidAskTickData::clear_fifth_bid_remain() {
-  fifth_bid_remain_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::_internal_fifth_bid_remain() const {
-  return fifth_bid_remain_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosBidAskTickData::fifth_bid_remain() const {
-  // @@protoc_insertion_point(field_get:stock_api.CybosBidAskTickData.fifth_bid_remain)
-  return _internal_fifth_bid_remain();
-}
-inline void CybosBidAskTickData::_internal_set_fifth_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  fifth_bid_remain_ = value;
-}
-inline void CybosBidAskTickData::set_fifth_bid_remain(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_fifth_bid_remain(value);
-  // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.fifth_bid_remain)
-}
-
-// uint64 total_ask_remain = 25;
+// uint64 total_ask_remain = 9;
 inline void CybosBidAskTickData::clear_total_ask_remain() {
   total_ask_remain_ = PROTOBUF_ULONGLONG(0);
 }
@@ -5007,7 +4675,7 @@ inline void CybosBidAskTickData::set_total_ask_remain(::PROTOBUF_NAMESPACE_ID::u
   // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.total_ask_remain)
 }
 
-// uint64 total_bid_remain = 26;
+// uint64 total_bid_remain = 10;
 inline void CybosBidAskTickData::clear_total_bid_remain() {
   total_bid_remain_ = PROTOBUF_ULONGLONG(0);
 }
@@ -5027,7 +4695,7 @@ inline void CybosBidAskTickData::set_total_bid_remain(::PROTOBUF_NAMESPACE_ID::u
   // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.total_bid_remain)
 }
 
-// int64 out_time_total_ask_remain = 27;
+// int64 out_time_total_ask_remain = 11;
 inline void CybosBidAskTickData::clear_out_time_total_ask_remain() {
   out_time_total_ask_remain_ = PROTOBUF_LONGLONG(0);
 }
@@ -5047,7 +4715,7 @@ inline void CybosBidAskTickData::set_out_time_total_ask_remain(::PROTOBUF_NAMESP
   // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.out_time_total_ask_remain)
 }
 
-// int64 out_time_total_bid_remain = 28;
+// int64 out_time_total_bid_remain = 12;
 inline void CybosBidAskTickData::clear_out_time_total_bid_remain() {
   out_time_total_bid_remain_ = PROTOBUF_LONGLONG(0);
 }

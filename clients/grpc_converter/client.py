@@ -5,6 +5,7 @@ import grpc
 import grpc.experimental.gevent as grpc_gevent
 grpc_gevent.init_gevent()
 
+import time
 
 import os
 import sys
@@ -35,6 +36,12 @@ def get_day_data(stub):
         print(data)
 
 
+def send_stock_selection(stub, code):
+    until_datetime = timestamp_pb2.Timestamp()
+    until_datetime.FromDatetime(datetime(2020, 6, 11))
+    query = stock_provider_pb2.StockSelection(code=code, count_of_days=200, until_datetime=until_datetime)
+    stub.SetCurrentStock(query)
+
 def get_minute_data(stub):
     from_datetime = timestamp_pb2.Timestamp()
     from_datetime.FromSeconds(int(datetime.timestamp(datetime(2020, 3, 18))))
@@ -51,9 +58,11 @@ def get_minute_data(stub):
 
 def start_simulation(stub):
     from_datetime = timestamp_pb2.Timestamp()
-    from_datetime.FromDatetime(datetime(2020, 3, 27, 8, 59))
+    from_datetime.FromDatetime(datetime(2020, 6, 12, 9, 3))
     simulation_argument = stock_provider_pb2.SimulationArgument(from_datetime=from_datetime)
     response = stub.StartSimulation(simulation_argument) 
+    for msg in response:
+        i += 1
 
 
 def tick_subscriber(stub):
@@ -62,7 +71,7 @@ def tick_subscriber(stub):
     response = stub.ListenCybosTickData(query)
     for msg in response:
         i += 1
-        print('tick', i)
+        print('tick', i, msg.tick_date.ToDatetime())
 
 
 def bidask_subscriber(stub):
@@ -71,7 +80,7 @@ def bidask_subscriber(stub):
     response = stub.ListenCybosBidAsk(query)
     for msg in response:
         i += 1
-        print('bidask', i)
+        print('bidask', i, msg.tick_date.ToDatetime())
 
 
 def subject_subscriber(stub):
@@ -80,7 +89,7 @@ def subject_subscriber(stub):
     response = stub.ListenCybosSubject(query)
     for msg in response:
         i += 1
-        print('subject', i)
+        print('subject', i, msg.tick_date.ToDatetime())
 
 
 def subscribe_stock(code, stub):
@@ -106,11 +115,15 @@ def run():
     global _STUB
     with grpc.insecure_channel('localhost:50052') as channel:
         _STUB = stock_provider_pb2_grpc.StockStub(channel)
-        result = _STUB.GetYesterdayTopAmountCodes(Empty())
-        print('codes', result.codelist)
+        #result = _STUB.GetYesterdayTopAmountCodes(Empty())
+        #print('codes', result.codelist)
         #get_day_data(_STUB)
         #get_minute_data(_STUB)
-        #start_simulation(_STUB)
+        send_stock_selection(_STUB, "A005930")
+        gevent.joinall([gevent.spawn(start_simulation, _STUB)])
+        start_simulation(_STUB)
+        #gevent.sleep(5)
+        #send_stock_selection(_STUB, "A005930")
         #gevent.joinall([gevent.spawn(tick_subscriber, _STUB), gevent.spawn(bidask_subscriber, _STUB), gevent.spawn(subject_subscriber, _STUB), gevent.spawn(time_listener, _STUB)])
     print('exit')
 

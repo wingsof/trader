@@ -29,7 +29,7 @@ MinuteWindow::MinuteWindow(StockModel &model, QWidget *parent)
     layout->addWidget(beforeYesterdayChartView);
     layout->addWidget(todayChartView);
     layout->setSpacing(0);
-    layout->setContentMargin(0, 0, 0, 0);
+    //layout->setContentMargin(0, 0, 0, 0);
     setLayout(layout);
     resize(1800, 480);
 }

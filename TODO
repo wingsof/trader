@@ -1,6 +1,3 @@
-* tcpdump -i eth0 -w conn_err.pcap
-* vethe7e5ce7
-
 * Priority
     * Client 안정화
         - vi_follower 시작 시점을 client가 다 연결된 경우

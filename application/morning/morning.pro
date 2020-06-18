@@ -7,10 +7,11 @@ CONFIG += link_pkgconfig
 TARGET = morning
 INCLUDEPATH += .
 QT += widgets
-QT += charts
+QT += charts qml quick
 #LIBS += -L/usr/local/lib
 PKGCONFIG += protobuf
 PKGCONFIG += grpc++
+RESOURCES += morning.qrc
 
 OBJECTS_DIR=generated_files
 MOC_DIR=generated_files

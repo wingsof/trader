@@ -25,3 +25,8 @@ moc*.*
 application/chart_test/chart
 application/morning/morning
 application/chart_test/performance_comparison/chartlib_compare
+application/qml_tick/morning_tick
+application/qml_dayquery/morning_dayview
+*.so*
+*.so.*
+*.qrc
