@@ -58,7 +58,8 @@ def get_minute_data(stub):
 
 def start_simulation(stub):
     from_datetime = timestamp_pb2.Timestamp()
-    from_datetime.FromDatetime(datetime(2020, 6, 12, 9, 3))
+    #from_datetime.FromDatetime(datetime(2020, 6, 12, 9, 3, 12))
+    from_datetime.FromDatetime(datetime(2020, 6, 12, 8, 59))
     simulation_argument = stock_provider_pb2.SimulationArgument(from_datetime=from_datetime)
     response = stub.StartSimulation(simulation_argument) 
     for msg in response:

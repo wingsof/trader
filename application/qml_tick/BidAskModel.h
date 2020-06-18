@@ -11,6 +11,10 @@ public:
     
     void setTick(CybosTickData *data);
     void setBidAskTick(CybosBidAskTickData *data);
+    int getPrice(int i);
+    uint getRemain(int i, bool isAsk);
+    int getRemainDiff(int i, bool isAsk);
+    int getIndexOfPrice(int price);
 
 private:
     int *prices;
@@ -53,11 +57,13 @@ public:
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const override
     {
+        Q_UNUSED(parent);
         return BidAskModel::COLUMN_COUNT;
     }
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override
     {
+        Q_UNUSED(parent);
         return BidAskModel::ROW_COUNT;
     }
 
@@ -80,26 +86,20 @@ public:
     uint getTotalAskRemain() { return totalAskRemain; }
 
 private:
-    int *bidPrices;
-    int *askPrices;
     int highlight;
-    CybosTickData *currentTick;
-    uint *bidRemains;
-    uint *askRemains;
-    int *bidRemainDiff;
-    int *askRemainDiff;
     int yesterdayClose;
     uint totalBidRemain;
     uint totalAskRemain;
 
     QString currentStockCode;
+    PriceModel *priceModel;
 
 private:
     int getPriceByRow(int row) const ;
     uint getRemain(int row, int column) const;
     int getRemainDiff(int row, int column) const;
     void resetData();
-    void setHighlightPosition();
+    void setHighlightPosition(int price);
 
 private slots:
     void tickArrived(CybosTickData *);

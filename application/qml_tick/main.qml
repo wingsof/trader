@@ -148,6 +148,12 @@ ApplicationWindow {
                     implicitWidth: (root.width - 6) / 7
                     implicitHeight: (root.height - 20) / 22
                     color: "#ffffff"
+                    border.color: "#d7d7d7"
+                    border.width: {
+                        if (model.column == 0 || model.column == 6)
+                            return 1
+                        return 0
+                    }
 
                     Text {
                         text: display

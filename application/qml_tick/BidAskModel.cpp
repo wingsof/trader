@@ -1,6 +1,8 @@
 #include "BidAskModel.h"
+#include <google/protobuf/util/time_util.h>
 #include <QDebug>
 
+using google::protobuf::util::TimeUtil;
 
 PriceModel::PriceModel() {
     prices = new int[BidAskModel::STEPS * 2];
@@ -17,6 +19,47 @@ PriceModel::PriceModel() {
 }
 
 
+int PriceModel::getPrice(int i) {
+    return prices[i];
+}
+
+
+uint PriceModel::getRemain(int i, bool isAsk) {
+    if (isAsk) {
+        if (i < BidAskModel::STEPS)
+            return remains[i];
+        else if (i == BidAskModel::STEPS && !isBuy)
+            return currentVolume;
+    }
+    else {
+        if (i >= BidAskModel::STEPS && i < BidAskModel::STEPS * 2)
+            return remains[i];
+        else if (i == BidAskModel::STEPS - 1 && isBuy)
+            return currentVolume;
+    }
+    return 0;
+}
+
+
+int PriceModel::getRemainDiff(int i, bool isAsk) {
+    if (isAsk && i >= BidAskModel::STEPS)
+        return 0;
+    else if (!isAsk && (i < BidAskModel::STEPS || i >= BidAskModel::STEPS * 2))
+        return 0;
+
+    return remainDiff[i];
+}
+
+
+int PriceModel::getIndexOfPrice(int price) {
+    for (int i = 0; i < BidAskModel::STEPS * 2; i++) {
+        if (prices[i] == price)
+            return i;
+    }
+    return -1;
+}
+
+
 void PriceModel::setTick(CybosTickData *data) {
     currentVolume = data->volume();
     isBuy = data->buy_or_sell();
@@ -24,6 +67,7 @@ void PriceModel::setTick(CybosTickData *data) {
         remainDiff[i] = 0;
 
     if (!isBidaskReceived) {
+        qWarning() << "not bidaskReceived: " << data->ask_price() << ", " << data->bid_price();
         prices[BidAskModel::STEPS - 1] = data->ask_price();             
         prices[BidAskModel::STEPS] = data->bid_price();
     }
@@ -80,12 +124,14 @@ void PriceModel::movePrices(int askPrice, int bidPrice) {
                     break;
                 }
             }
-
+            qWarning() << "ASK found index : " << priceIndex;
             if (priceIndex == -1) {
+                qWarning() << "ASK left rotate";
                 rotatePrices(-1, true);
                 prices[BidAskModel::STEPS - 1] = askPrice;
             }
             else {
+                qWarning() << "ASK right rotate : " << BidAskModel::STEPS - 1 - priceIndex;
                 rotatePrices(BidAskModel::STEPS - 1 - priceIndex, true);
             }
         }
@@ -98,12 +144,14 @@ void PriceModel::movePrices(int askPrice, int bidPrice) {
                     break;
                 }
             }
-
+            qWarning() << "BID found index : " << priceIndex;
             if (priceIndex == -1) {
+                qWarning() << "ASK right rotate";
                 rotatePrices(1, false);
                 prices[BidAskModel::STEPS] = bidPrice;
             }
             else {
+                qWarning() << "BID left rotate : " << BidAskModel::STEPS - priceIndex;
                 rotatePrices(BidAskModel::STEPS - priceIndex, false);
             }
         }
@@ -118,10 +166,12 @@ void PriceModel::decreaseVolume(int price, uint volume, bool isBuy) {
 
     for (int i = startIndex; i < startIndex + BidAskModel::STEPS; i++) {
         if (prices[i] == price) {
-            if (volume >= remains[i])
+            if (volume >= remains[i]) 
                 remains[i] = 0;
-            else
-                remains[i] = remains[i] - volume;
+            else 
+                remains[i] -= volume;
+
+            remainDiff[i] = -(volume);
         }
     }
 }
@@ -176,16 +226,9 @@ void PriceModel::setBidAskTick(CybosBidAskTickData *data) {
 }
 
 
-
 BidAskModel::BidAskModel(QObject *parent)
 : QAbstractTableModel(parent) {
-    bidPrices = new int[BidAskModel::STEPS];
-    askPrices = new int[BidAskModel::STEPS];
-    bidRemains = new uint[BidAskModel::STEPS];
-    askRemains = new uint[BidAskModel::STEPS];
-    bidRemainDiff = new int[BidAskModel::STEPS];
-    askRemainDiff = new int[BidAskModel::STEPS];
-
+    priceModel = new PriceModel;
     
     connect(DataProvider::getInstance(), &DataProvider::tickArrived,
             this, &BidAskModel::tickArrived);
@@ -202,27 +245,15 @@ BidAskModel::BidAskModel(QObject *parent)
 
 
 BidAskModel::~BidAskModel() {
-    delete bidPrices;
-    delete askPrices;
-    delete bidRemains;
-    delete askRemains;
+    delete priceModel;
 }
 
 
 void BidAskModel::resetData() {
-    for (int i = 0; i < BidAskModel::STEPS; i++) {
-        bidPrices[i] = 0;
-        askPrices[i] = 0;
-        bidRemains[i] = 0;
-        askRemains[i] = 0;
-        bidRemainDiff[i] = 0;
-        askRemainDiff[i] = 0;
-    }
     setTotalBidRemain(0);
     setTotalAskRemain(0);
     totalBidRemain = 0;
     totalAskRemain = 0;
-    currentTick = NULL;
     setYesterdayClose(0);
     setHighlight(-1);
 }
@@ -245,6 +276,8 @@ void BidAskModel::setTotalAskRemain(uint br) {
 
 
 void BidAskModel::setCurrentStock(QString code, QDateTime dt, int countOfDays) {
+    Q_UNUSED(countOfDays);
+    Q_UNUSED(dt);
     if (currentStockCode != code) {
         currentStockCode = code;
         qWarning() << "currentStock: " << currentStockCode;
@@ -267,17 +300,17 @@ QVariant BidAskModel::data(const QModelIndex &index, int role) const
                 index.row() >= BidAskModel::START_ROW && index.row() <= BidAskModel::STEPS * 2) {
 
         if (index.column() == BidAskModel::PRICE_COLUMN) {
-            int price = getPriceByRow(index.row());
+            int price = priceModel->getPrice(index.row() - 1);
             if (price != 0)
                 return QVariant(price);
         }
         else if (index.column() == BidAskModel::ASK_REMAIN_COLUMN || index.column() == BidAskModel::BID_REMAIN_COLUMN) {
-            uint remain = getRemain(index.row(), index.column());
+            uint remain = priceModel->getRemain(index.row() - 1, index.column() == BidAskModel::ASK_REMAIN_COLUMN);
             if (remain != 0)
                 return QVariant(remain);
         }
         else if (index.column() == BidAskModel::ASK_DIFF_COLUMN || index.column() == BidAskModel::BID_DIFF_COLUMN) {
-            int remainDiff = getRemainDiff(index.row(), index.column());
+            int remainDiff = priceModel->getRemainDiff(index.row() - 1, index.column() == BidAskModel::ASK_DIFF_COLUMN);
             if (remainDiff != 0)
                 return QVariant(remainDiff);
         }
@@ -286,95 +319,22 @@ QVariant BidAskModel::data(const QModelIndex &index, int role) const
 }
 
 
-int BidAskModel::getPriceByRow(int row) const {
-    int index = row - BidAskModel::START_ROW;
-    if (index < 0 || index >= BidAskModel::STEPS * 2)
-        return 0;
-
-    if (index >= BidAskModel::STEPS)
-        return bidPrices[index - BidAskModel::STEPS];
-
-    return askPrices[BidAskModel::STEPS - index - 1];
-}
-
-
-uint BidAskModel::getRemain(int row, int column) const {
-    int index = row - BidAskModel::START_ROW;
-    if (index < 0 || index >= BidAskModel::STEPS * 2)
-        return 0;
-
-    if (column == BidAskModel::ASK_REMAIN_COLUMN) {
-        if (index < BidAskModel::STEPS)
-            return askRemains[BidAskModel::STEPS - index - 1];        
-        else if (index == BidAskModel::STEPS &&
-                        currentTick != NULL &&
-                        !currentTick->buy_or_sell())
-            return currentTick->volume();
-    }
-    else if (column == BidAskModel::BID_REMAIN_COLUMN) {
-        if (index >= BidAskModel::STEPS && index < BidAskModel::STEPS * 2)
-            return bidRemains[index - BidAskModel::STEPS];
-        else if (index == BidAskModel::STEPS - 1 &&
-                        currentTick != NULL &&
-                        currentTick->buy_or_sell())
-            return currentTick->volume();
-    }
-    return 0;
-}
-
-
-int BidAskModel::getRemainDiff(int row, int column) const {
-    int index = row - BidAskModel::START_ROW;
-    if (index < 0 || index >= BidAskModel::STEPS * 2)
-        return 0;
-
-    if (column == BidAskModel::ASK_DIFF_COLUMN && index < BidAskModel::STEPS) {
-        return askRemainDiff[BidAskModel::STEPS - index - 1];        
-    }
-    else if (column == BidAskModel::BID_DIFF_COLUMN && index >= BidAskModel::STEPS && index < BidAskModel::STEPS * 2) {
-        return bidRemainDiff[index - BidAskModel::STEPS];
-    }
-    return 0;
-}
-
-
 void BidAskModel::tickArrived(CybosTickData *data) {
     if (currentStockCode != QString::fromStdString(data->code()))
         return;
-    qWarning() << "current: " << data->current_price() << ", volume: " << data->volume() << "\tBUY:" << data->buy_or_sell();
-    currentTick = data;
-    int startRow = 10;
-    int endRow = 11;
-    setYesterdayClose(data->current_price() - data->yesterday_diff());
-    setHighlightPosition();
 
-    if (startRow > highlight)
-        startRow = highlight;
-    else if (endRow < highlight)
-        endRow = highlight;
-    dataChanged(createIndex(startRow, 1), createIndex(endRow, 5));
+    long msec = TimeUtil::TimestampToMilliseconds(data->tick_date());
+    qWarning() << QDateTime::fromMSecsSinceEpoch(msec, Qt::UTC) << "\tcurrent: " << data->current_price() << ", volume: " << data->volume() << "\tBUY:" << data->buy_or_sell() << "\task: " << data->ask_price() << ", bid: " << data->bid_price();
+    setYesterdayClose(data->current_price() - data->yesterday_diff());
+    setHighlightPosition(data->current_price());
+    priceModel->setTick(data);
+    dataChanged(createIndex(1, 1), createIndex(20, 5));
 }
 
 
-void BidAskModel::setHighlightPosition() {
-    if (currentTick) {
-        //qWarning() << "setHighlightPosition: " << currentTick->current_price();
-        for (int i = 0; i < BidAskModel::STEPS; i++) {
-            if (bidPrices[i] == currentTick->current_price()) {
-                setHighlight(i + BidAskModel::STEPS + 1);
-                return;
-            }
-        }
-        for (int i = 0; i < BidAskModel::STEPS; i++) {
-            if (askPrices[i] == currentTick->current_price()) {
-                setHighlight(BidAskModel::STEPS - i);
-                return;
-            }
-        }
-    }
-    else {
-        setHighlight(-1);
-    }
+void BidAskModel::setHighlightPosition(int price) {
+    int index = priceModel->getIndexOfPrice(price);
+    setHighlight(index >= 0?index+1:index);
 }
 
 
@@ -382,49 +342,13 @@ void BidAskModel::bidAskTickArrived(CybosBidAskTickData *data) {
     if (currentStockCode != QString::fromStdString(data->code()))
         return;
 
-    bool priceChanged = false;
-
-    for (int i = 0; i < data->ask_prices_size(); i++) {
-        if (askPrices[i] != data->ask_prices(i))
-            priceChanged = true;
-
-        askPrices[i] = data->ask_prices(i);
-    }
-    
-    for (int i = 0; i < data->bid_prices_size(); i++) {
-        if (bidPrices[i] != data->bid_prices(i))
-            priceChanged = true;
-
-        bidPrices[i] = data->bid_prices(i);
-    }
-
-    if (priceChanged) {
-        for (int i = 0; i < data->ask_remains_size(); i++)
-            askRemains[i] = data->ask_remains(i);
-
-        for (int i = 0; i < data->bid_remains_size(); i++)
-            bidRemains[i] = data->bid_remains(i);
-    }
-
-    for (int i = 0; i < data->ask_remains_size(); i++) {
-        if (askRemains[i] != 0) {
-            askRemainDiff[i] = data->ask_remains(i) - askRemains[i];
-        }
-        askRemains[i] = data->ask_remains(i);
-    }
-    
-    for (int i = 0; i < data->bid_remains_size(); i++) {
-        if (bidRemains[i] != 0) {
-            bidRemainDiff[i] = data->bid_remains(i) - bidRemains[i];
-        }
-        bidRemains[i] = data->bid_remains(i);
-    }
+    priceModel->setBidAskTick(data);
     setTotalAskRemain(data->total_ask_remain());
     setTotalBidRemain(data->total_bid_remain()); 
+    setHighlight(-1);
     dataChanged(createIndex(1, 1), createIndex(20, 5));
-    setHighlightPosition();
-
-    qWarning() << "ASK: " << data->ask_prices(0) << "(" << data->ask_remains(0) << ")\t" << "BID: " << data->bid_prices(0) << "(" << data->bid_remains(0) << ")";
+    long msec = TimeUtil::TimestampToMilliseconds(data->tick_date());
+    qWarning() << QDateTime::fromMSecsSinceEpoch(msec, Qt::UTC) << "\tASK: " << data->ask_prices(0) << "(" << data->ask_remains(0) << ")\t" << "BID: " << data->bid_prices(0) << "(" << data->bid_remains(0) << ")";
 }
 
 

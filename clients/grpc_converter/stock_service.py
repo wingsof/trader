@@ -26,7 +26,7 @@ from gevent.queue import Queue
 
 
 simulation_progressing = [False, False, False]
-TIME_SPEED = 10
+TIME_SPEED = 1
 
 
 def get_yesterday_data(today, market_code):
