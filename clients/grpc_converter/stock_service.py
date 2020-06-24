@@ -52,6 +52,7 @@ def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_ti
     global simulation_progressing
 
     simulation_progressing[2] = True
+    last_datatime = None
     while simulation_progressing[0]:
         try:
             data = tick_queue.get(True, 1)
@@ -66,6 +67,9 @@ def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_ti
         for d in data:
             if not simulation_progressing[0]:
                 break
+            
+            if last_datatime is None:
+                last_datatime = d['date']
 
             if datatime is None:
                 datatime = d['date'] - timedelta(seconds=1)
@@ -84,7 +88,10 @@ def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_ti
 
             datatime = d['date'] - timeadjust
             now = datetime.now()
-            #time_handler(datatime)
+
+            if d['date'] - last_datatime > timedelta(seconds=1):
+                time_handler(d['date'])
+                last_datetime = d['date']
     simulation_progressing[2] = False
     print('exit deliver tick')
 
@@ -133,11 +140,11 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.current_stock_until_time = None
 
     def GetDayData(self, request, context):
-        print('GetDayData', request.code, datetime.fromtimestamp(request.from_datetime.seconds), datetime.fromtimestamp(request.until_datetime.seconds))
+        print('GetDayData', request.code, request.from_datetime.ToDatetime(), request.until_datetime.ToDatetime())
         day_datas = morning_client.get_past_day_data(
             request.code,
-            datetime.fromtimestamp(request.from_datetime.seconds),
-            datetime.fromtimestamp(request.until_datetime.seconds))
+            request.from_datetime.ToDatetime(),
+            request.until_datetime.ToDatetime())
         protoc_converted = []
         for d in day_datas:
             protoc_converted.append(stock_provider_pb2.CybosDayData(
@@ -162,8 +169,8 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         print('GetMinuteData', request)
         minute_datas = morning_client.get_minute_data(
             request.code,
-            datetime.fromtimestamp(request.from_datetime.seconds),
-            datetime.fromtimestamp(request.until_datetime.seconds))
+            request.from_datetime.ToDatetime(),
+            request.until_datetime.ToDatetime())
         protoc_converted = []
         for m in minute_datas:
             protoc_converted.append(stock_provider_pb2.CybosDayData(
@@ -412,7 +419,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
     def GetYesterdayTopAmountCodes(self, request, context):
         market_code = morning_client.get_all_market_code()
-        request_date = request.toDateTime()
+        request_date = request.ToDatetime()
         print('GetYesterdayTopAmountCodes', request_date)
         yesterday_list = get_yesterday_data(request_date, market_code)
         yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)

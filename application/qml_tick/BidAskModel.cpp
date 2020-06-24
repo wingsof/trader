@@ -345,7 +345,7 @@ void BidAskModel::bidAskTickArrived(CybosBidAskTickData *data) {
     priceModel->setBidAskTick(data);
     setTotalAskRemain(data->total_ask_remain());
     setTotalBidRemain(data->total_bid_remain()); 
-    setHighlight(-1);
+    //setHighlight(-1);
     dataChanged(createIndex(1, 1), createIndex(20, 5));
     long msec = TimeUtil::TimestampToMilliseconds(data->tick_date());
     qWarning() << QDateTime::fromMSecsSinceEpoch(msec, Qt::UTC) << "\tASK: " << data->ask_prices(0) << "(" << data->ask_remains(0) << ")\t" << "BID: " << data->bid_prices(0) << "(" << data->bid_remains(0) << ")";

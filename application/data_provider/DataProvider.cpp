@@ -6,9 +6,12 @@
 #include <grpcpp/security/credentials.h>
 #include <google/protobuf/util/time_util.h>
 #include "TickThread.h"
+#include "TimeThread.h"
 #include "BidAskThread.h"
 #include "StockSelectionThread.h"
 #include "SpeedStatistics.h"
+#include "MinuteData.h"
+#include "DayDataProvider.h"
 
 
 using grpc::Channel;
@@ -50,18 +53,43 @@ DataProvider::DataProvider()
     stub_ = Stock::NewStub(grpc::CreateChannel("localhost:50052", grpc::InsecureChannelCredentials()));
 
     speedStatistics = NULL;
+    minuteData = NULL;
     tickThread = new TickThread(stub_);
     bidAskThread = new BidAskThread(stub_);
     stockSelectionThread = new StockSelectionThread(stub_);
+    timeThread = new TimeThread(stub_);
+    dayDataProvider = new DayDataProvider(stub_);
+
     connect(tickThread, &TickThread::tickArrived, this, &DataProvider::tickArrived);
     connect(bidAskThread, &BidAskThread::tickArrived, this, &DataProvider::bidAskTickArrived);
     connect(stockSelectionThread, &StockSelectionThread::stockCodeChanged, this, &DataProvider::stockCodeChanged);
+    connect(dayDataProvider, &DayDataProvider::dataReady, this, &DataProvider::dayDataReady);
+    connect(dayDataProvider, &DayDataProvider::minuteDataReady, this, &DataProvider::minuteDataReady);
 }
 
 
 void DataProvider::createSpeedStatistics(int secs) {
     if (speedStatistics == NULL)
         speedStatistics = new SpeedStatistics(secs, this);
+}
+
+
+void DataProvider::requestDayData(const QString &code, int countOfDays, const QDateTime &_untilTime) {
+    dayDataProvider->requestDayData(code, countOfDays, _untilTime);
+}
+
+
+void DataProvider::requestMinuteData(const QString &code, const QDateTime &fromTime, const QDateTime &untilTime) {
+    dayDataProvider->requestMinuteData(code, fromTime, untilTime);
+}
+
+
+void DataProvider::collectMinuteData(int min) {
+    if (minuteData == NULL) {
+        minuteData = new MinuteData(this, min);
+        connect(tickThread, &TickThread::tickArrived, minuteData, &MinuteData::stockTickArrived);
+        connect(minuteData, &MinuteData::minuteTickUpdated, this, &DataProvider::minuteTickUpdated);
+    }
 }
 
 
@@ -77,4 +105,11 @@ void DataProvider::startBidAskTick() {
 
 void DataProvider::startStockCodeListening() {
     stockSelectionThread->start();
+}
+
+
+MinuteTick * DataProvider::getMinuteTick(const QString &code) {
+    if (minuteData && !code.isEmpty())
+        return minuteData->getMinuteTick(code);
+    return nullptr;
 }

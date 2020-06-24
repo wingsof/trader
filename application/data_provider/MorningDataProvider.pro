@@ -31,15 +31,22 @@ SOURCES += \
            stock_provider.pb.cc \
            TickThread.cpp \
            BidAskThread.cpp \
+           TimeThread.cpp \
            StockSelectionThread.cpp \
            SpeedStatistics.cpp \
+           MinuteData.cpp \
+           DayDataProvider.cpp \
            DataProvider.cpp 
 
 HEADERS += stock_provider.grpc.pb.h \
            stock_provider.pb.h \
            TickThread.h \
            BidAskThread.h \
+           TimeThread.h \
            StockSelectionThread.h \
            SpeedStatistics.h \
+           MinuteData.h \
+           DayDataProvider.h \
+           Util.h \
            DataProvider.h 
 

@@ -255,14 +255,19 @@ void DayView::paint(QPainter *painter) {
         pen.setColor(QColor("#d7d7d7"));
         painter->setPen(pen);
 
+        painter->save();
         if (d.dayOfWeek() > currentDayOfWeek) {
             painter->drawLine(QLineF(startX + horizontalGridStep + horizontalGridStep / 2, 0, startX + horizontalGridStep + horizontalGridStep / 2, verticalGridStep * 2 * 8));
             const CybosDayData &previousData = dayData->getDayData(i + 1);
             QDate previousDate = dayData->convertToDate(previousData.date());
             QPen fPen(QColor("#000000"));
+            QFont font = painter->font();
+            font.setPointSize(6);
             painter->setPen(fPen);
+            painter->setFont(font);
             painter->drawText(QRectF(startX + horizontalGridStep * 2, verticalGridStep * 2 * 8, horizontalGridStep * 8, verticalGridStep), Qt::AlignLeft | Qt::AlignVCenter, previousDate.toString("M/dd"));
         }
+        painter->restore();
 
         currentDayOfWeek = d.dayOfWeek();
 
@@ -464,7 +469,8 @@ int DayData::countOfData() {
 qreal DayData::mapPriceToPos(int price, qreal startY, qreal endY) {
     qreal priceGap = priceSteps.at(priceSteps.size() - 1) - priceSteps.at(0); 
     qreal positionGap = startY - endY; // device coordinate zero is started from upper
-    qreal pricePosition = price - lowestPrice;
+    // TODO: need to verify qreal pricePosition = price - lowestPrice;
+    qreal pricePosition = price - priceSteps.at(0);
     qreal result = startY - pricePosition * positionGap / priceGap;
     //qWarning() << "price : " << price << ", gap: " << priceGap << ", price pos: " << pricePosition << ", " << "Y : " << startY << ", " << endY << "\tresult : " << result;
     return result;

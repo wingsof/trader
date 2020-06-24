@@ -1,0 +1,82 @@
+[
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "auto"
+                    }
+                ],
+                "className": "MorningTickChartView",
+                "object": true,
+                "qualifiedClassName": "MorningTickChartView",
+                "slots": [
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "type": "QString"
+                            },
+                            {
+                                "type": "QDateTime"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "name": "setCurrentStock",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "code",
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "minuteTickUpdated",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "code",
+                                "type": "QString"
+                            },
+                            {
+                                "type": "CybosDayDatas*"
+                            }
+                        ],
+                        "name": "dayDataReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "code",
+                                "type": "QString"
+                            },
+                            {
+                                "type": "CybosDayDatas*"
+                            }
+                        ],
+                        "name": "minuteDataReceived",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QQuickPaintedItem"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "MorningTickChartView.h",
+        "outputRevision": 67
+    }
+]
