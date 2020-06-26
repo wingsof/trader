@@ -108,6 +108,11 @@ void DataProvider::startStockCodeListening() {
 }
 
 
+void DataProvider::setCurrentStock(const QString &code, const QDateTime &dt, int countOfDays) {
+    stockSelectionThread->setCurrentStock(code, dt, countOfDays);
+}
+
+
 MinuteTick * DataProvider::getMinuteTick(const QString &code) {
     if (minuteData && !code.isEmpty())
         return minuteData->getMinuteTick(code);

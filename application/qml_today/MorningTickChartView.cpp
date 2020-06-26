@@ -43,9 +43,9 @@ void MorningTickChartView::minuteTickUpdated(QString code) {
         return;
 
     MinuteTick *mt = DataProvider::getInstance()->getMinuteTick(currentStockCode);
-    qWarning() << "highest : " << mt->getHighestPrice() << ", lowest" << mt->getLowestPrice();
+    //qWarning() << "highest : " << mt->getHighestPrice() << ", lowest" << mt->getLowestPrice() << "highest volume: " << currentVolumeMax << "\tlowest volume: " << currentVolumeMin;
     updatePriceSteps(mt->getHighestPrice(), mt->getLowestPrice());
-    updateVolumeMinMax(mt->getHighestVolume(), mt->getLowestVolume());
+    updateVolumeMax(mt->getHighestVolume());
     update(); 
 }
 
@@ -105,19 +105,17 @@ void MorningTickChartView::setVolumeMinMax(uint h, uint l) {
         currentVolumeMin = l;
     }
     else {
-        if (l < currentVolumeMin)
+        if (currentVolumeMin == 0 || l < currentVolumeMin)
             currentVolumeMin = l;
 
         if (h > currentVolumeMax)
             currentVolumeMax = h;
     }
+    qWarning() << "volume max : " << currentVolumeMax << "\tvolume min : " << currentVolumeMin;
 }
 
 
-void MorningTickChartView::updateVolumeMinMax(uint h, uint l) {
-    if (currentVolumeMin == 0 || l < currentVolumeMin)
-        currentVolumeMin = l;
-
+void MorningTickChartView::updateVolumeMax(uint h) {
     if (h > currentVolumeMax)
         currentVolumeMax = h;
 }
@@ -190,8 +188,12 @@ qreal MorningTickChartView::getCandleLineWidth(qreal w) {
 
 
 qreal MorningTickChartView::getVolumeHeight(uint v, qreal ch) {
-    uint vRange = currentVolumeMax - currentVolumeMin;
-    return (v - currentVolumeMin) / vRange * ch;
+    if (v < currentVolumeMin)
+        return 0.0;
+
+    qreal vRange = qreal(currentVolumeMax - currentVolumeMin);
+    qWarning() << "vol diff : " << (v - currentVolumeMin) << "\tvRange : " << vRange << "\t ch : " << ch;
+    return ch * VOLUME_ROW_COUNT * (v - currentVolumeMin) / vRange;
 }
 
 
@@ -205,6 +207,7 @@ void MorningTickChartView::drawVolume(QPainter *painter, const CybosDayData &dat
     painter->setBrush(QBrush(color));
     painter->setPen(Qt::NoPen);
     qreal volumeHeight = getVolumeHeight(data.volume(), ch);
+    qWarning() << "volume : " << data.volume() << "\t" << QRectF(startX, volumeEndY - volumeHeight, tickWidth, volumeHeight);
     painter->drawRect(QRectF(startX, volumeEndY - volumeHeight, tickWidth, volumeHeight));
     painter->restore();
 }

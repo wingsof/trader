@@ -10,6 +10,7 @@ class StockSelectionThread : public QThread {
 Q_OBJECT
 public:
     StockSelectionThread(std::shared_ptr<stock_api::Stock::Stub> stub);
+    void setCurrentStock(const QString &code, const QDateTime &dt, int countOfDays);
 
 protected:
     void run();

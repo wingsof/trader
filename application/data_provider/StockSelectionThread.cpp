@@ -12,6 +12,7 @@ using grpc::ClientWriter;
 using grpc::Status;
 
 using google::protobuf::Empty;
+using google::protobuf::Timestamp;
 
 using stock_api::StockSelection;
 using google::protobuf::util::TimeUtil;
@@ -20,6 +21,18 @@ using google::protobuf::util::TimeUtil;
 StockSelectionThread::StockSelectionThread(std::shared_ptr<stock_api::Stock::Stub> stub)
 : QThread(0) {
     stub_ = stub;
+}
+
+
+void StockSelectionThread::setCurrentStock(const QString &code, const QDateTime &dt, int countOfDays) {
+    ClientContext context;
+    StockSelection data;
+    Empty empty;
+    data.set_code(code.toStdString());
+    Timestamp *untilTime = new Timestamp(TimeUtil::TimeTToTimestamp(dt.toTime_t()));
+    data.set_allocated_until_datetime(untilTime);
+    data.set_count_of_days(countOfDays);
+    stub_->SetCurrentStock(&context, data, &empty);
 }
 
 

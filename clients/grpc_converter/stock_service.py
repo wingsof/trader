@@ -193,7 +193,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
     def GetPastMinuteData(self, request, context):
         print('GetPastMinuteData', request)
-        today = datetime.fromtimestamp(request.today.seconds)
+        today = request.today.ToDatetime()
         yesterday = holidays.get_yesterday(today)
         from_date = holidays.get_date_by_previous_working_day_count(yesterday, request.count_of_days - 1)
         print('GetPastMinuteData', from_date, yesterday)
@@ -244,7 +244,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
         for q in self.current_stock_selection_subscribe_clients:
             q.put_nowait((request.code, request.count_of_days, request.until_datetime))
-        print('SetCurrentStock', request.code, request.count_of_days, request.until_datetime)
+        print('SetCurrentStock', request.code, request.count_of_days, request.until_datetime.ToDatetime())
         return Empty()
 
     def handle_bidask_tick(self, code, data):

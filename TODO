@@ -1,31 +1,18 @@
-* Priority
-    * Client 안정화
-        - vi_follower 시작 시점을 client가 다 연결된 경우
-    * Simulation Data Reading performance
-        * DB Index 있을 경우와 없을 경우의 시간 확인
-    * DB 데이터 검증(해당 날짜에 데이터가 정상적으로 모두 수신되었는지 여부)
+* 06/25 ~ 06/29
+    * 수정사항
+        * Tick 에서 현재 가격 위 아래로 위: 시작가 대비, 아래: 어제 종가 기준 %
+        * Tick 에서 Tick 이 먼저 들어온 경우 Minute data 기다리기
+        * DayView 동작 확인
+        * comparison 에서 10:40~10:50 A005380 데이터 가격이 이동 확인
 
-* Replayer
-    - 어떻게 효율적으로 데이터를 타이밍에 맞춰 보낼 것인가?
+    * Database 변환 작업 (timezone) - 실제 datetime.now() 에 timezone 기입시 정상적으로 DB 저장 확인
+    * Client datetime.now() 시 timezone 명시
+    * Search 연동 테스트- 코드 검색?
+    * Picker (Today Bull - VI - Yesterday Bull - Recent Search)
+    * Code to Company name 및 category 화 어떻게?
+        * 검색 및 연관 코드 검색에도 활용
+    * 월요일 실제 데이터 Listening 테스트 준비
 
-
-* 현재 진행 사항(2020/04/23)
-    * Chart Library 까지 직접 개발해야 되는 문제
-        * 들어야 하는 시간에 비해 기존 HTS와 큰 차이가 현재 없다
-        * 차라리 BULL 항목들을 나열하고 테이블에서 클릭시 Clipboard 복사 형태
-            * 복사 후 HTS에 코드 입력하는 형태
-        * 위의 BULL 항목과 HTS 비교 후 
-    * 원 목표는 Replay 가능한 HTS
-        * 구현해보니 막상 Chart Library 에 공수가 너무 많이 들어감
-    * Chart Library 에 집중하기 보다는 HTS와 혼용하여 활용할 방안
-        * HTS 와 혼용시 Replay 가 되지 않음
-        * 간단한 Bar 형태와 Realtime으로 Display 가능한 Chart 만 개발?
-
-
-* Client 개선
-    1. 안내 html popup 창이 뜨는 시점을 connected라고 판단하고 auto를 종료
-    2. connected가 일정 시간 되지 않는 경우 reboot 진행
-    3. start한 vm 이 다 연결된 경우 vi_follower 실행
 
 
 * Picker 검증 진행
@@ -371,6 +358,12 @@ Done
     * 이유: max값이 크면, 사실 작은 값들의 스케일을 그래프로 구분할 수가 없음
     * 100개 종목의 15초마다 가장 작은 값으로 매수? 특정 거래대금 이상 필요?
     * Speed 분석 완료 후 효용성 있을 시, VI 이전 호가 전략 테스트 병행?
+* Priority
+    * Client 안정화
+        - vi_follower 시작 시점을 client가 다 연결된 경우
+    * Simulation Data Reading performance
+        * DB Index 있을 경우와 없을 경우의 시간 확인
+    * DB 데이터 검증(해당 날짜에 데이터가 정상적으로 모두 수신되었는지 여부)
 
 No important
 * 코스피 200 종목 동일하게 추세로 선물 거래는?

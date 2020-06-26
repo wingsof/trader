@@ -9,7 +9,7 @@ using google::protobuf::util::TimeUtil;
 MinuteTick::MinuteTick(int intervalMin) {
     currentMSecs = 0;
     yesterdayClose = 0;
-    highestVolume = lowestVolume = 0;
+    highestVolume = 0;
     highestPrice = lowestPrice = 0;
     intervalMinute = intervalMin;
 }
@@ -24,6 +24,9 @@ void MinuteTick::setCurrentData(CybosTickData *d, long msec) {
     currentData.set_lowest_price(d->current_price());
     currentData.set_close_price(d->current_price());
     currentData.set_volume(d->volume());
+
+    setVolumeBoundary(d->volume());
+
     currentData.set_amount(d->volume() * d->current_price());
     currentData.set_cum_sell_volume(d->cum_sell_volume());
     currentData.set_cum_buy_volume(d->cum_buy_volume());
@@ -53,7 +56,7 @@ bool MinuteTick::appendTick(CybosTickData *d) {
     }
     else if (d->market_type() == 50) {
         yesterdayClose = d->current_price() - d->yesterday_diff();
-        setBoundary(d->current_price(), d->volume());
+        setPriceBoundary(d->current_price());
         if (currentMSecs == 0) {
             setCurrentData(d, msec);
         }
@@ -72,18 +75,18 @@ bool MinuteTick::appendTick(CybosTickData *d) {
 }
 
 
-void MinuteTick::setBoundary(int price, uint volume) {
+void MinuteTick::setVolumeBoundary(uint volume) {
+    if (volume > highestVolume)
+        highestVolume = volume;
+}
+
+
+void MinuteTick::setPriceBoundary(int price) {
     if (lowestPrice == 0 || lowestPrice > price)
         lowestPrice = price;
 
     if (price > highestPrice)
         highestPrice = price;
-
-    if (lowestVolume == 0 || lowestVolume > volume)
-        lowestVolume = volume;
-
-    if (volume > highestVolume)
-        highestVolume = volume;
 }
 
 
@@ -113,6 +116,9 @@ void MinuteTick::updateCurrentData(CybosTickData *d) {
 
     currentData.set_close_price(d->current_price());
     currentData.set_volume(currentData.volume() + d->volume());
+
+    setVolumeBoundary(currentData.volume());
+
     currentData.set_amount(d->volume() * d->current_price() + currentData.amount());
     currentData.set_cum_sell_volume(d->cum_sell_volume());
     currentData.set_cum_buy_volume(d->cum_buy_volume());

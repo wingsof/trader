@@ -35,7 +35,7 @@ private:
     void setPriceSteps(int h, int l);
     void updatePriceSteps(int h, int l);
     void setVolumeMinMax(uint h, uint l);
-    void updateVolumeMinMax(uint h, uint l);
+    void updateVolumeMax(uint h);
 
     qreal mapPriceToPos(int price, qreal startY, qreal endY);
     qreal getCandleLineWidth(qreal w);

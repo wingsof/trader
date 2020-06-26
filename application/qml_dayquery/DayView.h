@@ -4,16 +4,8 @@
 #include <QQuickPaintedItem>
 #include <QDateTime>
 #include <QPainter>
+#include "DataProvider.h"
 #include "stock_provider.grpc.pb.h"
-
-
-using stock_api::CybosDayDatas;
-using stock_api::CybosDayData;
-using stock_api::CybosTickData;
-
-class DayDataProvider;
-class StockSelectionThread;
-class TickThread;
 
 
 class DayData {
@@ -95,10 +87,7 @@ private:
     QString stockCode;
     int countDays;
     QDateTime untilTime;
-    DayDataProvider *provider;
-    StockSelectionThread *stockSelector;
     DayData *dayData;
-    TickThread *tickThread;
 
     qreal getCandleLineWidth(qreal gap);
 

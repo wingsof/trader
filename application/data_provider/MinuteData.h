@@ -25,7 +25,6 @@ public:
     int getHighestPrice() { return highestPrice; }
     int getLowestPrice() { return lowestPrice; }
     uint getHighestVolume() { return highestVolume; }
-    uint getLowestVolume() { return lowestVolume; }
 
 private:
     CybosDayData currentData;
@@ -36,12 +35,12 @@ private:
     int highestPrice;
     int lowestPrice;
     uint highestVolume;
-    uint lowestVolume;
 
     void setCurrentData(CybosTickData *d, long msec);
     void updateCurrentData(CybosTickData *d);
     void pushToQueue();
-    void setBoundary(int price, uint volume);
+    void setPriceBoundary(int price);
+    void setVolumeBoundary(uint volume);
 
 public:
     QString getDebugString();

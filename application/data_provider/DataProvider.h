@@ -39,6 +39,7 @@ public:
     MinuteTick *getMinuteTick(const QString &code);
     void requestDayData(const QString &code, int countOfDays, const QDateTime &_untilTime);
     void requestMinuteData(const QString &code, const QDateTime &fromTime, const QDateTime &untilTime);
+    void setCurrentStock(const QString &code, const QDateTime &dt, int countOfDays);
 
 private:
     DataProvider();

@@ -1,21 +1,14 @@
 #include "DayView.h"
-#include "DayDataProvider.h"
-#include "StockSelectionThread.h"
-#include "TickThread.h"
 #include <QDebug>
 
 DayView::DayView(QQuickItem *parent) : QQuickPaintedItem(parent) {
     qWarning() << "DayView constructor";
     dayData = new DayData;
-    provider = new DayDataProvider;
-    stockSelector = new StockSelectionThread(provider->getStub());
-    tickThread = new TickThread(provider->getStub());
-
-    connect(stockSelector, &StockSelectionThread::stockCodeChanged, this, &DayView::searchReceived);
-    connect(provider, &DayDataProvider::dataReady, this, &DayView::dataReceived);
-    connect(tickThread, &TickThread::tickArrived, this, &DayView::tickDataArrived);
-    stockSelector->start();
-    tickThread->start();
+    connect(DataProvider::getInstance(), &DataProvider::stockCodeChanged, this, &DayView::searchReceived);
+    connect(DataProvider::getInstance(), &DataProvider::dayDataReady, this, &DayView::dataReceived);
+    connect(DataProvider::getInstance(), &DataProvider::tickArrived, this, &DayView::tickDataArrived);
+    DataProvider::getInstance()->startStockCodeListening();
+    DataProvider::getInstance()->startStockTick();
 }
 
 
@@ -54,7 +47,7 @@ void DayView::search(QString _stockCode, QDateTime _untilTime, int _countDays) {
         stockCode = _stockCode;
         countDays = _countDays;
         untilTime = _untilTime;
-        provider->requestDayData(stockCode, countDays, untilTime);     
+        DataProvider::getInstance()->requestDayData(stockCode, countDays, untilTime);     
         qWarning() << "search " << _stockCode << " " << _countDays << " " << _untilTime;
     }
 }

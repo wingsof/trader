@@ -6,18 +6,15 @@ TEMPLATE = app
 CONFIG += link_pkgconfig
 CONFIG += qmltypes
 CONFIG += metatypes
-QML_IMPORT_NAME = MorningChartView
-QML_IMPORT_MAJOR_VERSION = 1
-
-TARGET = morning_dayview
-INCLUDEPATH += .
+TARGET = qml_search
 INCLUDEPATH += . /home/nnnlife/workspace/trader/application/data_provider
 QT += widgets
 QT += qml quick
-#LIBS += -L/usr/local/lib
-PKGCONFIG += protobuf
-PKGCONFIG += grpc++
+QML_IMPORT_NAME = search.backend
+QML_IMPORT_MAJOR_VERSION = 1
 LIBS += -L/home/nnnlife/workspace/trader/application/data_provider -lMorningDataProvider
+PKGCONFIG += protobuf
+#PKGCONFIG += grpc++
 
 OBJECTS_DIR=generated_files
 MOC_DIR=generated_files
@@ -30,8 +27,7 @@ MOC_DIR=generated_files
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-SOURCES += main.cpp \
-           DayView.cpp
+SOURCES += main.cpp SearchBackend.cpp
 
-HEADERS += DayView.h
+HEADERS += SearchBackend.h
 

@@ -29,6 +29,7 @@ application/qml_tick/morning_tick
 application/qml_dayquery/morning_dayview
 application/qml_today/qml_today
 application/qml_comparison/qml_comparison
+application/qml_search/qml_search
 *.so*
 *.so.*
 *.qrc

@@ -121,7 +121,6 @@ def run():
         #print('codes', result.codelist)
         #get_day_data(_STUB)
         #get_minute_data(_STUB)
-        send_stock_selection(_STUB, "A005930")
         gevent.joinall([gevent.spawn(start_simulation, _STUB)])
         start_simulation(_STUB)
         #gevent.sleep(5)
