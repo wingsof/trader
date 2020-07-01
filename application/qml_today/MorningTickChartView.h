@@ -3,8 +3,8 @@
 
 #include <QQuickPaintedItem>
 #include <QPainter>
-#include "MinInfo.h"
 #include "DataProvider.h"
+#include "MinInfo.h"
 
 
 class MorningTickChartView : public QQuickPaintedItem {
@@ -30,6 +30,7 @@ private:
     uint currentVolumeMax;
     uint currentVolumeMin;
     int todayStartHour;
+    bool pastMinuteDataReceived;
 
     void resetData();
     void setPriceSteps(int h, int l);
@@ -47,7 +48,7 @@ private:
     void drawVolume(QPainter *painter, const CybosDayData &data, qreal startX, qreal tickWidth, qreal ch, qreal volumeEndY);
     void drawTimeLabels(QPainter *painter, qreal tickWidth, qreal cw, qreal ch, qreal startX, int startHour);
     void drawPriceLabels(QPainter *painter, qreal startX, qreal ch);
-    void drawCurrentLineRange(QPainter *painter, const CybosDayData &data, qreal cw, qreal priceChartEndY);
+    void drawCurrentLineRange(QPainter *painter, MinuteTick * mt,const CybosDayData &data, qreal cw, qreal priceChartEndY);
 
 private slots:
     void setCurrentStock(QString, QDateTime, int);

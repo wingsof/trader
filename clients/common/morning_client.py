@@ -170,6 +170,11 @@ def get_minute_data(code, from_date, until_date, t = 0):
     return minute_data
 
 
+def get_today_minute_data(code):
+    minute_data = stock_api.request_stock_today_data(get_reader(), code)
+    return _convert_min_data_readable(code, minute_data)
+
+
 def setup():
     global _message_reader
     while True:

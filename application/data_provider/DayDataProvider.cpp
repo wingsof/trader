@@ -35,8 +35,8 @@ DayDataCollector::DayDataCollector(std::shared_ptr<stock_api::Stock::Stub> stub,
                         const QString &_code,
                         const QDateTime &_fromTime,
                         const QDateTime &_untilTime,
-                        bool isRequestMinuteData)
-: QObject(0), stub_(stub), code(_code), requestMinuteData(isRequestMinuteData){
+                        DayDataProvider::DATA_TYPE type)
+: QObject(0), stub_(stub), code(_code), dataType(type){
     fromTime = new Timestamp(TimeUtil::TimeTToTimestamp(_fromTime.toTime_t()));
     untilTime = new Timestamp(TimeUtil::TimeTToTimestamp(_untilTime.toTime_t()));
 }
@@ -49,13 +49,19 @@ void DayDataCollector::process() {
     stock_query.set_allocated_from_datetime(fromTime);
     stock_query.set_allocated_until_datetime(untilTime);
 
-    if (requestMinuteData) {
+    if (dataType == DayDataProvider::MINUTE_DATA) {
         stub_->GetMinuteData(&context, stock_query, data);
         emit minuteDataReady(code, data);
     }
-    else {
+    else if (dataType == DayDataProvider::DAY_DATA){
         stub_->GetDayData(&context, stock_query, data);
         emit finished(code, data);
+    }
+    else if (dataType == DayDataProvider::TODAY_MINUTE_DATA) {
+        StockCodeQuery stockCodeQuery;
+        stockCodeQuery.set_code(code.toStdString());
+        stub_->GetTodayMinuteData(&context, stockCodeQuery, data);
+        emit minuteDataReady(code, data);
     }
 }
 
@@ -70,7 +76,7 @@ void DayDataProvider::requestDayData(const QString &code,
                                     int countOfDays,
                                     const QDateTime &untilTime) {
     QDateTime fromTime = untilTime.addDays(-countOfDays);
-    waitingQueue.append(DayDataQuery(code, fromTime, untilTime));
+    waitingQueue.append(DayDataQuery(code, fromTime, untilTime, DAY_DATA));
     checkWaitingList();
 }
 
@@ -78,8 +84,14 @@ void DayDataProvider::requestDayData(const QString &code,
 void DayDataProvider::requestMinuteData(const QString &code,
                                      const QDateTime &fromTime,
                                      const QDateTime &untilTime) {
-    waitingQueue.append(DayDataQuery(code, fromTime, untilTime, true));
+    waitingQueue.append(DayDataQuery(code, fromTime, untilTime, MINUTE_DATA));
     checkWaitingList();
+}
+
+
+void DayDataProvider::requestTodayMinuteData(const QString &code) {
+    waitingQueue.append(DayDataQuery(code, QDateTime::currentDateTime(),
+                                            QDateTime::currentDateTime(), TODAY_MINUTE_DATA));
 }
 
 
@@ -108,7 +120,7 @@ void DayDataProvider::checkWaitingList() {
         DayDataQuery query = waitingQueue.first();
         waitingQueue.removeFirst();
         QThread * thread = new QThread;
-        DayDataCollector * worker = new DayDataCollector(stub_ ,query.getCode(), query.getFromTime(), query.getUntilTime(), query.isRequestMinuteData());
+        DayDataCollector * worker = new DayDataCollector(stub_ ,query.getCode(), query.getFromTime(), query.getUntilTime(), query.getDataType());
         worker->moveToThread(thread);
         connect(thread, SIGNAL(started()), worker, SLOT(process()));
         connect(worker, SIGNAL(finished(QString, CybosDayDatas*)), this, SLOT(dataReceived(QString, CybosDayDatas*)));

@@ -26,7 +26,8 @@ from gevent.queue import Queue
 
 
 simulation_progressing = [False, False, False]
-TIME_SPEED = 1
+request_stop_simulation = False
+TIME_SPEED = 1.0
 
 
 def get_yesterday_data(today, market_code):
@@ -48,7 +49,7 @@ def collect_db(db, from_time, until_time):
     return list(db[collection_name].find({'date': {'$gt': from_time, '$lte': until_time}}))
 
 
-def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler):
+def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler, simulation_handler):
     global simulation_progressing
 
     simulation_progressing[2] = True
@@ -93,10 +94,13 @@ def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_ti
                 time_handler(d['date'])
                 last_datetime = d['date']
     simulation_progressing[2] = False
+    if not any(simulation_progressing):
+        simulation_handler([False])
+
     print('exit deliver tick')
 
 
-def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler):
+def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler, simulation_handler):
     global simulation_progressing
     AT_ONCE_SECONDS = 60
     tick_queue = Queue(3)
@@ -104,7 +108,7 @@ def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_han
     finish_time = simulation_datetime.replace(hour=15, minute=30)
     simulation_progressing[1] = True
 
-    gevent.spawn(deliver_tick, tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler)
+    gevent.spawn(deliver_tick, tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler, simulation_handler)
     while simulation_datetime <= finish_time and simulation_progressing[0]:
         print('load data', simulation_datetime, 'data period seconds', AT_ONCE_SECONDS, 'real time', datetime.now())
         data = collect_db(db, simulation_datetime, simulation_datetime + timedelta(seconds=AT_ONCE_SECONDS))
@@ -125,6 +129,8 @@ def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_han
         gevent.sleep()
         print('load done', simulation_datetime, 'tick len', len(data), 'real time', datetime.now())
     simulation_progressing[1] = False
+    if not any(simulation_progressing):
+        simulation_handler([False])
 
 
 class StockServicer(stock_provider_pb2_grpc.StockServicer):
@@ -135,25 +141,28 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.subject_subscribe_clients = []
         self.current_time_subscribe_clients = []
         self.current_stock_selection_subscribe_clients = []
+        self.simulation_changed_subscribe_clients = []
         self.current_stock_code = ""
         self.current_stock_count_of_days = 0
         self.current_stock_until_time = None
 
     def GetDayData(self, request, context):
-        print('GetDayData', request.code, request.from_datetime.ToDatetime(), request.until_datetime.ToDatetime())
+        print('GetDayData', request.code,
+                            request.from_datetime.ToDatetime() + timedelta(hours=9),
+                            request.until_datetime.ToDatetime() + timedelta(hours=9))
         day_datas = morning_client.get_past_day_data(
             request.code,
-            request.from_datetime.ToDatetime(),
-            request.until_datetime.ToDatetime())
+            request.from_datetime.ToDatetime() + timedelta(hours=9),
+            request.until_datetime.ToDatetime() + timedelta(hours=9))
         protoc_converted = []
         for d in day_datas:
             protoc_converted.append(stock_provider_pb2.CybosDayData(
                 date = d['0'],
                 time = d['time'],
-                start_price = d['start_price'],
-                highest_price = d['highest_price'],
-                lowest_price = d['lowest_price'],
-                close_price = d['close_price'],
+                start_price = int(d['start_price']),
+                highest_price = int(d['highest_price']),
+                lowest_price = int(d['lowest_price']),
+                close_price = int(d['close_price']),
                 volume = d['volume'],
                 amount = d['amount'],
                 cum_sell_volume = d['cum_sell_volume'],
@@ -162,24 +171,25 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                 foreigner_hold_rate = d['foreigner_hold_rate'],
                 institution_buy_volume = d['institution_buy_volume'],
                 institution_cum_buy_volume = d['institution_cum_buy_volume']))
-
         return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
 
     def GetMinuteData(self, request, context):
-        print('GetMinuteData', request)
+        print('GetMinuteData', request.code,
+                               request.from_datetime.ToDatetime() + timedelta(hours=9),
+                               request.until_datetime.ToDatetime() + timedelta(hours=9))
         minute_datas = morning_client.get_minute_data(
             request.code,
-            request.from_datetime.ToDatetime(),
-            request.until_datetime.ToDatetime())
+            request.from_datetime.ToDatetime() + timedelta(hours=9),
+            request.until_datetime.ToDatetime() + timedelta(hours=9))
         protoc_converted = []
         for m in minute_datas:
             protoc_converted.append(stock_provider_pb2.CybosDayData(
                 date = m['0'],
                 time = m['time'],
-                start_price = m['start_price'],
-                highest_price = m['highest_price'],
-                lowest_price = m['lowest_price'],
-                close_price = m['close_price'],
+                start_price = int(m['start_price']),
+                highest_price = int(m['highest_price']),
+                lowest_price = int(m['lowest_price']),
+                close_price = int(m['close_price']),
                 volume = m['volume'],
                 amount = m['amount'],
                 cum_sell_volume = m['cum_sell_volume'],
@@ -190,6 +200,30 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                 institution_cum_buy_volume = m['institution_cum_buy_volume']))
 
         return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
+
+    def GetTodayMinuteData(self, request, context):
+        print("GetTodayMinuteData", request)
+        minute_datas = morning_client.get_today_minute_data(request.code)
+        protoc_converted = []
+        for m in minute_datas:
+            protoc_converted.append(stock_provider_pb2.CybosDayData(
+                date = m['0'],
+                time = m['time'],
+                start_price = int(m['start_price']),
+                highest_price = int(m['highest_price']),
+                lowest_price = int(m['lowest_price']),
+                close_price = int(m['close_price']),
+                volume = m['volume'],
+                amount = m['amount'],
+                cum_sell_volume = m['cum_sell_volume'],
+                cum_buy_volume = m['cum_buy_volume'],
+                foreigner_hold_volume = m['foreigner_hold_volume'],
+                foreigner_hold_rate = m['foreigner_hold_rate'],
+                institution_buy_volume = m['institution_buy_volume'],
+                institution_cum_buy_volume = m['institution_cum_buy_volume']))
+
+        return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
+
 
     def GetPastMinuteData(self, request, context):
         print('GetPastMinuteData', request)
@@ -203,10 +237,10 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             protoc_converted.append(stock_provider_pb2.CybosDayData(
                 date = m['0'],
                 time = m['time'],
-                start_price = m['start_price'],
-                highest_price = m['highest_price'],
-                lowest_price = m['lowest_price'],
-                close_price = m['close_price'],
+                start_price = int(m['start_price']),
+                highest_price = int(m['highest_price']),
+                lowest_price = int(m['lowest_price']),
+                close_price = int(m['close_price']),
                 volume = m['volume'],
                 amount = m['amount'],
                 cum_sell_volume = m['cum_sell_volume'],
@@ -247,10 +281,21 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         print('SetCurrentStock', request.code, request.count_of_days, request.until_datetime.ToDatetime())
         return Empty()
 
+    def SetSimulationStatus(self, request, context):
+        global TIME_SPEED
+        TIME_SPEED = request.simulation_speed
+        return Empty()
+
+
+    def GetSimulationStatus(self, request, context):
+        is_simulation = any(simulation_progressing)
+        return stock_provider_pb2.SimulationStatus(simulation_on=is_simulation,
+                                                    simulation_speed=TIME_SPEED)
+
     def handle_bidask_tick(self, code, data):
         if len(data) != 1:
             return
-        
+
         if '_BA' in code:
             code = code[:code.index('_')]
 
@@ -258,7 +303,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         tick_date = Timestamp()
         tick_date.FromDatetime(data['date'])
         bidask = stock_provider_pb2.CybosBidAskTickData(tick_date=tick_date,
-                                                    code=data['code'],
+                                                    code=code,
                                                     time=data['1'],
                                                     volume=data['2'],
                                                     total_ask_remain=data['23'],
@@ -287,20 +332,20 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
         data = data[0]
         tick_date = Timestamp()
-        tick_date.FromDatetime(data['date'])
+        tick_date.FromDatetime(data['date'] - timedelta(hours=9))
         data = stock_provider_pb2.CybosTickData(tick_date=tick_date,
-                                                code=data['code'],
+                                                code=code,
                                                 company_name=data['1'],
                                                 yesterday_diff=data['2'],
                                                 time=data['3'],
-                                                start_price=data['4'],
-                                                highest_price=data['5'],
-                                                lowest_price=data['6'],
-                                                ask_price=data['7'],
-                                                bid_price=data['8'],
+                                                start_price=int(data['4']),
+                                                highest_price=int(data['5']),
+                                                lowest_price=int(data['6']),
+                                                ask_price=int(data['7']),
+                                                bid_price=int(data['8']),
                                                 cum_volume=data['9'],
                                                 cum_amount=data['10'],
-                                                current_price=data['13'],
+                                                current_price=int(data['13']),
                                                 buy_or_sell=(data['14'] == ord('1')),
                                                 cum_sell_volume_by_price=data['15'],
                                                 cum_buy_volume_by_price=data['16'],
@@ -319,13 +364,16 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         if len(data) != 1:
             return
 
+        if '_' in code:
+            code = code[:code.index('_')]
+
         data = data[0]
         tick_date = Timestamp()
-        tick_date.FromDatetime(data['date'])
+        tick_date.FromDatetime(data['date'] - timedelta(hours=9))
         data = stock_provider_pb2.CybosSubjectTickData(tick_date=tick_date,
                                                         time=data['0'],
                                                         name=data['1'],
-                                                        code=data['code'],
+                                                        code=code,
                                                         company_name=data['3'],
                                                         buy_or_sell=(data['4'] == ord('2')),
                                                         volume=data['5'],
@@ -353,10 +401,25 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.current_stock_selection_subscribe_clients.remove(q)
         print('Done ListenCurrentStock', len(self.current_stock_selection_subscribe_clients)) 
 
+    def ListenSimulationStatusChanged(self, request, context):
+        q = Queue()
+        self.simulation_changed_subscribe_clients.append(q)
+        print('Run ListenSimualtionStatusChanged', len(self.current_stock_selection_subscribe_clients))
+
+        while context.is_active():
+            try:
+                data = q.get(True, 1)
+                yield stock_provider_pb2.SimulationStatus(simulation_on=data[0], simulation_speed=TIME_SPEED)
+            except gevent.queue.Empty as ge:
+                pass
+
+        self.simulation_changed_subscribe_clients.remove(q)
+        print('Done ListenSimualtionStatusChanged', len(self.current_stock_selection_subscribe_clients))
+
     def ListenCybosTickData(self, request, context):
-        print('ListenCybosTickData', len(self.stock_subscribe_clients))
         q = Queue()
         self.stock_subscribe_clients.append(q)
+        print('ListenCybosTickData', len(self.stock_subscribe_clients))
 
         while context.is_active():
             try:
@@ -368,9 +431,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         print('Done SubscribeStock', len(self.stock_subscribe_clients))
 
     def ListenCybosBidAsk(self, request, context):
-        print('ListenCybosBidAsk', len(self.bidask_subscribe_cilents))
         q = Queue()
         self.bidask_subscribe_cilents.append(q)
+        print('ListenCybosBidAsk', len(self.bidask_subscribe_cilents))
 
         while context.is_active():
             try:
@@ -383,9 +446,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         print('Done SubscribeBidAsk', len(self.bidask_subscribe_cilents))
 
     def ListenCybosSubject(self, request, context):
-        print('ListenCybosSubject', len(self.subject_subscribe_clients))
         q = Queue()
         self.subject_subscribe_clients.append(q)
+        print('ListenCybosSubject', len(self.subject_subscribe_clients))
         while context.is_active():
             try:
                 data = q.get(True, 1)
@@ -398,14 +461,18 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
     def handle_time(self, d):
         data_date = Timestamp()
-        data_date.FromDatetime(d)
+        data_date.FromDatetime(d + timedelta(hours=9))
         for q in self.current_time_subscribe_clients:
             q.put(data_date)
 
+    def handle_simulation(self, d):
+        for q in self.simulation_changed_subscribe_clients:
+            q.put(d)
+
     def ListenCurrentTime(self, request, context):
-        print('ListenCurrentTime', len(self.current_time_subscribe_clients))
         q = Queue()
         self.current_time_subscribe_clients.append(q)
+        print('ListenCurrentTime', len(self.current_time_subscribe_clients))
 
         while context.is_active():
             try:
@@ -429,26 +496,37 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return stock_provider_pb2.CodeList(codelist=market_codes)
 
     def StartSimulation(self, request, context):
-        global simulation_progressing
+        global simulation_progressing, request_stop_simulation
         triggered = False
 
         if not any(simulation_progressing):
             simulation_progressing[0] = True
             triggered = True
-            simulation_datetime = request.from_datetime.ToDatetime()
-            gevent.spawn(start_tick_provider, simulation_datetime, self.handle_stock_tick, self.handle_bidask_tick, self.handle_subject_tick, self.handle_time)
+            simulation_datetime = request.from_datetime.ToDatetime() + timedelta(hours=9)
+            gevent.spawn(start_tick_provider, simulation_datetime, self.handle_stock_tick, self.handle_bidask_tick, self.handle_subject_tick, self.handle_time, self.handle_simulation)
+
+            self.handle_simulation([True])
             print('Start Simulation Mode', simulation_datetime)
-            while context.is_active():
+            while context.is_active() and not request_stop_simulation:
                 gevent.sleep(1)
 
         if triggered:
+            request_stop_simulation = False
             simulation_progressing[0] = False
             print('Stop Simulation Mode')
         yield Empty()
 
+    def StopSimulation(self, request, context):
+        print('StopSimulation')
+        global request_stop_simulation
+        if all(simulation_progressing):
+            request_stop_simulation = True
+
+        return Empty()
+
 
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=30))
     stock_provider_pb2_grpc.add_StockServicer_to_server(StockServicer(), server)
     server.add_insecure_port('[::]:50052')
     server.start()

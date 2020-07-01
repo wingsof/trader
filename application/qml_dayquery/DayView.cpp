@@ -13,30 +13,8 @@ DayView::DayView(QQuickItem *parent) : QQuickPaintedItem(parent) {
 
 
 void DayView::searchReceived(QString code, QDateTime untilTime, int countOfDays) {
+    qWarning() << "searchReceived : " << code << "\t" << untilTime << "\t" << countOfDays;
     search(code, untilTime, countOfDays);
-}
-
-
-void DayView::setStockCode(QString code) {
-    qWarning() << "setStockCode " << code;
-    if (code != stockCode) {
-        code = stockCode;
-        emit stockCodeChanged();
-    }
-}
-
-
-void DayView::setCountDays(int count) {
-    qWarning() << "setCountDays " << count;
-    countDays = count;
-    emit countDaysChanged();
-}
-
-
-void DayView::setUntilTime(QDateTime dt) {
-    qWarning() << "setUntilTime " << dt;
-    untilTime = dt;
-    emit untilTimeChanged();
 }
 
 
@@ -47,8 +25,8 @@ void DayView::search(QString _stockCode, QDateTime _untilTime, int _countDays) {
         stockCode = _stockCode;
         countDays = _countDays;
         untilTime = _untilTime;
-        DataProvider::getInstance()->requestDayData(stockCode, countDays, untilTime);     
-        qWarning() << "search " << _stockCode << " " << _countDays << " " << _untilTime;
+        DataProvider::getInstance()->requestDayData(stockCode, countDays, untilTime.addDays(-1));
+        qWarning() << "search " << _stockCode << " " << _countDays << " " << untilTime.addDays(-1);
     }
 }
 
@@ -56,6 +34,7 @@ void DayView::search(QString _stockCode, QDateTime _untilTime, int _countDays) {
 void DayView::dataReceived(QString code, CybosDayDatas *datas) {
     dayData->setData(code, datas);
     update();
+    qWarning() << "update";
 }
 
  
@@ -151,6 +130,7 @@ void DayView::drawPriceLabels(QPainter *painter, qreal startX, qreal priceChartE
 void DayView::drawCandle(QPainter *painter, const CybosDayData *data, qreal startX, qreal horizontalGridStep, qreal priceChartEndY) {
     QColor color;
     painter->save();
+    qWarning() << "drawCandle : " << data->close_price() << "\t startX : " << startX;
     if (data->close_price() >= data->start_price()) 
         color.setRgb(255, 0, 0);
     else 
@@ -178,7 +158,7 @@ void DayView::drawCandle(QPainter *painter, const CybosDayData *data, qreal star
 qreal DayView::drawVolume(QPainter *painter, const CybosDayData *data, qreal startX, qreal horizontalGridStep, qreal volumeEndY, qreal priceChartEndY, bool divideBuySell) {
     painter->save();
     qreal volume_bar_y = dayData->mapVolumeToPos(data->volume(), volumeEndY, priceChartEndY);
-
+    
     if (divideBuySell) {
         qreal sell_volume_bar_height = dayData->getSellVolumeHeight(*data, volumeEndY - volume_bar_y);
         painter->setBrush(Qt::NoBrush);
@@ -212,7 +192,7 @@ void DayView::paint(QPainter *painter) {
     drawGridLine(painter, itemSize, verticalGridStep * 2, itemSize.width() - priceLabelWidth,
                         (int)(horizontalLineCount / 2));
 
-    if (!dayData->hasData() || dayData->countOfData() == 0)
+    if (!dayData->hasData() || dayData->countOfData() == 0) 
         return;
 
     qreal priceEndY = verticalGridStep * 2 * 6; // price chart end Y
@@ -249,6 +229,7 @@ void DayView::paint(QPainter *painter) {
         painter->setPen(pen);
 
         painter->save();
+
         if (d.dayOfWeek() > currentDayOfWeek) {
             painter->drawLine(QLineF(startX + horizontalGridStep + horizontalGridStep / 2, 0, startX + horizontalGridStep + horizontalGridStep / 2, verticalGridStep * 2 * 8));
             const CybosDayData &previousData = dayData->getDayData(i + 1);
@@ -365,7 +346,7 @@ void DayData::setData(QString _code, CybosDayDatas *dayData) {
     }
     data = dayData;
     qWarning() << "setData count : " << data->day_data_size();
-    if (data->day_data_size() == 0)
+    if (data->day_data_size() == 0) 
         return;
 
     lowestPrice = data->day_data(0).lowest_price();
@@ -483,6 +464,9 @@ qreal DayData::mapVolumeToPos(unsigned long volume, qreal startY, qreal endY) {
 
 
 qreal DayData::getSellVolumeHeight(const CybosDayData &data, qreal h) {
+    if (data.cum_sell_volume() == 0)
+        return 0.0;
+
     unsigned long vol_sum = data.cum_buy_volume() + data.cum_sell_volume();
     return h * data.cum_sell_volume() / (qreal) vol_sum;
 }

@@ -1,8 +1,6 @@
 #ifndef MIN_INFO_H_
 #define MIN_INFO_H_
 
-#include <QQuickPaintedItem>
-#include <QPainter>
 #include "stock_provider.grpc.pb.h"
 
 using stock_api::CybosDayDatas;
@@ -11,7 +9,7 @@ using stock_api::CybosDayData;
 
 class MinInfo {
 public:
-    MinInfo();
+    MinInfo(int minInterval);
     ~MinInfo();
 
     int count();
@@ -19,6 +17,7 @@ public:
 
     const CybosDayData &get(int i);
     void setData(CybosDayDatas *cd);
+    void setCurrentDateTime(uint cd, uint ct);
 
     int getHighestPrice() { return highestPrice; }
     int getLowestPrice() { return lowestPrice; }
@@ -30,10 +29,13 @@ public:
     bool isEmpty();
 
 private:
+    int minuteInterval;
     int highestPrice;
     int lowestPrice;
     uint highestVolume;
     uint lowestVolume;
+    uint currentDate;
+    uint currentTime;
 
     CybosDayDatas data;
 };

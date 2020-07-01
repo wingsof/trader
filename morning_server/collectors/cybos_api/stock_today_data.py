@@ -30,7 +30,7 @@ def get_today_data_raw(code, period_type):
             d[str(j)] = chart_obj.GetDataValue(j, i)
         data.append(d)
 
-    return data
+    return reversed(data)
 
 
 def get_today_min_data(code, period_type='m'):

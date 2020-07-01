@@ -43,10 +43,10 @@ void StockSelectionThread::run() {
     std::unique_ptr<ClientReader<StockSelection> > reader(
         stub_->ListenCurrentStock(&context, empty)); 
     while (reader->Read(&data)) {
-        std::cout << "Read StockSelection: " << data.code() << std::endl;
         long msec = TimeUtil::TimestampToMilliseconds(data.until_datetime());
+        std::cout << "Read StockSelection: " << data.code() << std::endl;
         emit stockCodeChanged(QString::fromStdString(data.code()),
-                              QDateTime::fromMSecsSinceEpoch(msec, Qt::UTC).addDays(-1),
+                              QDateTime::fromMSecsSinceEpoch(msec).toLocalTime(),
                               data.count_of_days());
     }
     Status status = reader->Finish();

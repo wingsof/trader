@@ -53,25 +53,13 @@ private:
 
 class DayView : public QQuickPaintedItem {
     Q_OBJECT
-    Q_PROPERTY(QString stockCode READ getStockCode WRITE setStockCode NOTIFY stockCodeChanged)
-    Q_PROPERTY(int countDays READ getCountDays WRITE setCountDays NOTIFY countDaysChanged)
-    Q_PROPERTY(QDateTime untilTime READ getUntilTime WRITE setUntilTime NOTIFY untilTimeChanged)
     QML_ELEMENT
 
 public:
     DayView(QQuickItem *parent = 0);
     void paint(QPainter *painter);
 
-
-    Q_INVOKABLE void search(QString stockCode, QDateTime untilTime, int countDays);
-
-    QString getStockCode() { return stockCode; }
-    int getCountDays() { return countDays; }
-    QDateTime getUntilTime() { return untilTime; }
-
-    void setStockCode(QString code);
-    void setUntilTime(QDateTime dt);
-    void setCountDays(int count);
+    void search(QString stockCode, QDateTime untilTime, int countDays);
 
 private:
     void fillBackground(QPainter *painter, const QSizeF &itemSize);

@@ -1,4 +1,4 @@
-#include "TimeThread.h"
+#include "SimulationEvent.h"
 
 #include <grpc/grpc.h>
 #include <grpcpp/channel.h>
@@ -20,23 +20,23 @@ using google::protobuf::Empty;
 
 
 
-TimeThread::TimeThread(std::shared_ptr<stock_api::Stock::Stub> stub)
+SimulationEvent::SimulationEvent(std::shared_ptr<stock_api::Stock::Stub> stub)
 : QThread(0){
     stub_ = stub;
 }
 
 
-void TimeThread::run() {
+void SimulationEvent::run() {
     ClientContext context;
     Empty empty;
-    Timestamp data;
-    std::unique_ptr<ClientReader<Timestamp> > reader(
-        stub_->ListenCurrentTime(&context, empty)); 
+    SimulationStatus data;
+    std::unique_ptr<ClientReader<SimulationStatus> > reader(
+        stub_->ListenSimulationStatusChanged(&context, empty)); 
     while (reader->Read(&data)) {
-        emit timeInfoArrived(new Timestamp(data));
+        emit simulationStatusChanged(new SimulationStatus(data));
     }
     Status status = reader->Finish();
     if (!status.ok()) {
-        std::cout << "TimeInfo Failed " << status.error_message() << std::endl;
+        std::cout << "SimulationEvent Failed " << status.error_message() << std::endl;
     }
 }

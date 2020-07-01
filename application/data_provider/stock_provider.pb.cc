@@ -29,6 +29,10 @@ class StockQueryDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<StockQuery> _instance;
 } _StockQuery_default_instance_;
+class SimulationStatusDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<SimulationStatus> _instance;
+} _SimulationStatus_default_instance_;
 class StockSelectionDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<StockSelection> _instance;
@@ -180,6 +184,20 @@ static void InitDefaultsscc_info_SimulationArgument_stock_5fprovider_2eproto() {
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_SimulationArgument_stock_5fprovider_2eproto}, {
       &scc_info_Timestamp_google_2fprotobuf_2ftimestamp_2eproto.base,}};
 
+static void InitDefaultsscc_info_SimulationStatus_stock_5fprovider_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::stock_api::_SimulationStatus_default_instance_;
+    new (ptr) ::stock_api::SimulationStatus();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::stock_api::SimulationStatus::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_SimulationStatus_stock_5fprovider_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_SimulationStatus_stock_5fprovider_2eproto}, {}};
+
 static void InitDefaultsscc_info_StockCodeQuery_stock_5fprovider_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -224,7 +242,7 @@ static void InitDefaultsscc_info_StockSelection_stock_5fprovider_2eproto() {
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_StockSelection_stock_5fprovider_2eproto}, {
       &scc_info_Timestamp_google_2fprotobuf_2ftimestamp_2eproto.base,}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_stock_5fprovider_2eproto[11];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_stock_5fprovider_2eproto[12];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_stock_5fprovider_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_stock_5fprovider_2eproto = nullptr;
 
@@ -249,6 +267,13 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_stock_5fprovider_2eproto::offs
   PROTOBUF_FIELD_OFFSET(::stock_api::StockQuery, code_),
   PROTOBUF_FIELD_OFFSET(::stock_api::StockQuery, from_datetime_),
   PROTOBUF_FIELD_OFFSET(::stock_api::StockQuery, until_datetime_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::stock_api::SimulationStatus, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::stock_api::SimulationStatus, simulation_on_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::SimulationStatus, simulation_speed_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::stock_api::StockSelection, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -361,20 +386,22 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 0, -1, sizeof(::stock_api::StockCodeQuery)},
   { 6, -1, sizeof(::stock_api::CodeList)},
   { 12, -1, sizeof(::stock_api::StockQuery)},
-  { 20, -1, sizeof(::stock_api::StockSelection)},
-  { 28, -1, sizeof(::stock_api::PastMinuteQuery)},
-  { 36, -1, sizeof(::stock_api::SimulationArgument)},
-  { 42, -1, sizeof(::stock_api::CybosDayData)},
-  { 61, -1, sizeof(::stock_api::CybosDayDatas)},
-  { 67, -1, sizeof(::stock_api::CybosSubjectTickData)},
-  { 81, -1, sizeof(::stock_api::CybosTickData)},
-  { 110, -1, sizeof(::stock_api::CybosBidAskTickData)},
+  { 20, -1, sizeof(::stock_api::SimulationStatus)},
+  { 27, -1, sizeof(::stock_api::StockSelection)},
+  { 35, -1, sizeof(::stock_api::PastMinuteQuery)},
+  { 43, -1, sizeof(::stock_api::SimulationArgument)},
+  { 49, -1, sizeof(::stock_api::CybosDayData)},
+  { 68, -1, sizeof(::stock_api::CybosDayDatas)},
+  { 74, -1, sizeof(::stock_api::CybosSubjectTickData)},
+  { 88, -1, sizeof(::stock_api::CybosTickData)},
+  { 117, -1, sizeof(::stock_api::CybosBidAskTickData)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_StockCodeQuery_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_CodeList_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_StockQuery_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_SimulationStatus_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_StockSelection_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_PastMinuteQuery_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_SimulationArgument_default_instance_),
@@ -393,86 +420,96 @@ const char descriptor_table_protodef_stock_5fprovider_2eproto[] PROTOBUF_SECTION
   "\n\nStockQuery\022\014\n\004code\030\001 \001(\t\0221\n\rfrom_datet"
   "ime\030\002 \001(\0132\032.google.protobuf.Timestamp\0222\n"
   "\016until_datetime\030\003 \001(\0132\032.google.protobuf."
-  "Timestamp\"i\n\016StockSelection\022\014\n\004code\030\001 \001("
-  "\t\022\025\n\rcount_of_days\030\002 \001(\r\0222\n\016until_dateti"
-  "me\030\003 \001(\0132\032.google.protobuf.Timestamp\"a\n\017"
-  "PastMinuteQuery\022\014\n\004code\030\001 \001(\t\022\025\n\rcount_o"
-  "f_days\030\002 \001(\r\022)\n\005today\030\003 \001(\0132\032.google.pro"
-  "tobuf.Timestamp\"G\n\022SimulationArgument\0221\n"
-  "\rfrom_datetime\030\001 \001(\0132\032.google.protobuf.T"
-  "imestamp\"\322\002\n\014CybosDayData\022\014\n\004date\030\001 \001(\r\022"
-  "\014\n\004time\030\002 \001(\r\022\023\n\013start_price\030\003 \001(\r\022\025\n\rhi"
-  "ghest_price\030\004 \001(\r\022\024\n\014lowest_price\030\005 \001(\r\022"
-  "\023\n\013close_price\030\006 \001(\r\022\016\n\006volume\030\007 \001(\004\022\016\n\006"
-  "amount\030\010 \001(\004\022\027\n\017cum_sell_volume\030\t \001(\004\022\026\n"
-  "\016cum_buy_volume\030\n \001(\004\022\035\n\025foreigner_hold_"
-  "volume\030\013 \001(\003\022\033\n\023foreigner_hold_rate\030\014 \001("
-  "\002\022\036\n\026institution_buy_volume\030\r \001(\003\022\"\n\032ins"
-  "titution_cum_buy_volume\030\016 \001(\003\":\n\rCybosDa"
-  "yDatas\022)\n\010day_data\030\001 \003(\0132\027.stock_api.Cyb"
-  "osDayData\"\340\001\n\024CybosSubjectTickData\022-\n\tti"
-  "ck_date\030\001 \001(\0132\032.google.protobuf.Timestam"
-  "p\022\014\n\004time\030\002 \001(\r\022\014\n\004name\030\003 \001(\t\022\014\n\004code\030\004 "
-  "\001(\t\022\024\n\014company_name\030\005 \001(\t\022\023\n\013buy_or_sell"
-  "\030\006 \001(\010\022\016\n\006volume\030\007 \001(\004\022\024\n\014total_volume\030\010"
-  " \001(\003\022\036\n\026foreigner_total_volume\030\t \001(\003\"\270\004\n"
-  "\rCybosTickData\022-\n\ttick_date\030\001 \001(\0132\032.goog"
-  "le.protobuf.Timestamp\022\014\n\004code\030\002 \001(\t\022\024\n\014c"
-  "ompany_name\030\003 \001(\t\022\026\n\016yesterday_diff\030\004 \001("
-  "\005\022\014\n\004time\030\005 \001(\r\022\023\n\013start_price\030\006 \001(\r\022\025\n\r"
-  "highest_price\030\007 \001(\r\022\024\n\014lowest_price\030\010 \001("
-  "\r\022\021\n\task_price\030\t \001(\r\022\021\n\tbid_price\030\n \001(\r\022"
-  "\022\n\ncum_volume\030\013 \001(\004\022\022\n\ncum_amount\030\014 \001(\004\022"
-  "\025\n\rcurrent_price\030\r \001(\r\022\023\n\013buy_or_sell\030\016 "
-  "\001(\010\022 \n\030cum_sell_volume_by_price\030\017 \001(\004\022\037\n"
-  "\027cum_buy_volume_by_price\030\020 \001(\004\022\016\n\006volume"
-  "\030\021 \001(\003\022\025\n\rtime_with_sec\030\022 \001(\r\022\027\n\017market_"
-  "type_exp\030\023 \001(\r\022\023\n\013market_type\030\024 \001(\r\022\027\n\017o"
-  "ut_time_volume\030\025 \001(\004\022\027\n\017cum_sell_volume\030"
-  "\026 \001(\004\022\026\n\016cum_buy_volume\030\027 \001(\004\022\020\n\010is_kosp"
-  "i\030\030 \001(\010\"\274\002\n\023CybosBidAskTickData\022-\n\ttick_"
-  "date\030\001 \001(\0132\032.google.protobuf.Timestamp\022\014"
-  "\n\004code\030\002 \001(\t\022\014\n\004time\030\003 \001(\r\022\016\n\006volume\030\004 \001"
-  "(\004\022\022\n\nask_prices\030\005 \003(\005\022\022\n\nbid_prices\030\006 \003"
-  "(\005\022\023\n\013ask_remains\030\007 \003(\r\022\023\n\013bid_remains\030\010"
-  " \003(\r\022\030\n\020total_ask_remain\030\t \001(\004\022\030\n\020total_"
-  "bid_remain\030\n \001(\004\022!\n\031out_time_total_ask_r"
-  "emain\030\013 \001(\003\022!\n\031out_time_total_bid_remain"
-  "\030\014 \001(\0032\361\010\n\005Stock\022\?\n\nGetDayData\022\025.stock_a"
-  "pi.StockQuery\032\030.stock_api.CybosDayDatas\""
-  "\000\022B\n\rGetMinuteData\022\025.stock_api.StockQuer"
-  "y\032\030.stock_api.CybosDayDatas\"\000\022K\n\021GetPast"
-  "MinuteData\022\032.stock_api.PastMinuteQuery\032\030"
-  ".stock_api.CybosDayDatas\"\000\022K\n\024RequestCyb"
-  "osTickData\022\031.stock_api.StockCodeQuery\032\026."
-  "google.protobuf.Empty\"\000\022I\n\022RequestCybosB"
-  "idAsk\022\031.stock_api.StockCodeQuery\032\026.googl"
-  "e.protobuf.Empty\"\000\022J\n\023RequestCybosSubjec"
-  "t\022\031.stock_api.StockCodeQuery\032\026.google.pr"
-  "otobuf.Empty\"\000\022F\n\017SetCurrentStock\022\031.stoc"
-  "k_api.StockSelection\032\026.google.protobuf.E"
-  "mpty\"\000\022O\n\032GetYesterdayTopAmountCodes\022\032.g"
-  "oogle.protobuf.Timestamp\032\023.stock_api.Cod"
-  "eList\"\000\022K\n\022ListenCurrentStock\022\026.google.p"
-  "rotobuf.Empty\032\031.stock_api.StockSelection"
-  "\"\0000\001\022K\n\023ListenCybosTickData\022\026.google.pro"
-  "tobuf.Empty\032\030.stock_api.CybosTickData\"\0000"
-  "\001\022O\n\021ListenCybosBidAsk\022\026.google.protobuf"
-  ".Empty\032\036.stock_api.CybosBidAskTickData\"\000"
-  "0\001\022K\n\021ListenCurrentTime\022\026.google.protobu"
-  "f.Empty\032\032.google.protobuf.Timestamp\"\0000\001\022"
-  "Q\n\022ListenCybosSubject\022\026.google.protobuf."
-  "Empty\032\037.stock_api.CybosSubjectTickData\"\000"
-  "0\001\022J\n\017StartSimulation\022\035.stock_api.Simula"
-  "tionArgument\032\026.google.protobuf.Empty\"\000\022B"
-  "\n\016StopSimulation\022\026.google.protobuf.Empty"
-  "\032\026.google.protobuf.Empty\"\000b\006proto3"
+  "Timestamp\"C\n\020SimulationStatus\022\025\n\rsimulat"
+  "ion_on\030\001 \001(\010\022\030\n\020simulation_speed\030\002 \001(\002\"i"
+  "\n\016StockSelection\022\014\n\004code\030\001 \001(\t\022\025\n\rcount_"
+  "of_days\030\002 \001(\r\0222\n\016until_datetime\030\003 \001(\0132\032."
+  "google.protobuf.Timestamp\"a\n\017PastMinuteQ"
+  "uery\022\014\n\004code\030\001 \001(\t\022\025\n\rcount_of_days\030\002 \001("
+  "\r\022)\n\005today\030\003 \001(\0132\032.google.protobuf.Times"
+  "tamp\"G\n\022SimulationArgument\0221\n\rfrom_datet"
+  "ime\030\001 \001(\0132\032.google.protobuf.Timestamp\"\322\002"
+  "\n\014CybosDayData\022\014\n\004date\030\001 \001(\r\022\014\n\004time\030\002 \001"
+  "(\r\022\023\n\013start_price\030\003 \001(\r\022\025\n\rhighest_price"
+  "\030\004 \001(\r\022\024\n\014lowest_price\030\005 \001(\r\022\023\n\013close_pr"
+  "ice\030\006 \001(\r\022\016\n\006volume\030\007 \001(\004\022\016\n\006amount\030\010 \001("
+  "\004\022\027\n\017cum_sell_volume\030\t \001(\004\022\026\n\016cum_buy_vo"
+  "lume\030\n \001(\004\022\035\n\025foreigner_hold_volume\030\013 \001("
+  "\003\022\033\n\023foreigner_hold_rate\030\014 \001(\002\022\036\n\026instit"
+  "ution_buy_volume\030\r \001(\003\022\"\n\032institution_cu"
+  "m_buy_volume\030\016 \001(\003\":\n\rCybosDayDatas\022)\n\010d"
+  "ay_data\030\001 \003(\0132\027.stock_api.CybosDayData\"\340"
+  "\001\n\024CybosSubjectTickData\022-\n\ttick_date\030\001 \001"
+  "(\0132\032.google.protobuf.Timestamp\022\014\n\004time\030\002"
+  " \001(\r\022\014\n\004name\030\003 \001(\t\022\014\n\004code\030\004 \001(\t\022\024\n\014comp"
+  "any_name\030\005 \001(\t\022\023\n\013buy_or_sell\030\006 \001(\010\022\016\n\006v"
+  "olume\030\007 \001(\004\022\024\n\014total_volume\030\010 \001(\003\022\036\n\026for"
+  "eigner_total_volume\030\t \001(\003\"\270\004\n\rCybosTickD"
+  "ata\022-\n\ttick_date\030\001 \001(\0132\032.google.protobuf"
+  ".Timestamp\022\014\n\004code\030\002 \001(\t\022\024\n\014company_name"
+  "\030\003 \001(\t\022\026\n\016yesterday_diff\030\004 \001(\005\022\014\n\004time\030\005"
+  " \001(\r\022\023\n\013start_price\030\006 \001(\r\022\025\n\rhighest_pri"
+  "ce\030\007 \001(\r\022\024\n\014lowest_price\030\010 \001(\r\022\021\n\task_pr"
+  "ice\030\t \001(\r\022\021\n\tbid_price\030\n \001(\r\022\022\n\ncum_volu"
+  "me\030\013 \001(\004\022\022\n\ncum_amount\030\014 \001(\004\022\025\n\rcurrent_"
+  "price\030\r \001(\r\022\023\n\013buy_or_sell\030\016 \001(\010\022 \n\030cum_"
+  "sell_volume_by_price\030\017 \001(\004\022\037\n\027cum_buy_vo"
+  "lume_by_price\030\020 \001(\004\022\016\n\006volume\030\021 \001(\003\022\025\n\rt"
+  "ime_with_sec\030\022 \001(\r\022\027\n\017market_type_exp\030\023 "
+  "\001(\r\022\023\n\013market_type\030\024 \001(\r\022\027\n\017out_time_vol"
+  "ume\030\025 \001(\004\022\027\n\017cum_sell_volume\030\026 \001(\004\022\026\n\016cu"
+  "m_buy_volume\030\027 \001(\004\022\020\n\010is_kospi\030\030 \001(\010\"\274\002\n"
+  "\023CybosBidAskTickData\022-\n\ttick_date\030\001 \001(\0132"
+  "\032.google.protobuf.Timestamp\022\014\n\004code\030\002 \001("
+  "\t\022\014\n\004time\030\003 \001(\r\022\016\n\006volume\030\004 \001(\004\022\022\n\nask_p"
+  "rices\030\005 \003(\005\022\022\n\nbid_prices\030\006 \003(\005\022\023\n\013ask_r"
+  "emains\030\007 \003(\r\022\023\n\013bid_remains\030\010 \003(\r\022\030\n\020tot"
+  "al_ask_remain\030\t \001(\004\022\030\n\020total_bid_remain\030"
+  "\n \001(\004\022!\n\031out_time_total_ask_remain\030\013 \001(\003"
+  "\022!\n\031out_time_total_bid_remain\030\014 \001(\0032\266\013\n\005"
+  "Stock\022\?\n\nGetDayData\022\025.stock_api.StockQue"
+  "ry\032\030.stock_api.CybosDayDatas\"\000\022B\n\rGetMin"
+  "uteData\022\025.stock_api.StockQuery\032\030.stock_a"
+  "pi.CybosDayDatas\"\000\022K\n\022GetTodayMinuteData"
+  "\022\031.stock_api.StockCodeQuery\032\030.stock_api."
+  "CybosDayDatas\"\000\022K\n\021GetPastMinuteData\022\032.s"
+  "tock_api.PastMinuteQuery\032\030.stock_api.Cyb"
+  "osDayDatas\"\000\022K\n\024RequestCybosTickData\022\031.s"
+  "tock_api.StockCodeQuery\032\026.google.protobu"
+  "f.Empty\"\000\022I\n\022RequestCybosBidAsk\022\031.stock_"
+  "api.StockCodeQuery\032\026.google.protobuf.Emp"
+  "ty\"\000\022J\n\023RequestCybosSubject\022\031.stock_api."
+  "StockCodeQuery\032\026.google.protobuf.Empty\"\000"
+  "\022F\n\017SetCurrentStock\022\031.stock_api.StockSel"
+  "ection\032\026.google.protobuf.Empty\"\000\022L\n\023SetS"
+  "imulationStatus\022\033.stock_api.SimulationSt"
+  "atus\032\026.google.protobuf.Empty\"\000\022L\n\023GetSim"
+  "ulationStatus\022\026.google.protobuf.Empty\032\033."
+  "stock_api.SimulationStatus\"\000\022O\n\032GetYeste"
+  "rdayTopAmountCodes\022\032.google.protobuf.Tim"
+  "estamp\032\023.stock_api.CodeList\"\000\022K\n\022ListenC"
+  "urrentStock\022\026.google.protobuf.Empty\032\031.st"
+  "ock_api.StockSelection\"\0000\001\022K\n\023ListenCybo"
+  "sTickData\022\026.google.protobuf.Empty\032\030.stoc"
+  "k_api.CybosTickData\"\0000\001\022O\n\021ListenCybosBi"
+  "dAsk\022\026.google.protobuf.Empty\032\036.stock_api"
+  ".CybosBidAskTickData\"\0000\001\022K\n\021ListenCurren"
+  "tTime\022\026.google.protobuf.Empty\032\032.google.p"
+  "rotobuf.Timestamp\"\0000\001\022Q\n\022ListenCybosSubj"
+  "ect\022\026.google.protobuf.Empty\032\037.stock_api."
+  "CybosSubjectTickData\"\0000\001\022X\n\035ListenSimula"
+  "tionStatusChanged\022\026.google.protobuf.Empt"
+  "y\032\033.stock_api.SimulationStatus\"\0000\001\022L\n\017St"
+  "artSimulation\022\035.stock_api.SimulationArgu"
+  "ment\032\026.google.protobuf.Empty\"\0000\001\022B\n\016Stop"
+  "Simulation\022\026.google.protobuf.Empty\032\026.goo"
+  "gle.protobuf.Empty\"\000b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_stock_5fprovider_2eproto_deps[2] = {
   &::descriptor_table_google_2fprotobuf_2fempty_2eproto,
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_stock_5fprovider_2eproto_sccs[11] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_stock_5fprovider_2eproto_sccs[12] = {
   &scc_info_CodeList_stock_5fprovider_2eproto.base,
   &scc_info_CybosBidAskTickData_stock_5fprovider_2eproto.base,
   &scc_info_CybosDayData_stock_5fprovider_2eproto.base,
@@ -481,6 +518,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_sto
   &scc_info_CybosTickData_stock_5fprovider_2eproto.base,
   &scc_info_PastMinuteQuery_stock_5fprovider_2eproto.base,
   &scc_info_SimulationArgument_stock_5fprovider_2eproto.base,
+  &scc_info_SimulationStatus_stock_5fprovider_2eproto.base,
   &scc_info_StockCodeQuery_stock_5fprovider_2eproto.base,
   &scc_info_StockQuery_stock_5fprovider_2eproto.base,
   &scc_info_StockSelection_stock_5fprovider_2eproto.base,
@@ -488,10 +526,10 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_sto
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_stock_5fprovider_2eproto_once;
 static bool descriptor_table_stock_5fprovider_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_stock_5fprovider_2eproto = {
-  &descriptor_table_stock_5fprovider_2eproto_initialized, descriptor_table_protodef_stock_5fprovider_2eproto, "stock_provider.proto", 3234,
-  &descriptor_table_stock_5fprovider_2eproto_once, descriptor_table_stock_5fprovider_2eproto_sccs, descriptor_table_stock_5fprovider_2eproto_deps, 11, 2,
+  &descriptor_table_stock_5fprovider_2eproto_initialized, descriptor_table_protodef_stock_5fprovider_2eproto, "stock_provider.proto", 3628,
+  &descriptor_table_stock_5fprovider_2eproto_once, descriptor_table_stock_5fprovider_2eproto_sccs, descriptor_table_stock_5fprovider_2eproto_deps, 12, 2,
   schemas, file_default_instances, TableStruct_stock_5fprovider_2eproto::offsets,
-  file_level_metadata_stock_5fprovider_2eproto, 11, file_level_enum_descriptors_stock_5fprovider_2eproto, file_level_service_descriptors_stock_5fprovider_2eproto,
+  file_level_metadata_stock_5fprovider_2eproto, 12, file_level_enum_descriptors_stock_5fprovider_2eproto, file_level_service_descriptors_stock_5fprovider_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -1189,6 +1227,218 @@ void StockQuery::InternalSwap(StockQuery* other) {
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata StockQuery::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void SimulationStatus::InitAsDefaultInstance() {
+}
+class SimulationStatus::_Internal {
+ public:
+};
+
+SimulationStatus::SimulationStatus()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:stock_api.SimulationStatus)
+}
+SimulationStatus::SimulationStatus(const SimulationStatus& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::memcpy(&simulation_on_, &from.simulation_on_,
+    static_cast<size_t>(reinterpret_cast<char*>(&simulation_speed_) -
+    reinterpret_cast<char*>(&simulation_on_)) + sizeof(simulation_speed_));
+  // @@protoc_insertion_point(copy_constructor:stock_api.SimulationStatus)
+}
+
+void SimulationStatus::SharedCtor() {
+  ::memset(&simulation_on_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&simulation_speed_) -
+      reinterpret_cast<char*>(&simulation_on_)) + sizeof(simulation_speed_));
+}
+
+SimulationStatus::~SimulationStatus() {
+  // @@protoc_insertion_point(destructor:stock_api.SimulationStatus)
+  SharedDtor();
+}
+
+void SimulationStatus::SharedDtor() {
+}
+
+void SimulationStatus::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const SimulationStatus& SimulationStatus::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_SimulationStatus_stock_5fprovider_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void SimulationStatus::Clear() {
+// @@protoc_insertion_point(message_clear_start:stock_api.SimulationStatus)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ::memset(&simulation_on_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&simulation_speed_) -
+      reinterpret_cast<char*>(&simulation_on_)) + sizeof(simulation_speed_));
+  _internal_metadata_.Clear();
+}
+
+const char* SimulationStatus::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // bool simulation_on = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          simulation_on_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // float simulation_speed = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 21)) {
+          simulation_speed_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* SimulationStatus::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:stock_api.SimulationStatus)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // bool simulation_on = 1;
+  if (this->simulation_on() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(1, this->_internal_simulation_on(), target);
+  }
+
+  // float simulation_speed = 2;
+  if (!(this->simulation_speed() <= 0 && this->simulation_speed() >= 0)) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(2, this->_internal_simulation_speed(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:stock_api.SimulationStatus)
+  return target;
+}
+
+size_t SimulationStatus::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:stock_api.SimulationStatus)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // bool simulation_on = 1;
+  if (this->simulation_on() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // float simulation_speed = 2;
+  if (!(this->simulation_speed() <= 0 && this->simulation_speed() >= 0)) {
+    total_size += 1 + 4;
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void SimulationStatus::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:stock_api.SimulationStatus)
+  GOOGLE_DCHECK_NE(&from, this);
+  const SimulationStatus* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<SimulationStatus>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:stock_api.SimulationStatus)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:stock_api.SimulationStatus)
+    MergeFrom(*source);
+  }
+}
+
+void SimulationStatus::MergeFrom(const SimulationStatus& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:stock_api.SimulationStatus)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.simulation_on() != 0) {
+    _internal_set_simulation_on(from._internal_simulation_on());
+  }
+  if (!(from.simulation_speed() <= 0 && from.simulation_speed() >= 0)) {
+    _internal_set_simulation_speed(from._internal_simulation_speed());
+  }
+}
+
+void SimulationStatus::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:stock_api.SimulationStatus)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void SimulationStatus::CopyFrom(const SimulationStatus& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:stock_api.SimulationStatus)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool SimulationStatus::IsInitialized() const {
+  return true;
+}
+
+void SimulationStatus::InternalSwap(SimulationStatus* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(simulation_on_, other->simulation_on_);
+  swap(simulation_speed_, other->simulation_speed_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata SimulationStatus::GetMetadata() const {
   return GetMetadataStatic();
 }
 
@@ -4463,6 +4713,9 @@ template<> PROTOBUF_NOINLINE ::stock_api::CodeList* Arena::CreateMaybeMessage< :
 }
 template<> PROTOBUF_NOINLINE ::stock_api::StockQuery* Arena::CreateMaybeMessage< ::stock_api::StockQuery >(Arena* arena) {
   return Arena::CreateInternal< ::stock_api::StockQuery >(arena);
+}
+template<> PROTOBUF_NOINLINE ::stock_api::SimulationStatus* Arena::CreateMaybeMessage< ::stock_api::SimulationStatus >(Arena* arena) {
+  return Arena::CreateInternal< ::stock_api::SimulationStatus >(arena);
 }
 template<> PROTOBUF_NOINLINE ::stock_api::StockSelection* Arena::CreateMaybeMessage< ::stock_api::StockSelection >(Arena* arena) {
   return Arena::CreateInternal< ::stock_api::StockSelection >(arena);

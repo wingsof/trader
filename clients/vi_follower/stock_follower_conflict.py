@@ -63,4 +63,3 @@ class StockFollower:
         stock_api.subscribe_stock(self.reader, self.code, self.tick_data_handler)
         stock_api.subscribe_stock_bidask(self.reader, self.code, self.ba_data_handler)
         stock_api.subscribe_stock_subject(self.reader, self.code, self.subject_handler)
-

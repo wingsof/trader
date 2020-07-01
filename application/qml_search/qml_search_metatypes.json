@@ -52,6 +52,22 @@
                         "access": "public",
                         "name": "launchDayChart",
                         "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "dt",
+                                "type": "QDateTime"
+                            }
+                        ],
+                        "name": "startSimulation",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "stopSimulation",
+                        "returnType": "void"
                     }
                 ],
                 "object": true,
@@ -88,6 +104,20 @@
                         "constant": false,
                         "designable": true,
                         "final": false,
+                        "name": "serverDateTime",
+                        "notify": "serverDateTimeChanged",
+                        "read": "serverDateTime",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QDateTime",
+                        "user": false,
+                        "write": "setServerDateTime"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
                         "name": "days",
                         "notify": "daysChanged",
                         "read": "days",
@@ -111,6 +141,20 @@
                         "type": "bool",
                         "user": false,
                         "write": "setSimulationRunning"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "name": "simulationSpeed",
+                        "notify": "simulationSpeedChanged",
+                        "read": "simulationSpeed",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "qreal",
+                        "user": false,
+                        "write": "setSimulationSpeed"
                     }
                 ],
                 "qualifiedClassName": "SearchBackend",
@@ -134,6 +178,16 @@
                         "access": "public",
                         "name": "simulationRunningChanged",
                         "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "simulationSpeedChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "serverDateTimeChanged",
+                        "returnType": "void"
                     }
                 ],
                 "slots": [
@@ -154,6 +208,28 @@
                             }
                         ],
                         "name": "stockCodeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "dt",
+                                "type": "QDateTime"
+                            }
+                        ],
+                        "name": "timeInfoArrived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "status",
+                                "type": "bool"
+                            }
+                        ],
+                        "name": "setSimulationStatus",
                         "returnType": "void"
                     }
                 ],

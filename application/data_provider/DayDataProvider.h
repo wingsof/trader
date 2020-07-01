@@ -17,32 +17,16 @@ using grpc::ClientContext;
 using stock_api::CybosDayDatas;
 
 
-class DayDataQuery {
-public:
-    explicit DayDataQuery(const QString &code, const QDateTime &fromTime, const QDateTime &untilTime, bool isMinute=false) {
-        mCode = code;
-        mFromTime = fromTime;
-        mUntilTime = untilTime;
-        requestMinuteData = isMinute;
-    }
-
-public:
-    const QString &getCode() { return mCode; }
-    const QDateTime &getFromTime() { return mFromTime; }
-    const QDateTime &getUntilTime() { return mUntilTime; }
-    bool isRequestMinuteData() { return requestMinuteData; }
-
-private:
-    QString mCode;
-    QDateTime mFromTime;
-    QDateTime mUntilTime;
-    bool requestMinuteData;
-};
-
+class DayDataQuery;
 
 class DayDataProvider : public QObject {
     Q_OBJECT
 public:
+    enum DATA_TYPE{
+        DAY_DATA = 0,
+        MINUTE_DATA = 1,
+        TODAY_MINUTE_DATA = 2
+    };
     DayDataProvider(std::shared_ptr<stock_api::Stock::Stub> stub);
 
     Q_INVOKABLE void requestDayData(const QString &code,
@@ -52,6 +36,7 @@ public:
     Q_INVOKABLE void requestMinuteData(const QString &code,
                                     const QDateTime &fromTime,
                                     const QDateTime &untilTime);
+    Q_INVOKABLE void requestTodayMinuteData(const QString &code);
 
 
 private:
@@ -71,6 +56,31 @@ signals:
     void minuteDataReady(QString, CybosDayDatas*);
 };
 
+
+class DayDataQuery {
+public:
+    explicit DayDataQuery(const QString &code, const QDateTime &fromTime, const QDateTime &untilTime, DayDataProvider::DATA_TYPE type) {
+        mCode = code;
+        mFromTime = fromTime;
+        mUntilTime = untilTime;
+        mDataType = type;
+    }
+
+public:
+    const QString &getCode() { return mCode; }
+    const QDateTime &getFromTime() { return mFromTime; }
+    const QDateTime &getUntilTime() { return mUntilTime; }
+    DayDataProvider::DATA_TYPE getDataType() { return mDataType; }
+
+private:
+    QString mCode;
+    QDateTime mFromTime;
+    QDateTime mUntilTime;
+    DayDataProvider::DATA_TYPE mDataType;
+};
+
+
+
 class DayDataCollector : public QObject {
 Q_OBJECT
 public:
@@ -78,14 +88,14 @@ public:
                         const QString &_code,
                         const QDateTime &_fromTime,
                         const QDateTime &_untilTime,
-                        bool isRequestMinute);
+                        DayDataProvider::DATA_TYPE type);
 
 private:
     std::shared_ptr<stock_api::Stock::Stub> stub_;
     QString code;
     Timestamp * fromTime;
     Timestamp * untilTime;
-    bool requestMinuteData;
+    DayDataProvider::DATA_TYPE dataType;
 
 public slots:
     void process();

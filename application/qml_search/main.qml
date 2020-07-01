@@ -52,6 +52,16 @@ ApplicationWindow {
                                             dateTime.hour, dateTime.minute, 0),
                                         parseInt(daysField.text))
                 }
+
+                Connections {
+                    target: codeSearch
+                    function onCodeEntered() {
+                        SearchBackend.sendCurrent(codeSearch.code,
+                                        new Date(dateTime.year, dateTime.month - 1, dateTime.day,
+                                            dateTime.hour, dateTime.minute, 0),
+                                        parseInt(daysField.text))
+                    }
+                }
             }
 
             
@@ -74,6 +84,10 @@ ApplicationWindow {
                         }
                     }
                 }
+                onClicked: {
+                    SearchBackend.startSimulation(new Date(dateTime.year, dateTime.month - 1, dateTime.day,
+                                            dateTime.hour, dateTime.minute, 0))
+                }
             }
 
             Button {
@@ -94,7 +108,9 @@ ApplicationWindow {
                         }
                     }
                 }
-
+                onClicked: {
+                    SearchBackend.stopSimulation()
+                }
             }
             Layout.bottomMargin: 10
         }
@@ -103,6 +119,7 @@ ApplicationWindow {
             spacing: 20
             Button {
                 text: "TICK"
+                Layout.leftMargin: 30 
                 Layout.preferredWidth: 50 
                 Layout.preferredHeight: 30 
                 onClicked: {
@@ -130,11 +147,40 @@ ApplicationWindow {
 
             Button {
                 text: "VOL Trend"
-                Layout.preferredWidth: 100 
+                Layout.preferredWidth: 85 
                 Layout.preferredHeight: 30 
+                Layout.rightMargin: 50 
                 onClicked: {
                     SearchBackend.launchVolumeGraph()
                 }
+            }
+
+            Text {
+                text: SearchBackend.serverDateTime.toLocaleDateString(Qt.locale("ko_KR"), "yyyy-MM-dd") + " " + SearchBackend.serverDateTime.toLocaleTimeString(Qt.locale("ko_KR"), "hh:mm")
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                Layout.preferredWidth: 300 
+                Layout.preferredHeight: 30 
+                Layout.rightMargin: 50
+                font.pointSize: 16
+                Connections {
+                    target: SearchBackend
+                    function onServerDateTimeChanged(dt) {
+                    }
+                }
+            }
+            
+            Text {
+                text: "Simulation Speed"
+                verticalAlignment: Text.AlignVCenter
+                Layout.preferredWidth: 100 
+                Layout.preferredHeight: 30 
+            }
+
+            TextField {
+                Layout.preferredWidth: 50 
+                Layout.preferredHeight: 30 
+                text: SearchBackend.simulationSpeed
             }
         }
     }

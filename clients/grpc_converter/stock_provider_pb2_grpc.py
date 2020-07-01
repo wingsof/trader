@@ -26,6 +26,11 @@ class StockStub(object):
         request_serializer=stock__provider__pb2.StockQuery.SerializeToString,
         response_deserializer=stock__provider__pb2.CybosDayDatas.FromString,
         )
+    self.GetTodayMinuteData = channel.unary_unary(
+        '/stock_api.Stock/GetTodayMinuteData',
+        request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
+        response_deserializer=stock__provider__pb2.CybosDayDatas.FromString,
+        )
     self.GetPastMinuteData = channel.unary_unary(
         '/stock_api.Stock/GetPastMinuteData',
         request_serializer=stock__provider__pb2.PastMinuteQuery.SerializeToString,
@@ -50,6 +55,16 @@ class StockStub(object):
         '/stock_api.Stock/SetCurrentStock',
         request_serializer=stock__provider__pb2.StockSelection.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.SetSimulationStatus = channel.unary_unary(
+        '/stock_api.Stock/SetSimulationStatus',
+        request_serializer=stock__provider__pb2.SimulationStatus.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.GetSimulationStatus = channel.unary_unary(
+        '/stock_api.Stock/GetSimulationStatus',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=stock__provider__pb2.SimulationStatus.FromString,
         )
     self.GetYesterdayTopAmountCodes = channel.unary_unary(
         '/stock_api.Stock/GetYesterdayTopAmountCodes',
@@ -81,6 +96,11 @@ class StockStub(object):
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=stock__provider__pb2.CybosSubjectTickData.FromString,
         )
+    self.ListenSimulationStatusChanged = channel.unary_stream(
+        '/stock_api.Stock/ListenSimulationStatusChanged',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=stock__provider__pb2.SimulationStatus.FromString,
+        )
     self.StartSimulation = channel.unary_stream(
         '/stock_api.Stock/StartSimulation',
         request_serializer=stock__provider__pb2.SimulationArgument.SerializeToString,
@@ -105,6 +125,13 @@ class StockServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def GetMinuteData(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def GetTodayMinuteData(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -140,6 +167,20 @@ class StockServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def SetCurrentStock(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetSimulationStatus(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def GetSimulationStatus(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -188,6 +229,13 @@ class StockServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def ListenSimulationStatusChanged(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def StartSimulation(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -215,6 +263,11 @@ def add_StockServicer_to_server(servicer, server):
           request_deserializer=stock__provider__pb2.StockQuery.FromString,
           response_serializer=stock__provider__pb2.CybosDayDatas.SerializeToString,
       ),
+      'GetTodayMinuteData': grpc.unary_unary_rpc_method_handler(
+          servicer.GetTodayMinuteData,
+          request_deserializer=stock__provider__pb2.StockCodeQuery.FromString,
+          response_serializer=stock__provider__pb2.CybosDayDatas.SerializeToString,
+      ),
       'GetPastMinuteData': grpc.unary_unary_rpc_method_handler(
           servicer.GetPastMinuteData,
           request_deserializer=stock__provider__pb2.PastMinuteQuery.FromString,
@@ -239,6 +292,16 @@ def add_StockServicer_to_server(servicer, server):
           servicer.SetCurrentStock,
           request_deserializer=stock__provider__pb2.StockSelection.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'SetSimulationStatus': grpc.unary_unary_rpc_method_handler(
+          servicer.SetSimulationStatus,
+          request_deserializer=stock__provider__pb2.SimulationStatus.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'GetSimulationStatus': grpc.unary_unary_rpc_method_handler(
+          servicer.GetSimulationStatus,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=stock__provider__pb2.SimulationStatus.SerializeToString,
       ),
       'GetYesterdayTopAmountCodes': grpc.unary_unary_rpc_method_handler(
           servicer.GetYesterdayTopAmountCodes,
@@ -269,6 +332,11 @@ def add_StockServicer_to_server(servicer, server):
           servicer.ListenCybosSubject,
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=stock__provider__pb2.CybosSubjectTickData.SerializeToString,
+      ),
+      'ListenSimulationStatusChanged': grpc.unary_stream_rpc_method_handler(
+          servicer.ListenSimulationStatusChanged,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=stock__provider__pb2.SimulationStatus.SerializeToString,
       ),
       'StartSimulation': grpc.unary_stream_rpc_method_handler(
           servicer.StartSimulation,

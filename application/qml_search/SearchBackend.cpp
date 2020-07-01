@@ -8,13 +8,23 @@ SearchBackend::SearchBackend(QObject *parent)
 : QObject(parent) {
     m_currentCode = "";
     m_currentDateTime = QDateTime::currentDateTime();
+    m_serverDateTime = QDateTime::currentDateTime();
     m_days = 120;
+    m_simulationSpeed = 1.0;
 
     connect(DataProvider::getInstance(), &DataProvider::stockCodeChanged,
             this, &SearchBackend::stockCodeChanged);
+    connect(DataProvider::getInstance(), &DataProvider::timeInfoArrived, this, &SearchBackend::timeInfoArrived);
+    connect(DataProvider::getInstance(), &DataProvider::simulationStatusChanged, this, &SearchBackend::setSimulationStatus);
     DataProvider::getInstance()->startStockCodeListening();
-    m_simulationRunning = false; // read from server whether currently running
+    DataProvider::getInstance()->startTimeListening();
+    m_simulationRunning = DataProvider::getInstance()->isSimulation();
     qWarning() << "SearchBackend";
+}
+
+
+void SearchBackend::timeInfoArrived(QDateTime dt) {
+    setServerDateTime(dt);
 }
 
 
@@ -33,8 +43,18 @@ int SearchBackend::days() {
 }
 
 
+qreal SearchBackend::simulationSpeed() {
+    return m_simulationSpeed;
+}
+
+
 bool SearchBackend::simulationRunning() {
     return m_simulationRunning;
+}
+
+
+QDateTime SearchBackend::serverDateTime() {
+    return m_serverDateTime;
 }
 
 
@@ -44,7 +64,46 @@ void SearchBackend::stockCodeChanged(QString code, QDateTime untilTime, int coun
 
 
 void SearchBackend::setSimulationRunning(bool r) {
+    qWarning() << "setSimulationRunning: org " << m_simulationRunning << "\t value : " << r;
+    if (m_simulationRunning ^ r) {
+        qWarning() << "changed";
+        m_simulationRunning = r;
+        emit simulationRunningChanged();
+    }
+}
 
+
+void SearchBackend::setSimulationStatus(bool status) {
+    qWarning() << "setSimulationStatus : " << status;
+    setSimulationRunning(status);
+}
+
+
+void SearchBackend::startSimulation(const QDateTime &dt) {
+    qWarning() << "startSimulation : " << dt;
+    DataProvider::getInstance()->startSimulation(dt);
+}
+
+
+void SearchBackend::stopSimulation() {
+    qWarning() << "stopSimulation";
+    DataProvider::getInstance()->stopSimulation();
+}
+
+
+void SearchBackend::setServerDateTime(const QDateTime &dt) {
+    if (m_serverDateTime.toMSecsSinceEpoch() != dt.toMSecsSinceEpoch()) {
+        m_serverDateTime = dt;
+        emit serverDateTimeChanged();
+    }
+}
+
+
+void SearchBackend::setSimulationSpeed(qreal s) {
+    if ( m_simulationSpeed != s) {
+        m_simulationSpeed = s;
+        emit simulationSpeedChanged();
+    }
 }
 
 
@@ -98,8 +157,8 @@ void SearchBackend::launchVolumeGraph() {
 void SearchBackend::launchBidAsk() {
     QProcess *process = new QProcess;
     connect(process, &QProcess::started, process, &QProcess::deleteLater);
-    QString dir = "/home/nnnlife/workspace/trader/application/qml_tick";
-    bool ret = process->startDetached(dir + "/morning_tick", QStringList(), dir);
+    QString dir = "/home/nnnlife/workspace/trader/application/qml_bidask";
+    bool ret = process->startDetached(dir + "/morning_bidask", QStringList(), dir);
 
 }
 

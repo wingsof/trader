@@ -324,7 +324,7 @@ void BidAskModel::tickArrived(CybosTickData *data) {
         return;
 
     long msec = TimeUtil::TimestampToMilliseconds(data->tick_date());
-    qWarning() << QDateTime::fromMSecsSinceEpoch(msec, Qt::UTC) << "\tcurrent: " << data->current_price() << ", volume: " << data->volume() << "\tBUY:" << data->buy_or_sell() << "\task: " << data->ask_price() << ", bid: " << data->bid_price();
+    qWarning() << QDateTime::fromMSecsSinceEpoch(msec) << "\tcurrent: " << data->current_price() << ", volume: " << data->volume() << "\tBUY:" << data->buy_or_sell() << "\task: " << data->ask_price() << ", bid: " << data->bid_price();
     setYesterdayClose(data->current_price() - data->yesterday_diff());
     setHighlightPosition(data->current_price());
     priceModel->setTick(data);
@@ -348,7 +348,7 @@ void BidAskModel::bidAskTickArrived(CybosBidAskTickData *data) {
     //setHighlight(-1);
     dataChanged(createIndex(1, 1), createIndex(20, 5));
     long msec = TimeUtil::TimestampToMilliseconds(data->tick_date());
-    qWarning() << QDateTime::fromMSecsSinceEpoch(msec, Qt::UTC) << "\tASK: " << data->ask_prices(0) << "(" << data->ask_remains(0) << ")\t" << "BID: " << data->bid_prices(0) << "(" << data->bid_remains(0) << ")";
+    qWarning() << QDateTime::fromMSecsSinceEpoch(msec) << "\tASK: " << data->ask_prices(0) << "(" << data->ask_remains(0) << ")\t" << "BID: " << data->bid_prices(0) << "(" << data->bid_remains(0) << ")";
 }
 
 

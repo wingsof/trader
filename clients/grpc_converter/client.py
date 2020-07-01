@@ -24,12 +24,10 @@ _STUB = None
 
 def get_day_data(stub):
     from_datetime = timestamp_pb2.Timestamp()
-    from_datetime.FromSeconds(int(datetime.timestamp(datetime(2020, 3, 18))))
     until_datetime = timestamp_pb2.Timestamp()
-    until_datetime.FromSeconds(int(datetime.timestamp(datetime(2020, 3, 20))))
-    query = stock_provider_pb2.StockQuery(code='A005930',
-        from_datetime = from_datetime,
-        until_datetime = until_datetime)
+    from_datetime.FromDatetime(datetime(2020, 3, 20))
+    until_datetime.FromDatetime(datetime(2020, 4, 20))
+    query = stock_provider_pb2.StockQuery(code='U201', from_datetime = from_datetime, until_datetime = until_datetime)
     response = stub.GetDayData(query)
     print('len', len(response.day_data))
     for data in response.day_data:
@@ -56,10 +54,20 @@ def get_minute_data(stub):
         pass#print(data)
 
 
+def get_today_minute_data(stub, code):
+    query = stock_provider_pb2.StockCodeQuery(code=code)
+    response = stub.GetTodayMinuteData(query)
+    print('len', len(response.day_data))
+    for data in response.day_data:
+        print(data)
+
+
+
 def start_simulation(stub):
     from_datetime = timestamp_pb2.Timestamp()
     #from_datetime.FromDatetime(datetime(2020, 6, 12, 9, 3, 12))
     from_datetime.FromDatetime(datetime(2020, 6, 12, 10, 1, 0))
+    i = 0
     #from_datetime.FromDatetime(datetime(2020, 6, 12, 8, 59))
     simulation_argument = stock_provider_pb2.SimulationArgument(from_datetime=from_datetime)
     response = stub.StartSimulation(simulation_argument) 
@@ -121,10 +129,15 @@ def run():
         #print('codes', result.codelist)
         #get_day_data(_STUB)
         #get_minute_data(_STUB)
-        gevent.joinall([gevent.spawn(start_simulation, _STUB)])
+        #gevent.joinall([gevent.spawn(start_simulation, _STUB)])
         start_simulation(_STUB)
         #gevent.sleep(5)
+        #get_today_minute_data(_STUB, "A005930")
         #send_stock_selection(_STUB, "A005930")
+        #subscribe_bidask("A005930", _STUB)        
+        #subscribe_stock("A005930", _STUB)        
+        #subscribe_bidask("A005390", _STUB)        
+        #subscribe_stock("A005390", _STUB)        
         #gevent.joinall([gevent.spawn(tick_subscriber, _STUB), gevent.spawn(bidask_subscriber, _STUB), gevent.spawn(subject_subscriber, _STUB), gevent.spawn(time_listener, _STUB)])
     print('exit')
 

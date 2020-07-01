@@ -1,7 +1,9 @@
 #include "MinInfo.h"
+#include "Util.h"
 
 
-MinInfo::MinInfo() {
+MinInfo::MinInfo(int minInterval) {
+    minuteInterval = minInterval;
     clear();
 }
 
@@ -38,6 +40,7 @@ void MinInfo::clear() {
     data.clear_day_data();
     lowestPrice = highestPrice = 0;
     highestVolume = lowestVolume = 0;
+    currentDate = currentTime = 0;
 }
 
 
@@ -49,11 +52,21 @@ int MinInfo::getLatestClosePrice() {
 }
 
 
+void MinInfo::setCurrentDateTime(uint cd, uint ct) {
+    currentDate = cd;
+    currentTime = ct;
+}
+
+
 void MinInfo::setData(CybosDayDatas *cd) {
     clear();
 
     for (int i = 0; i < cd->day_data_size(); i++) {
         const CybosDayData &d = cd->day_data(i);
+        
+        if (d.date() == currentDate && d.time() > currentTime)
+            break;
+
         CybosDayData * nd = data.add_day_data();
         *nd = d;
         uint time = d.time();
@@ -65,7 +78,11 @@ void MinInfo::setData(CybosDayDatas *cd) {
             const CybosDayData &p = cd->day_data(j);
             uint ctime = p.time();
             i++;
-            if (time + 2 >= ctime) {
+            if (currentDate == d.date() && ctime > currentTime) {
+                i--;
+                break;
+            }
+            else if (time + minuteInterval - 1 >= ctime) {
                 if (p.highest_price() > nd->highest_price())
                     nd->set_highest_price(p.highest_price());
 
@@ -83,7 +100,7 @@ void MinInfo::setData(CybosDayDatas *cd) {
         }
         nd->set_volume(volume);
         nd->set_amount(amount);
-        nd->set_time(nd->time() - 1);
+        nd->set_time(morning::Util::decreaseTime(nd->time(), 1));
 
         if (nd->highest_price() > highestPrice)
             highestPrice = nd->highest_price();
@@ -107,4 +124,3 @@ void MinInfo::setData(CybosDayDatas *cd) {
     qWarning() << "last : " << cd->day_data(cd->day_data_size() - 1).time();
     */
 }
-

@@ -5,7 +5,7 @@
 
 
 MorningTickChartView::MorningTickChartView(QQuickItem *parent)
-: QQuickPaintedItem(parent) {
+: QQuickPaintedItem(parent), yesterdayMinInfo(3) {
     todayStartHour = 9;
     connect(DataProvider::getInstance(), &DataProvider::minuteTickUpdated,
             this, &MorningTickChartView::minuteTickUpdated);
@@ -23,16 +23,16 @@ MorningTickChartView::MorningTickChartView(QQuickItem *parent)
 
 void MorningTickChartView::resetData() {
     currentVolumeMin = currentVolumeMax = 0;
+    pastMinuteDataReceived = false;
     yesterdayMinInfo.clear();
 }
 
 
 void MorningTickChartView::setCurrentStock(QString code, QDateTime dt, int countOfDays) {
-    Q_UNUSED(countOfDays);
     if (currentStockCode != code) {
         resetData();
         currentStockCode = code;
-        qWarning() << "currentStock: " << currentStockCode;
+        qWarning() << "currentStock: " << currentStockCode << "\t request day data until: " << dt.addDays(-1);
         DataProvider::getInstance()->requestDayData(currentStockCode, 60, dt.addDays(-1));
     }
 }
@@ -46,7 +46,9 @@ void MorningTickChartView::minuteTickUpdated(QString code) {
     //qWarning() << "highest : " << mt->getHighestPrice() << ", lowest" << mt->getLowestPrice() << "highest volume: " << currentVolumeMax << "\tlowest volume: " << currentVolumeMin;
     updatePriceSteps(mt->getHighestPrice(), mt->getLowestPrice());
     updateVolumeMax(mt->getHighestVolume());
-    update(); 
+
+    if (pastMinuteDataReceived) // to prevent initial price scaling
+        update(); 
 }
 
 
@@ -64,7 +66,6 @@ void MorningTickChartView::dayDataReceived(QString code, CybosDayDatas *data) {
         return;
 
     int count = data->day_data_size();
-    qWarning() << "day data : " << count;
     if (count > 0) {
         const CybosDayData &d = data->day_data(count - 1);
         QDate date = morning::Util::convertToDate(d.date());
@@ -96,6 +97,7 @@ void MorningTickChartView::minuteDataReceived(QString code, CybosDayDatas *data)
     else {
         qWarning() << "NO MINUTE DATA";
     }
+    pastMinuteDataReceived = true;
 }
 
 
@@ -111,7 +113,7 @@ void MorningTickChartView::setVolumeMinMax(uint h, uint l) {
         if (h > currentVolumeMax)
             currentVolumeMax = h;
     }
-    qWarning() << "volume max : " << currentVolumeMax << "\tvolume min : " << currentVolumeMin;
+    //qWarning() << "volume max : " << currentVolumeMax << "\tvolume min : " << currentVolumeMin;
 }
 
 
@@ -192,7 +194,7 @@ qreal MorningTickChartView::getVolumeHeight(uint v, qreal ch) {
         return 0.0;
 
     qreal vRange = qreal(currentVolumeMax - currentVolumeMin);
-    qWarning() << "vol diff : " << (v - currentVolumeMin) << "\tvRange : " << vRange << "\t ch : " << ch;
+    //qWarning() << "vol diff : " << (v - currentVolumeMin) << "\tvRange : " << vRange << "\t ch : " << ch;
     return ch * VOLUME_ROW_COUNT * (v - currentVolumeMin) / vRange;
 }
 
@@ -207,7 +209,7 @@ void MorningTickChartView::drawVolume(QPainter *painter, const CybosDayData &dat
     painter->setBrush(QBrush(color));
     painter->setPen(Qt::NoPen);
     qreal volumeHeight = getVolumeHeight(data.volume(), ch);
-    qWarning() << "volume : " << data.volume() << "\t" << QRectF(startX, volumeEndY - volumeHeight, tickWidth, volumeHeight);
+    //qWarning() << "volume : " << data.volume() << "\t" << QRectF(startX, volumeEndY - volumeHeight, tickWidth, volumeHeight);
     painter->drawRect(QRectF(startX, volumeEndY - volumeHeight, tickWidth, volumeHeight));
     painter->restore();
 }
@@ -302,7 +304,7 @@ void MorningTickChartView::drawTimeLabels(QPainter *painter, qreal tickWidth,
 }
 
 
-void MorningTickChartView::drawCurrentLineRange(QPainter *painter, const CybosDayData &data, qreal cw, qreal priceChartEndY) {
+void MorningTickChartView::drawCurrentLineRange(QPainter *painter, MinuteTick *mt, const CybosDayData &data, qreal cw, qreal priceChartEndY) {
     painter->save();
     QPen pen;
     pen.setStyle(Qt::DashLine);
@@ -315,6 +317,23 @@ void MorningTickChartView::drawCurrentLineRange(QPainter *painter, const CybosDa
     qreal lower_y = mapPriceToPos(data.close_price() * 0.97, priceChartEndY, 0);;
     painter->drawLine(QLineF(0, current_y, cw * PRICE_COLUMN_COUNT, current_y));
     painter->drawText(int(cw * PRICE_COLUMN_COUNT + cw), int(current_y), QString::number(data.close_price()));
+    qreal yesterdayDiff = (int(data.close_price()) - mt->getYesterdayClose()) / (qreal)mt->getYesterdayClose() * 100.0;
+    qreal openDiff = (int(data.close_price()) - mt->getOpenPrice()) / (qreal)mt->getOpenPrice() * 100.0;
+
+    if (openDiff < 0) 
+        pen.setColor("#0000ff");
+    else
+        pen.setColor("#ff0000");
+    painter->setPen(pen);
+    painter->drawText(int(cw * PRICE_COLUMN_COUNT + cw), int(current_y - 20), QString::number(openDiff, 'f', 1));
+
+    if (yesterdayDiff < 0)
+        pen.setColor("#0000ff");
+    else
+        pen.setColor("#ff0000");
+    painter->setPen(pen);
+    painter->drawText(int(cw * PRICE_COLUMN_COUNT + cw), int(current_y + 20), QString::number(yesterdayDiff, 'f', 1));
+
     pen.setColor("#30000000");
     painter->setPen(pen);
     painter->drawLine(QLineF(0, upper_y, cw * PRICE_COLUMN_COUNT, upper_y));
@@ -368,7 +387,7 @@ void MorningTickChartView::paint(QPainter *painter) {
             qreal xPos = getTimeToXPos(d.time(), tickWidth, todayStartHour);
             drawCandle(painter, d, startX + xPos, tickWidth, cellHeight * PRICE_ROW_COUNT);
             drawVolume(painter, d, startX + xPos, tickWidth, cellHeight, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
-            drawCurrentLineRange(painter, d, cellWidth, cellHeight * PRICE_ROW_COUNT);
+            drawCurrentLineRange(painter, mt, d, cellWidth, cellHeight * PRICE_ROW_COUNT);
         }
     }
 }

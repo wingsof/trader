@@ -16,13 +16,23 @@ Module {
         exportMetaObjectRevisions: [0]
         Property { name: "currentCode"; type: "string" }
         Property { name: "currentDateTime"; type: "QDateTime" }
+        Property { name: "serverDateTime"; type: "QDateTime" }
         Property { name: "days"; type: "int" }
         Property { name: "simulationRunning"; type: "bool" }
+        Property { name: "simulationSpeed"; type: "double" }
         Method {
             name: "stockCodeChanged"
             Parameter { name: "code"; type: "string" }
             Parameter { name: "untilTime"; type: "QDateTime" }
             Parameter { name: "countOfDays"; type: "int" }
+        }
+        Method {
+            name: "timeInfoArrived"
+            Parameter { name: "dt"; type: "QDateTime" }
+        }
+        Method {
+            name: "setSimulationStatus"
+            Parameter { name: "status"; type: "bool" }
         }
         Method {
             name: "sendCurrent"
@@ -34,5 +44,10 @@ Module {
         Method { name: "launchVolumeGraph" }
         Method { name: "launchBidAsk" }
         Method { name: "launchDayChart" }
+        Method {
+            name: "startSimulation"
+            Parameter { name: "dt"; type: "QDateTime" }
+        }
+        Method { name: "stopSimulation" }
     }
 }

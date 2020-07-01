@@ -6,15 +6,20 @@
 #include <QDateTime>
 #include "stock_provider.grpc.pb.h"
 
+
+class DayDataProvider;
+
 using stock_api::CybosBidAskTickData;
 using stock_api::CybosTickData;
 using stock_api::CybosDayDatas;
 using stock_api::CybosDayData;
 
 
-class MinuteTick {
+class MinuteTick : public QObject{
+Q_OBJECT
 public:
-    MinuteTick(int intervaMin);    
+    MinuteTick(const QString &code, const QDateTime &dt, int intervaMin);
+    ~MinuteTick();
     
     bool appendTick(CybosTickData *d);
     const CybosDayData &getCurrent() { return currentData; }
@@ -22,41 +27,68 @@ public:
     bool isTimeout(long current);
     int getYesterdayClose() { return yesterdayClose; }
 
-    int getHighestPrice() { return highestPrice; }
-    int getLowestPrice() { return lowestPrice; }
-    uint getHighestVolume() { return highestVolume; }
+    int     getHighestPrice() { return highestPrice; }
+    int     getLowestPrice() { return lowestPrice; }
+    int     getOpenPrice() { return openPrice; }
+    uint    getHighestVolume() { return highestVolume; }
+    const QDateTime &getCreateDateTime() { return createDateTime; }
+    const QString &getCode() { return code; }
+    bool isPreviousDataReceived() { return previousDataReceived; }
+    void skipReceivePreviousData();
 
 private:
     CybosDayData currentData;
     CybosDayDatas queue;
+    QString code;
+    QDateTime createDateTime;
+
     long currentMSecs;
     int yesterdayClose;
     int intervalMinute;
     int highestPrice;
     int lowestPrice;
+    int openPrice;
     uint highestVolume;
 
+    bool previousDataReceived;
+    bool isSimulation;
+
     void setCurrentData(CybosTickData *d, long msec);
+    void setCurrentData(const CybosDayData &d);
     void updateCurrentData(CybosTickData *d);
+    void updateCurrentData(const CybosDayData &d);
     void pushToQueue();
     void setPriceBoundary(int price);
     void setVolumeBoundary(uint volume);
 
 public:
     QString getDebugString();
+
+
+public slots:
+    void minuteDataReady(QString, CybosDayDatas *);
 };
 
 
 class MinuteData : public QObject {
 Q_OBJECT
 public:
-    MinuteData(QObject *parent, int min);
+    MinuteData(QObject *parent, std::shared_ptr<stock_api::Stock::Stub> stub, int min, const QString &code, bool isSimul);
     MinuteTick * getMinuteTick(const QString &code);
+    void setSimulation(bool isSimul);
+    void setCurrentStockCode(const QString &code);
 
 private:
+    std::shared_ptr<stock_api::Stock::Stub> stub_;
     QMap<QString, MinuteTick *> codeMap;
     long lastCheckTime;
+    bool isSimulation;
     int intervalMinute;
+    void clearData();
+    DayDataProvider *dayDataProvider;
+    QString currentStockCode;
+
+    void requestPreviousData(MinuteTick *tick);
 
 public slots:
     void stockTickArrived(CybosTickData *);

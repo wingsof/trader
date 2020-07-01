@@ -5,12 +5,16 @@ import search.backend 1.0
 
 
 Item {
+    id: root
     property alias code: codeField.text
+    signal codeEntered()
+
     RowLayout {
         TextField {
             id: codeField
             Layout.preferredWidth: 100
             text: SearchBackend.currentCode
+            onAccepted: root.codeEntered()
         }
 
         Button {

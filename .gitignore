@@ -30,6 +30,7 @@ application/qml_dayquery/morning_dayview
 application/qml_today/qml_today
 application/qml_comparison/qml_comparison
 application/qml_search/qml_search
+application/qml_bidask/morning_bidask
 *.so*
 *.so.*
 *.qrc

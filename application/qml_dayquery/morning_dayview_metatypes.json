@@ -9,72 +9,7 @@
                     }
                 ],
                 "className": "DayView",
-                "methods": [
-                    {
-                        "access": "public",
-                        "arguments": [
-                            {
-                                "name": "stockCode",
-                                "type": "QString"
-                            },
-                            {
-                                "name": "untilTime",
-                                "type": "QDateTime"
-                            },
-                            {
-                                "name": "countDays",
-                                "type": "int"
-                            }
-                        ],
-                        "name": "search",
-                        "returnType": "void"
-                    }
-                ],
                 "object": true,
-                "properties": [
-                    {
-                        "constant": false,
-                        "designable": true,
-                        "final": false,
-                        "name": "stockCode",
-                        "notify": "stockCodeChanged",
-                        "read": "getStockCode",
-                        "required": false,
-                        "scriptable": true,
-                        "stored": true,
-                        "type": "QString",
-                        "user": false,
-                        "write": "setStockCode"
-                    },
-                    {
-                        "constant": false,
-                        "designable": true,
-                        "final": false,
-                        "name": "countDays",
-                        "notify": "countDaysChanged",
-                        "read": "getCountDays",
-                        "required": false,
-                        "scriptable": true,
-                        "stored": true,
-                        "type": "int",
-                        "user": false,
-                        "write": "setCountDays"
-                    },
-                    {
-                        "constant": false,
-                        "designable": true,
-                        "final": false,
-                        "name": "untilTime",
-                        "notify": "untilTimeChanged",
-                        "read": "getUntilTime",
-                        "required": false,
-                        "scriptable": true,
-                        "stored": true,
-                        "type": "QDateTime",
-                        "user": false,
-                        "write": "setUntilTime"
-                    }
-                ],
                 "qualifiedClassName": "DayView",
                 "signals": [
                     {

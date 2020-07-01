@@ -18,9 +18,9 @@ Module {
             "MorningChartView/DayView 1.7"
         ]
         exportMetaObjectRevisions: [0, 1, 11, 4, 7]
-        Property { name: "stockCode"; type: "string" }
-        Property { name: "countDays"; type: "int" }
-        Property { name: "untilTime"; type: "QDateTime" }
+        Signal { name: "stockCodeChanged" }
+        Signal { name: "countDaysChanged" }
+        Signal { name: "untilTimeChanged" }
         Method {
             name: "dataReceived"
             Parameter { type: "string" }
@@ -35,12 +35,6 @@ Module {
         Method {
             name: "tickDataArrived"
             Parameter { type: "CybosTickData"; isPointer: true }
-        }
-        Method {
-            name: "search"
-            Parameter { name: "stockCode"; type: "string" }
-            Parameter { name: "untilTime"; type: "QDateTime" }
-            Parameter { name: "countDays"; type: "int" }
         }
     }
 }

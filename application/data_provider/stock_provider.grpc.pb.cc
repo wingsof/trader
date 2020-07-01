@@ -24,17 +24,21 @@ namespace stock_api {
 static const char* Stock_method_names[] = {
   "/stock_api.Stock/GetDayData",
   "/stock_api.Stock/GetMinuteData",
+  "/stock_api.Stock/GetTodayMinuteData",
   "/stock_api.Stock/GetPastMinuteData",
   "/stock_api.Stock/RequestCybosTickData",
   "/stock_api.Stock/RequestCybosBidAsk",
   "/stock_api.Stock/RequestCybosSubject",
   "/stock_api.Stock/SetCurrentStock",
+  "/stock_api.Stock/SetSimulationStatus",
+  "/stock_api.Stock/GetSimulationStatus",
   "/stock_api.Stock/GetYesterdayTopAmountCodes",
   "/stock_api.Stock/ListenCurrentStock",
   "/stock_api.Stock/ListenCybosTickData",
   "/stock_api.Stock/ListenCybosBidAsk",
   "/stock_api.Stock/ListenCurrentTime",
   "/stock_api.Stock/ListenCybosSubject",
+  "/stock_api.Stock/ListenSimulationStatusChanged",
   "/stock_api.Stock/StartSimulation",
   "/stock_api.Stock/StopSimulation",
 };
@@ -48,19 +52,23 @@ std::unique_ptr< Stock::Stub> Stock::NewStub(const std::shared_ptr< ::grpc::Chan
 Stock::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
   : channel_(channel), rpcmethod_GetDayData_(Stock_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_GetMinuteData_(Stock_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetPastMinuteData_(Stock_method_names[2], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_RequestCybosTickData_(Stock_method_names[3], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_RequestCybosBidAsk_(Stock_method_names[4], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_RequestCybosSubject_(Stock_method_names[5], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetCurrentStock_(Stock_method_names[6], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetYesterdayTopAmountCodes_(Stock_method_names[7], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ListenCurrentStock_(Stock_method_names[8], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_ListenCybosTickData_(Stock_method_names[9], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_ListenCybosBidAsk_(Stock_method_names[10], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_ListenCurrentTime_(Stock_method_names[11], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_ListenCybosSubject_(Stock_method_names[12], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_StartSimulation_(Stock_method_names[13], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_StopSimulation_(Stock_method_names[14], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetTodayMinuteData_(Stock_method_names[2], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetPastMinuteData_(Stock_method_names[3], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_RequestCybosTickData_(Stock_method_names[4], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_RequestCybosBidAsk_(Stock_method_names[5], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_RequestCybosSubject_(Stock_method_names[6], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetCurrentStock_(Stock_method_names[7], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetSimulationStatus_(Stock_method_names[8], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetSimulationStatus_(Stock_method_names[9], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetYesterdayTopAmountCodes_(Stock_method_names[10], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ListenCurrentStock_(Stock_method_names[11], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_ListenCybosTickData_(Stock_method_names[12], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_ListenCybosBidAsk_(Stock_method_names[13], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_ListenCurrentTime_(Stock_method_names[14], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_ListenCybosSubject_(Stock_method_names[15], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_ListenSimulationStatusChanged_(Stock_method_names[16], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_StartSimulation_(Stock_method_names[17], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_StopSimulation_(Stock_method_names[18], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status Stock::Stub::GetDayData(::grpc::ClientContext* context, const ::stock_api::StockQuery& request, ::stock_api::CybosDayDatas* response) {
@@ -117,6 +125,34 @@ void Stock::Stub::experimental_async::GetMinuteData(::grpc::ClientContext* conte
 
 ::grpc::ClientAsyncResponseReader< ::stock_api::CybosDayDatas>* Stock::Stub::PrepareAsyncGetMinuteDataRaw(::grpc::ClientContext* context, const ::stock_api::StockQuery& request, ::grpc::CompletionQueue* cq) {
   return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::CybosDayDatas>::Create(channel_.get(), cq, rpcmethod_GetMinuteData_, context, request, false);
+}
+
+::grpc::Status Stock::Stub::GetTodayMinuteData(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::stock_api::CybosDayDatas* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_GetTodayMinuteData_, context, request, response);
+}
+
+void Stock::Stub::experimental_async::GetTodayMinuteData(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery* request, ::stock_api::CybosDayDatas* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GetTodayMinuteData_, context, request, response, std::move(f));
+}
+
+void Stock::Stub::experimental_async::GetTodayMinuteData(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CybosDayDatas* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GetTodayMinuteData_, context, request, response, std::move(f));
+}
+
+void Stock::Stub::experimental_async::GetTodayMinuteData(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery* request, ::stock_api::CybosDayDatas* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_GetTodayMinuteData_, context, request, response, reactor);
+}
+
+void Stock::Stub::experimental_async::GetTodayMinuteData(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CybosDayDatas* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_GetTodayMinuteData_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::stock_api::CybosDayDatas>* Stock::Stub::AsyncGetTodayMinuteDataRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::CybosDayDatas>::Create(channel_.get(), cq, rpcmethod_GetTodayMinuteData_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::stock_api::CybosDayDatas>* Stock::Stub::PrepareAsyncGetTodayMinuteDataRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::CybosDayDatas>::Create(channel_.get(), cq, rpcmethod_GetTodayMinuteData_, context, request, false);
 }
 
 ::grpc::Status Stock::Stub::GetPastMinuteData(::grpc::ClientContext* context, const ::stock_api::PastMinuteQuery& request, ::stock_api::CybosDayDatas* response) {
@@ -259,6 +295,62 @@ void Stock::Stub::experimental_async::SetCurrentStock(::grpc::ClientContext* con
   return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::google::protobuf::Empty>::Create(channel_.get(), cq, rpcmethod_SetCurrentStock_, context, request, false);
 }
 
+::grpc::Status Stock::Stub::SetSimulationStatus(::grpc::ClientContext* context, const ::stock_api::SimulationStatus& request, ::google::protobuf::Empty* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_SetSimulationStatus_, context, request, response);
+}
+
+void Stock::Stub::experimental_async::SetSimulationStatus(::grpc::ClientContext* context, const ::stock_api::SimulationStatus* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_SetSimulationStatus_, context, request, response, std::move(f));
+}
+
+void Stock::Stub::experimental_async::SetSimulationStatus(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_SetSimulationStatus_, context, request, response, std::move(f));
+}
+
+void Stock::Stub::experimental_async::SetSimulationStatus(::grpc::ClientContext* context, const ::stock_api::SimulationStatus* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_SetSimulationStatus_, context, request, response, reactor);
+}
+
+void Stock::Stub::experimental_async::SetSimulationStatus(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_SetSimulationStatus_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* Stock::Stub::AsyncSetSimulationStatusRaw(::grpc::ClientContext* context, const ::stock_api::SimulationStatus& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::google::protobuf::Empty>::Create(channel_.get(), cq, rpcmethod_SetSimulationStatus_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* Stock::Stub::PrepareAsyncSetSimulationStatusRaw(::grpc::ClientContext* context, const ::stock_api::SimulationStatus& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::google::protobuf::Empty>::Create(channel_.get(), cq, rpcmethod_SetSimulationStatus_, context, request, false);
+}
+
+::grpc::Status Stock::Stub::GetSimulationStatus(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::stock_api::SimulationStatus* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_GetSimulationStatus_, context, request, response);
+}
+
+void Stock::Stub::experimental_async::GetSimulationStatus(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::stock_api::SimulationStatus* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GetSimulationStatus_, context, request, response, std::move(f));
+}
+
+void Stock::Stub::experimental_async::GetSimulationStatus(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::SimulationStatus* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GetSimulationStatus_, context, request, response, std::move(f));
+}
+
+void Stock::Stub::experimental_async::GetSimulationStatus(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::stock_api::SimulationStatus* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_GetSimulationStatus_, context, request, response, reactor);
+}
+
+void Stock::Stub::experimental_async::GetSimulationStatus(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::SimulationStatus* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_GetSimulationStatus_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::stock_api::SimulationStatus>* Stock::Stub::AsyncGetSimulationStatusRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::SimulationStatus>::Create(channel_.get(), cq, rpcmethod_GetSimulationStatus_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::stock_api::SimulationStatus>* Stock::Stub::PrepareAsyncGetSimulationStatusRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::SimulationStatus>::Create(channel_.get(), cq, rpcmethod_GetSimulationStatus_, context, request, false);
+}
+
 ::grpc::Status Stock::Stub::GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::stock_api::CodeList* response) {
   return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_GetYesterdayTopAmountCodes_, context, request, response);
 }
@@ -367,32 +459,36 @@ void Stock::Stub::experimental_async::ListenCybosSubject(::grpc::ClientContext* 
   return ::grpc_impl::internal::ClientAsyncReaderFactory< ::stock_api::CybosSubjectTickData>::Create(channel_.get(), cq, rpcmethod_ListenCybosSubject_, context, request, false, nullptr);
 }
 
-::grpc::Status Stock::Stub::StartSimulation(::grpc::ClientContext* context, const ::stock_api::SimulationArgument& request, ::google::protobuf::Empty* response) {
-  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_StartSimulation_, context, request, response);
+::grpc::ClientReader< ::stock_api::SimulationStatus>* Stock::Stub::ListenSimulationStatusChangedRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request) {
+  return ::grpc_impl::internal::ClientReaderFactory< ::stock_api::SimulationStatus>::Create(channel_.get(), rpcmethod_ListenSimulationStatusChanged_, context, request);
 }
 
-void Stock::Stub::experimental_async::StartSimulation(::grpc::ClientContext* context, const ::stock_api::SimulationArgument* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
-  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_StartSimulation_, context, request, response, std::move(f));
+void Stock::Stub::experimental_async::ListenSimulationStatusChanged(::grpc::ClientContext* context, ::google::protobuf::Empty* request, ::grpc::experimental::ClientReadReactor< ::stock_api::SimulationStatus>* reactor) {
+  ::grpc_impl::internal::ClientCallbackReaderFactory< ::stock_api::SimulationStatus>::Create(stub_->channel_.get(), stub_->rpcmethod_ListenSimulationStatusChanged_, context, request, reactor);
 }
 
-void Stock::Stub::experimental_async::StartSimulation(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
-  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_StartSimulation_, context, request, response, std::move(f));
+::grpc::ClientAsyncReader< ::stock_api::SimulationStatus>* Stock::Stub::AsyncListenSimulationStatusChangedRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc_impl::internal::ClientAsyncReaderFactory< ::stock_api::SimulationStatus>::Create(channel_.get(), cq, rpcmethod_ListenSimulationStatusChanged_, context, request, true, tag);
 }
 
-void Stock::Stub::experimental_async::StartSimulation(::grpc::ClientContext* context, const ::stock_api::SimulationArgument* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_StartSimulation_, context, request, response, reactor);
+::grpc::ClientAsyncReader< ::stock_api::SimulationStatus>* Stock::Stub::PrepareAsyncListenSimulationStatusChangedRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncReaderFactory< ::stock_api::SimulationStatus>::Create(channel_.get(), cq, rpcmethod_ListenSimulationStatusChanged_, context, request, false, nullptr);
 }
 
-void Stock::Stub::experimental_async::StartSimulation(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_StartSimulation_, context, request, response, reactor);
+::grpc::ClientReader< ::google::protobuf::Empty>* Stock::Stub::StartSimulationRaw(::grpc::ClientContext* context, const ::stock_api::SimulationArgument& request) {
+  return ::grpc_impl::internal::ClientReaderFactory< ::google::protobuf::Empty>::Create(channel_.get(), rpcmethod_StartSimulation_, context, request);
 }
 
-::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* Stock::Stub::AsyncStartSimulationRaw(::grpc::ClientContext* context, const ::stock_api::SimulationArgument& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::google::protobuf::Empty>::Create(channel_.get(), cq, rpcmethod_StartSimulation_, context, request, true);
+void Stock::Stub::experimental_async::StartSimulation(::grpc::ClientContext* context, ::stock_api::SimulationArgument* request, ::grpc::experimental::ClientReadReactor< ::google::protobuf::Empty>* reactor) {
+  ::grpc_impl::internal::ClientCallbackReaderFactory< ::google::protobuf::Empty>::Create(stub_->channel_.get(), stub_->rpcmethod_StartSimulation_, context, request, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* Stock::Stub::PrepareAsyncStartSimulationRaw(::grpc::ClientContext* context, const ::stock_api::SimulationArgument& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::google::protobuf::Empty>::Create(channel_.get(), cq, rpcmethod_StartSimulation_, context, request, false);
+::grpc::ClientAsyncReader< ::google::protobuf::Empty>* Stock::Stub::AsyncStartSimulationRaw(::grpc::ClientContext* context, const ::stock_api::SimulationArgument& request, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc_impl::internal::ClientAsyncReaderFactory< ::google::protobuf::Empty>::Create(channel_.get(), cq, rpcmethod_StartSimulation_, context, request, true, tag);
+}
+
+::grpc::ClientAsyncReader< ::google::protobuf::Empty>* Stock::Stub::PrepareAsyncStartSimulationRaw(::grpc::ClientContext* context, const ::stock_api::SimulationArgument& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncReaderFactory< ::google::protobuf::Empty>::Create(channel_.get(), cq, rpcmethod_StartSimulation_, context, request, false, nullptr);
 }
 
 ::grpc::Status Stock::Stub::StopSimulation(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::google::protobuf::Empty* response) {
@@ -437,65 +533,85 @@ Stock::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[2],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::PastMinuteQuery, ::stock_api::CybosDayDatas>(
-          std::mem_fn(&Stock::Service::GetPastMinuteData), this)));
+      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::StockCodeQuery, ::stock_api::CybosDayDatas>(
+          std::mem_fn(&Stock::Service::GetTodayMinuteData), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[3],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
-          std::mem_fn(&Stock::Service::RequestCybosTickData), this)));
+      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::PastMinuteQuery, ::stock_api::CybosDayDatas>(
+          std::mem_fn(&Stock::Service::GetPastMinuteData), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[4],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
-          std::mem_fn(&Stock::Service::RequestCybosBidAsk), this)));
+          std::mem_fn(&Stock::Service::RequestCybosTickData), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[5],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
-          std::mem_fn(&Stock::Service::RequestCybosSubject), this)));
+          std::mem_fn(&Stock::Service::RequestCybosBidAsk), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[6],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
+          std::mem_fn(&Stock::Service::RequestCybosSubject), this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      Stock_method_names[7],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::StockSelection, ::google::protobuf::Empty>(
           std::mem_fn(&Stock::Service::SetCurrentStock), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Stock_method_names[7],
+      Stock_method_names[8],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::SimulationStatus, ::google::protobuf::Empty>(
+          std::mem_fn(&Stock::Service::SetSimulationStatus), this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      Stock_method_names[9],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::google::protobuf::Empty, ::stock_api::SimulationStatus>(
+          std::mem_fn(&Stock::Service::GetSimulationStatus), this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      Stock_method_names[10],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< Stock::Service, ::google::protobuf::Timestamp, ::stock_api::CodeList>(
           std::mem_fn(&Stock::Service::GetYesterdayTopAmountCodes), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Stock_method_names[8],
+      Stock_method_names[11],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::google::protobuf::Empty, ::stock_api::StockSelection>(
           std::mem_fn(&Stock::Service::ListenCurrentStock), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Stock_method_names[9],
+      Stock_method_names[12],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::google::protobuf::Empty, ::stock_api::CybosTickData>(
           std::mem_fn(&Stock::Service::ListenCybosTickData), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Stock_method_names[10],
+      Stock_method_names[13],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::google::protobuf::Empty, ::stock_api::CybosBidAskTickData>(
           std::mem_fn(&Stock::Service::ListenCybosBidAsk), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Stock_method_names[11],
+      Stock_method_names[14],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::google::protobuf::Empty, ::google::protobuf::Timestamp>(
           std::mem_fn(&Stock::Service::ListenCurrentTime), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Stock_method_names[12],
+      Stock_method_names[15],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::google::protobuf::Empty, ::stock_api::CybosSubjectTickData>(
           std::mem_fn(&Stock::Service::ListenCybosSubject), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Stock_method_names[13],
-      ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::stock_api::SimulationArgument, ::google::protobuf::Empty>(
+      Stock_method_names[16],
+      ::grpc::internal::RpcMethod::SERVER_STREAMING,
+      new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::google::protobuf::Empty, ::stock_api::SimulationStatus>(
+          std::mem_fn(&Stock::Service::ListenSimulationStatusChanged), this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      Stock_method_names[17],
+      ::grpc::internal::RpcMethod::SERVER_STREAMING,
+      new ::grpc::internal::ServerStreamingHandler< Stock::Service, ::stock_api::SimulationArgument, ::google::protobuf::Empty>(
           std::mem_fn(&Stock::Service::StartSimulation), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Stock_method_names[14],
+      Stock_method_names[18],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< Stock::Service, ::google::protobuf::Empty, ::google::protobuf::Empty>(
           std::mem_fn(&Stock::Service::StopSimulation), this)));
@@ -512,6 +628,13 @@ Stock::Service::~Service() {
 }
 
 ::grpc::Status Stock::Service::GetMinuteData(::grpc::ServerContext* context, const ::stock_api::StockQuery* request, ::stock_api::CybosDayDatas* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status Stock::Service::GetTodayMinuteData(::grpc::ServerContext* context, const ::stock_api::StockCodeQuery* request, ::stock_api::CybosDayDatas* response) {
   (void) context;
   (void) request;
   (void) response;
@@ -547,6 +670,20 @@ Stock::Service::~Service() {
 }
 
 ::grpc::Status Stock::Service::SetCurrentStock(::grpc::ServerContext* context, const ::stock_api::StockSelection* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status Stock::Service::SetSimulationStatus(::grpc::ServerContext* context, const ::stock_api::SimulationStatus* request, ::google::protobuf::Empty* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status Stock::Service::GetSimulationStatus(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::stock_api::SimulationStatus* response) {
   (void) context;
   (void) request;
   (void) response;
@@ -595,10 +732,17 @@ Stock::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status Stock::Service::StartSimulation(::grpc::ServerContext* context, const ::stock_api::SimulationArgument* request, ::google::protobuf::Empty* response) {
+::grpc::Status Stock::Service::ListenSimulationStatusChanged(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::grpc::ServerWriter< ::stock_api::SimulationStatus>* writer) {
   (void) context;
   (void) request;
-  (void) response;
+  (void) writer;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status Stock::Service::StartSimulation(::grpc::ServerContext* context, const ::stock_api::SimulationArgument* request, ::grpc::ServerWriter< ::google::protobuf::Empty>* writer) {
+  (void) context;
+  (void) request;
+  (void) writer;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
