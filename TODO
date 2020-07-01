@@ -3,20 +3,17 @@
     * stock_service.py 에서는 UTC 로 다시 변경됨
     * Server 에서 받을 때는 -9 로 하고, Server로 보낼 때는 +9로?
 
-    
-    * comparison 에서 10:40~10:50 A005380 데이터 가격이 이동 확인
 
-    * Simulation Speed 인자 qml_search에 포함
-    * Simulation Pause 추가
-    * Database 변환 작업 (timezone) - 실제 datetime.now() 에 timezone 기입시 정상적으로 DB 저장 확인
-    * Client datetime.now() 시 timezone 명시
-    * Search 연동 테스트- 코드 검색?
-    * Picker (Today Bull - VI - Yesterday Bull - Recent Search)
-    * Code to Company name 및 category 화 어떻게?
-        * 검색 및 연관 코드 검색에도 활용
-    * 월요일 실제 데이터 Listening 테스트 준비
+* comparison 에서 10:40~10:50 A005380 데이터 가격이 이동 확인
 
-
+* Simulation Pause 추가
+* Search 연동 테스트- 코드 검색?
+* Picker (Today Bull - VI - Yesterday Bull - Recent Search)
+* Code to Company name 및 category 화 어떻게?
+    * vi_follower 에 code 관련 DB 저장
+    * 검색 및 연관 코드 검색에도 활용
+    * category는 TAG 화, 예를 들어 화학@업종 과 같이 Freestyle
+    * TAG 는 별도 excel 로 구분 관리
 
 * Picker 검증 진행
     * 오전 장의 고점을 오후장에서 강하게 뚫어줄 때 (VI 가 걸린 가격을 회복했을 때)

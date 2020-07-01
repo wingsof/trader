@@ -2,6 +2,7 @@ from pymongo import MongoClient
 from datetime import date, timedelta, datetime
 
 from morning_server import message
+from morning_server import memcache
 from morning.back_data import fetch_stock_data
 from morning.back_data.holidays import is_holidays, get_working_days, get_yesterday
 from configs import db
@@ -87,4 +88,4 @@ def pre_handle_request(sock, header, body):
         code = db.tr_code(header['code'])
         return _get_data_from_db(code, from_date, until_date, '_INVESTOR')
 
-    return None, None
+    return memcache.get_cached_data(header, body)

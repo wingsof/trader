@@ -24,6 +24,7 @@ from morning_server import morning_stats
 from configs import time_info
 from morning_server import trade_machine
 from morning_server import clientmanager
+from morning_server import memcache
 from utils import slack
 
 
@@ -59,6 +60,7 @@ def handle_response(sock, header, body):
             client_manager.handle_block_response(header, data)
             partial_request.pop_item(header['_id'])
     else:
+        memcache.check_cacheable_data(header, body)
         client_manager.handle_block_response(header, body)
 
     logger.info('HANDLE RESPONSE DONE')

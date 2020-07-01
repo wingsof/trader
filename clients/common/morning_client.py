@@ -51,6 +51,14 @@ def get_reader():
     return _message_reader
 
 
+def code_to_name(code):
+    result = stock_api.request_code_to_name(get_reader(), code)
+    if isinstance(result, list):
+        if len(result) == 1:
+            return result[0]
+    return ''
+
+
 def is_kospi_code(code):
     global _kospi_code
     if _kospi_code is not None and code in _kospi_code:
@@ -192,7 +200,8 @@ def setup():
 
 
 if __name__ == '__main__':
-    result = get_past_day_data('A005930', date(2020, 2, 9), date(2020, 2, 12))
-    for data in result:
-        print(data)
+    print(code_to_name('A005930'))
+    #result = get_past_day_data('A005930', date(2020, 2, 9), date(2020, 2, 12))
+    #for data in result:
+    #    print(data)
 
