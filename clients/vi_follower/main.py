@@ -57,6 +57,9 @@ def start_vi_follower():
     db_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
 
     market_code = morning_client.get_all_market_code()
+    for m in market_code: # for caching company name in server
+        morning_client.code_to_name(m)
+
     yesterday_list = get_yesterday_data(datetime.now(), market_code)
     yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
     yesterday_list = yesterday_list[:1000]

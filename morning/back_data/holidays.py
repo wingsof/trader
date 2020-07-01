@@ -8,7 +8,7 @@ _holidays = []
 
 def read_holiday_excel(directory='morning' + os.sep + 'back_data' + os.sep + 'holiday_data'):
     global _holidays
-
+    directory =  os.environ['MORNING_PATH'] + os.sep + directory
     for subdir, _, files in os.walk(directory):
         for file in files:
             df = pd.read_excel(subdir + os.sep + file)
@@ -17,7 +17,9 @@ def read_holiday_excel(directory='morning' + os.sep + 'back_data' + os.sep + 'ho
                 if len(date_str) > 0:
                     _holidays.append(date(int(date_str[0]), int(date_str[1]), int(date_str[2])))
                 
+
 read_holiday_excel()
+
 
 def is_holidays(date):
     d = date if date.__class__.__name__ == 'date' else date.date()
@@ -27,6 +29,7 @@ def is_holidays(date):
         if d in _holidays:
             return True
     return False
+
 
 def get_yesterday(today):
     today = today if today.__class__.__name__ == 'date' else today.date()
