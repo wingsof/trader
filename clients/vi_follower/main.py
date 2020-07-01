@@ -32,6 +32,7 @@ def check_time():
     while True:
         now = datetime.now()
         if now.hour >= 18 and now.minute >= 35:
+            slack.send_slack_message('VI FOLLOWER DONE')
             sys.exit(0)
         gevent.sleep(60)
 
@@ -84,7 +85,6 @@ def start_vi_follower():
 
     time_check_thread = gevent.spawn(check_time)
     gevent.joinall([time_check_thread])
-    slack.send_slack_message('VI FOLLOWER DONE')
 
 
 if __name__ == '__main__':
