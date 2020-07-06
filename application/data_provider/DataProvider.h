@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QDateTime>
+#include <QStringList>
 #include "stock_provider.grpc.pb.h"
 #include <google/protobuf/timestamp.pb.h>
 
@@ -15,6 +16,7 @@ class TimeThread;
 class MinuteTick;
 class DayDataProvider;
 class SimulationEvent;
+class StockListThread;
 
 using stock_api::CybosBidAskTickData;
 using stock_api::CybosTickData;
@@ -45,8 +47,11 @@ public:
     void startBidAskTick();
     void startStockCodeListening();
     void startTimeListening();
+    void startListTypeListening();
 
     MinuteTick *getMinuteTick(const QString &code);
+
+    QString getCompanyName(const QString &code);
 
     bool isSimulation();
     void createSpeedStatistics(int secs=60);
@@ -56,6 +61,9 @@ public:
     void setCurrentStock(const QString &code, const QDateTime &dt, int countOfDays);
     void startSimulation(const QDateTime &dt);
     void stopSimulation();
+
+    QStringList getRecentSearch();
+    const QDateTime & getCurrentDateTime() { return currentDateTime; }
 
 private:
     DataProvider();
@@ -70,13 +78,17 @@ private:
     TimeThread *            timeThread;
     DayDataProvider *       dayDataProvider;
     SimulationEvent *       simulationEvent;
+    StockListThread *       stockListThread;
+
+
     QString currentStockCode;
+    QDateTime currentDateTime;
 
     SIMULATION m_simulationStatus;
 
     void _stopSimulation();
     bool _isSimulation();
-
+    void _setCurrentStock(const QString &code, const QDateTime &dt, int countOfDays);
 
 private slots:
     void convertTimeInfo(Timestamp *);
@@ -92,6 +104,7 @@ signals:
     void minuteDataReady(QString, CybosDayDatas *);
     void timeInfoArrived(QDateTime dt);
     void simulationStatusChanged(bool);
+    void stockListTypeChanged(QString);
 };
 
 

@@ -48,10 +48,12 @@ void MinuteTick::minuteDataReady(QString _code, CybosDayDatas * data) {
             else 
                 inTimeCount++;
         }
-        qWarning() << "receive today MinuteData size(" << data->day_data_size() << "), until : " << t << "\t inTime count " << inTimeCount;
+        qWarning() << "receive MinuteData size(" << data->day_data_size() << "), until : " << t << "\t inTime count " << inTimeCount;
 
         const int im = intervalMinute;
-        int queueCount = int(inTimeCount / im);
+        // if count 6 then complete 1 candle and use last as current
+        // if count is 5 then complete 1 -> (5-1)/3 = 1 and queueCount * im = 3, until < 5
+        int queueCount = int((inTimeCount - 1) / im);
 
         for (int i = 0; i < queueCount; i++) {
             for (int j = im * i; j < im * i + im; j++) {
@@ -62,7 +64,7 @@ void MinuteTick::minuteDataReady(QString _code, CybosDayDatas * data) {
             }
             pushToQueue();
         }
-
+        //qWarning() << "start from : " << queueCount * im << "\tuntil : " << inTimeCount;
         for (int i = queueCount * im; i < inTimeCount; i++) {
             if (i == queueCount * im)
                 setCurrentData(data->day_data(i));
@@ -74,7 +76,7 @@ void MinuteTick::minuteDataReady(QString _code, CybosDayDatas * data) {
 
 
 void MinuteTick::setCurrentData(CybosTickData *d, long msec) {
-    QDateTime dt = QDateTime::fromMSecsSinceEpoch(msec, Qt::UTC);
+    QDateTime dt = QDateTime::fromMSecsSinceEpoch(msec);
     currentData.set_date(dt.toString("yyyyMMdd").toUInt());
     currentData.set_time(dt.toString("hhmm").toUInt());
     currentData.set_start_price(d->current_price());
@@ -88,6 +90,7 @@ void MinuteTick::setCurrentData(CybosTickData *d, long msec) {
     currentData.set_amount(d->volume() * d->current_price());
     currentData.set_cum_sell_volume(d->cum_sell_volume());
     currentData.set_cum_buy_volume(d->cum_buy_volume());
+    //qWarning() << "setCurrentData Tick : " << dt;
     currentMSecs = msec;
 }
 
@@ -96,7 +99,8 @@ void MinuteTick::setCurrentData(const CybosDayData &d) {
     uint t = d.time();
     t = morning::Util::decreaseTime(t, 1);
 
-    QDateTime dt = QDateTime(QDate(int(d.date() / 10000), int(d.date() % 10000 / 100), int(d.date() % 100)), QTime(int(t / 100), int(t % 100), 0), Qt::UTC);
+    QDateTime dt = QDateTime(QDate(int(d.date() / 10000), int(d.date() % 10000 / 100), int(d.date() % 100)), QTime(int(t / 100), int(t % 100), 0));
+    //qWarning() << "setCurrentData Day Data : " << dt;
     currentData.set_date(d.date());
     currentData.set_time(t);
     currentData.set_start_price(d.start_price());
@@ -104,6 +108,9 @@ void MinuteTick::setCurrentData(const CybosDayData &d) {
     currentData.set_lowest_price(d.lowest_price());
     currentData.set_close_price(d.close_price());
     currentData.set_volume(d.volume());
+
+    setPriceBoundary(d.highest_price(), d.lowest_price());
+    setVolumeBoundary(d.volume());
     currentData.set_amount(d.amount());
     currentData.set_cum_sell_volume(d.cum_sell_volume());
     currentData.set_cum_buy_volume(d.cum_buy_volume());
@@ -162,6 +169,12 @@ void MinuteTick::setVolumeBoundary(uint volume) {
 }
 
 
+void MinuteTick::setPriceBoundary(int high, int low) {
+    setPriceBoundary(low);
+    setPriceBoundary(high);
+}
+
+
 void MinuteTick::setPriceBoundary(int price) {
     if (lowestPrice == 0 || lowestPrice > price)
         lowestPrice = price;
@@ -215,7 +228,10 @@ void MinuteTick::updateCurrentData(const CybosDayData &d) {
 
     currentData.set_close_price(d.close_price());
     currentData.set_volume(currentData.volume() + d.volume());
+
     setVolumeBoundary(currentData.volume());
+    setPriceBoundary(d.highest_price(), d.lowest_price());
+
     currentData.set_amount(currentData.amount() + d.amount());
     currentData.set_cum_sell_volume(d.cum_sell_volume());
     currentData.set_cum_buy_volume(d.cum_buy_volume());
@@ -238,7 +254,7 @@ void MinuteData::setCurrentStockCode(const QString &code) {
 }
 
 
-MinuteTick * MinuteData::getMinuteTick(const QString &code) {
+MinuteTick * MinuteData::getMinuteTick(const QString &code, const QDateTime &serverTime) {
     if (codeMap.contains(code))
         return codeMap[code];
 
@@ -253,6 +269,7 @@ void MinuteData::clearData() {
         delete i.value();
     }
     codeMap.clear();
+    currentDateTime = QDateTime();
 }
 
 
@@ -269,15 +286,19 @@ void MinuteData::requestPreviousData(MinuteTick *tick) {
                 tick, &MinuteTick::minuteDataReady);
     const QDateTime &dt = tick->getCreateDateTime();
 
-    if (dt.time().hour() * 100 + dt.time().minute() > 900) {
-        if (!isSimulation) 
-            dayDataProvider->requestTodayMinuteData(tick->getCode());
-        else 
-            dayDataProvider->requestMinuteData(tick->getCode(), dt, dt); // does not matter since query is done with 1 day
+    if (dt.date() == QDateTime::currentDateTime().date()) {
+        qWarning() << "request Today Minute Data";
+        dayDataProvider->requestTodayMinuteData(tick->getCode());
     }
     else {
-        tick->skipReceivePreviousData();
+        dayDataProvider->requestMinuteData(tick->getCode(), dt, dt); // does not matter since query is done with 1 day
+        qWarning() << "request past minute data " << tick->getCode() << "\t" << dt;
     }
+}
+
+
+void MinuteData::timeInfoArrived(QDateTime dt) {
+    currentDateTime = dt;
 }
 
 

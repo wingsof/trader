@@ -12,6 +12,7 @@ ApplicationWindow {
     visible: true
 
     TableView {
+        id: bidAskTable
         anchors.fill: parent
         columnSpacing: 0
         rowSpacing: 0

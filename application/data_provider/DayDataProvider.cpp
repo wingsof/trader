@@ -61,7 +61,7 @@ void DayDataCollector::process() {
         StockCodeQuery stockCodeQuery;
         stockCodeQuery.set_code(code.toStdString());
         stub_->GetTodayMinuteData(&context, stockCodeQuery, data);
-        emit minuteDataReady(code, data);
+        emit todayMinuteDataReady(code, data);
     }
 }
 
@@ -76,6 +76,17 @@ void DayDataProvider::requestDayData(const QString &code,
                                     int countOfDays,
                                     const QDateTime &untilTime) {
     QDateTime fromTime = untilTime.addDays(-countOfDays);
+
+    for (int i = 0; i < cachedQueue.count(); i++) {
+        if (cachedQueue[i].getCode() == code && cachedQueue[i].isCached() &&
+            cachedQueue[i].getDataType() == DAY_DATA && cachedQueue[i].getFromTime() == fromTime &&
+            cachedQueue[i].getUntilTime() == untilTime) {
+            qWarning() << "return cached day data : " << code;
+            emit dataReady(code, cachedQueue[i].getCachedData());
+            return;
+        }
+    }
+
     waitingQueue.append(DayDataQuery(code, fromTime, untilTime, DAY_DATA));
     checkWaitingList();
 }
@@ -84,6 +95,16 @@ void DayDataProvider::requestDayData(const QString &code,
 void DayDataProvider::requestMinuteData(const QString &code,
                                      const QDateTime &fromTime,
                                      const QDateTime &untilTime) {
+    for (int i = 0; i < cachedQueue.count(); i++) {
+        if (cachedQueue[i].getCode() == code && cachedQueue[i].isCached() &&
+            cachedQueue[i].getDataType() == MINUTE_DATA && cachedQueue[i].getFromTime() == fromTime &&
+            cachedQueue[i].getUntilTime() == untilTime) {
+            qWarning() << "return cached minute data : " << code;
+            emit minuteDataReady(code, cachedQueue[i].getCachedData());
+            return;
+        }
+    }
+
     waitingQueue.append(DayDataQuery(code, fromTime, untilTime, MINUTE_DATA));
     checkWaitingList();
 }
@@ -97,7 +118,15 @@ void DayDataProvider::requestTodayMinuteData(const QString &code) {
 
 void DayDataProvider::dataReceived(QString code, CybosDayDatas *data) {
     isProcessing = false;
-    qWarning() << "provider data received : " << data->day_data_size();
+    qWarning() << "provider day data received : " << data->day_data_size();
+    for (int i = 0; i < cachedQueue.count(); i++) {
+        if (cachedQueue[i].getCode() == code && !cachedQueue[i].isCached() &&
+            cachedQueue[i].getDataType() == DAY_DATA) {
+            cachedQueue[i].setResultData(data);
+            break;
+        }
+    }
+
     emit dataReady(code, data);
     checkWaitingList();
 }
@@ -105,7 +134,23 @@ void DayDataProvider::dataReceived(QString code, CybosDayDatas *data) {
 
 void DayDataProvider::minuteDataReceived(QString code, CybosDayDatas *data) {
     isProcessing = false;
-    qWarning() << "provider data received(minute) : " << data->day_data_size();
+    qWarning() << "provider minute data received(minute) : " << data->day_data_size();
+    for (int i = 0; i < cachedQueue.count(); i++) {
+        if (cachedQueue[i].getCode() == code && !cachedQueue[i].isCached() &&
+            cachedQueue[i].getDataType() == MINUTE_DATA) {
+            cachedQueue[i].setResultData(data);
+            break;
+        }
+    }
+
+    emit minuteDataReady(code, data);
+    checkWaitingList();
+}
+
+
+void DayDataProvider::todayMinuteDataReceived(QString code, CybosDayDatas *data) {
+    isProcessing = false;
+    qWarning() << "provider today minute data received(minute) : " << data->day_data_size();
     emit minuteDataReady(code, data);
     checkWaitingList();
 }
@@ -118,6 +163,9 @@ void DayDataProvider::checkWaitingList() {
     if (waitingQueue.count() > 0) {
         isProcessing = true;
         DayDataQuery query = waitingQueue.first();
+        if (query.getDataType() != TODAY_MINUTE_DATA)
+            cachedQueue.append(query);
+
         waitingQueue.removeFirst();
         QThread * thread = new QThread;
         DayDataCollector * worker = new DayDataCollector(stub_ ,query.getCode(), query.getFromTime(), query.getUntilTime(), query.getDataType());
@@ -125,6 +173,7 @@ void DayDataProvider::checkWaitingList() {
         connect(thread, SIGNAL(started()), worker, SLOT(process()));
         connect(worker, SIGNAL(finished(QString, CybosDayDatas*)), this, SLOT(dataReceived(QString, CybosDayDatas*)));
         connect(worker, &DayDataCollector::minuteDataReady, this,  &DayDataProvider::minuteDataReceived);
+        connect(worker, &DayDataCollector::todayMinuteDataReady, this,  &DayDataProvider::todayMinuteDataReceived);
         connect(worker, SIGNAL(finished(QString, CybosDayDatas*)), thread, SLOT(quit()));
         connect(worker, SIGNAL(finished(QString, CybosDayDatas*)), worker, SLOT(deleteLater()));
         connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));

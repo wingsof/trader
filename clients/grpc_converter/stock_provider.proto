@@ -11,16 +11,26 @@ service Stock {
   rpc GetMinuteData(StockQuery) returns (CybosDayDatas) {}
   rpc GetTodayMinuteData(StockCodeQuery) returns (CybosDayDatas) {}
   rpc GetPastMinuteData(PastMinuteQuery) returns (CybosDayDatas) {}
+
   rpc RequestCybosTickData(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosBidAsk(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosSubject(StockCodeQuery) returns (google.protobuf.Empty) {}
+
   rpc SetCurrentStock(StockSelection) returns (google.protobuf.Empty) {}
+  rpc GetCompanyName(StockCodeQuery) returns (CompanyName) {}
+
   rpc SetSimulationStatus(SimulationStatus) returns (google.protobuf.Empty) {}
   rpc GetSimulationStatus(google.protobuf.Empty) returns (SimulationStatus) {}
 
+  rpc GetFavoriteList(google.protobuf.Empty) returns (CodeList) {}
+  rpc AddFavorite(StockCodeQuery) returns (google.protobuf.Empty) {}
+  rpc RemoveFavorite(StockCodeQuery) returns (google.protobuf.Empty) {}
+
   rpc GetYesterdayTopAmountCodes(google.protobuf.Timestamp) returns (CodeList) {}
+  rpc GetRecentSearch(google.protobuf.Empty) returns (CodeList) {}
 
   rpc ListenCurrentStock(google.protobuf.Empty) returns (stream StockSelection) {}
+  rpc ListenListChanged(google.protobuf.Empty) returns (stream ListType) {}
 
   rpc ListenCybosTickData(google.protobuf.Empty) returns (stream CybosTickData) {}
   rpc ListenCybosBidAsk(google.protobuf.Empty) returns (stream CybosBidAskTickData) {}
@@ -61,6 +71,15 @@ message StockSelection {
     string code = 1;
     uint32 count_of_days = 2;
     google.protobuf.Timestamp until_datetime = 3;
+}
+
+
+message ListType {
+    string type_name = 1;
+}
+
+message CompanyName {
+    string company_name = 1;
 }
 
 

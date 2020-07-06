@@ -42,6 +42,7 @@ public:
 private:
     std::shared_ptr<stock_api::Stock::Stub> stub_;
     QList<DayDataQuery> waitingQueue;
+    QList<DayDataQuery> cachedQueue;
     bool isProcessing = false;
 
 private:
@@ -50,6 +51,7 @@ private:
 private slots:
     void dataReceived(QString, CybosDayDatas*);
     void minuteDataReceived(QString, CybosDayDatas*);
+    void todayMinuteDataReceived(QString, CybosDayDatas*);
 
 signals:
     void dataReady(QString, CybosDayDatas*);
@@ -64,6 +66,7 @@ public:
         mFromTime = fromTime;
         mUntilTime = untilTime;
         mDataType = type;
+        cachedData = nullptr;
     }
 
 public:
@@ -71,12 +74,16 @@ public:
     const QDateTime &getFromTime() { return mFromTime; }
     const QDateTime &getUntilTime() { return mUntilTime; }
     DayDataProvider::DATA_TYPE getDataType() { return mDataType; }
+    bool isCached() { return cachedData != nullptr; }
+    void setResultData(CybosDayDatas *d) { cachedData = new CybosDayDatas(*d); }
+    CybosDayDatas *getCachedData() { return cachedData; }
 
 private:
     QString mCode;
     QDateTime mFromTime;
     QDateTime mUntilTime;
     DayDataProvider::DATA_TYPE mDataType;
+    CybosDayDatas *cachedData;
 };
 
 
@@ -103,6 +110,7 @@ public slots:
 signals:
     void finished(QString, CybosDayDatas *);
     void minuteDataReady(QString, CybosDayDatas *);
+    void todayMinuteDataReady(QString, CybosDayDatas *);
 };
 
 

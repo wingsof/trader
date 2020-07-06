@@ -59,6 +59,7 @@ private:
     void updateCurrentData(const CybosDayData &d);
     void pushToQueue();
     void setPriceBoundary(int price);
+    void setPriceBoundary(int high, int low);
     void setVolumeBoundary(uint volume);
 
 public:
@@ -74,7 +75,7 @@ class MinuteData : public QObject {
 Q_OBJECT
 public:
     MinuteData(QObject *parent, std::shared_ptr<stock_api::Stock::Stub> stub, int min, const QString &code, bool isSimul);
-    MinuteTick * getMinuteTick(const QString &code);
+    MinuteTick * getMinuteTick(const QString &code, const QDateTime &serverTime);
     void setSimulation(bool isSimul);
     void setCurrentStockCode(const QString &code);
 
@@ -87,11 +88,13 @@ private:
     void clearData();
     DayDataProvider *dayDataProvider;
     QString currentStockCode;
+    QDateTime currentDateTime;
 
     void requestPreviousData(MinuteTick *tick);
 
 public slots:
     void stockTickArrived(CybosTickData *);
+    void timeInfoArrived(QDateTime);
 
 signals:
     void minuteTickUpdated(QString);

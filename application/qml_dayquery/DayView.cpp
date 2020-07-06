@@ -3,7 +3,10 @@
 
 DayView::DayView(QQuickItem *parent) : QQuickPaintedItem(parent) {
     qWarning() << "DayView constructor";
+    setAcceptedMouseButtons(Qt::AllButtons);
     dayData = new DayData;
+    priceEndY = 0.0;
+    drawHorizontalY = 0.0;
     connect(DataProvider::getInstance(), &DataProvider::stockCodeChanged, this, &DayView::searchReceived);
     connect(DataProvider::getInstance(), &DataProvider::dayDataReady, this, &DayView::dataReceived);
     connect(DataProvider::getInstance(), &DataProvider::tickArrived, this, &DayView::tickDataArrived);
@@ -25,6 +28,7 @@ void DayView::search(QString _stockCode, QDateTime _untilTime, int _countDays) {
         stockCode = _stockCode;
         countDays = _countDays;
         untilTime = _untilTime;
+        priceEndY = 0.0;
         DataProvider::getInstance()->requestDayData(stockCode, countDays, untilTime.addDays(-1));
         qWarning() << "search " << _stockCode << " " << _countDays << " " << untilTime.addDays(-1);
     }
@@ -34,7 +38,6 @@ void DayView::search(QString _stockCode, QDateTime _untilTime, int _countDays) {
 void DayView::dataReceived(QString code, CybosDayDatas *datas) {
     dayData->setData(code, datas);
     update();
-    qWarning() << "update";
 }
 
  
@@ -130,7 +133,7 @@ void DayView::drawPriceLabels(QPainter *painter, qreal startX, qreal priceChartE
 void DayView::drawCandle(QPainter *painter, const CybosDayData *data, qreal startX, qreal horizontalGridStep, qreal priceChartEndY) {
     QColor color;
     painter->save();
-    qWarning() << "drawCandle : " << data->close_price() << "\t startX : " << startX;
+    //qWarning() << "drawCandle : " << data->close_price() << "\t startX : " << startX;
     if (data->close_price() >= data->start_price()) 
         color.setRgb(255, 0, 0);
     else 
@@ -195,7 +198,7 @@ void DayView::paint(QPainter *painter) {
     if (!dayData->hasData() || dayData->countOfData() == 0) 
         return;
 
-    qreal priceEndY = verticalGridStep * 2 * 6; // price chart end Y
+    priceEndY = verticalGridStep * 2 * 6; // price chart end Y
     drawPriceDistribution(painter, 0.0, distributionWidth, priceEndY, verticalGridStep);
     drawForeignerPriceDistribution(painter, distributionWidth, distributionWidth, priceEndY, verticalGridStep);
     drawInstitutionPriceDistribution(painter, distributionWidth * 2, distributionWidth, priceEndY, verticalGridStep);
@@ -283,6 +286,32 @@ void DayView::paint(QPainter *painter) {
                                 (int)current_y,
                                  QString::number(dayData->getTodayData()->close_price()));
     }
+
+    if ( (drawHorizontalY > 0.0 && drawHorizontalY < priceEndY) &&
+            (dayData->getTodayData()->close_price() != 0 || dayData->countOfData() != 0)) {
+        int closePrice = dayData->getTodayData()->close_price();
+        if (closePrice == 0)
+            closePrice = dayData->getDayData(dayData->countOfData() - 1).close_price();
+        
+        qreal hStartY = dayData->mapPriceToPos(closePrice, priceEndY, 0);
+        int hPrice = dayData->mapPosToPrice(int(drawHorizontalY), priceEndY, 0);
+        qreal profit = qreal(hPrice - closePrice) / closePrice * 100.0;
+
+        painter->setBrush(QBrush(QColor("#2000ff00")));
+        painter->drawRect(QRectF(0.0, hStartY, itemSize.width() - priceLabelWidth, drawHorizontalY - hStartY));
+
+        QPen pen;
+        if (profit > 0.0)
+            pen.setColor("#ff0000");
+        else
+            pen.setColor("#0000ff");
+        pen.setWidth(1);
+        QFont font = painter->font();
+        font.setPointSize(15);
+        painter->setFont(font);
+        painter->setPen(pen);
+        painter->drawText(QRectF(0.0, hStartY, itemSize.width() - priceLabelWidth, drawHorizontalY - hStartY), Qt::AlignCenter, QString::number(hPrice) + "   " + QString::number(profit, 'f', 1));
+    }
 }
 
 
@@ -307,6 +336,27 @@ void DayView::tickDataArrived(CybosTickData *data) {
         update();
     }
 }
+
+
+void DayView::mousePressEvent(QMouseEvent *e) {}
+
+
+void DayView::mouseReleaseEvent(QMouseEvent *e) {
+    qWarning() << "mouseReleaseEvent : " << e->localPos();
+    drawHorizontalY = 0.0;
+    update();
+}
+
+
+void DayView::mouseMoveEvent(QMouseEvent *e) {
+    qWarning() << "mouseMoveEvent : " << e->y();
+    if (priceEndY == 0.0)
+        drawHorizontalY = 0.0;
+    else 
+        drawHorizontalY = e->y();
+    update();
+}
+
 
 
 DayData::DayData() : data(NULL) {
@@ -340,10 +390,12 @@ void DayData::setTodayData(int o, int h, int l, int c, unsigned long v) {
 void DayData::setData(QString _code, CybosDayDatas *dayData) {
     code = _code;
 
+    /*
     if (data != NULL) {
         data->clear_day_data();
         delete data;
-    }
+    }*/
+
     data = dayData;
     qWarning() << "setData count : " << data->day_data_size();
     if (data->day_data_size() == 0) 
@@ -449,6 +501,17 @@ qreal DayData::mapPriceToPos(int price, qreal startY, qreal endY) {
     //qWarning() << "price : " << price << ", gap: " << priceGap << ", price pos: " << pricePosition << ", " << "Y : " << startY << ", " << endY << "\tresult : " << result;
     return result;
 }
+
+
+int DayData::mapPosToPrice(int yPos, qreal startY, qreal endY) {
+    qreal priceGap = priceSteps.at(priceSteps.size() - 1) - priceSteps.at(0); 
+    qreal positionGap = startY - endY;
+    qreal cursorPos = startY - (qreal)yPos;
+    qreal result = cursorPos / positionGap * priceGap;
+    return priceSteps.at(0) + int(result);
+    // result / priceGap = (startY - yPos) / positionGap;
+}
+
 
 qreal DayData::mapVolumeToPos(unsigned long volume, qreal startY, qreal endY) {
     qreal positionGap = startY - endY;

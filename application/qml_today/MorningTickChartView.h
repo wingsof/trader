@@ -33,6 +33,7 @@ private:
     bool pastMinuteDataReceived;
 
     void resetData();
+    void calculateMinMaxRange();
     void setPriceSteps(int h, int l);
     void updatePriceSteps(int h, int l);
     void setVolumeMinMax(uint h, uint l);

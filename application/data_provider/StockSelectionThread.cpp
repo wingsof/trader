@@ -24,18 +24,6 @@ StockSelectionThread::StockSelectionThread(std::shared_ptr<stock_api::Stock::Stu
 }
 
 
-void StockSelectionThread::setCurrentStock(const QString &code, const QDateTime &dt, int countOfDays) {
-    ClientContext context;
-    StockSelection data;
-    Empty empty;
-    data.set_code(code.toStdString());
-    Timestamp *untilTime = new Timestamp(TimeUtil::TimeTToTimestamp(dt.toTime_t()));
-    data.set_allocated_until_datetime(untilTime);
-    data.set_count_of_days(countOfDays);
-    stub_->SetCurrentStock(&context, data, &empty);
-}
-
-
 void StockSelectionThread::run() {
     ClientContext context;
     Empty empty;
@@ -44,7 +32,7 @@ void StockSelectionThread::run() {
         stub_->ListenCurrentStock(&context, empty)); 
     while (reader->Read(&data)) {
         long msec = TimeUtil::TimestampToMilliseconds(data.until_datetime());
-        std::cout << "Read StockSelection: " << data.code() << std::endl;
+        //std::cout << "Read StockSelection: " << data.code() << std::endl;
         emit stockCodeChanged(QString::fromStdString(data.code()),
                               QDateTime::fromMSecsSinceEpoch(msec).toLocalTime(),
                               data.count_of_days());

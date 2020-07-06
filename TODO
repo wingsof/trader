@@ -1,3 +1,8 @@
+* Mouse press and move
+    - 빨간 줄로 해당 가격과 현재 가격 or 마지막 close 가격에서 몇 % 인지
+* Today 에서 VI 인 경우 어떻게 표시?
+* /home/nnnlife/src/Qt/qt5/qtdeclarative/examples/quick/models/abstractitemmodel 참조 
+
 * TIMEZONE
     * qml_search -> 입력 -> StockSelection 에서 LocalTime 으로 Receive   
     * stock_service.py 에서는 UTC 로 다시 변경됨

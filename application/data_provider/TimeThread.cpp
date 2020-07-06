@@ -7,6 +7,7 @@
 #include <grpcpp/security/credentials.h>
 #include <google/protobuf/util/time_util.h>
 #include <google/protobuf/timestamp.pb.h>
+#include <QDebug>
 
 
 using grpc::Channel;

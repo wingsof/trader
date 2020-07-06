@@ -31,6 +31,7 @@ application/qml_today/qml_today
 application/qml_comparison/qml_comparison
 application/qml_search/qml_search
 application/qml_bidask/morning_bidask
+application/qml_favorite/qml_favorite
 *.so*
 *.so.*
 *.qrc

@@ -34,6 +34,7 @@ SOURCES += \
            BidAskThread.cpp \
            TimeThread.cpp \
            StockSelectionThread.cpp \
+           StockListThread.cpp \
            SpeedStatistics.cpp \
            MinuteData.cpp \
            DayDataProvider.cpp \
@@ -46,6 +47,7 @@ HEADERS += stock_provider.grpc.pb.h \
            SimulationEvent.h \
            TickThread.h \
            BidAskThread.h \
+           StockListThread.h \
            TimeThread.h \
            StockSelectionThread.h \
            SpeedStatistics.h \

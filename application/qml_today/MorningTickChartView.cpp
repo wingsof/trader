@@ -24,6 +24,7 @@ MorningTickChartView::MorningTickChartView(QQuickItem *parent)
 void MorningTickChartView::resetData() {
     currentVolumeMin = currentVolumeMax = 0;
     pastMinuteDataReceived = false;
+    priceSteps.clear();
     yesterdayMinInfo.clear();
 }
 
@@ -39,16 +40,15 @@ void MorningTickChartView::setCurrentStock(QString code, QDateTime dt, int count
 
 
 void MorningTickChartView::minuteTickUpdated(QString code) {
-    if (currentStockCode != code)
+    if (currentStockCode != code || !pastMinuteDataReceived)
         return;
 
     MinuteTick *mt = DataProvider::getInstance()->getMinuteTick(currentStockCode);
-    //qWarning() << "highest : " << mt->getHighestPrice() << ", lowest" << mt->getLowestPrice() << "highest volume: " << currentVolumeMax << "\tlowest volume: " << currentVolumeMin;
+    qWarning() << "(minute Tick) highest : " << mt->getHighestPrice() << ", lowest" << mt->getLowestPrice() << "highest volume: " << currentVolumeMax << "\tlowest volume: " << currentVolumeMin;
     updatePriceSteps(mt->getHighestPrice(), mt->getLowestPrice());
     updateVolumeMax(mt->getHighestVolume());
 
-    if (pastMinuteDataReceived) // to prevent initial price scaling
-        update(); 
+    update(); 
 }
 
 
@@ -74,24 +74,49 @@ void MorningTickChartView::dayDataReceived(QString code, CybosDayDatas *data) {
 }
 
 
+void MorningTickChartView::calculateMinMaxRange() {
+    MinuteTick *mt = DataProvider::getInstance()->getMinuteTick(currentStockCode);
+    int highest = yesterdayMinInfo.getHighestPrice();
+    int lowest = yesterdayMinInfo.getLowestPrice();
+    uint highestVolume = yesterdayMinInfo.getHighestVolume();
+    qWarning() << "(yesterday) " << highest << ", " << lowest;
+    if (yesterdayMinInfo.isCloserToMaximum()) 
+        setPriceSteps((int)(highest * 1.05), lowest);
+    else 
+        setPriceSteps(highest, (int)(lowest * 0.95));
+
+    if (mt != NULL) {
+        qWarning() << "(mt) " << mt->getHighestPrice() << ", " << mt->getLowestPrice();
+        if (mt->getHighestPrice() > highest)
+            highest = mt->getHighestPrice();
+
+        // Start Simulation -> Launch Tick App -> Tick is arrived first but not lowest price is calculated yet
+        if (mt->getLowestPrice() != 0 && mt->getLowestPrice() < lowest)
+            lowest = mt->getLowestPrice();
+
+        if (mt->getHighestVolume() > highestVolume)
+            highestVolume = mt->getHighestVolume();
+
+        updatePriceSteps(highest, lowest);
+    }
+
+
+    setVolumeMinMax(highestVolume, yesterdayMinInfo.getLowestVolume());
+}
+
+
 void MorningTickChartView::minuteDataReceived(QString code, CybosDayDatas *data) {
     if (currentStockCode != code) 
         return;
-    //qWarning() << "minute data : " << data->day_data_size();
+
     int count = data->day_data_size();
 
+    qWarning() << "(minuteDataReceived) : " << count;
     if (count > 0) {
         //qWarning() << "date : " << data->day_data(0).date();
+        // TODO: consider when count is 0
         yesterdayMinInfo.setData(data);
-        if (yesterdayMinInfo.isCloserToMaximum()) {
-            setPriceSteps((int)(yesterdayMinInfo.getHighestPrice() * 1.05),
-                            yesterdayMinInfo.getLowestPrice());
-        }
-        else {
-            setPriceSteps(yesterdayMinInfo.getHighestPrice(),
-                            (int)(yesterdayMinInfo.getLowestPrice() * 0.95));
-        }
-        setVolumeMinMax(yesterdayMinInfo.getHighestVolume(), yesterdayMinInfo.getLowestVolume());
+        calculateMinMaxRange();
         update();
     }
     else {
@@ -351,6 +376,9 @@ void MorningTickChartView::paint(QPainter *painter) {
     //qWarning() << canvasSize << "\t" << cellWidth * PRICE_COLUMN_COUNT / 2;
 
     drawGridLine(painter, cellWidth, cellHeight);
+    if (priceSteps.count() == 0)
+        return;
+
     drawPriceLabels(painter, canvasSize.width() - cellWidth * 2 + 10, cellHeight);
     qreal startX = 0;
     qreal tickCount = 131; // normally 9:00 ~ 15:30 : 390 min / 3 : 130 ticks

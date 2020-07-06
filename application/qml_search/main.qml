@@ -149,14 +149,24 @@ ApplicationWindow {
                 text: "VOL Trend"
                 Layout.preferredWidth: 85 
                 Layout.preferredHeight: 30 
-                Layout.rightMargin: 50 
                 onClicked: {
                     SearchBackend.launchVolumeGraph()
                 }
             }
 
+            Button {
+                text: "Favorite"
+                Layout.preferredWidth: 85 
+                Layout.preferredHeight: 30 
+                onClicked: {
+                    SearchBackend.launchFavorite()
+                }
+            }
+
+
             Text {
-                text: SearchBackend.serverDateTime.toLocaleDateString(Qt.locale("ko_KR"), "yyyy-MM-dd") + " " + SearchBackend.serverDateTime.toLocaleTimeString(Qt.locale("ko_KR"), "hh:mm")
+                id: timeText
+                text: SearchBackend.serverDateTime.toLocaleDateString(Qt.locale("ko_KR"), "yyyy-MM-dd") + "  " + "<b>" + SearchBackend.serverDateTime.toLocaleTimeString(Qt.locale("ko_KR"), "hh:mm:ss") + "</b>"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
                 Layout.preferredWidth: 300 
@@ -166,6 +176,7 @@ ApplicationWindow {
                 Connections {
                     target: SearchBackend
                     function onServerDateTimeChanged(dt) {
+                        timeText.text = SearchBackend.serverDateTime.toLocaleDateString(Qt.locale("ko_KR"), "yyyy-MM-dd") + "  " + "<b>" + SearchBackend.serverDateTime.toLocaleTimeString(Qt.locale("ko_KR"), "hh:mm:ss") + "</b>"
                     }
                 }
             }
@@ -178,9 +189,13 @@ ApplicationWindow {
             }
 
             TextField {
+                id: speedField
                 Layout.preferredWidth: 50 
                 Layout.preferredHeight: 30 
                 text: SearchBackend.simulationSpeed
+                onAccepted: {
+                    SearchBackend.simulationSpeed = parseFloat(speedField.text)
+                }
             }
         }
     }

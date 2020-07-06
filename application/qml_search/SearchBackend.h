@@ -41,6 +41,7 @@ public:
     Q_INVOKABLE void launchVolumeGraph();
     Q_INVOKABLE void launchBidAsk();
     Q_INVOKABLE void launchDayChart();
+    Q_INVOKABLE void launchFavorite();
 
     Q_INVOKABLE void startSimulation(const QDateTime &dt);
     Q_INVOKABLE void stopSimulation();
@@ -52,6 +53,8 @@ private:
     int m_days;
     bool m_simulationRunning;
     qreal m_simulationSpeed;
+
+    bool launchApp(const QString &path, const QString &name);
 
 private slots:
     void stockCodeChanged(QString code, QDateTime untilTime, int countOfDays);

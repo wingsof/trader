@@ -18,6 +18,8 @@ Item {
         TextField {
             id: yearField
             Layout.preferredWidth: 80
+            inputMethodHints: Qt.ImhDigitsOnly
+            maximumLength: 4
             text: currentDate.getFullYear()
         }
 
@@ -28,6 +30,8 @@ Item {
         TextField {
             id: monthField
             Layout.preferredWidth: 40
+            inputMethodHints: Qt.ImhDigitsOnly
+            maximumLength: 2
             text: currentDate.getMonth() + 1
         }
 
@@ -38,6 +42,8 @@ Item {
         TextField {
             id: dayField
             Layout.preferredWidth: 40
+            inputMethodHints: Qt.ImhDigitsOnly
+            maximumLength: 2
             text: currentDate.getDate()
         }
 
@@ -48,6 +54,8 @@ Item {
         TextField {
             id: hourField
             Layout.preferredWidth: 40
+            inputMethodHints: Qt.ImhDigitsOnly
+            maximumLength: 2
             text: currentDate.getHours()
         }
 
@@ -58,6 +66,8 @@ Item {
         TextField {
             id: minuteField
             Layout.preferredWidth: 40
+            inputMethodHints: Qt.ImhDigitsOnly
+            maximumLength: 2
             text: currentDate.getMinutes()
         }
     }

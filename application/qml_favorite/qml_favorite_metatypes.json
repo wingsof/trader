@@ -1,0 +1,219 @@
+[
+    {
+        "classes": [
+            {
+                "className": "StockInfo",
+                "object": true,
+                "qualifiedClassName": "StockInfo",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "infoUpdated",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "code",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "data",
+                                "type": "CybosDayDatas*"
+                            }
+                        ],
+                        "name": "dayDataReceived",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            },
+            {
+                "className": "StockStat",
+                "object": true,
+                "qualifiedClassName": "StockStat",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "code",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "untilTime",
+                                "type": "QDateTime"
+                            },
+                            {
+                                "name": "countOfDays",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "stockCodeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "stockListTypeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "infoUpdated",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "code",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "untilTime",
+                                "type": "QDateTime"
+                            },
+                            {
+                                "name": "countOfDays",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "slotStockCodeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "type": "CybosTickData*"
+                            }
+                        ],
+                        "name": "tickArrived",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "StockStat.h",
+        "outputRevision": 67
+    },
+    {
+        "classes": [
+            {
+                "className": "RecentCode",
+                "object": true,
+                "qualifiedClassName": "RecentCode",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "auto"
+                    }
+                ],
+                "className": "RecentListModel",
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "currentSelectionChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "object": true,
+                "qualifiedClassName": "RecentListModel",
+                "slots": [
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "code",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "untilTime",
+                                "type": "QDateTime"
+                            },
+                            {
+                                "name": "countOfDays",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "stockCodeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "stockListTypeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "infoUpdated",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QAbstractListModel"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "RecentListModel.h",
+        "outputRevision": 67
+    }
+]

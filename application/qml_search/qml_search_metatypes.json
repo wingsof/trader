@@ -55,6 +55,11 @@
                     },
                     {
                         "access": "public",
+                        "name": "launchFavorite",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
                         "arguments": [
                             {
                                 "name": "dt",

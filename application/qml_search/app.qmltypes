@@ -44,6 +44,7 @@ Module {
         Method { name: "launchVolumeGraph" }
         Method { name: "launchBidAsk" }
         Method { name: "launchDayChart" }
+        Method { name: "launchFavorite" }
         Method {
             name: "startSimulation"
             Parameter { name: "dt"; type: "QDateTime" }

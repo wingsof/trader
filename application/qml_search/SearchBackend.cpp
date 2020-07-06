@@ -59,6 +59,8 @@ QDateTime SearchBackend::serverDateTime() {
 
 
 void SearchBackend::stockCodeChanged(QString code, QDateTime untilTime, int countOfDays) {
+    Q_UNUSED(untilTime);
+    Q_UNUSED(countOfDays);
     setCurrentCode(code);
 }
 
@@ -66,7 +68,6 @@ void SearchBackend::stockCodeChanged(QString code, QDateTime untilTime, int coun
 void SearchBackend::setSimulationRunning(bool r) {
     qWarning() << "setSimulationRunning: org " << m_simulationRunning << "\t value : " << r;
     if (m_simulationRunning ^ r) {
-        qWarning() << "changed";
         m_simulationRunning = r;
         emit simulationRunningChanged();
     }
@@ -100,7 +101,7 @@ void SearchBackend::setServerDateTime(const QDateTime &dt) {
 
 
 void SearchBackend::setSimulationSpeed(qreal s) {
-    if ( m_simulationSpeed != s) {
+    if (m_simulationRunning &&  m_simulationSpeed != s) {
         m_simulationSpeed = s;
         emit simulationSpeedChanged();
     }
@@ -138,34 +139,35 @@ void SearchBackend::sendCurrent(const QString &code, const QDateTime &dt, int co
 }
 
 
-void SearchBackend::launchTick() {
+bool SearchBackend::launchApp(const QString &path, const QString &name) {
     QProcess *process = new QProcess;
     connect(process, &QProcess::started, process, &QProcess::deleteLater);
-    QString dir = "/home/nnnlife/workspace/trader/application/qml_today";
-    bool ret = process->startDetached(dir + "/qml_today", QStringList(), dir);
+    QString dir = qgetenv("MORNING_PATH") + path;
+    bool ret = process->startDetached(dir + "/" + name, QStringList(), dir);
+    return ret;
+}
+
+
+void SearchBackend::launchTick() {
+    launchApp("/application/qml_today", "qml_today");
 }
 
 
 void SearchBackend::launchVolumeGraph() {
-    QProcess *process = new QProcess;
-    connect(process, &QProcess::started, process, &QProcess::deleteLater);
-    QString dir = "/home/nnnlife/workspace/trader/application/qml_comparison";
-    bool ret = process->startDetached(dir + "/qml_comparison", QStringList(), dir);
+    launchApp("/application/qml_comparison", "qml_comparison");
 }
 
 
 void SearchBackend::launchBidAsk() {
-    QProcess *process = new QProcess;
-    connect(process, &QProcess::started, process, &QProcess::deleteLater);
-    QString dir = "/home/nnnlife/workspace/trader/application/qml_bidask";
-    bool ret = process->startDetached(dir + "/morning_bidask", QStringList(), dir);
-
+    launchApp("/application/qml_bidask", "morning_bidask");
 }
 
 
 void SearchBackend::launchDayChart() {
-    QProcess *process = new QProcess;
-    connect(process, &QProcess::started, process, &QProcess::deleteLater);
-    QString dir = "/home/nnnlife/workspace/trader/application/qml_dayquery";
-    bool ret = process->startDetached(dir + "/morning_dayview", QStringList(), dir);
+    launchApp("/application/qml_dayquery", "morning_dayview");
+}
+
+
+void SearchBackend::launchFavorite() {
+    launchApp("/application/qml_favorite", "qml_favorite");
 }
