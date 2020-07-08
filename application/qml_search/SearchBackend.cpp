@@ -9,7 +9,6 @@ SearchBackend::SearchBackend(QObject *parent)
     m_currentCode = "";
     m_currentDateTime = QDateTime::currentDateTime();
     m_serverDateTime = QDateTime::currentDateTime();
-    m_days = 120;
     m_simulationSpeed = 1.0;
 
     connect(DataProvider::getInstance(), &DataProvider::stockCodeChanged,
@@ -17,13 +16,13 @@ SearchBackend::SearchBackend(QObject *parent)
     connect(DataProvider::getInstance(), &DataProvider::timeInfoArrived, this, &SearchBackend::timeInfoArrived);
     connect(DataProvider::getInstance(), &DataProvider::simulationStatusChanged, this, &SearchBackend::setSimulationStatus);
     DataProvider::getInstance()->startStockCodeListening();
-    DataProvider::getInstance()->startTimeListening();
     m_simulationRunning = DataProvider::getInstance()->isSimulation();
     qWarning() << "SearchBackend";
 }
 
 
 void SearchBackend::timeInfoArrived(QDateTime dt) {
+    qWarning() << "SearchBackend>\t" << "timeInfoArrived : " << dt;
     setServerDateTime(dt);
 }
 
@@ -35,11 +34,6 @@ QString SearchBackend::currentCode() {
 
 QDateTime SearchBackend::currentDateTime() {
     return m_currentDateTime; 
-}
-
-
-int SearchBackend::days() {
-    return m_days;
 }
 
 
@@ -58,9 +52,7 @@ QDateTime SearchBackend::serverDateTime() {
 }
 
 
-void SearchBackend::stockCodeChanged(QString code, QDateTime untilTime, int countOfDays) {
-    Q_UNUSED(untilTime);
-    Q_UNUSED(countOfDays);
+void SearchBackend::stockCodeChanged(QString code) {
     setCurrentCode(code);
 }
 
@@ -80,9 +72,9 @@ void SearchBackend::setSimulationStatus(bool status) {
 }
 
 
-void SearchBackend::startSimulation(const QDateTime &dt) {
-    qWarning() << "startSimulation : " << dt;
-    DataProvider::getInstance()->startSimulation(dt);
+void SearchBackend::startSimulation() {
+    qWarning() << "startSimulation";
+    DataProvider::getInstance()->startSimulation();
 }
 
 
@@ -125,17 +117,13 @@ void SearchBackend::setCurrentDateTime(const QDateTime &dt) {
 }
 
 
-void SearchBackend::setDays(int d) {
-    if (m_days != d) {
-        m_days = d;
-        emit daysChanged();
-    }
+void SearchBackend::sendCurrentStock(const QString &code) {
+    DataProvider::getInstance()->setCurrentStock(code);
 }
 
 
-void SearchBackend::sendCurrent(const QString &code, const QDateTime &dt, int countOfDays) {
-    qWarning() << "sendCurrent : " << code << "\t" << dt << "\t" << countOfDays;
-    DataProvider::getInstance()->setCurrentStock(code, dt, countOfDays);
+void SearchBackend::sendCurrentDateTime(const QDateTime &dt) {
+    DataProvider::getInstance()->setCurrentDateTime(dt);
 }
 
 

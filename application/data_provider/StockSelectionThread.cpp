@@ -14,7 +14,7 @@ using grpc::Status;
 using google::protobuf::Empty;
 using google::protobuf::Timestamp;
 
-using stock_api::StockSelection;
+using stock_api::StockCodeQuery;
 using google::protobuf::util::TimeUtil;
 
 
@@ -27,15 +27,11 @@ StockSelectionThread::StockSelectionThread(std::shared_ptr<stock_api::Stock::Stu
 void StockSelectionThread::run() {
     ClientContext context;
     Empty empty;
-    StockSelection data;
-    std::unique_ptr<ClientReader<StockSelection> > reader(
+    StockCodeQuery data;
+    std::unique_ptr<ClientReader<StockCodeQuery> > reader(
         stub_->ListenCurrentStock(&context, empty)); 
     while (reader->Read(&data)) {
-        long msec = TimeUtil::TimestampToMilliseconds(data.until_datetime());
-        //std::cout << "Read StockSelection: " << data.code() << std::endl;
-        emit stockCodeChanged(QString::fromStdString(data.code()),
-                              QDateTime::fromMSecsSinceEpoch(msec).toLocalTime(),
-                              data.count_of_days());
+        emit stockCodeChanged(QString::fromStdString(data.code()));
     }
     Status status = reader->Finish();
     if (status.ok()) {

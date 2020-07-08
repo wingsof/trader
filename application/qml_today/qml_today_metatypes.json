@@ -17,15 +17,19 @@
                         "arguments": [
                             {
                                 "type": "QString"
-                            },
-                            {
-                                "type": "QDateTime"
-                            },
-                            {
-                                "type": "int"
                             }
                         ],
                         "name": "setCurrentStock",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "type": "QDateTime"
+                            }
+                        ],
+                        "name": "timeInfoArrived",
                         "returnType": "void"
                     },
                     {

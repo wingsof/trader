@@ -49,7 +49,7 @@ struct TableStruct_stock_5fprovider_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[14]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[12]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -84,9 +84,6 @@ extern ListTypeDefaultTypeInternal _ListType_default_instance_;
 class PastMinuteQuery;
 class PastMinuteQueryDefaultTypeInternal;
 extern PastMinuteQueryDefaultTypeInternal _PastMinuteQuery_default_instance_;
-class SimulationArgument;
-class SimulationArgumentDefaultTypeInternal;
-extern SimulationArgumentDefaultTypeInternal _SimulationArgument_default_instance_;
 class SimulationStatus;
 class SimulationStatusDefaultTypeInternal;
 extern SimulationStatusDefaultTypeInternal _SimulationStatus_default_instance_;
@@ -96,9 +93,6 @@ extern StockCodeQueryDefaultTypeInternal _StockCodeQuery_default_instance_;
 class StockQuery;
 class StockQueryDefaultTypeInternal;
 extern StockQueryDefaultTypeInternal _StockQuery_default_instance_;
-class StockSelection;
-class StockSelectionDefaultTypeInternal;
-extern StockSelectionDefaultTypeInternal _StockSelection_default_instance_;
 }  // namespace stock_api
 PROTOBUF_NAMESPACE_OPEN
 template<> ::stock_api::CodeList* Arena::CreateMaybeMessage<::stock_api::CodeList>(Arena*);
@@ -110,11 +104,9 @@ template<> ::stock_api::CybosSubjectTickData* Arena::CreateMaybeMessage<::stock_
 template<> ::stock_api::CybosTickData* Arena::CreateMaybeMessage<::stock_api::CybosTickData>(Arena*);
 template<> ::stock_api::ListType* Arena::CreateMaybeMessage<::stock_api::ListType>(Arena*);
 template<> ::stock_api::PastMinuteQuery* Arena::CreateMaybeMessage<::stock_api::PastMinuteQuery>(Arena*);
-template<> ::stock_api::SimulationArgument* Arena::CreateMaybeMessage<::stock_api::SimulationArgument>(Arena*);
 template<> ::stock_api::SimulationStatus* Arena::CreateMaybeMessage<::stock_api::SimulationStatus>(Arena*);
 template<> ::stock_api::StockCodeQuery* Arena::CreateMaybeMessage<::stock_api::StockCodeQuery>(Arena*);
 template<> ::stock_api::StockQuery* Arena::CreateMaybeMessage<::stock_api::StockQuery>(Arena*);
-template<> ::stock_api::StockSelection* Arena::CreateMaybeMessage<::stock_api::StockSelection>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace stock_api {
 
@@ -706,169 +698,6 @@ class SimulationStatus :
 };
 // -------------------------------------------------------------------
 
-class StockSelection :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.StockSelection) */ {
- public:
-  StockSelection();
-  virtual ~StockSelection();
-
-  StockSelection(const StockSelection& from);
-  StockSelection(StockSelection&& from) noexcept
-    : StockSelection() {
-    *this = ::std::move(from);
-  }
-
-  inline StockSelection& operator=(const StockSelection& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline StockSelection& operator=(StockSelection&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return GetMetadataStatic().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return GetMetadataStatic().reflection;
-  }
-  static const StockSelection& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const StockSelection* internal_default_instance() {
-    return reinterpret_cast<const StockSelection*>(
-               &_StockSelection_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    4;
-
-  friend void swap(StockSelection& a, StockSelection& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(StockSelection* other) {
-    if (other == this) return;
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline StockSelection* New() const final {
-    return CreateMaybeMessage<StockSelection>(nullptr);
-  }
-
-  StockSelection* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<StockSelection>(arena);
-  }
-  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const StockSelection& from);
-  void MergeFrom(const StockSelection& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  inline void SharedCtor();
-  inline void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(StockSelection* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "stock_api.StockSelection";
-  }
-  private:
-  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
-    return nullptr;
-  }
-  inline void* MaybeArenaPtr() const {
-    return nullptr;
-  }
-  public:
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-  private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
-    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
-    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
-  }
-
-  public:
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kCodeFieldNumber = 1,
-    kUntilDatetimeFieldNumber = 3,
-    kCountOfDaysFieldNumber = 2,
-  };
-  // string code = 1;
-  void clear_code();
-  const std::string& code() const;
-  void set_code(const std::string& value);
-  void set_code(std::string&& value);
-  void set_code(const char* value);
-  void set_code(const char* value, size_t size);
-  std::string* mutable_code();
-  std::string* release_code();
-  void set_allocated_code(std::string* code);
-  private:
-  const std::string& _internal_code() const;
-  void _internal_set_code(const std::string& value);
-  std::string* _internal_mutable_code();
-  public:
-
-  // .google.protobuf.Timestamp until_datetime = 3;
-  bool has_until_datetime() const;
-  private:
-  bool _internal_has_until_datetime() const;
-  public:
-  void clear_until_datetime();
-  const PROTOBUF_NAMESPACE_ID::Timestamp& until_datetime() const;
-  PROTOBUF_NAMESPACE_ID::Timestamp* release_until_datetime();
-  PROTOBUF_NAMESPACE_ID::Timestamp* mutable_until_datetime();
-  void set_allocated_until_datetime(PROTOBUF_NAMESPACE_ID::Timestamp* until_datetime);
-  private:
-  const PROTOBUF_NAMESPACE_ID::Timestamp& _internal_until_datetime() const;
-  PROTOBUF_NAMESPACE_ID::Timestamp* _internal_mutable_until_datetime();
-  public:
-
-  // uint32 count_of_days = 2;
-  void clear_count_of_days();
-  ::PROTOBUF_NAMESPACE_ID::uint32 count_of_days() const;
-  void set_count_of_days(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_count_of_days() const;
-  void _internal_set_count_of_days(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:stock_api.StockSelection)
- private:
-  class _Internal;
-
-  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr code_;
-  PROTOBUF_NAMESPACE_ID::Timestamp* until_datetime_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 count_of_days_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_stock_5fprovider_2eproto;
-};
-// -------------------------------------------------------------------
-
 class ListType :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.ListType) */ {
  public:
@@ -911,7 +740,7 @@ class ListType :
                &_ListType_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    4;
 
   friend void swap(ListType& a, ListType& b) {
     a.Swap(&b);
@@ -1046,7 +875,7 @@ class CompanyName :
                &_CompanyName_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    5;
 
   friend void swap(CompanyName& a, CompanyName& b) {
     a.Swap(&b);
@@ -1181,7 +1010,7 @@ class PastMinuteQuery :
                &_PastMinuteQuery_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    6;
 
   friend void swap(PastMinuteQuery& a, PastMinuteQuery& b) {
     a.Swap(&b);
@@ -1302,140 +1131,6 @@ class PastMinuteQuery :
 };
 // -------------------------------------------------------------------
 
-class SimulationArgument :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.SimulationArgument) */ {
- public:
-  SimulationArgument();
-  virtual ~SimulationArgument();
-
-  SimulationArgument(const SimulationArgument& from);
-  SimulationArgument(SimulationArgument&& from) noexcept
-    : SimulationArgument() {
-    *this = ::std::move(from);
-  }
-
-  inline SimulationArgument& operator=(const SimulationArgument& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline SimulationArgument& operator=(SimulationArgument&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return GetMetadataStatic().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return GetMetadataStatic().reflection;
-  }
-  static const SimulationArgument& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const SimulationArgument* internal_default_instance() {
-    return reinterpret_cast<const SimulationArgument*>(
-               &_SimulationArgument_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    8;
-
-  friend void swap(SimulationArgument& a, SimulationArgument& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(SimulationArgument* other) {
-    if (other == this) return;
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline SimulationArgument* New() const final {
-    return CreateMaybeMessage<SimulationArgument>(nullptr);
-  }
-
-  SimulationArgument* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<SimulationArgument>(arena);
-  }
-  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const SimulationArgument& from);
-  void MergeFrom(const SimulationArgument& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  inline void SharedCtor();
-  inline void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(SimulationArgument* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "stock_api.SimulationArgument";
-  }
-  private:
-  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
-    return nullptr;
-  }
-  inline void* MaybeArenaPtr() const {
-    return nullptr;
-  }
-  public:
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-  private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
-    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
-    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
-  }
-
-  public:
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kFromDatetimeFieldNumber = 1,
-  };
-  // .google.protobuf.Timestamp from_datetime = 1;
-  bool has_from_datetime() const;
-  private:
-  bool _internal_has_from_datetime() const;
-  public:
-  void clear_from_datetime();
-  const PROTOBUF_NAMESPACE_ID::Timestamp& from_datetime() const;
-  PROTOBUF_NAMESPACE_ID::Timestamp* release_from_datetime();
-  PROTOBUF_NAMESPACE_ID::Timestamp* mutable_from_datetime();
-  void set_allocated_from_datetime(PROTOBUF_NAMESPACE_ID::Timestamp* from_datetime);
-  private:
-  const PROTOBUF_NAMESPACE_ID::Timestamp& _internal_from_datetime() const;
-  PROTOBUF_NAMESPACE_ID::Timestamp* _internal_mutable_from_datetime();
-  public:
-
-  // @@protoc_insertion_point(class_scope:stock_api.SimulationArgument)
- private:
-  class _Internal;
-
-  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
-  PROTOBUF_NAMESPACE_ID::Timestamp* from_datetime_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_stock_5fprovider_2eproto;
-};
-// -------------------------------------------------------------------
-
 class CybosDayData :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.CybosDayData) */ {
  public:
@@ -1478,7 +1173,7 @@ class CybosDayData :
                &_CybosDayData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    7;
 
   friend void swap(CybosDayData& a, CybosDayData& b) {
     a.Swap(&b);
@@ -1749,7 +1444,7 @@ class CybosDayDatas :
                &_CybosDayDatas_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    8;
 
   friend void swap(CybosDayDatas& a, CybosDayDatas& b) {
     a.Swap(&b);
@@ -1886,7 +1581,7 @@ class CybosSubjectTickData :
                &_CybosSubjectTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    9;
 
   friend void swap(CybosSubjectTickData& a, CybosSubjectTickData& b) {
     a.Swap(&b);
@@ -2129,7 +1824,7 @@ class CybosTickData :
                &_CybosTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    10;
 
   friend void swap(CybosTickData& a, CybosTickData& b) {
     a.Swap(&b);
@@ -2530,7 +2225,7 @@ class CybosBidAskTickData :
                &_CybosBidAskTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    11;
 
   friend void swap(CybosBidAskTickData& a, CybosBidAskTickData& b) {
     a.Swap(&b);
@@ -3173,145 +2868,6 @@ inline void SimulationStatus::set_simulation_speed(float value) {
 
 // -------------------------------------------------------------------
 
-// StockSelection
-
-// string code = 1;
-inline void StockSelection::clear_code() {
-  code_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline const std::string& StockSelection::code() const {
-  // @@protoc_insertion_point(field_get:stock_api.StockSelection.code)
-  return _internal_code();
-}
-inline void StockSelection::set_code(const std::string& value) {
-  _internal_set_code(value);
-  // @@protoc_insertion_point(field_set:stock_api.StockSelection.code)
-}
-inline std::string* StockSelection::mutable_code() {
-  // @@protoc_insertion_point(field_mutable:stock_api.StockSelection.code)
-  return _internal_mutable_code();
-}
-inline const std::string& StockSelection::_internal_code() const {
-  return code_.GetNoArena();
-}
-inline void StockSelection::_internal_set_code(const std::string& value) {
-  
-  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
-}
-inline void StockSelection::set_code(std::string&& value) {
-  
-  code_.SetNoArena(
-    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:stock_api.StockSelection.code)
-}
-inline void StockSelection::set_code(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:stock_api.StockSelection.code)
-}
-inline void StockSelection::set_code(const char* value, size_t size) {
-  
-  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:stock_api.StockSelection.code)
-}
-inline std::string* StockSelection::_internal_mutable_code() {
-  
-  return code_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline std::string* StockSelection::release_code() {
-  // @@protoc_insertion_point(field_release:stock_api.StockSelection.code)
-  
-  return code_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline void StockSelection::set_allocated_code(std::string* code) {
-  if (code != nullptr) {
-    
-  } else {
-    
-  }
-  code_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), code);
-  // @@protoc_insertion_point(field_set_allocated:stock_api.StockSelection.code)
-}
-
-// uint32 count_of_days = 2;
-inline void StockSelection::clear_count_of_days() {
-  count_of_days_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 StockSelection::_internal_count_of_days() const {
-  return count_of_days_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 StockSelection::count_of_days() const {
-  // @@protoc_insertion_point(field_get:stock_api.StockSelection.count_of_days)
-  return _internal_count_of_days();
-}
-inline void StockSelection::_internal_set_count_of_days(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  count_of_days_ = value;
-}
-inline void StockSelection::set_count_of_days(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_count_of_days(value);
-  // @@protoc_insertion_point(field_set:stock_api.StockSelection.count_of_days)
-}
-
-// .google.protobuf.Timestamp until_datetime = 3;
-inline bool StockSelection::_internal_has_until_datetime() const {
-  return this != internal_default_instance() && until_datetime_ != nullptr;
-}
-inline bool StockSelection::has_until_datetime() const {
-  return _internal_has_until_datetime();
-}
-inline const PROTOBUF_NAMESPACE_ID::Timestamp& StockSelection::_internal_until_datetime() const {
-  const PROTOBUF_NAMESPACE_ID::Timestamp* p = until_datetime_;
-  return p != nullptr ? *p : *reinterpret_cast<const PROTOBUF_NAMESPACE_ID::Timestamp*>(
-      &PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
-}
-inline const PROTOBUF_NAMESPACE_ID::Timestamp& StockSelection::until_datetime() const {
-  // @@protoc_insertion_point(field_get:stock_api.StockSelection.until_datetime)
-  return _internal_until_datetime();
-}
-inline PROTOBUF_NAMESPACE_ID::Timestamp* StockSelection::release_until_datetime() {
-  // @@protoc_insertion_point(field_release:stock_api.StockSelection.until_datetime)
-  
-  PROTOBUF_NAMESPACE_ID::Timestamp* temp = until_datetime_;
-  until_datetime_ = nullptr;
-  return temp;
-}
-inline PROTOBUF_NAMESPACE_ID::Timestamp* StockSelection::_internal_mutable_until_datetime() {
-  
-  if (until_datetime_ == nullptr) {
-    auto* p = CreateMaybeMessage<PROTOBUF_NAMESPACE_ID::Timestamp>(GetArenaNoVirtual());
-    until_datetime_ = p;
-  }
-  return until_datetime_;
-}
-inline PROTOBUF_NAMESPACE_ID::Timestamp* StockSelection::mutable_until_datetime() {
-  // @@protoc_insertion_point(field_mutable:stock_api.StockSelection.until_datetime)
-  return _internal_mutable_until_datetime();
-}
-inline void StockSelection::set_allocated_until_datetime(PROTOBUF_NAMESPACE_ID::Timestamp* until_datetime) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
-  if (message_arena == nullptr) {
-    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(until_datetime_);
-  }
-  if (until_datetime) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(until_datetime)->GetArena();
-    if (message_arena != submessage_arena) {
-      until_datetime = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, until_datetime, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  until_datetime_ = until_datetime;
-  // @@protoc_insertion_point(field_set_allocated:stock_api.StockSelection.until_datetime)
-}
-
-// -------------------------------------------------------------------
-
 // ListType
 
 // string type_name = 1;
@@ -3575,65 +3131,6 @@ inline void PastMinuteQuery::set_allocated_today(PROTOBUF_NAMESPACE_ID::Timestam
   }
   today_ = today;
   // @@protoc_insertion_point(field_set_allocated:stock_api.PastMinuteQuery.today)
-}
-
-// -------------------------------------------------------------------
-
-// SimulationArgument
-
-// .google.protobuf.Timestamp from_datetime = 1;
-inline bool SimulationArgument::_internal_has_from_datetime() const {
-  return this != internal_default_instance() && from_datetime_ != nullptr;
-}
-inline bool SimulationArgument::has_from_datetime() const {
-  return _internal_has_from_datetime();
-}
-inline const PROTOBUF_NAMESPACE_ID::Timestamp& SimulationArgument::_internal_from_datetime() const {
-  const PROTOBUF_NAMESPACE_ID::Timestamp* p = from_datetime_;
-  return p != nullptr ? *p : *reinterpret_cast<const PROTOBUF_NAMESPACE_ID::Timestamp*>(
-      &PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
-}
-inline const PROTOBUF_NAMESPACE_ID::Timestamp& SimulationArgument::from_datetime() const {
-  // @@protoc_insertion_point(field_get:stock_api.SimulationArgument.from_datetime)
-  return _internal_from_datetime();
-}
-inline PROTOBUF_NAMESPACE_ID::Timestamp* SimulationArgument::release_from_datetime() {
-  // @@protoc_insertion_point(field_release:stock_api.SimulationArgument.from_datetime)
-  
-  PROTOBUF_NAMESPACE_ID::Timestamp* temp = from_datetime_;
-  from_datetime_ = nullptr;
-  return temp;
-}
-inline PROTOBUF_NAMESPACE_ID::Timestamp* SimulationArgument::_internal_mutable_from_datetime() {
-  
-  if (from_datetime_ == nullptr) {
-    auto* p = CreateMaybeMessage<PROTOBUF_NAMESPACE_ID::Timestamp>(GetArenaNoVirtual());
-    from_datetime_ = p;
-  }
-  return from_datetime_;
-}
-inline PROTOBUF_NAMESPACE_ID::Timestamp* SimulationArgument::mutable_from_datetime() {
-  // @@protoc_insertion_point(field_mutable:stock_api.SimulationArgument.from_datetime)
-  return _internal_mutable_from_datetime();
-}
-inline void SimulationArgument::set_allocated_from_datetime(PROTOBUF_NAMESPACE_ID::Timestamp* from_datetime) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
-  if (message_arena == nullptr) {
-    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(from_datetime_);
-  }
-  if (from_datetime) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(from_datetime)->GetArena();
-    if (message_arena != submessage_arena) {
-      from_datetime = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, from_datetime, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  from_datetime_ = from_datetime;
-  // @@protoc_insertion_point(field_set_allocated:stock_api.SimulationArgument.from_datetime)
 }
 
 // -------------------------------------------------------------------
@@ -5331,10 +4828,6 @@ inline void CybosBidAskTickData::set_out_time_total_bid_remain(::PROTOBUF_NAMESP
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
-// -------------------------------------------------------------------
-
-// -------------------------------------------------------------------
-
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -16,16 +16,6 @@
                         "access": "public",
                         "name": "stockCodeChanged",
                         "returnType": "void"
-                    },
-                    {
-                        "access": "public",
-                        "name": "countDaysChanged",
-                        "returnType": "void"
-                    },
-                    {
-                        "access": "public",
-                        "name": "untilTimeChanged",
-                        "returnType": "void"
                     }
                 ],
                 "slots": [
@@ -47,12 +37,6 @@
                         "arguments": [
                             {
                                 "type": "QString"
-                            },
-                            {
-                                "type": "QDateTime"
-                            },
-                            {
-                                "type": "int"
                             }
                         ],
                         "name": "searchReceived",
@@ -66,6 +50,17 @@
                             }
                         ],
                         "name": "tickDataArrived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "dt",
+                                "type": "QDateTime"
+                            }
+                        ],
+                        "name": "timeInfoArrived",
                         "returnType": "void"
                     }
                 ],

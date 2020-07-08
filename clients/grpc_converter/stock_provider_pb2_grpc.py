@@ -53,7 +53,12 @@ class StockStub(object):
         )
     self.SetCurrentStock = channel.unary_unary(
         '/stock_api.Stock/SetCurrentStock',
-        request_serializer=stock__provider__pb2.StockSelection.SerializeToString,
+        request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.SetCurrentDateTime = channel.unary_unary(
+        '/stock_api.Stock/SetCurrentDateTime',
+        request_serializer=google_dot_protobuf_dot_timestamp__pb2.Timestamp.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
     self.GetCompanyName = channel.unary_unary(
@@ -99,7 +104,7 @@ class StockStub(object):
     self.ListenCurrentStock = channel.unary_stream(
         '/stock_api.Stock/ListenCurrentStock',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-        response_deserializer=stock__provider__pb2.StockSelection.FromString,
+        response_deserializer=stock__provider__pb2.StockCodeQuery.FromString,
         )
     self.ListenListChanged = channel.unary_stream(
         '/stock_api.Stock/ListenListChanged',
@@ -133,7 +138,7 @@ class StockStub(object):
         )
     self.StartSimulation = channel.unary_stream(
         '/stock_api.Stock/StartSimulation',
-        request_serializer=stock__provider__pb2.SimulationArgument.SerializeToString,
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
     self.StopSimulation = channel.unary_unary(
@@ -197,6 +202,13 @@ class StockServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def SetCurrentStock(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetCurrentDateTime(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -362,7 +374,12 @@ def add_StockServicer_to_server(servicer, server):
       ),
       'SetCurrentStock': grpc.unary_unary_rpc_method_handler(
           servicer.SetCurrentStock,
-          request_deserializer=stock__provider__pb2.StockSelection.FromString,
+          request_deserializer=stock__provider__pb2.StockCodeQuery.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'SetCurrentDateTime': grpc.unary_unary_rpc_method_handler(
+          servicer.SetCurrentDateTime,
+          request_deserializer=google_dot_protobuf_dot_timestamp__pb2.Timestamp.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
       'GetCompanyName': grpc.unary_unary_rpc_method_handler(
@@ -408,7 +425,7 @@ def add_StockServicer_to_server(servicer, server):
       'ListenCurrentStock': grpc.unary_stream_rpc_method_handler(
           servicer.ListenCurrentStock,
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-          response_serializer=stock__provider__pb2.StockSelection.SerializeToString,
+          response_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
       ),
       'ListenListChanged': grpc.unary_stream_rpc_method_handler(
           servicer.ListenListChanged,
@@ -442,7 +459,7 @@ def add_StockServicer_to_server(servicer, server):
       ),
       'StartSimulation': grpc.unary_stream_rpc_method_handler(
           servicer.StartSimulation,
-          request_deserializer=stock__provider__pb2.SimulationArgument.FromString,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
       'StopSimulation': grpc.unary_unary_rpc_method_handler(

@@ -104,7 +104,7 @@ private:
 private slots:
     void tickArrived(CybosTickData *);
     void bidAskTickArrived(CybosBidAskTickData *);
-    void setCurrentStock(QString, QDateTime, int);
+    void setCurrentStock(QString);
 
 signals:
     void highlightChanged();

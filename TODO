@@ -3,11 +3,6 @@
 * Today 에서 VI 인 경우 어떻게 표시?
 * /home/nnnlife/src/Qt/qt5/qtdeclarative/examples/quick/models/abstractitemmodel 참조 
 
-* TIMEZONE
-    * qml_search -> 입력 -> StockSelection 에서 LocalTime 으로 Receive   
-    * stock_service.py 에서는 UTC 로 다시 변경됨
-    * Server 에서 받을 때는 -9 로 하고, Server로 보낼 때는 +9로?
-
 
 * comparison 에서 10:40~10:50 A005380 데이터 가격이 이동 확인
 
@@ -18,7 +13,8 @@
     * vi_follower 에 code 관련 DB 저장
     * 검색 및 연관 코드 검색에도 활용
     * category는 TAG 화, 예를 들어 화학@업종 과 같이 Freestyle
-    * TAG 는 별도 excel 로 구분 관리
+    * TAG 큰 분류는 별도 excel 로 구분 관리
+    * Memo 기능 추가
 
 * Picker 검증 진행
     * 오전 장의 고점을 오후장에서 강하게 뚫어줄 때 (VI 가 걸린 가격을 회복했을 때)

@@ -7,7 +7,9 @@ DayView::DayView(QQuickItem *parent) : QQuickPaintedItem(parent) {
     dayData = new DayData;
     priceEndY = 0.0;
     drawHorizontalY = 0.0;
+    countDays = 120;
     connect(DataProvider::getInstance(), &DataProvider::stockCodeChanged, this, &DayView::searchReceived);
+    connect(DataProvider::getInstance(), &DataProvider::timeInfoArrived, this, &DayView::timeInfoArrived);
     connect(DataProvider::getInstance(), &DataProvider::dayDataReady, this, &DayView::dataReceived);
     connect(DataProvider::getInstance(), &DataProvider::tickArrived, this, &DayView::tickDataArrived);
     DataProvider::getInstance()->startStockCodeListening();
@@ -15,22 +17,27 @@ DayView::DayView(QQuickItem *parent) : QQuickPaintedItem(parent) {
 }
 
 
-void DayView::searchReceived(QString code, QDateTime untilTime, int countOfDays) {
-    qWarning() << "searchReceived : " << code << "\t" << untilTime << "\t" << countOfDays;
-    search(code, untilTime, countOfDays);
+void DayView::searchReceived(QString code) {
+    //qWarning() << "searchReceived : " << code;
+    if (stockCode != code) {
+        stockCode = code;
+        search();
+    }
 }
 
 
-void DayView::search(QString _stockCode, QDateTime _untilTime, int _countDays) {
-    if (stockCode != _stockCode ||
-            countDays != _countDays ||
-            untilTime != _untilTime) {
-        stockCode = _stockCode;
-        countDays = _countDays;
-        untilTime = _untilTime;
+void DayView::timeInfoArrived(QDateTime dt) {
+    if (!currentDateTime.isValid() || (currentDateTime.date() != dt.date())) {
+        currentDateTime = dt;
+        search();
+    }
+}
+
+
+void DayView::search() {
+    if (!stockCode.isEmpty() && currentDateTime.isValid()) {
         priceEndY = 0.0;
-        DataProvider::getInstance()->requestDayData(stockCode, countDays, untilTime.addDays(-1));
-        qWarning() << "search " << _stockCode << " " << _countDays << " " << untilTime.addDays(-1);
+        DataProvider::getInstance()->requestDayData(stockCode, countDays, currentDateTime.addDays(-1));
     }
 }
 

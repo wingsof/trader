@@ -68,6 +68,9 @@ public:
 
 public slots:
     void minuteDataReady(QString, CybosDayDatas *);
+
+signals:
+    void minuteTickUpdated(QString);
 };
 
 

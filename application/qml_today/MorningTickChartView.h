@@ -31,8 +31,10 @@ private:
     uint currentVolumeMin;
     int todayStartHour;
     bool pastMinuteDataReceived;
+    QDateTime currentDateTime;
 
     void resetData();
+    void sendRequestData();
     void calculateMinMaxRange();
     void setPriceSteps(int h, int l);
     void updatePriceSteps(int h, int l);
@@ -52,7 +54,8 @@ private:
     void drawCurrentLineRange(QPainter *painter, MinuteTick * mt,const CybosDayData &data, qreal cw, qreal priceChartEndY);
 
 private slots:
-    void setCurrentStock(QString, QDateTime, int);
+    void setCurrentStock(QString);
+    void timeInfoArrived(QDateTime);
     void minuteTickUpdated(QString code);
 
     void dayDataReceived(QString code, CybosDayDatas *);

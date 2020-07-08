@@ -58,12 +58,16 @@ public:
     void collectMinuteData(int min=1);
     void requestDayData(const QString &code, int countOfDays, const QDateTime &_untilTime);
     void requestMinuteData(const QString &code, const QDateTime &fromTime, const QDateTime &untilTime);
-    void setCurrentStock(const QString &code, const QDateTime &dt, int countOfDays);
-    void startSimulation(const QDateTime &dt);
+    void setCurrentStock(const QString &code);
+    void setCurrentDateTime(const QDateTime &dt);
+    void startSimulation();
     void stopSimulation();
 
     QStringList getRecentSearch();
-    const QDateTime & getCurrentDateTime() { return currentDateTime; }
+    QStringList getFavoriteList();
+    void addToFavorite(const QString &code);
+    void removeFromFavorite(const QString &code);
+    const QDateTime & currentDateTime() { return m_currentDateTime; }
 
 private:
     DataProvider();
@@ -82,21 +86,22 @@ private:
 
 
     QString currentStockCode;
-    QDateTime currentDateTime;
+    QDateTime m_currentDateTime;
 
     SIMULATION m_simulationStatus;
 
     void _stopSimulation();
     bool _isSimulation();
-    void _setCurrentStock(const QString &code, const QDateTime &dt, int countOfDays);
+    void _setCurrentStock(const QString &code);
+    void _setCurrentDateTime(const QDateTime &dt);
 
 private slots:
     void convertTimeInfo(Timestamp *);
     void setSimulationStatus(SimulationStatus *status);
-    void stockCodeReceived(QString code, QDateTime untilTime, int countOfDays);
+    void stockCodeReceived(QString code);
 
 signals:
-    void stockCodeChanged(QString code, QDateTime untilTime, int countOfDays);
+    void stockCodeChanged(QString code);
     void tickArrived(CybosTickData *);
     void bidAskTickArrived(CybosBidAskTickData *);
     void minuteTickUpdated(QString);

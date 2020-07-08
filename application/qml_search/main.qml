@@ -18,7 +18,21 @@ ApplicationWindow {
                 Layout.minimumWidth: 350 
                 Layout.preferredWidth: 250 
                 Layout.preferredHeight: 40
-                Layout.rightMargin: 50 
+                Layout.rightMargin: 30 
+            }
+
+
+            Button {
+                Layout.preferredWidth: 50
+                Layout.preferredHeight: 40
+                Layout.rightMargin: 100 
+                text: "SET"
+
+                onClicked: {
+                    SearchBackend.sendCurrentDateTime(
+                                            new Date(dateTime.year, dateTime.month - 1, dateTime.day,
+                                                        dateTime.hour, dateTime.minute, 0))
+                }
             }
 
             CodeSearch {
@@ -26,40 +40,10 @@ ApplicationWindow {
                 Layout.preferredWidth: 180 
                 Layout.preferredHeight: 40
                 Layout.rightMargin: 20
-            }
-
-            TextField {
-                id: daysField
-                Layout.preferredWidth: 50 
-                Layout.preferredHeight: 40
-                text: SearchBackend.days
-            }
-
-
-            Text {
-                Layout.preferredWidth: 50 
-                text: "DAYS"
-            }
-
-            Button {
-                Layout.preferredWidth: 50
-                Layout.preferredHeight: 40
-                text: "SET"
-
-                onClicked: {
-                    SearchBackend.sendCurrent(codeSearch.code,
-                                        new Date(dateTime.year, dateTime.month - 1, dateTime.day,
-                                            dateTime.hour, dateTime.minute, 0),
-                                        parseInt(daysField.text))
-                }
-
                 Connections {
                     target: codeSearch
                     function onCodeEntered() {
-                        SearchBackend.sendCurrent(codeSearch.code,
-                                        new Date(dateTime.year, dateTime.month - 1, dateTime.day,
-                                            dateTime.hour, dateTime.minute, 0),
-                                        parseInt(daysField.text))
+                        SearchBackend.sendCurrentStock(codeSearch.code)
                     }
                 }
             }
@@ -84,10 +68,7 @@ ApplicationWindow {
                         }
                     }
                 }
-                onClicked: {
-                    SearchBackend.startSimulation(new Date(dateTime.year, dateTime.month - 1, dateTime.day,
-                                            dateTime.hour, dateTime.minute, 0))
-                }
+                onClicked: SearchBackend.startSimulation()
             }
 
             Button {

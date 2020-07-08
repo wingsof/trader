@@ -4,63 +4,19 @@
 
 #include <qqml.h>
 #include <QDateTime>
-#include <QAbstractListModel>
+#include "AbstractListModel.h"
 
 
-class RecentCode : public QObject{
-Q_OBJECT
-public:
-    RecentCode(const QString &code, const QDateTime &dt);
-
-    const QString & code() const { return m_code; }
-    const QString & name() const { return m_name; }
-    qreal yesterdayProfit() const;
-    uint64_t yesterdayAmount() const;
-    qreal todayProfit() const;
-    uint64_t todayAmount() const;
-
-private:
-    QString m_code;
-    QString m_name;
-    QDateTime m_today;
-};
-
-
-class RecentListModel : public QAbstractListModel {
+class RecentListModel : public AbstractListModel {
     Q_OBJECT
     QML_ELEMENT
 
 public:
     RecentListModel(QObject *parent=nullptr);
-    int rowCount(const QModelIndex &parent=QModelIndex()) const override;
-
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    QHash<int, QByteArray> roleNames() const override
-    {
-        return { {Qt::DisplayRole, "display"},
-                 {Qt::UserRole,    "code"},
-                 {Qt::UserRole + 1, "yprofit"},
-                 {Qt::UserRole + 2, "tprofit"},
-                 {Qt::UserRole + 3, "yamount"},
-                 {Qt::UserRole + 4, "tamount"}};
-    }
-    Q_INVOKABLE void currentSelectionChanged(int index);
-
-
-private:
-    QDateTime today;
-    QList<RecentCode *> recentList;
-
-    void clearList();
-    void refreshList();
-    QString uint64ToString(uint64_t amount) const;
-
-private slots:
-    void stockCodeChanged(QString code, QDateTime untilTime, int countOfDays);
-    void stockListTypeChanged(QString);
-    void infoUpdated(QString);
+    Q_INVOKABLE void menuClicked(int index) override;
+    QStringList getServerList() override;
+    QString sectionName() { return "recent"; }
 };
-
 
 
 #endif

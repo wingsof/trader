@@ -20,17 +20,20 @@
                             {
                                 "name": "code",
                                 "type": "QString"
-                            },
+                            }
+                        ],
+                        "name": "sendCurrentStock",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
                             {
                                 "name": "dt",
                                 "type": "QDateTime"
-                            },
-                            {
-                                "name": "countOfDays",
-                                "type": "int"
                             }
                         ],
-                        "name": "sendCurrent",
+                        "name": "sendCurrentDateTime",
                         "returnType": "void"
                     },
                     {
@@ -60,12 +63,6 @@
                     },
                     {
                         "access": "public",
-                        "arguments": [
-                            {
-                                "name": "dt",
-                                "type": "QDateTime"
-                            }
-                        ],
                         "name": "startSimulation",
                         "returnType": "void"
                     },
@@ -123,20 +120,6 @@
                         "constant": false,
                         "designable": true,
                         "final": false,
-                        "name": "days",
-                        "notify": "daysChanged",
-                        "read": "days",
-                        "required": false,
-                        "scriptable": true,
-                        "stored": true,
-                        "type": "int",
-                        "user": false,
-                        "write": "setDays"
-                    },
-                    {
-                        "constant": false,
-                        "designable": true,
-                        "final": false,
                         "name": "simulationRunning",
                         "notify": "simulationRunningChanged",
                         "read": "simulationRunning",
@@ -176,11 +159,6 @@
                     },
                     {
                         "access": "public",
-                        "name": "daysChanged",
-                        "returnType": "void"
-                    },
-                    {
-                        "access": "public",
                         "name": "simulationRunningChanged",
                         "returnType": "void"
                     },
@@ -202,14 +180,6 @@
                             {
                                 "name": "code",
                                 "type": "QString"
-                            },
-                            {
-                                "name": "untilTime",
-                                "type": "QDateTime"
-                            },
-                            {
-                                "name": "countOfDays",
-                                "type": "int"
                             }
                         ],
                         "name": "stockCodeChanged",

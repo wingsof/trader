@@ -50,25 +50,6 @@
                         "access": "public",
                         "arguments": [
                             {
-                                "name": "code",
-                                "type": "QString"
-                            },
-                            {
-                                "name": "untilTime",
-                                "type": "QDateTime"
-                            },
-                            {
-                                "name": "countOfDays",
-                                "type": "int"
-                            }
-                        ],
-                        "name": "stockCodeChanged",
-                        "returnType": "void"
-                    },
-                    {
-                        "access": "public",
-                        "arguments": [
-                            {
                                 "type": "QString"
                             }
                         ],
@@ -84,28 +65,24 @@
                         ],
                         "name": "infoUpdated",
                         "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "infoCleared",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "currentFocusChanged",
+                        "returnType": "void"
                     }
                 ],
                 "slots": [
-                    {
-                        "access": "private",
-                        "arguments": [
-                            {
-                                "name": "code",
-                                "type": "QString"
-                            },
-                            {
-                                "name": "untilTime",
-                                "type": "QDateTime"
-                            },
-                            {
-                                "name": "countOfDays",
-                                "type": "int"
-                            }
-                        ],
-                        "name": "slotStockCodeChanged",
-                        "returnType": "void"
-                    },
                     {
                         "access": "private",
                         "arguments": [
@@ -114,6 +91,17 @@
                             }
                         ],
                         "name": "tickArrived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "dt",
+                                "type": "QDateTime"
+                            }
+                        ],
+                        "name": "timeInfoArrived",
                         "returnType": "void"
                     }
                 ],
@@ -131,9 +119,9 @@
     {
         "classes": [
             {
-                "className": "RecentCode",
+                "className": "ListItem",
                 "object": true,
-                "qualifiedClassName": "RecentCode",
+                "qualifiedClassName": "ListItem",
                 "superClasses": [
                     {
                         "access": "public",
@@ -142,13 +130,7 @@
                 ]
             },
             {
-                "classInfos": [
-                    {
-                        "name": "QML.Element",
-                        "value": "auto"
-                    }
-                ],
-                "className": "RecentListModel",
+                "className": "AbstractListModel",
                 "methods": [
                     {
                         "access": "public",
@@ -160,28 +142,53 @@
                         ],
                         "name": "currentSelectionChanged",
                         "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "setCurrentIndex",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "menuClicked",
+                        "returnType": "void"
                     }
                 ],
                 "object": true,
-                "qualifiedClassName": "RecentListModel",
+                "qualifiedClassName": "AbstractListModel",
+                "signals": [
+                    {
+                        "access": "public",
+                        "name": "clearCurrentIndex",
+                        "returnType": "void"
+                    }
+                ],
                 "slots": [
                     {
                         "access": "private",
                         "arguments": [
                             {
-                                "name": "code",
                                 "type": "QString"
-                            },
-                            {
-                                "name": "untilTime",
-                                "type": "QDateTime"
-                            },
-                            {
-                                "name": "countOfDays",
-                                "type": "int"
                             }
                         ],
-                        "name": "stockCodeChanged",
+                        "name": "infoUpdated",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "name": "dateChanged",
                         "returnType": "void"
                     },
                     {
@@ -201,7 +208,7 @@
                                 "type": "QString"
                             }
                         ],
-                        "name": "infoUpdated",
+                        "name": "focusChanged",
                         "returnType": "void"
                     }
                 ],
@@ -209,6 +216,78 @@
                     {
                         "access": "public",
                         "name": "QAbstractListModel"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "AbstractListModel.h",
+        "outputRevision": 67
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "auto"
+                    }
+                ],
+                "className": "FavoriteListModel",
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "menuClicked",
+                        "returnType": "void"
+                    }
+                ],
+                "object": true,
+                "qualifiedClassName": "FavoriteListModel",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "AbstractListModel"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "FavoriteListModel.h",
+        "outputRevision": 67
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "auto"
+                    }
+                ],
+                "className": "RecentListModel",
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "menuClicked",
+                        "returnType": "void"
+                    }
+                ],
+                "object": true,
+                "qualifiedClassName": "RecentListModel",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "AbstractListModel"
                     }
                 ]
             }

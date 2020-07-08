@@ -67,7 +67,7 @@ public:
     DayView(QQuickItem *parent = 0);
     void paint(QPainter *painter);
 
-    void search(QString stockCode, QDateTime untilTime, int countDays);
+    void search();
 
 private:
     void fillBackground(QPainter *painter, const QSizeF &itemSize);
@@ -87,7 +87,7 @@ protected:
 private:
     QString stockCode;
     int countDays;
-    QDateTime untilTime;
+    QDateTime currentDateTime;
     DayData *dayData;
     qreal priceEndY;
 
@@ -97,13 +97,12 @@ private:
 
 signals:
     void stockCodeChanged();
-    void countDaysChanged();
-    void untilTimeChanged();
 
 private slots:
     void dataReceived(QString, CybosDayDatas *);
-    void searchReceived(QString, QDateTime, int);
+    void searchReceived(QString);
     void tickDataArrived(CybosTickData *);
+    void timeInfoArrived(QDateTime dt);
 };
 
 

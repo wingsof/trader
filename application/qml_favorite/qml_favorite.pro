@@ -29,8 +29,12 @@ MOC_DIR=generated_files
 # Input
 SOURCES += main.cpp \
            StockStat.cpp \
+           AbstractListModel.cpp \
+           FavoriteListModel.cpp \
            RecentListModel.cpp
 
 HEADERS += StockStat.h \ 
+           AbstractListModel.h \
+           FavoriteListModel.h \
            RecentListModel.h
 

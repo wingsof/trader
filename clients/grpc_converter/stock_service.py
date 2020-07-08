@@ -23,12 +23,12 @@ from morning_server import stock_api
 from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.empty_pb2 import Empty
 from gevent.queue import Queue
+import favorite
 
 
 simulation_progressing = [False, False, False]
 request_stop_simulation = False
 recent_search_codes = []
-favorite_codes = [] # temporarily
 TIME_SPEED = 1.0
 
 
@@ -89,7 +89,7 @@ def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_ti
                 stock_tick_handler(d['code'], [d])
 
             if d['date'] - last_datatime > timedelta(seconds=1):
-                time_handler(d['date'])
+                time_handler(d['date'] - timedelta(hours=9))    # DB time is UTC but time is set as if localtime
                 last_datatime = d['date']
 
             datatime = d['date'] - timeadjust
@@ -147,8 +147,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.current_stock_selection_subscribe_clients = []
         self.simulation_changed_subscribe_clients = []
         self.current_stock_code = ""
-        self.current_stock_count_of_days = 0
-        self.current_stock_until_time = None
+        self.current_datetime = None
 
     def GetDayData(self, request, context):
         print('GetDayData', request.code,
@@ -286,31 +285,35 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
     def SetCurrentStock(self, request, context):
         global recent_search_codes
+        if len(request.code) == 0:
+            return Empty()
+
         self.current_stock_code = request.code
-        self.current_stock_count_of_days = request.count_of_days
-        self.current_stock_until_time = request.until_datetime
 
         for q in self.current_stock_selection_subscribe_clients:
-            q.put_nowait((request.code, request.count_of_days, request.until_datetime))
+            q.put_nowait(request.code)
 
-        if len(request.code) > 0 and request.code not in recent_search_codes:
+        if request.code not in recent_search_codes:
             recent_search_codes.insert(0, request.code)
             self.send_list_changed('recent')
 
-        print('SetCurrentStock', request.code, request.count_of_days, request.until_datetime.ToDatetime())
+        print('SetCurrentStock', request.code())
         return Empty()
 
-    def AddFavorite(self, reqeust, context):
-        global favorite_codes
-        if len(request.code) > 0 and request.code not in favorite_codes:
-            favorite_codes.insert(0, request.code)
+    def SetCurrentDateTime(self, request ,context):
+        print('SetCurrentDateTime : ', request.ToDatetime())
+        self.handle_time(request.ToDatetime())
+        return Empty()
+
+    def AddFavorite(self, request, context):
+        print('AddFavorite', request.code)
+        if favorite.add_to_favorite(request.code):
             self.send_list_changed('favorite')
         return Empty()
 
     def RemoveFavorite(self, request, context):
-        global favorite_codes
-        if len(request.code) > 0 and request.code in favorite_codes:
-            favorite_codes.remove(request.code)
+        print('RemoveFavorite', request.code)
+        if favorite.remove_from_favorite(request.code):
             self.send_list_changed('favorite')
         return Empty()
 
@@ -421,24 +424,21 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         print('Run Listen Current Stock', len(self.current_stock_selection_subscribe_clients))
 
         if len(self.current_stock_code) > 0:
-            yield stock_provider_pb2.StockSelection(code=self.current_stock_code,
-                                                    count_of_days=self.current_stock_count_of_days,
-                                                    until_datetime=self.current_stock_until_time)
+            yield stock_provider_pb2.StockCodeQuery(code=self.current_stock_code)
 
         while context.is_active():
             try:
                 data = q.get(True, 1)
-                yield stock_provider_pb2.StockSelection(code=data[0], count_of_days=data[1], until_datetime=data[2])
+                yield stock_provider_pb2.StockCodeQuery(code=data)
             except gevent.queue.Empty as ge:
                 pass
         self.current_stock_selection_subscribe_clients.remove(q)
         print('Done ListenCurrentStock', len(self.current_stock_selection_subscribe_clients)) 
 
-
     def handle_time(self, d):
+        self.current_datetime = d
         data_date = Timestamp()
-        data_date.FromDatetime(d - timedelta(hours=9))
-        # print('deliver time : ', len(self.current_time_subscribe_clients)) 
+        data_date.FromDatetime(d)
         for q in self.current_time_subscribe_clients:
             q.put(data_date)
 
@@ -453,6 +453,15 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         q = Queue()
         client_list.append(q)
         print(title, len(client_list))
+
+        current = Timestamp()
+        if self.current_datetime is None:
+            current.FromDatetime(datetime.now() - timedelta(hours=9))
+        else:
+            current.FromDatetime(self.current_datetime)
+
+        yield current
+
         while context.is_active():
             try:
                 data = q.get(True, 1)
@@ -545,7 +554,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return stock_provider_pb2.CodeList(codelist=recent_search_codes)
 
     def GetFavoriteList(self, request, context):
-        return stock_provider_pb2.CodeList(codelist=favorite_codes)
+        return stock_provider_pb2.CodeList(codelist=favorite.get_favorite())
 
     def GetYesterdayTopAmountCodes(self, request, context):
         market_code = morning_client.get_all_market_code()
@@ -565,11 +574,12 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         if not any(simulation_progressing):
             simulation_progressing[0] = True
             triggered = True
-            simulation_datetime = request.from_datetime.ToDatetime() + timedelta(hours=9)
-            gevent.spawn(start_tick_provider, simulation_datetime, self.handle_stock_tick, self.handle_bidask_tick, self.handle_subject_tick, self.handle_time, self.handle_simulation)
+
+            if self.current_datetime is not None:
+                gevent.spawn(start_tick_provider, self.current_datetime + timedelta(hours=9), self.handle_stock_tick, self.handle_bidask_tick, self.handle_subject_tick, self.handle_time, self.handle_simulation)
 
             self.handle_simulation([True])
-            print('Start Simulation Mode', simulation_datetime)
+            print('Start Simulation Mode', self.current_datetime + timedelta(hours=9))
             while context.is_active() and not request_stop_simulation:
                 gevent.sleep(1)
 

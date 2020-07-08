@@ -71,6 +71,8 @@ void MinuteTick::minuteDataReady(QString _code, CybosDayDatas * data) {
             else
                 updateCurrentData(data->day_data(i));
         }
+        qWarning() << "send minuteTickUpdated";
+        emit minuteTickUpdated(code);
     }
 }
 
@@ -255,14 +257,17 @@ void MinuteData::setCurrentStockCode(const QString &code) {
 
 
 MinuteTick * MinuteData::getMinuteTick(const QString &code, const QDateTime &serverTime) {
-    if (codeMap.contains(code))
-        return codeMap[code];
+    if (!codeMap.contains(code)) {
+        codeMap[code] = new MinuteTick(code, serverTime, intervalMinute);
+        requestPreviousData(codeMap[code]);
+    }
 
-    return nullptr;
+    return codeMap[code]; 
 }
 
 
 void MinuteData::clearData() {
+    // TODO: clear MinuteData when realtime data is started
     QMapIterator<QString, MinuteTick *> i(codeMap);
     while (i.hasNext()) {
         i.next();
@@ -284,6 +289,9 @@ void MinuteData::setSimulation(bool isSimul) {
 void MinuteData::requestPreviousData(MinuteTick *tick) {
     connect(dayDataProvider, &DayDataProvider::minuteDataReady,
                 tick, &MinuteTick::minuteDataReady);
+
+    connect(tick, &MinuteTick::minuteTickUpdated,
+                this, &MinuteData::minuteTickUpdated);
     const QDateTime &dt = tick->getCreateDateTime();
 
     if (dt.date() == QDateTime::currentDateTime().date()) {
@@ -298,6 +306,11 @@ void MinuteData::requestPreviousData(MinuteTick *tick) {
 
 
 void MinuteData::timeInfoArrived(QDateTime dt) {
+    if (!isSimulation) {
+        qWarning() << "not simulation timeInfoArrived clear data";
+        clearData();
+    }
+
     currentDateTime = dt;
 }
 

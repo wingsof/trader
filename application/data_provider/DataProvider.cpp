@@ -32,7 +32,6 @@ using stock_api::StockCodeQuery;
 using stock_api::StockQuery;
 using stock_api::CybosDayData;
 using stock_api::CodeList;
-using stock_api::SimulationArgument;
 using stock_api::CompanyName;
 
 using grpc::ClientContext;
@@ -42,7 +41,6 @@ using stock_api::CybosTickData;
 using stock_api::CybosDayDatas;
 using stock_api::CybosBidAskTickData;
 using stock_api::CybosSubjectTickData;
-using stock_api::StockSelection;
 using google::protobuf::Timestamp;
 using stock_api::SimulationStatus;
 
@@ -79,18 +77,18 @@ DataProvider::DataProvider()
     connect(simulationEvent, &SimulationEvent::simulationStatusChanged, this, &DataProvider::setSimulationStatus);
 
     simulationEvent->start();
+    startTimeListening();
 }
 
 
-void DataProvider::stockCodeReceived(QString code, QDateTime untilTime, int countOfDays) {
-    qWarning() << "receive stock code received : " << code << "\t" << untilTime;
+void DataProvider::stockCodeReceived(QString code) {
+    qWarning() << "receive stock code received : " << code;
     currentStockCode = code;
-    currentDateTime = untilTime;
 
     if (minuteData != NULL)
         minuteData->setCurrentStockCode(code);
 
-    emit stockCodeChanged(code, untilTime, countOfDays);
+    emit stockCodeChanged(code);
 }
 
 
@@ -100,10 +98,16 @@ void DataProvider::createSpeedStatistics(int secs) {
 }
 
 
+void DataProvider::setCurrentDateTime(const QDateTime &dt) {
+    _setCurrentDateTime(dt); 
+}
+
+
 void DataProvider::convertTimeInfo(Timestamp *t) {
     long msec = TimeUtil::TimestampToMilliseconds(*t);
     //qWarning() << "time arrived : " << QDateTime::fromMSecsSinceEpoch(msec);
-    emit timeInfoArrived(QDateTime::fromMSecsSinceEpoch(msec));
+    m_currentDateTime = QDateTime::fromMSecsSinceEpoch(msec);
+    emit timeInfoArrived(m_currentDateTime);
 }
 
 
@@ -141,8 +145,7 @@ void DataProvider::collectMinuteData(int min) {
         minuteData = new MinuteData(this, stub_, min, currentStockCode, isSimulation());
         connect(tickThread, &TickThread::tickArrived, minuteData, &MinuteData::stockTickArrived);
         connect(minuteData, &MinuteData::minuteTickUpdated, this, &DataProvider::minuteTickUpdated);
-        //startTimeListening();
-        //connect(this, &DataProvider::timeInfoArrived, minuteData, &MinuteData::timeInfoArrived);
+        connect(this, &DataProvider::timeInfoArrived, minuteData, &MinuteData::timeInfoArrived);
     }
 }
 
@@ -162,9 +165,9 @@ void DataProvider::startStockCodeListening() {
 }
 
 
-void DataProvider::startSimulation(const QDateTime &dt) {
+void DataProvider::startSimulation() {
     if (m_simulationStatus == STOP) {
-        RunSimulation * rs = new RunSimulation(dt, stub_);
+        RunSimulation * rs = new RunSimulation(stub_);
         connect(rs, &RunSimulation::finished, rs, &RunSimulation::deleteLater);
         rs->start();
         m_simulationStatus = STOP_TO_RUNNING;
@@ -203,8 +206,8 @@ bool DataProvider::isSimulation() {
 }
 
 
-void DataProvider::setCurrentStock(const QString &code, const QDateTime &dt, int countOfDays) {
-    _setCurrentStock(code, dt, countOfDays);
+void DataProvider::setCurrentStock(const QString &code) {
+    _setCurrentStock(code);
 }
 
 
@@ -220,7 +223,7 @@ QString DataProvider::getCompanyName(const QString &code) {
 
 MinuteTick * DataProvider::getMinuteTick(const QString &code) {
     if (minuteData && !code.isEmpty())
-        return minuteData->getMinuteTick(code, getCurrentDateTime());
+        return minuteData->getMinuteTick(code, currentDateTime());
     return nullptr;
 }
 
@@ -234,6 +237,37 @@ QStringList DataProvider::getRecentSearch() {
     for (int i = 0; i < codeList->codelist_size(); i++)
         list.append(QString::fromStdString(codeList->codelist(i)));
     return list;
+}
+
+
+QStringList DataProvider::getFavoriteList() {
+    ClientContext context;
+    CodeList * codeList = new CodeList;
+    Empty empty;
+    stub_->GetFavoriteList(&context, empty, codeList);
+    QStringList list;
+    for (int i = 0; i < codeList->codelist_size(); i++)
+        list.append(QString::fromStdString(codeList->codelist(i)));
+    return list;
+}
+
+
+void DataProvider::addToFavorite(const QString &code) {
+    qWarning() << "DataProvider addToFavorite : " << code;
+    ClientContext context;
+    StockCodeQuery data; 
+    data.set_code(code.toStdString());
+    Empty empty;
+    stub_->AddFavorite(&context, data, &empty);
+}
+
+
+void DataProvider::removeFromFavorite(const QString &code) {
+    ClientContext context;
+    StockCodeQuery data; 
+    data.set_code(code.toStdString());
+    Empty empty;
+    stub_->RemoveFavorite(&context, data, &empty);
 }
 
 
@@ -256,13 +290,19 @@ bool DataProvider::_isSimulation() {
 }
 
 
-void DataProvider::_setCurrentStock(const QString &code, const QDateTime &dt, int countOfDays) {
+void DataProvider::_setCurrentStock(const QString &code) {
     ClientContext context;
-    StockSelection data;
+    StockCodeQuery data;
     Empty empty;
     data.set_code(code.toStdString());
-    Timestamp *untilTime = new Timestamp(TimeUtil::TimeTToTimestamp(dt.toTime_t()));
-    data.set_allocated_until_datetime(untilTime);
-    data.set_count_of_days(countOfDays);
     stub_->SetCurrentStock(&context, data, &empty);
+}
+
+
+void DataProvider::_setCurrentDateTime(const QDateTime &dt) {
+    ClientContext context;
+    Timestamp data = Timestamp(TimeUtil::TimeTToTimestamp(dt.toTime_t()));
+    Empty empty;
+    stub_->SetCurrentDateTime(&context, data, &empty);
+
 }

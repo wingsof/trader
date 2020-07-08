@@ -21,8 +21,10 @@ Module {
         Method {
             name: "setCurrentStock"
             Parameter { type: "string" }
+        }
+        Method {
+            name: "timeInfoArrived"
             Parameter { type: "QDateTime" }
-            Parameter { type: "int" }
         }
         Method {
             name: "minuteTickUpdated"

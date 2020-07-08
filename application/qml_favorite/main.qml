@@ -11,7 +11,12 @@ ApplicationWindow {
     RowLayout { 
         anchors.fill: parent
         spacing: 0.0
-        TodayBullListView {
+        RecentList {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
+
+        FavoriteList {
             Layout.fillWidth: true
             Layout.fillHeight: true
         }

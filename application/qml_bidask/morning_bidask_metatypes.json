@@ -117,12 +117,6 @@
                         "arguments": [
                             {
                                 "type": "QString"
-                            },
-                            {
-                                "type": "QDateTime"
-                            },
-                            {
-                                "type": "int"
                             }
                         ],
                         "name": "setCurrentStock",

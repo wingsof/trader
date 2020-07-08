@@ -200,8 +200,7 @@ def setup():
 
 
 if __name__ == '__main__':
-    print(code_to_name('A005930'))
-    #result = get_past_day_data('A005930', date(2020, 2, 9), date(2020, 2, 12))
-    #for data in result:
-    #    print(data)
+    result = get_past_day_data('A005930', date(2020, 7, 1), date(2020, 7, 8))
+    for data in result:
+        print(data)
 

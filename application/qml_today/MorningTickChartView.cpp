@@ -13,11 +13,11 @@ MorningTickChartView::MorningTickChartView(QQuickItem *parent)
             this, &MorningTickChartView::setCurrentStock);
     connect(DataProvider::getInstance(), &DataProvider::dayDataReady, this, &MorningTickChartView::dayDataReceived);
     connect(DataProvider::getInstance(), &DataProvider::minuteDataReady, this, &MorningTickChartView::minuteDataReceived);
+    connect(DataProvider::getInstance(), &DataProvider::timeInfoArrived, this, &MorningTickChartView::timeInfoArrived);
 
     DataProvider::getInstance()->collectMinuteData(3);
     DataProvider::getInstance()->startStockCodeListening();
     DataProvider::getInstance()->startStockTick();
-    // setCurrentStock("A005930", QDateTime(QDate(2020, 6, 12)), 0);
 }
 
 
@@ -29,12 +29,27 @@ void MorningTickChartView::resetData() {
 }
 
 
-void MorningTickChartView::setCurrentStock(QString code, QDateTime dt, int countOfDays) {
-    if (currentStockCode != code) {
+void MorningTickChartView::timeInfoArrived(QDateTime dt) {
+    if (!currentDateTime.isValid() || (!DataProvider::getInstance()->isSimulation() && currentDateTime != dt)) {
+        qWarning() << "(MorningTickChartView) timeInfoArrived" << dt;
+        currentDateTime = dt;
+        sendRequestData();
+    }
+}
+
+
+void MorningTickChartView::sendRequestData() {
+    if (!currentStockCode.isEmpty() && currentDateTime.isValid()) {
         resetData();
+        DataProvider::getInstance()->requestDayData(currentStockCode, 20, currentDateTime.addDays(-1));
+    }
+}
+
+
+void MorningTickChartView::setCurrentStock(QString code) {
+    if (currentStockCode != code) {
         currentStockCode = code;
-        qWarning() << "currentStock: " << currentStockCode << "\t request day data until: " << dt.addDays(-1);
-        DataProvider::getInstance()->requestDayData(currentStockCode, 60, dt.addDays(-1));
+        sendRequestData();
     }
 }
 
@@ -342,6 +357,16 @@ void MorningTickChartView::drawCurrentLineRange(QPainter *painter, MinuteTick *m
     qreal lower_y = mapPriceToPos(data.close_price() * 0.97, priceChartEndY, 0);;
     painter->drawLine(QLineF(0, current_y, cw * PRICE_COLUMN_COUNT, current_y));
     painter->drawText(int(cw * PRICE_COLUMN_COUNT + cw), int(current_y), QString::number(data.close_price()));
+    pen.setColor("#90000000");
+    painter->setPen(pen);
+    painter->drawLine(QLineF(0, upper_y, cw * PRICE_COLUMN_COUNT, upper_y));
+    painter->drawLine(QLineF(0, lower_y, cw * PRICE_COLUMN_COUNT, lower_y));
+
+    if (mt->getYesterdayClose() == 0 || mt->getOpenPrice() == 0) {
+        painter->restore();
+        return;
+    }
+
     qreal yesterdayDiff = (int(data.close_price()) - mt->getYesterdayClose()) / (qreal)mt->getYesterdayClose() * 100.0;
     qreal openDiff = (int(data.close_price()) - mt->getOpenPrice()) / (qreal)mt->getOpenPrice() * 100.0;
 
@@ -359,16 +384,13 @@ void MorningTickChartView::drawCurrentLineRange(QPainter *painter, MinuteTick *m
     painter->setPen(pen);
     painter->drawText(int(cw * PRICE_COLUMN_COUNT + cw), int(current_y + 20), QString::number(yesterdayDiff, 'f', 1));
 
-    pen.setColor("#30000000");
-    painter->setPen(pen);
-    painter->drawLine(QLineF(0, upper_y, cw * PRICE_COLUMN_COUNT, upper_y));
-    painter->drawLine(QLineF(0, lower_y, cw * PRICE_COLUMN_COUNT, lower_y));
 
     painter->restore();
 }
 
 
 void MorningTickChartView::paint(QPainter *painter) {
+    qWarning() << "MorningTickChartView paint";
     painter->setRenderHint(QPainter::Antialiasing);
     QSizeF canvasSize = size();
     qreal cellHeight = canvasSize.height() / ROW_COUNT;

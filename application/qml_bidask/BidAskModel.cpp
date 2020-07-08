@@ -275,9 +275,7 @@ void BidAskModel::setTotalAskRemain(uint br) {
 }
 
 
-void BidAskModel::setCurrentStock(QString code, QDateTime dt, int countOfDays) {
-    Q_UNUSED(countOfDays);
-    Q_UNUSED(dt);
+void BidAskModel::setCurrentStock(QString code) {
     if (currentStockCode != code) {
         currentStockCode = code;
         qWarning() << "currentStock: " << currentStockCode;

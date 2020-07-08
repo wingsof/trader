@@ -4,8 +4,7 @@
 
 StockStat::StockStat()
 : QObject(nullptr) {
-    connect(DataProvider::getInstance(), &DataProvider::stockCodeChanged, this, &StockStat::slotStockCodeChanged);
-    connect(DataProvider::getInstance(), &DataProvider::stockCodeChanged, this, &StockStat::stockCodeChanged);
+    connect(DataProvider::getInstance(), &DataProvider::timeInfoArrived, this, &StockStat::timeInfoArrived);
     connect(DataProvider::getInstance(), &DataProvider::stockListTypeChanged, this, &StockStat::stockListTypeChanged);
     connect(DataProvider::getInstance(), &DataProvider::tickArrived, this, &StockStat::tickArrived);
 
@@ -20,27 +19,43 @@ QStringList StockStat::getRecentSearch() {
 }
 
 
-void StockStat::slotStockCodeChanged(QString code, QDateTime untilTime, int _countOfDays) {
-    Q_UNUSED(code);
-    if (!today.isValid() || (today.toMSecsSinceEpoch() != untilTime.toMSecsSinceEpoch())) {
-        today = untilTime;
-        countOfDays = _countOfDays;
+QStringList StockStat::getFavoriteList() {
+    return DataProvider::getInstance()->getFavoriteList();
+}
+
+
+void StockStat::addToFavorite(const QString &code) {
+    DataProvider::getInstance()->addToFavorite(code);
+}
+
+
+void StockStat::removeFromFavorite(const QString &code) {
+    DataProvider::getInstance()->removeFromFavorite(code);
+}
+
+
+void StockStat::timeInfoArrived(QDateTime dt) {
+    qWarning() << "timeInfo arrived"  << dt << "\tisSimul: " << DataProvider::getInstance()->isSimulation();
+    if (!DataProvider::getInstance()->isSimulation()) {
+        m_currentDateTime = dt;
         clearStat();
+        qWarning() << "clearStat";
+        emit infoCleared();
     }
 }
 
 
-void StockStat::setCurrentCode(const QString &code) {
-    if (today.isValid())
-        DataProvider::getInstance()->setCurrentStock(code, today, countOfDays);
+void StockStat::setCurrentCode(const QString &section, const QString &code) {
+    emit currentFocusChanged(section);
+    DataProvider::getInstance()->setCurrentStock(code);
 }
 
 
 StockInfo * StockStat::getInfo(const QString &code) {
     if (infoMap.contains(code))
         return infoMap[code];
-    else if (today.isValid() && !infoMap.contains(code)) {
-        infoMap[code] = new StockInfo(code, today);
+    else if (currentDateTime().isValid() && !infoMap.contains(code)) {
+        infoMap[code] = new StockInfo(code, currentDateTime());
         connect(infoMap[code], &StockInfo::infoUpdated, this, &StockStat::infoUpdated);
         return infoMap[code];
     }

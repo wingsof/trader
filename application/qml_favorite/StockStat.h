@@ -52,25 +52,30 @@ public:
     }
 
     QStringList getRecentSearch();
+    QStringList getFavoriteList();
+    void addToFavorite(const QString &code);
+    void removeFromFavorite(const QString &code);
+
     StockInfo * getInfo(const QString &code);
-    void setCurrentCode(const QString &code);
+    void setCurrentCode(const QString &section, const QString &code);
+    const QDateTime &currentDateTime() { return m_currentDateTime; }
 
 private:
     StockStat();
 
     QMap<QString, StockInfo *> infoMap;
-    QDateTime today;
-    int countOfDays;
+    QDateTime m_currentDateTime;
     void clearStat();
 
 private slots:
-    void slotStockCodeChanged(QString code, QDateTime untilTime, int countOfDays);
     void tickArrived(CybosTickData *);
+    void timeInfoArrived(QDateTime dt);
 
 signals:
-    void stockCodeChanged(QString code, QDateTime untilTime, int countOfDays);
     void stockListTypeChanged(QString);
     void infoUpdated(QString);
+    void infoCleared();
+    void currentFocusChanged(QString);
 };
 
 

@@ -17,14 +17,11 @@ Module {
         Property { name: "currentCode"; type: "string" }
         Property { name: "currentDateTime"; type: "QDateTime" }
         Property { name: "serverDateTime"; type: "QDateTime" }
-        Property { name: "days"; type: "int" }
         Property { name: "simulationRunning"; type: "bool" }
         Property { name: "simulationSpeed"; type: "double" }
         Method {
             name: "stockCodeChanged"
             Parameter { name: "code"; type: "string" }
-            Parameter { name: "untilTime"; type: "QDateTime" }
-            Parameter { name: "countOfDays"; type: "int" }
         }
         Method {
             name: "timeInfoArrived"
@@ -35,20 +32,19 @@ Module {
             Parameter { name: "status"; type: "bool" }
         }
         Method {
-            name: "sendCurrent"
+            name: "sendCurrentStock"
             Parameter { name: "code"; type: "string" }
+        }
+        Method {
+            name: "sendCurrentDateTime"
             Parameter { name: "dt"; type: "QDateTime" }
-            Parameter { name: "countOfDays"; type: "int" }
         }
         Method { name: "launchTick" }
         Method { name: "launchVolumeGraph" }
         Method { name: "launchBidAsk" }
         Method { name: "launchDayChart" }
         Method { name: "launchFavorite" }
-        Method {
-            name: "startSimulation"
-            Parameter { name: "dt"; type: "QDateTime" }
-        }
+        Method { name: "startSimulation" }
         Method { name: "stopSimulation" }
     }
 }

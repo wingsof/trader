@@ -27,8 +27,6 @@ Module {
         Method {
             name: "setCurrentStock"
             Parameter { type: "string" }
-            Parameter { type: "QDateTime" }
-            Parameter { type: "int" }
         }
     }
     Component {

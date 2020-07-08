@@ -19,8 +19,6 @@ Module {
         ]
         exportMetaObjectRevisions: [0, 1, 11, 4, 7]
         Signal { name: "stockCodeChanged" }
-        Signal { name: "countDaysChanged" }
-        Signal { name: "untilTimeChanged" }
         Method {
             name: "dataReceived"
             Parameter { type: "string" }
@@ -29,12 +27,14 @@ Module {
         Method {
             name: "searchReceived"
             Parameter { type: "string" }
-            Parameter { type: "QDateTime" }
-            Parameter { type: "int" }
         }
         Method {
             name: "tickDataArrived"
             Parameter { type: "CybosTickData"; isPointer: true }
+        }
+        Method {
+            name: "timeInfoArrived"
+            Parameter { name: "dt"; type: "QDateTime" }
         }
     }
 }

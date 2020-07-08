@@ -8,6 +8,46 @@ import QtQuick.tooling 1.2
 Module {
     dependencies: ["QtQuick 2.0"]
     Component {
+        name: "AbstractListModel"
+        prototype: "QAbstractListModel"
+        Signal { name: "clearCurrentIndex" }
+        Method {
+            name: "infoUpdated"
+            Parameter { type: "string" }
+        }
+        Method { name: "dateChanged" }
+        Method {
+            name: "stockListTypeChanged"
+            Parameter { type: "string" }
+        }
+        Method {
+            name: "focusChanged"
+            Parameter { type: "string" }
+        }
+        Method {
+            name: "currentSelectionChanged"
+            Parameter { name: "index"; type: "int" }
+        }
+        Method {
+            name: "setCurrentIndex"
+            Parameter { name: "index"; type: "int" }
+        }
+        Method {
+            name: "menuClicked"
+            Parameter { name: "index"; type: "int" }
+        }
+    }
+    Component {
+        name: "FavoriteListModel"
+        prototype: "AbstractListModel"
+        exports: ["favorite.backend/FavoriteListModel 1.0"]
+        exportMetaObjectRevisions: [0]
+        Method {
+            name: "menuClicked"
+            Parameter { name: "index"; type: "int" }
+        }
+    }
+    Component {
         name: "QAbstractItemModel"
         prototype: "QObject"
         Enum {
@@ -284,25 +324,11 @@ Module {
     Component { name: "QAbstractListModel"; prototype: "QAbstractItemModel" }
     Component {
         name: "RecentListModel"
-        prototype: "QAbstractListModel"
+        prototype: "AbstractListModel"
         exports: ["favorite.backend/RecentListModel 1.0"]
         exportMetaObjectRevisions: [0]
         Method {
-            name: "stockCodeChanged"
-            Parameter { name: "code"; type: "string" }
-            Parameter { name: "untilTime"; type: "QDateTime" }
-            Parameter { name: "countOfDays"; type: "int" }
-        }
-        Method {
-            name: "stockListTypeChanged"
-            Parameter { type: "string" }
-        }
-        Method {
-            name: "infoUpdated"
-            Parameter { type: "string" }
-        }
-        Method {
-            name: "currentSelectionChanged"
+            name: "menuClicked"
             Parameter { name: "index"; type: "int" }
         }
     }

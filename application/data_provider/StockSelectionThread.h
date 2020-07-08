@@ -18,7 +18,7 @@ private:
     std::shared_ptr<stock_api::Stock::Stub> stub_;
 
 signals:
-    void stockCodeChanged(QString code, QDateTime untilTime, int countOfDays);
+    void stockCodeChanged(QString code);
 };
 
 #endif

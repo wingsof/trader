@@ -19,21 +19,17 @@ using google::protobuf::Timestamp;
 using google::protobuf::Empty;
 using google::protobuf::util::TimeUtil;
 
-using stock_api::SimulationArgument;
 
-
-RunSimulation::RunSimulation(const QDateTime &dt, std::shared_ptr<stock_api::Stock::Stub> stub)
+RunSimulation::RunSimulation(std::shared_ptr<stock_api::Stock::Stub> stub)
 : QThread(0){
     stub_ = stub;
-    simulationStartTime = dt;
 }
 
 
 void RunSimulation::run() {
     ClientContext context;
+    Empty argument;
     Empty empty;
-    SimulationArgument argument;
-    argument.set_allocated_from_datetime(new Timestamp(TimeUtil::TimeTToTimestamp(simulationStartTime.toTime_t())));
 
     std::unique_ptr<ClientReader<Empty> > reader(
         stub_->StartSimulation(&context, argument)); 
