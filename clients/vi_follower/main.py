@@ -37,18 +37,38 @@ def check_time():
         gevent.sleep(60)
 
 
-def get_yesterday_data(today, market_code):
-    yesterday = holidays.get_yesterday(today)
-    yesterday_list = []
+def today_bull_record():
+    while True:
+        now = datetime.now()
+        if now.hour >= 16 and now.minute > 30:
+            result = morning_client.get_past_day_data('A005930', date(now.month, now.day), date(now.month, now.day))
+            if len(result) == 1:
+                break
+
+    now = datetime.now()
+    now_date = now.year * 10000 + now.month * 100 + now.day
+    db_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
+    tdata = list(db_collection['yamount'].find({'date': now_date}))
+    if len(tdata) == 0:
+        market_code = morning_client.get_all_market_code()
+        today_list = get_day_data(now, market_code)
+        today_list = sorted(today_list, key=lambda x: x['amount'], reverse=True)
+        today_list = today_list[:1000]
+        codes = [c['code'] for c in today_list]
+        db_collection['yamount'].insert_one({'date': now_date, 'codes': codes})
+
+
+def get_day_data(query_date, market_code):
+    result = []
     for progress, code in enumerate(market_code):
         print('collect yesterday data', f'{progress+1}/{len(market_code)}', end='\r')
         data = morning_client.get_past_day_data(code, yesterday, yesterday)
         if len(data) == 1:
             data = data[0]
             data['code'] = code
-            yesterday_list.append(data)
+            result.append(data)
     print('')
-    return yesterday_list
+    return result
 
 
 def start_vi_follower():
@@ -61,22 +81,26 @@ def start_vi_follower():
     for m in market_code: # for caching company name in server
         morning_client.code_to_name(m)
 
-    yesterday_list = get_yesterday_data(datetime.now(), market_code)
-    yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
-    yesterday_list = yesterday_list[:1000]
-    codes = [c['code'] for c in yesterday_list]
+    yesterday = holidays.get_yesterday(datetime.now())
+    yesterday_date = yesterday.year * 10000 + yesterday.month * 100 + yesterday.day
+    ydata = list(db_collection['yamount'].find({'date': yesterday_date}))
+
+    if len(ydata) == 0:
+        yesterday_list = get_day_data(yesterday, market_code)
+        yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
+        yesterday_list = yesterday_list[:1000]
+        codes = [c['code'] for c in yesterday_list]
+        db_collection['yamount'].insert_one({'date': yesterday_list[0]['0'], 'codes': codes})
+    else:
+        codes = ydata[0]['codes']
 
     if len(codes) == 0:
         print('Critical Error, No CODES')
         sys.exit(0)
 
-    ydata = list(db_collection['yamount'].find({'date': yesterday_list[0]['0']}))
-    if len(ydata) == 0:
-        db_collection['yamount'].insert_one({'date': yesterday_list[0]['0'], 'codes': codes})
-
     followers = []
-    for yesterday_data in yesterday_list:
-        sf = stock_follower.StockFollower(morning_client.get_reader(), db_collection, yesterday_data['code'])
+    for code in codes:
+        sf = stock_follower.StockFollower(morning_client.get_reader(), db_collection, code)
         sf.subscribe_at_startup()
         followers.append(sf)
 
@@ -93,7 +117,8 @@ def start_vi_follower():
     stock_api.subscribe_alarm(morning_client.get_reader(), vi_handler)
 
     time_check_thread = gevent.spawn(check_time)
-    gevent.joinall([time_check_thread])
+    today_bull_record_thread = gevent.spawn(today_bull_record)
+    gevent.joinall([time_check_thread, today_bull_record])
 
 
 if __name__ == '__main__':

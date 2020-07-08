@@ -11,7 +11,7 @@ public:
     YtopAmountListModel(QObject *parent=nullptr);
     QStringList getServerList() override;
     Q_INVOKABLE void menuClicked(int index) override;
-    QString secitonName() { return "ytopamount"; }
+    QString sectionName() { return "ytopamount"; }
 };
 
 

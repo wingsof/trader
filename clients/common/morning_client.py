@@ -207,9 +207,7 @@ def setup():
 
 
 if __name__ == '__main__':
-    print(get_yesterday_top_amount())
-    """
+    #print(get_yesterday_top_amount())
     result = get_past_day_data('A005930', date(2020, 7, 1), date(2020, 7, 8))
     for data in result:
         print(data)
-    """

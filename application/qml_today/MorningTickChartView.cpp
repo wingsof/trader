@@ -13,9 +13,11 @@ MorningTickChartView::MorningTickChartView(QQuickItem *parent)
             this, &MorningTickChartView::setCurrentStock);
     connect(DataProvider::getInstance(), &DataProvider::dayDataReady, this, &MorningTickChartView::dayDataReceived);
     connect(DataProvider::getInstance(), &DataProvider::minuteDataReady, this, &MorningTickChartView::minuteDataReceived);
+
+    // sequence is important, first MinuteData clear data and then call timeInfoArrived of MorningTickChartView
+    DataProvider::getInstance()->collectMinuteData(3);
     connect(DataProvider::getInstance(), &DataProvider::timeInfoArrived, this, &MorningTickChartView::timeInfoArrived);
 
-    DataProvider::getInstance()->collectMinuteData(3);
     DataProvider::getInstance()->startStockCodeListening();
     DataProvider::getInstance()->startStockTick();
 }

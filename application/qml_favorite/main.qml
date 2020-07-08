@@ -5,7 +5,7 @@ import QtQuick.Controls 2.12
 
 ApplicationWindow {
     id: root
-    width: 600; height: 500
+    width: 800; height: 800
     visible: true
 
     RowLayout { 
@@ -20,6 +20,7 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
+
         YtopAmountList {
             Layout.fillWidth: true
             Layout.fillHeight: true

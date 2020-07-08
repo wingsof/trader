@@ -112,6 +112,7 @@ void DayDataProvider::requestMinuteData(const QString &code,
 void DayDataProvider::requestTodayMinuteData(const QString &code) {
     waitingQueue.append(DayDataQuery(code, QDateTime::currentDateTime(),
                                             QDateTime::currentDateTime(), TODAY_MINUTE_DATA));
+    checkWaitingList();
 }
 
 
