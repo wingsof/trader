@@ -37,7 +37,7 @@ static const char* Stock_method_names[] = {
   "/stock_api.Stock/GetFavoriteList",
   "/stock_api.Stock/AddFavorite",
   "/stock_api.Stock/RemoveFavorite",
-  "/stock_api.Stock/GetYesterdayTopAmountCodes",
+  "/stock_api.Stock/GetYesterdayTopAmountList",
   "/stock_api.Stock/GetRecentSearch",
   "/stock_api.Stock/ListenCurrentStock",
   "/stock_api.Stock/ListenListChanged",
@@ -72,7 +72,7 @@ Stock::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
   , rpcmethod_GetFavoriteList_(Stock_method_names[12], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_AddFavorite_(Stock_method_names[13], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_RemoveFavorite_(Stock_method_names[14], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetYesterdayTopAmountCodes_(Stock_method_names[15], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetYesterdayTopAmountList_(Stock_method_names[15], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_GetRecentSearch_(Stock_method_names[16], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_ListenCurrentStock_(Stock_method_names[17], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   , rpcmethod_ListenListChanged_(Stock_method_names[18], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
@@ -505,32 +505,32 @@ void Stock::Stub::experimental_async::RemoveFavorite(::grpc::ClientContext* cont
   return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::google::protobuf::Empty>::Create(channel_.get(), cq, rpcmethod_RemoveFavorite_, context, request, false);
 }
 
-::grpc::Status Stock::Stub::GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::stock_api::CodeList* response) {
-  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_GetYesterdayTopAmountCodes_, context, request, response);
+::grpc::Status Stock::Stub::GetYesterdayTopAmountList(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::stock_api::CodeList* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_GetYesterdayTopAmountList_, context, request, response);
 }
 
-void Stock::Stub::experimental_async::GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp* request, ::stock_api::CodeList* response, std::function<void(::grpc::Status)> f) {
-  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GetYesterdayTopAmountCodes_, context, request, response, std::move(f));
+void Stock::Stub::experimental_async::GetYesterdayTopAmountList(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::stock_api::CodeList* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GetYesterdayTopAmountList_, context, request, response, std::move(f));
 }
 
-void Stock::Stub::experimental_async::GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CodeList* response, std::function<void(::grpc::Status)> f) {
-  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GetYesterdayTopAmountCodes_, context, request, response, std::move(f));
+void Stock::Stub::experimental_async::GetYesterdayTopAmountList(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CodeList* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GetYesterdayTopAmountList_, context, request, response, std::move(f));
 }
 
-void Stock::Stub::experimental_async::GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::google::protobuf::Timestamp* request, ::stock_api::CodeList* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_GetYesterdayTopAmountCodes_, context, request, response, reactor);
+void Stock::Stub::experimental_async::GetYesterdayTopAmountList(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::stock_api::CodeList* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_GetYesterdayTopAmountList_, context, request, response, reactor);
 }
 
-void Stock::Stub::experimental_async::GetYesterdayTopAmountCodes(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CodeList* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_GetYesterdayTopAmountCodes_, context, request, response, reactor);
+void Stock::Stub::experimental_async::GetYesterdayTopAmountList(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CodeList* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_GetYesterdayTopAmountList_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>* Stock::Stub::AsyncGetYesterdayTopAmountCodesRaw(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::CodeList>::Create(channel_.get(), cq, rpcmethod_GetYesterdayTopAmountCodes_, context, request, true);
+::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>* Stock::Stub::AsyncGetYesterdayTopAmountListRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::CodeList>::Create(channel_.get(), cq, rpcmethod_GetYesterdayTopAmountList_, context, request, true);
 }
 
-::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>* Stock::Stub::PrepareAsyncGetYesterdayTopAmountCodesRaw(::grpc::ClientContext* context, const ::google::protobuf::Timestamp& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::CodeList>::Create(channel_.get(), cq, rpcmethod_GetYesterdayTopAmountCodes_, context, request, false);
+::grpc::ClientAsyncResponseReader< ::stock_api::CodeList>* Stock::Stub::PrepareAsyncGetYesterdayTopAmountListRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::stock_api::CodeList>::Create(channel_.get(), cq, rpcmethod_GetYesterdayTopAmountList_, context, request, false);
 }
 
 ::grpc::Status Stock::Stub::GetRecentSearch(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::stock_api::CodeList* response) {
@@ -796,8 +796,8 @@ Stock::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[15],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::google::protobuf::Timestamp, ::stock_api::CodeList>(
-          std::mem_fn(&Stock::Service::GetYesterdayTopAmountCodes), this)));
+      new ::grpc::internal::RpcMethodHandler< Stock::Service, ::google::protobuf::Empty, ::stock_api::CodeList>(
+          std::mem_fn(&Stock::Service::GetYesterdayTopAmountList), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Stock_method_names[16],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
@@ -958,7 +958,7 @@ Stock::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status Stock::Service::GetYesterdayTopAmountCodes(::grpc::ServerContext* context, const ::google::protobuf::Timestamp* request, ::stock_api::CodeList* response) {
+::grpc::Status Stock::Service::GetYesterdayTopAmountList(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::stock_api::CodeList* response) {
   (void) context;
   (void) request;
   (void) response;

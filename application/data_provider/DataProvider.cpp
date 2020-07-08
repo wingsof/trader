@@ -252,6 +252,18 @@ QStringList DataProvider::getFavoriteList() {
 }
 
 
+QStringList DataProvider::getYtopAmountList() {
+    ClientContext context;
+    CodeList * codeList = new CodeList;
+    Empty empty;
+    stub_->GetYesterdayTopAmountList(&context, empty, codeList);
+    QStringList list;
+    for (int i = 0; i < codeList->codelist_size(); i++)
+        list.append(QString::fromStdString(codeList->codelist(i)));
+    return list;
+}
+
+
 void DataProvider::addToFavorite(const QString &code) {
     qWarning() << "DataProvider addToFavorite : " << code;
     ClientContext context;

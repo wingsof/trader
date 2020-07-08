@@ -183,6 +183,13 @@ def get_today_minute_data(code):
     return _convert_min_data_readable(code, minute_data)
 
 
+def get_yesterday_top_amount():
+    yday = datetime.now() - timedelta(days=1)
+    date = yday.year * 10000 + yday.month * 100 + yday.day
+    codes = stock_api.request_yesterday_top_amount(get_reader(), date)
+    return codes
+
+
 def setup():
     global _message_reader
     while True:
@@ -200,7 +207,9 @@ def setup():
 
 
 if __name__ == '__main__':
+    print(get_yesterday_top_amount())
+    """
     result = get_past_day_data('A005930', date(2020, 7, 1), date(2020, 7, 8))
     for data in result:
         print(data)
-
+    """

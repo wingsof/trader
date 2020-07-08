@@ -332,4 +332,14 @@ Module {
             Parameter { name: "index"; type: "int" }
         }
     }
+    Component {
+        name: "YtopAmountListModel"
+        prototype: "AbstractListModel"
+        exports: ["favorite.backend/YtopAmountListModel 1.0"]
+        exportMetaObjectRevisions: [0]
+        Method {
+            name: "menuClicked"
+            Parameter { name: "index"; type: "int" }
+        }
+    }
 }

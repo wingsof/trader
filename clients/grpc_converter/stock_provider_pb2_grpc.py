@@ -91,9 +91,9 @@ class StockStub(object):
         request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
-    self.GetYesterdayTopAmountCodes = channel.unary_unary(
-        '/stock_api.Stock/GetYesterdayTopAmountCodes',
-        request_serializer=google_dot_protobuf_dot_timestamp__pb2.Timestamp.SerializeToString,
+    self.GetYesterdayTopAmountList = channel.unary_unary(
+        '/stock_api.Stock/GetYesterdayTopAmountList',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=stock__provider__pb2.CodeList.FromString,
         )
     self.GetRecentSearch = channel.unary_unary(
@@ -257,7 +257,7 @@ class StockServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def GetYesterdayTopAmountCodes(self, request, context):
+  def GetYesterdayTopAmountList(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -412,9 +412,9 @@ def add_StockServicer_to_server(servicer, server):
           request_deserializer=stock__provider__pb2.StockCodeQuery.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
-      'GetYesterdayTopAmountCodes': grpc.unary_unary_rpc_method_handler(
-          servicer.GetYesterdayTopAmountCodes,
-          request_deserializer=google_dot_protobuf_dot_timestamp__pb2.Timestamp.FromString,
+      'GetYesterdayTopAmountList': grpc.unary_unary_rpc_method_handler(
+          servicer.GetYesterdayTopAmountList,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=stock__provider__pb2.CodeList.SerializeToString,
       ),
       'GetRecentSearch': grpc.unary_unary_rpc_method_handler(

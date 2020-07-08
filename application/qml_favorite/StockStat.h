@@ -53,6 +53,7 @@ public:
 
     QStringList getRecentSearch();
     QStringList getFavoriteList();
+    QStringList getYtopAmountList();
     void addToFavorite(const QString &code);
     void removeFromFavorite(const QString &code);
 

@@ -64,6 +64,15 @@ def start_vi_follower():
     yesterday_list = get_yesterday_data(datetime.now(), market_code)
     yesterday_list = sorted(yesterday_list, key=lambda x: x['amount'], reverse=True)
     yesterday_list = yesterday_list[:1000]
+    codes = [c['code'] for c in yesterday_list]
+
+    if len(codes) == 0:
+        print('Critical Error, No CODES')
+        sys.exit(0)
+
+    ydata = list(db_collection['yamount'].find({'date': yesterday_list[0]['0']}))
+    if len(ydata) == 0:
+        db_collection['yamount'].insert_one({'date': yesterday_list[0]['0'], 'codes': codes})
 
     followers = []
     for yesterday_data in yesterday_list:

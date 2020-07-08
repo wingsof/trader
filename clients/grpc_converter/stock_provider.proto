@@ -27,7 +27,7 @@ service Stock {
   rpc AddFavorite(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RemoveFavorite(StockCodeQuery) returns (google.protobuf.Empty) {}
 
-  rpc GetYesterdayTopAmountCodes(google.protobuf.Timestamp) returns (CodeList) {}
+  rpc GetYesterdayTopAmountList(google.protobuf.Empty) returns (CodeList) {}
   rpc GetRecentSearch(google.protobuf.Empty) returns (CodeList) {}
 
   rpc ListenCurrentStock(google.protobuf.Empty) returns (stream StockCodeQuery) {}

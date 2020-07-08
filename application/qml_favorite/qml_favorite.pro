@@ -31,10 +31,12 @@ SOURCES += main.cpp \
            StockStat.cpp \
            AbstractListModel.cpp \
            FavoriteListModel.cpp \
+           YtopAmountListModel.cpp \
            RecentListModel.cpp
 
 HEADERS += StockStat.h \ 
            AbstractListModel.h \
            FavoriteListModel.h \
+           YtopAmountListModel.h \
            RecentListModel.h
 

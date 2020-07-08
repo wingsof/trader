@@ -24,6 +24,11 @@ QStringList StockStat::getFavoriteList() {
 }
 
 
+QStringList StockStat::getYtopAmountList() {
+    return DataProvider::getInstance()->getYtopAmountList();
+}
+
+
 void StockStat::addToFavorite(const QString &code) {
     DataProvider::getInstance()->addToFavorite(code);
 }

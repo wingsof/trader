@@ -65,6 +65,7 @@ public:
 
     QStringList getRecentSearch();
     QStringList getFavoriteList();
+    QStringList getYtopAmountList();
     void addToFavorite(const QString &code);
     void removeFromFavorite(const QString &code);
     const QDateTime & currentDateTime() { return m_currentDateTime; }

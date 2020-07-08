@@ -163,6 +163,13 @@ def request_long_list(reader):
     return reader.block_write(header, body)
 
 
+def request_yesterday_top_amount(reader, date):
+    header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.YESTERDAY_TOP_AMOUNT_DATA)
+    header['date'] = date
+    body = []
+    return reader.block_write(header, body)
+
+
 def order_stock(reader, code, price, quantity, is_buy):
     header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.ORDER_STOCK)
     header['code'] = code

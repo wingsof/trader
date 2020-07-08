@@ -21,6 +21,7 @@ from morning_server.handlers import request_pre_handler as request_pre_handler
 from morning_server import server_util
 from morning_server.server_util import stream_write
 from morning_server import morning_stats
+from morning_server import yesterday_top_amount as yta
 from configs import time_info
 from morning_server import trade_machine
 from morning_server import clientmanager
@@ -97,6 +98,9 @@ def handle_request(sock, header, body):
     elif header['method'] == message.COLLECTOR_STATS:
         header['type'] = message.RESPONSE
         stream_write(sock, header, morning_stat.get_collector_info())
+    elif header['method'] == message.YESTERDAY_TOP_AMOUNT_DATA:
+        header['type'] = message.RESPONSE
+        stream_write(sock, header, yta.get_yesterday_top_amount(header['date'])
     elif header['vendor'] == message.CYBOS:
         handle_request_cybos(sock, header, body)
     elif header['vendor'] == message.KIWOOM:
