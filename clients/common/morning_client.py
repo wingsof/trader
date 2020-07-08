@@ -184,9 +184,15 @@ def get_today_minute_data(code):
 
 
 def get_yesterday_top_amount():
+    tday = datetime.now()
+    today_date = tday.year * 10000 + tday.month * 100 + tday.day
+    codes = stock_api.request_yesterday_top_amount(get_reader(), today_date)
+    if len(codes) > 0:
+        return codes
+
     yday = datetime.now() - timedelta(days=1)
-    date = yday.year * 10000 + yday.month * 100 + yday.day
-    codes = stock_api.request_yesterday_top_amount(get_reader(), date)
+    yesterday_date = yday.year * 10000 + yday.month * 100 + yday.day
+    codes = stock_api.request_yesterday_top_amount(get_reader(), yesterday_date)
     return codes
 
 

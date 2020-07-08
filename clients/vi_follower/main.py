@@ -40,11 +40,16 @@ def check_time():
 def today_bull_record():
     while True:
         now = datetime.now()
-        if now.hour >= 16 and now.minute > 30:
-            result = morning_client.get_past_day_data('A005930', date(now.month, now.day), date(now.month, now.day))
+        start_time = now.replace(hour=16, minute=30)
+        if now > start_time:
+            result = morning_client.get_past_day_data('A005930', date(now.year, now.month, now.day), date(now.year, now.month, now.day))
+            print('today result len', len(result))
             if len(result) == 1:
                 break
 
+        gevent.sleep(60)
+
+    slack.send_slack_message('VI FOLLOWER COLLECT TODAY BULL START')
     now = datetime.now()
     now_date = now.year * 10000 + now.month * 100 + now.day
     db_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
@@ -57,12 +62,14 @@ def today_bull_record():
         codes = [c['code'] for c in today_list]
         db_collection['yamount'].insert_one({'date': now_date, 'codes': codes})
 
+    slack.send_slack_message('VI FOLLOWER COLLECT TODAY BULL DONE')
+
 
 def get_day_data(query_date, market_code):
     result = []
     for progress, code in enumerate(market_code):
-        print('collect yesterday data', f'{progress+1}/{len(market_code)}', end='\r')
-        data = morning_client.get_past_day_data(code, yesterday, yesterday)
+        print('collect data', f'{progress+1}/{len(market_code)}', end='\r')
+        data = morning_client.get_past_day_data(code, query_date, query_date)
         if len(data) == 1:
             data = data[0]
             data['code'] = code
@@ -118,7 +125,7 @@ def start_vi_follower():
 
     time_check_thread = gevent.spawn(check_time)
     today_bull_record_thread = gevent.spawn(today_bull_record)
-    gevent.joinall([time_check_thread, today_bull_record])
+    gevent.joinall([time_check_thread, today_bull_record_thread])
 
 
 if __name__ == '__main__':
