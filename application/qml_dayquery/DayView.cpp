@@ -6,6 +6,8 @@ DayView::DayView(QQuickItem *parent) : QQuickPaintedItem(parent) {
     setAcceptedMouseButtons(Qt::AllButtons);
     dayData = new DayData;
     priceEndY = 0.0;
+    mPinnedCode = false;
+    mPcode = "";
     drawHorizontalY = 0.0;
     countDays = 120;
     connect(DataProvider::getInstance(), &DataProvider::stockCodeChanged, this, &DayView::searchReceived);
@@ -19,9 +21,32 @@ DayView::DayView(QQuickItem *parent) : QQuickPaintedItem(parent) {
 
 void DayView::searchReceived(QString code) {
     //qWarning() << "searchReceived : " << code;
-    if (stockCode != code) {
+    if ( (!mPinnedCode && stockCode != code) ||
+            (mPinnedCode && code == pcode() && code != stockCode)) {
         stockCode = code;
+        mCorporateName = DataProvider::getInstance()->getCompanyName(stockCode);
+        emit corporateNameChanged();
         search();
+    }
+}
+
+
+void DayView::setPcode(const QString &code) {
+    if (mPcode != code) {
+        mPcode = code;
+        emit pcodeChanged();
+    }
+
+    if (mPinnedCode)
+        DataProvider::getInstance()->forceChangeStockCode(code);
+}
+
+
+void DayView::setPinnedCode(bool isOn) {
+    qWarning() << "setPinnedCode : " << isOn;
+    if (isOn ^ mPinnedCode) {
+        mPinnedCode = isOn;
+        emit pinnedCodeChanged();
     }
 }
 
@@ -277,9 +302,13 @@ void DayView::paint(QPainter *painter) {
     }
 
     if (dayData->getTodayData()->close_price() != 0) {
-        drawCandle(painter, dayData->getTodayData(), itemSize.width() - priceLabelWidth - horizontalGridStep, horizontalGridStep, priceEndY);
+        if (dayData->getTodayData()->start_price() != 0)
+            drawCandle(painter, dayData->getTodayData(), itemSize.width() - priceLabelWidth - horizontalGridStep, horizontalGridStep, priceEndY);
         QPen pen;
-        pen.setColor("#ff0000");
+        if (dayData->getTodayData()->is_synchronized_bidding())
+            pen.setColor(QColor(255, 0, 255));
+        else
+            pen.setColor("#ff0000");
         pen.setWidth(1);
         pen.setStyle(Qt::DashLine);
         painter->setPen(pen);
@@ -287,7 +316,11 @@ void DayView::paint(QPainter *painter) {
                                                 priceEndY, 0);
         painter->drawLine(QLineF(0, current_y, itemSize.width() - priceLabelWidth, current_y));
         drawVolume(painter, dayData->getTodayData(), itemSize.width() - priceLabelWidth - horizontalGridStep, horizontalGridStep, volumeEndY, priceEndY, false);
-        pen.setColor(QColor("#ff0000"));
+
+        if (dayData->getTodayData()->is_synchronized_bidding())
+            pen.setColor(QColor(255, 0, 255));
+        else
+            pen.setColor("#ff0000");
         painter->setPen(pen);
         painter->drawText((int)itemSize.width() - priceLabelWidth + 50, 
                                 (int)current_y,
@@ -297,7 +330,8 @@ void DayView::paint(QPainter *painter) {
     if ( (drawHorizontalY > 0.0 && drawHorizontalY < priceEndY) &&
             (dayData->getTodayData()->close_price() != 0 || dayData->countOfData() != 0)) {
         int closePrice = dayData->getTodayData()->close_price();
-        if (closePrice == 0)
+
+        if (closePrice == 0) 
             closePrice = dayData->getDayData(dayData->countOfData() - 1).close_price();
         
         qreal hStartY = dayData->mapPriceToPos(closePrice, priceEndY, 0);
@@ -308,10 +342,11 @@ void DayView::paint(QPainter *painter) {
         painter->drawRect(QRectF(0.0, hStartY, itemSize.width() - priceLabelWidth, drawHorizontalY - hStartY));
 
         QPen pen;
-        if (profit > 0.0)
+        if (profit > 0.0) 
             pen.setColor("#ff0000");
-        else
+        else 
             pen.setColor("#0000ff");
+
         pen.setWidth(1);
         QFont font = painter->font();
         font.setPointSize(15);
@@ -333,13 +368,18 @@ void DayView::tickDataArrived(CybosTickData *data) {
     if (!dayData->hasData() || dayData->countOfData() == 0)
         return;
 
-    if (QString::fromStdString(data->code()) == stockCode &&
-            data->market_type() == 50) {
+    if (QString::fromStdString(data->code()) == stockCode) {
+        //qWarning() << "start : " << data->start_price() << "\t" <<
+        //                "highest : " << data->highest_price() << "\t" <<
+        //               "lowest : " << data->lowest_price() << "\t" <<
+        //               "cum volume : " << data->cum_volume() << "\t" <<
+        //               "market type : " << data->market_type();
         dayData->setTodayData(data->start_price(),
                                 data->highest_price(),
                                 data->lowest_price(),
                                 data->current_price(),
-                                data->cum_volume());
+                                data->cum_volume(),
+                                data->market_type() == 49);
         update();
     }
 }
@@ -385,12 +425,28 @@ bool DayData::hasData() {
 }
 
 
-void DayData::setTodayData(int o, int h, int l, int c, unsigned long v) {
+void DayData::setTodayData(int o, int h, int l, int c, unsigned long v, bool is_synchronized_bidding) {
     todayData->set_start_price(o);
     todayData->set_highest_price(h);
     todayData->set_lowest_price(l);
     todayData->set_close_price(c);
     todayData->set_volume(v);
+    todayData->set_is_synchronized_bidding(is_synchronized_bidding);
+
+    int stepCount = priceSteps.count();
+    if (stepCount > 0) {
+        int highest = todayData->close_price() > todayData->highest_price() ? todayData->close_price() : todayData->highest_price();
+        int lowest = todayData->close_price() < todayData->lowest_price() ? todayData->close_price() : todayData->lowest_price();
+
+        if (highest > priceSteps.at(stepCount - 1)) {
+            setPriceSteps(priceSteps.at(0), highest);
+            setPPS();
+        }
+        else if ( lowest < priceSteps.at(0)) {
+            setPriceSteps(lowest, priceSteps.at(stepCount - 1));
+            setPPS();
+        }
+    }
 }
 
 

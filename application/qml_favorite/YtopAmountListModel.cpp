@@ -3,21 +3,52 @@
 
 
 YtopAmountListModel::YtopAmountListModel(QObject *parent)
-: AbstractListModel(parent) {}
+: AbstractListModel(parent) {
+    m_dateSymbol = "-";    
+    m_listDate = 0;
+}
 
 
 QStringList YtopAmountListModel::getServerList() {
-    QStringList yt = StockStat::instance()->getYtopAmountList();
-    QStringList display;
-    for (int i = 0; i < 20; i++)  {
-        if (i > yt.count() - 1)
+    TopList *tlist = StockStat::instance()->getYtopAmountList();
+    currentDisplayList.clear();
+    qWarning() << "top list count : " << tlist->codelist_size() << "\t" << tlist->date();
+    for (int i = 0; i < 30; i++) {
+        if (i > tlist->codelist_size() - 1)
             break;
-        display.append(yt.at(i));
+        currentDisplayList.append(QString::fromStdString(tlist->codelist(i)));
     }
-    return display;
+    if (tlist->is_today_data())
+        setDateSymbol("T");
+    else
+        setDateSymbol("Y");
+
+    setListDate(tlist->date());
+
+    return currentDisplayList;
 }
 
 
 void YtopAmountListModel::menuClicked(int index) {
-    Q_UNUSED(index);
+    if (index == 0) {
+        if (currentSelectIndex() >= itemList.count() || currentSelectIndex() == -1)
+            return;
+        StockStat::instance()->addToFavorite(currentDisplayList.at(currentSelectIndex()));
+    }
+}
+
+
+void YtopAmountListModel::setDateSymbol(const QString &sym) {
+    if (m_dateSymbol != sym) {
+        m_dateSymbol = sym;
+        emit dateSymbolChanged();
+    }
+}
+
+
+void YtopAmountListModel::setListDate(uint d) {
+    if (m_listDate != d) {
+        m_listDate = d;
+        emit listDateChanged();
+    }
 }

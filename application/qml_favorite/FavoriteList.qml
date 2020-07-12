@@ -10,6 +10,7 @@ Item {
         anchors.fill: parent
         MenuButton {
             firstText: 'DEL'
+            secondText: 'TOP'
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             Layout.preferredWidth: 200
             Layout.preferredHeight: 50

@@ -4,7 +4,9 @@
 
 
 FavoriteListModel::FavoriteListModel(QObject *parent)
-: AbstractListModel(parent) {}
+: AbstractListModel(parent) {
+    qWarning() << "Constructor";    
+}
 
 
 QStringList FavoriteListModel::getServerList() {
@@ -22,5 +24,12 @@ void FavoriteListModel::menuClicked(int index) {
     }
 
     const ListItem * li = itemList.at(currentSelectIndex());
-    StockStat::instance()->removeFromFavorite(li->code());
+
+    if (index == 0) {
+        StockStat::instance()->removeFromFavorite(li->code());
+    }
+    else if (index == 1) {
+        StockStat::instance()->removeFromFavorite(li->code());
+        StockStat::instance()->addToFavorite(li->code());
+    }
 }

@@ -118,7 +118,7 @@ void DayDataProvider::requestTodayMinuteData(const QString &code) {
 
 void DayDataProvider::dataReceived(QString code, CybosDayDatas *data) {
     isProcessing = false;
-    qWarning() << "provider day data received : " << data->day_data_size();
+    //qWarning() << "provider day data received : " << data->day_data_size();
     for (int i = 0; i < cachedQueue.count(); i++) {
         if (cachedQueue[i].getCode() == code && !cachedQueue[i].isCached() &&
             cachedQueue[i].getDataType() == DAY_DATA) {
@@ -134,7 +134,7 @@ void DayDataProvider::dataReceived(QString code, CybosDayDatas *data) {
 
 void DayDataProvider::minuteDataReceived(QString code, CybosDayDatas *data) {
     isProcessing = false;
-    qWarning() << "provider minute data received(minute) : " << data->day_data_size();
+    //qWarning() << "provider minute data received(minute) : " << data->day_data_size();
     for (int i = 0; i < cachedQueue.count(); i++) {
         if (cachedQueue[i].getCode() == code && !cachedQueue[i].isCached() &&
             cachedQueue[i].getDataType() == MINUTE_DATA) {
@@ -150,7 +150,7 @@ void DayDataProvider::minuteDataReceived(QString code, CybosDayDatas *data) {
 
 void DayDataProvider::todayMinuteDataReceived(QString code, CybosDayDatas *data) {
     isProcessing = false;
-    qWarning() << "provider today minute data received(minute) : " << data->day_data_size();
+    //qWarning() << "provider today minute data received(minute) : " << data->day_data_size();
     emit minuteDataReady(code, data);
     checkWaitingList();
 }

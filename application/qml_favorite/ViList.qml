@@ -9,13 +9,17 @@ Item {
     ColumnLayout {
         anchors.fill: parent
         MenuButton {
-            buttonColor: '#89d1fe'
-            firstText: 'ADD'
-            secondText: codeListView.model.dateSymbol
-            thirdText: codeListView.model.listDate
+            firstCheckText: '동적'
+            firstCheck: codeListView.model.filterDynamic
+            secondCheckText: '정적'
+            secondCheck: codeListView.model.filterStatic
+            thirdCheckText: '상승'
+            thirdCheck: codeListView.model.catchPlus
+
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             Layout.preferredWidth: 200
             Layout.preferredHeight: 50
+            onCheckStateChanged: codeListView.model.checkStateChanged(index, state)
             onSelected: codeListView.model.menuClicked(index)
         }
 
@@ -23,16 +27,15 @@ Item {
             id: codeListView
             Layout.fillHeight: true
             Layout.preferredWidth: 200
-            model: YtopAmountListModel{}
+            model: ViListModel{}
         }
 
         Connections {
             target: codeListView.model
             function onClearCurrentIndex() {
-                console.log('YtopAmountList:Receive clear current index')
+                console.log('ViList:Receive clear current index')
                 codeListView.currentIndex = -1
             }
         }
-
     }
 }

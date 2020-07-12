@@ -9,27 +9,30 @@ Item {
     ColumnLayout {
         anchors.fill: parent
         MenuButton {
-            buttonColor: '#89d1fe'
+            buttonColor: 'yellow'
             firstText: 'ADD'
-            secondText: codeListView.model.dateSymbol
-            thirdText: codeListView.model.listDate
+            firstCheckText: '누적'
+            secondCheckText: '상승'
+            firstCheck: codeListView.model.accumulatedPeriod
+            secondCheck: codeListView.model.catchPlus
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             Layout.preferredWidth: 200
             Layout.preferredHeight: 50
             onSelected: codeListView.model.menuClicked(index)
+            onCheckStateChanged: codeListView.model.checkStateChanged(index, state)
         }
 
         CodeListView {
             id: codeListView
             Layout.fillHeight: true
             Layout.preferredWidth: 200
-            model: YtopAmountListModel{}
+            model: TtopAmountListModel{}
         }
 
         Connections {
             target: codeListView.model
             function onClearCurrentIndex() {
-                console.log('YtopAmountList:Receive clear current index')
+                console.log('TtopAmountList:Receive clear current index')
                 codeListView.currentIndex = -1
             }
         }

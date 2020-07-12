@@ -4,9 +4,13 @@
 #include <QDebug>
 
 
+#define TICK_SPACE_RATIO    (2.0/3.0)
+
+
 MorningTickChartView::MorningTickChartView(QQuickItem *parent)
 : QQuickPaintedItem(parent), yesterdayMinInfo(3) {
-    todayStartHour = 9;
+    //todayStartHour = 9;
+    todayStartTime = QTime(8, 30);
     connect(DataProvider::getInstance(), &DataProvider::minuteTickUpdated,
             this, &MorningTickChartView::minuteTickUpdated);
     connect(DataProvider::getInstance(), &DataProvider::stockCodeChanged,
@@ -33,7 +37,7 @@ void MorningTickChartView::resetData() {
 
 void MorningTickChartView::timeInfoArrived(QDateTime dt) {
     if (!currentDateTime.isValid() || (!DataProvider::getInstance()->isSimulation() && currentDateTime != dt)) {
-        qWarning() << "(MorningTickChartView) timeInfoArrived" << dt;
+        //qWarning() << "(MorningTickChartView) timeInfoArrived" << dt;
         currentDateTime = dt;
         sendRequestData();
     }
@@ -61,7 +65,7 @@ void MorningTickChartView::minuteTickUpdated(QString code) {
         return;
 
     MinuteTick *mt = DataProvider::getInstance()->getMinuteTick(currentStockCode);
-    qWarning() << "(minute Tick) highest : " << mt->getHighestPrice() << ", lowest" << mt->getLowestPrice() << "highest volume: " << currentVolumeMax << "\tlowest volume: " << currentVolumeMin;
+    //qWarning() << "(minute Tick) highest : " << mt->getHighestPrice() << ", lowest" << mt->getLowestPrice() << "highest volume: " << currentVolumeMax << "\tlowest volume: " << currentVolumeMin << "\t" << mt->getHighestVolume();
     updatePriceSteps(mt->getHighestPrice(), mt->getLowestPrice());
     updateVolumeMax(mt->getHighestVolume());
 
@@ -160,8 +164,10 @@ void MorningTickChartView::setVolumeMinMax(uint h, uint l) {
 
 
 void MorningTickChartView::updateVolumeMax(uint h) {
-    if (h > currentVolumeMax)
+    if (h > currentVolumeMax) {
+        qWarning() << "CurrentVolumeMax : " << h;
         currentVolumeMax = h;
+    }
 }
 
 
@@ -179,7 +185,7 @@ void MorningTickChartView::drawGridLine(QPainter *painter, qreal cw, qreal ch) {
 
     pen.setColor(QColor("#ff0000"));
     painter->setPen(pen);
-    QLineF lineMiddle(cw * PRICE_COLUMN_COUNT / 2, 0, cw * PRICE_COLUMN_COUNT / 2, ch * (ROW_COUNT - 2));
+    QLineF lineMiddle(cw * YESTERDAY_COLUMN_COUNT, 0, cw * YESTERDAY_COLUMN_COUNT, ch * (ROW_COUNT - 2));
     painter->drawLine(lineMiddle);
 
     pen.setColor(QColor("#d7d7d7"));
@@ -250,9 +256,10 @@ void MorningTickChartView::drawVolume(QPainter *painter, const CybosDayData &dat
         color.setRgb(255, 0, 0);
     painter->setBrush(QBrush(color));
     painter->setPen(Qt::NoPen);
-    qreal volumeHeight = getVolumeHeight(data.volume(), ch);
-    //qWarning() << "volume : " << data.volume() << "\t" << QRectF(startX, volumeEndY - volumeHeight, tickWidth, volumeHeight);
-    painter->drawRect(QRectF(startX, volumeEndY - volumeHeight, tickWidth, volumeHeight));
+    if (data.volume() > 0) {
+        qreal volumeHeight = getVolumeHeight(data.volume(), ch);
+        painter->drawRect(QRectF(startX, volumeEndY - volumeHeight, tickWidth, volumeHeight));
+    }
     painter->restore();
 }
 
@@ -260,10 +267,19 @@ void MorningTickChartView::drawVolume(QPainter *painter, const CybosDayData &dat
 void MorningTickChartView::drawCandle(QPainter *painter, const CybosDayData &data, qreal startX, qreal horizontalGridStep, qreal priceChartEndY) {
     QColor color;
     painter->save();
-    if (data.close_price() >= data.start_price()) 
-        color.setRgb(255, 0, 0);
-    else 
-        color.setRgb(0, 0, 255);
+    if (data.close_price() >= data.start_price()) {
+        if (data.is_synchronized_bidding())
+            color.setRgb(255, 165, 0);
+        else
+            color.setRgb(255, 0, 0);
+    }
+    else {
+        if (data.is_synchronized_bidding())
+            color.setRgb(173, 216, 230);
+        else
+            color.setRgb(0, 0, 255);
+    }
+
     QPen pen = painter->pen();
     painter->setBrush(QBrush(color));
     pen.setColor(color);
@@ -284,12 +300,12 @@ void MorningTickChartView::drawCandle(QPainter *painter, const CybosDayData &dat
 }
 
 
-qreal MorningTickChartView::getTimeToXPos(uint time, qreal tickWidth, uint dataStartHour) {
-    QTime startTime = QTime((int)dataStartHour, 0, 0);
-    QTime dataTime = QTime(int(time / 100), int(time % 100), 0);
-    qreal diff = (dataTime.msecsSinceStartOfDay() - startTime.msecsSinceStartOfDay()) / 1000.0 / 180.0;
+qreal MorningTickChartView::getTimeToXPos(uint dataTime, qreal tickWidth, uint startTime) {
+    QTime st(int(startTime / 100), int(startTime % 100), 0);
+    QTime dt(int(dataTime / 100), int(dataTime % 100), 0);
+    qreal diff = (dt.msecsSinceStartOfDay() - st.msecsSinceStartOfDay()) / 1000.0 / 180.0; // 3 min
     //qWarning() << time << "\t" << tickWidth * 2 * diff << "\t" << diff << "\t" ;//<< tickWidth * PRICE_COLUMN_COUNT / 2;
-    return tickWidth * 2 * diff;
+    return (tickWidth + (tickWidth * TICK_SPACE_RATIO)) * diff;
 }
 
 
@@ -307,22 +323,26 @@ void MorningTickChartView::drawPriceLabels(QPainter *painter, qreal startX, qrea
 }
 
 
-void MorningTickChartView::drawTimeLabels(QPainter *painter, qreal tickWidth, 
-                                            qreal cw, qreal ch, qreal startX, int startHour) {
+void MorningTickChartView::drawTimeLabels(QPainter *painter,
+                                            qreal tickWidth,
+                                            qreal cw, qreal ch,
+                                            qreal startX,
+                                            int cellCount,
+                                            uint startTime) {
     painter->save();
     QPen pen;
     pen.setWidth(1);
     painter->setPen(pen);
 
-    QTime t = QTime(int(startHour), 0, 0);
+    QTime t = QTime(startTime / 100, startTime % 100, 0);
     qreal yPos = ch * (PRICE_ROW_COUNT + TIME_LABEL_ROW_COUNT + SUBJECT_ROW_COUNT);
-    for (int i = 1; i < 14; i++) { //14
+    for (int i = 0; i < cellCount * 2; i++) { 
         t = t.addSecs(60 * 30); // 30 min
         QString label;
-        qreal xPos = getTimeToXPos(uint(t.hour() * 100 + t.minute()), tickWidth, startHour);
+        qreal xPos = getTimeToXPos(t.hour() * 100 + t.minute(), tickWidth, startTime);
         qreal lineHeight = ch / 6;
-        if (i % 2 == 0) {
-            label = QString::number(startHour + (i / 2));
+        if (t.minute() == 0) {
+            label = QString::number(t.hour());
             lineHeight = ch / 5;
             QLineF line(startX + xPos, 0, startX + xPos, yPos + lineHeight);
             pen.setColor(QColor("#d7d7d7"));
@@ -351,7 +371,10 @@ void MorningTickChartView::drawCurrentLineRange(QPainter *painter, MinuteTick *m
     QPen pen;
     pen.setStyle(Qt::DashLine);
     pen.setWidth(1);
-    pen.setColor("#ff0000");
+    if (data.is_synchronized_bidding())
+        pen.setColor("#ff00ff");
+    else
+        pen.setColor("#ff0000");
     painter->setPen(pen);
 
     qreal current_y = mapPriceToPos(data.close_price(), priceChartEndY, 0);
@@ -364,35 +387,33 @@ void MorningTickChartView::drawCurrentLineRange(QPainter *painter, MinuteTick *m
     painter->drawLine(QLineF(0, upper_y, cw * PRICE_COLUMN_COUNT, upper_y));
     painter->drawLine(QLineF(0, lower_y, cw * PRICE_COLUMN_COUNT, lower_y));
 
-    if (mt->getYesterdayClose() == 0 || mt->getOpenPrice() == 0) {
-        painter->restore();
-        return;
+    if (mt->getYesterdayClose() != 0) {
+        qreal yesterdayDiff = (int(data.close_price()) - mt->getYesterdayClose()) / (qreal)mt->getYesterdayClose() * 100.0;
+        if (yesterdayDiff < 0)
+            pen.setColor("#0000ff");
+        else
+            pen.setColor("#ff0000");
+        painter->setPen(pen);
+        painter->drawText(int(cw * PRICE_COLUMN_COUNT + cw), int(current_y + 20), QString::number(yesterdayDiff, 'f', 1));
     }
 
-    qreal yesterdayDiff = (int(data.close_price()) - mt->getYesterdayClose()) / (qreal)mt->getYesterdayClose() * 100.0;
-    qreal openDiff = (int(data.close_price()) - mt->getOpenPrice()) / (qreal)mt->getOpenPrice() * 100.0;
+    if (mt->getOpenPrice() != 0) {
+        qreal openDiff = (int(data.close_price()) - mt->getOpenPrice()) / (qreal)mt->getOpenPrice() * 100.0;
 
-    if (openDiff < 0) 
-        pen.setColor("#0000ff");
-    else
-        pen.setColor("#ff0000");
-    painter->setPen(pen);
-    painter->drawText(int(cw * PRICE_COLUMN_COUNT + cw), int(current_y - 20), QString::number(openDiff, 'f', 1));
-
-    if (yesterdayDiff < 0)
-        pen.setColor("#0000ff");
-    else
-        pen.setColor("#ff0000");
-    painter->setPen(pen);
-    painter->drawText(int(cw * PRICE_COLUMN_COUNT + cw), int(current_y + 20), QString::number(yesterdayDiff, 'f', 1));
-
+        if (openDiff < 0) 
+            pen.setColor("#0000ff");
+        else
+            pen.setColor("#ff0000");
+        painter->setPen(pen);
+        painter->drawText(int(cw * PRICE_COLUMN_COUNT + cw), int(current_y - 20), QString::number(openDiff, 'f', 1));
+    }
 
     painter->restore();
 }
 
 
 void MorningTickChartView::paint(QPainter *painter) {
-    qWarning() << "MorningTickChartView paint";
+    //qWarning() << "MorningTickChartView paint";
     painter->setRenderHint(QPainter::Antialiasing);
     QSizeF canvasSize = size();
     qreal cellHeight = canvasSize.height() / ROW_COUNT;
@@ -405,40 +426,50 @@ void MorningTickChartView::paint(QPainter *painter) {
 
     drawPriceLabels(painter, canvasSize.width() - cellWidth * 2 + 10, cellHeight);
     qreal startX = 0;
-    qreal tickCount = 131; // normally 9:00 ~ 15:30 : 390 min / 3 : 130 ticks
-    qreal tickWidth = cellWidth * (PRICE_COLUMN_COUNT / 2)  / (tickCount * 2 - 1);
+    // normally 8:30 ~ 15:30 : 420 min / 3 : 140 ticks (0 ~ 10: count = 11)
+    qreal todayTickCount = 141;
+    qreal todaySpaceCount = todayTickCount - 1;
+    // normally 9:00 ~ 15:30 : 390 min / 3 : 130 ticks
+    qreal yesterdayTickCount = 131;
+    qreal yesterdaySpaceCount = yesterdayTickCount - 1;
+
+    // Space width between tick is 2/3 tick width, area_width = (count + (count - 1) * 2/3) * tickWidth
+    qreal todayTickWidth = cellWidth * TODAY_COLUMN_COUNT / (todayTickCount + todaySpaceCount * TICK_SPACE_RATIO);
+    qreal yesterdayTickWidth = cellWidth * YESTERDAY_COLUMN_COUNT / (yesterdayTickCount + yesterdaySpaceCount * TICK_SPACE_RATIO);
+
     if (!yesterdayMinInfo.isEmpty()) {
-        uint dataStartHour = yesterdayMinInfo.get(0).time();
-        drawTimeLabels(painter, tickWidth, cellWidth, cellHeight, startX, int(dataStartHour / 100));
+        uint st = yesterdayMinInfo.get(0).time();
+        drawTimeLabels(painter, yesterdayTickWidth, cellWidth, cellHeight, startX, YESTERDAY_COLUMN_COUNT, st);
         for (int i = 0; i < yesterdayMinInfo.count(); i++) {
             const CybosDayData &d = yesterdayMinInfo.get(i);
-            qreal xPos = getTimeToXPos(d.time(), tickWidth, int(dataStartHour / 100));
-            drawCandle(painter, d, startX + xPos, tickWidth, cellHeight * PRICE_ROW_COUNT);
-            drawVolume(painter, d, startX + xPos, tickWidth, cellHeight, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
+            qreal xPos = getTimeToXPos(d.time(), yesterdayTickWidth, st);
+            drawCandle(painter, d, startX + xPos, yesterdayTickWidth, cellHeight * PRICE_ROW_COUNT);
+            drawVolume(painter, d, startX + xPos, yesterdayTickWidth, cellHeight, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
         }
     }
 
     if (!currentStockCode.isEmpty()) {
-        startX = cellWidth * (PRICE_COLUMN_COUNT  / 2) + 1;
+        startX = cellWidth * YESTERDAY_COLUMN_COUNT + 1;
         MinuteTick *mt = DataProvider::getInstance()->getMinuteTick(currentStockCode);
         if (mt == NULL)
             return;
 
         const CybosDayDatas &queue = mt->getQueue();
-        drawTimeLabels(painter, tickWidth, cellWidth, cellHeight, startX, todayStartHour);
-
+        drawTimeLabels(painter, todayTickWidth, cellWidth, cellHeight, startX,
+                        TODAY_COLUMN_COUNT, todayStartTime.hour() * 100 + todayStartTime.minute());
+        
         for (int i = 0; i < queue.day_data_size(); i++) {
             const CybosDayData &d = queue.day_data(i);
-            qreal xPos = getTimeToXPos(d.time(), tickWidth, todayStartHour);
-            drawCandle(painter, d, startX + xPos, tickWidth, cellHeight * PRICE_ROW_COUNT);
-            drawVolume(painter, d, startX + xPos, tickWidth, cellHeight, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
+            qreal xPos = getTimeToXPos(d.time(), todayTickWidth, todayStartTime.hour() * 100 + todayStartTime.minute());
+            drawCandle(painter, d, startX + xPos, todayTickWidth, cellHeight * PRICE_ROW_COUNT);
+            drawVolume(painter, d, startX + xPos, todayTickWidth, cellHeight, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
         }
-
+        
         if (mt->getCurrent().start_price() != 0) {
             const CybosDayData &d = mt->getCurrent();
-            qreal xPos = getTimeToXPos(d.time(), tickWidth, todayStartHour);
-            drawCandle(painter, d, startX + xPos, tickWidth, cellHeight * PRICE_ROW_COUNT);
-            drawVolume(painter, d, startX + xPos, tickWidth, cellHeight, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
+            qreal xPos = getTimeToXPos(d.time(), todayTickWidth, todayStartTime.hour() * 100 + todayStartTime.minute());
+            drawCandle(painter, d, startX + xPos, todayTickWidth, cellHeight * PRICE_ROW_COUNT);
+            drawVolume(painter, d, startX + xPos, todayTickWidth, cellHeight, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
             drawCurrentLineRange(painter, mt, d, cellWidth, cellHeight * PRICE_ROW_COUNT);
         }
     }

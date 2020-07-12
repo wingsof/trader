@@ -183,17 +183,18 @@ def get_today_minute_data(code):
     return _convert_min_data_readable(code, minute_data)
 
 
-def get_yesterday_top_amount():
-    tday = datetime.now()
-    today_date = tday.year * 10000 + tday.month * 100 + tday.day
-    codes = stock_api.request_yesterday_top_amount(get_reader(), today_date)
-    if len(codes) > 0:
-        return codes
+def get_yesterday_top_amount(dt):
+    if dt.hour >= 18:
+        tday = dt
+        today_date = tday.year * 10000 + tday.month * 100 + tday.day
+        codes = stock_api.request_yesterday_top_amount(get_reader(), today_date)
+        if len(codes) > 0:
+            return codes, True, today_date
 
-    yday = datetime.now() - timedelta(days=1)
+    yday = holidays.get_yesterday(dt)
     yesterday_date = yday.year * 10000 + yday.month * 100 + yday.day
     codes = stock_api.request_yesterday_top_amount(get_reader(), yesterday_date)
-    return codes
+    return codes, False, yesterday_date
 
 
 def setup():
@@ -213,7 +214,9 @@ def setup():
 
 
 if __name__ == '__main__':
+
+    print(get_today_minute_data('A005930'))
     #print(get_yesterday_top_amount())
-    result = get_past_day_data('A005930', date(2020, 7, 1), date(2020, 7, 8))
-    for data in result:
-        print(data)
+    #result = get_past_day_data('A005930', date(2020, 7, 1), date(2020, 7, 8))
+    #for data in result:
+    #    print(data)

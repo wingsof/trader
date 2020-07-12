@@ -24,6 +24,8 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.empty_pb2 import Empty
 from gevent.queue import Queue
 import favorite
+import vi
+import todaytick
 
 
 simulation_progressing = [False, False, False]
@@ -51,7 +53,8 @@ def collect_db(db, from_time, until_time):
     return list(db[collection_name].find({'date': {'$gt': from_time, '$lte': until_time}}))
 
 
-def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler, simulation_handler):
+def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, alarm_tick_handler,
+                        time_handler, simulation_handler):
     global simulation_progressing
 
     simulation_progressing[2] = True
@@ -85,8 +88,12 @@ def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_ti
                 subject_tick_handler(d['code'], [d])
             elif d['type'] == 'bidask':
                 bidask_tick_handler(d['code'], [d])
-            else:
+            elif d['type'] == 'tick':
                 stock_tick_handler(d['code'], [d])
+            elif d['type'] == 'alarm':
+                alarm_tick_handler(d['code'], [d])
+            else:
+                continue
 
             if d['date'] - last_datatime > timedelta(seconds=1):
                 time_handler(d['date'] - timedelta(hours=9))    # DB time is UTC but time is set as if localtime
@@ -103,7 +110,8 @@ def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_ti
     print('exit deliver tick')
 
 
-def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler, simulation_handler):
+def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_handler, subject_tick_handler, alarm_tick_handler, 
+                            time_handler, simulation_handler):
     global simulation_progressing
     AT_ONCE_SECONDS = 60
     tick_queue = Queue(3)
@@ -111,7 +119,8 @@ def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_han
     finish_time = simulation_datetime.replace(hour=15, minute=30)
     simulation_progressing[1] = True
 
-    gevent.spawn(deliver_tick, tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, time_handler, simulation_handler)
+    gevent.spawn(deliver_tick, tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, alarm_tick_handler,
+                        time_handler, simulation_handler)
     while simulation_datetime <= finish_time and simulation_progressing[0]:
         print('load data', simulation_datetime, 'data period seconds', AT_ONCE_SECONDS, 'real time', datetime.now())
         data = collect_db(db, simulation_datetime, simulation_datetime + timedelta(seconds=AT_ONCE_SECONDS))
@@ -143,6 +152,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.bidask_subscribe_cilents = []
         self.subject_subscribe_clients = []
         self.current_time_subscribe_clients = []
+        self.alarm_subscribe_clients = []
         self.list_changed_subscribe_clients = []
         self.current_stock_selection_subscribe_clients = []
         self.simulation_changed_subscribe_clients = []
@@ -233,7 +243,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         today = request.today.ToDatetime()
         yesterday = holidays.get_yesterday(today)
         from_date = holidays.get_date_by_previous_working_day_count(yesterday, request.count_of_days - 1)
-        print('GetPastMinuteData', from_date, yesterday)
         minute_datas = morning_client.get_minute_data(request.code, from_date, yesterday)
         protoc_converted = []
         for m in minute_datas:
@@ -256,9 +265,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
       
     def GetCompanyName(self, request, context):
-        print('Before get company name', request.code)
+        #print('Before get company name', request.code)
         company_name = morning_client.code_to_name(request.code)
-        print('GetCompanyName', request.code, company_name)
+        #print('GetCompanyName', request.code, company_name)
         return stock_provider_pb2.CompanyName(company_name=company_name)
 
     def RequestCybosTickData(self, request, context):
@@ -277,6 +286,12 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         stock_api.subscribe_stock_subject(morning_client.get_reader(),
                                         request.code, self.handle_subject_tick) 
         print('Start Subscribe Subject', request.code)
+        return Empty()
+
+    def RequestCybosAlarm(self, request, context):
+        stock_api.subscribe_alarm(morning_client.get_reader(),
+                                    self.handle_alarm_tick)
+        print('Start Subscribe alarm')
         return Empty()
 
     def send_list_changed(self, type_name):
@@ -302,6 +317,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
     def SetCurrentDateTime(self, request ,context):
         print('SetCurrentDateTime : ', request.ToDatetime())
+        todaytick.clear_all()
         self.handle_time(request.ToDatetime())
         return Empty()
 
@@ -316,6 +332,14 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         if favorite.remove_from_favorite(request.code):
             self.send_list_changed('favorite')
         return Empty()
+
+    def GetViList(self, request, context):
+        print('GetViList', request.type)
+        return stock_provider_pb2.CodeList(codelist=vi.get_vi(request.type, request.catch_plus))
+
+    def GetTodayTopAmountList(self, request, context):
+        print('GetTodayTopAmountList')
+        return stock_provider_pb2.CodeList(codelist=todaytick.get_today_list(request.type, request.catch_plus, request.use_accumulated))
 
     def SetSimulationStatus(self, request, context):
         global TIME_SPEED
@@ -369,6 +393,10 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         data = data[0]
         tick_date = Timestamp()
         tick_date.FromDatetime(data['date'] - timedelta(hours=9))
+
+        if todaytick.handle_today_tick(code, data):
+            self.send_list_changed('ttopamount')
+
         data = stock_provider_pb2.CybosTickData(tick_date=tick_date,
                                                 code=code,
                                                 company_name=data['1'],
@@ -404,6 +432,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             code = code[:code.index('_')]
 
         data = data[0]
+
         tick_date = Timestamp()
         tick_date.FromDatetime(data['date'] - timedelta(hours=9))
         data = stock_provider_pb2.CybosSubjectTickData(tick_date=tick_date,
@@ -416,6 +445,28 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                         total_volume=data['6'],
                                                         foreigner_total_volume=data['8'])
         for q in self.subject_subscribe_clients:
+            q.put_nowait(data)
+
+    def handle_alarm_tick(self, _, data):
+        if len(data) != 1:
+            return
+
+        data = data[0]
+        tick_date = Timestamp()
+        tick_date.FromDatetime(data['date'] - timedelta(hours=9))
+        code = data['code'] if 'code' in data else data['3']
+        if vi.handle_vi(code, data):
+            self.send_list_changed('vi')
+
+        data = stock_provider_pb2.CybosStockAlarm(tick_date=tick_date,
+                                                time=data['0'],
+                                                type_category=data['1'],
+                                                market_category=data['2'],
+                                                code=code,
+                                                alarm_category=data['4'],
+                                                title=data['5'],
+                                                content=data['6'])
+        for q in self.alarm_subscribe_clients:
             q.put_nowait(data)
 
     def ListenCurrentStock(self, request, context):
@@ -533,6 +584,20 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         client_list.remove(q)
         print('Done', title, len(client_list))
 
+    def ListenCybosAlarm(self, request, context):
+        title = 'ListenCybosAlarm'
+        client_list = self.alarm_subscribe_clients
+        q = Queue()
+        client_list.append(q)
+        print(title, len(client_list))
+        while context.is_active():
+            try:
+                data = q.get(True, 1)
+                yield data
+            except gevent.queue.Empty as ge:
+                pass
+        client_list.remove(q)
+        print('Done', title, len(client_list))
 
     def ListenSimulationStatusChanged(self, request, context):
         title = 'ListenSimulationStatusChanged' 
@@ -557,7 +622,10 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return stock_provider_pb2.CodeList(codelist=favorite.get_favorite())
 
     def GetYesterdayTopAmountList(self, request, context):
-        return stock_provider_pb2.CodeList(codelist=morning_client.get_yesterday_top_amount())
+        dt = request.ToDatetime() + timedelta(hours=9)
+        top_list = morning_client.get_yesterday_top_amount(dt) 
+        print('GetYesterdayTopAmountList', dt, 'count : ', len(top_list[0]), top_list[1], top_list[2])
+        return stock_provider_pb2.TopList(codelist=top_list[0], is_today_data=top_list[1], date=top_list[2])
 
     def StartSimulation(self, request, context):
         global simulation_progressing, request_stop_simulation
@@ -567,8 +635,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             simulation_progressing[0] = True
             triggered = True
 
+            todaytick.clear_all()
             if self.current_datetime is not None:
-                gevent.spawn(start_tick_provider, self.current_datetime + timedelta(hours=9), self.handle_stock_tick, self.handle_bidask_tick, self.handle_subject_tick, self.handle_time, self.handle_simulation)
+                gevent.spawn(start_tick_provider, self.current_datetime + timedelta(hours=9), self.handle_stock_tick, self.handle_bidask_tick, self.handle_subject_tick, self.handle_alarm_tick, self.handle_time, self.handle_simulation)
 
             self.handle_simulation([True])
             print('Start Simulation Mode', self.current_datetime + timedelta(hours=9))

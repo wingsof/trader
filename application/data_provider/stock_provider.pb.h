@@ -49,7 +49,7 @@ struct TableStruct_stock_5fprovider_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[12]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[15]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -72,6 +72,9 @@ extern CybosDayDataDefaultTypeInternal _CybosDayData_default_instance_;
 class CybosDayDatas;
 class CybosDayDatasDefaultTypeInternal;
 extern CybosDayDatasDefaultTypeInternal _CybosDayDatas_default_instance_;
+class CybosStockAlarm;
+class CybosStockAlarmDefaultTypeInternal;
+extern CybosStockAlarmDefaultTypeInternal _CybosStockAlarm_default_instance_;
 class CybosSubjectTickData;
 class CybosSubjectTickDataDefaultTypeInternal;
 extern CybosSubjectTickDataDefaultTypeInternal _CybosSubjectTickData_default_instance_;
@@ -81,6 +84,9 @@ extern CybosTickDataDefaultTypeInternal _CybosTickData_default_instance_;
 class ListType;
 class ListTypeDefaultTypeInternal;
 extern ListTypeDefaultTypeInternal _ListType_default_instance_;
+class Option;
+class OptionDefaultTypeInternal;
+extern OptionDefaultTypeInternal _Option_default_instance_;
 class PastMinuteQuery;
 class PastMinuteQueryDefaultTypeInternal;
 extern PastMinuteQueryDefaultTypeInternal _PastMinuteQuery_default_instance_;
@@ -93,6 +99,9 @@ extern StockCodeQueryDefaultTypeInternal _StockCodeQuery_default_instance_;
 class StockQuery;
 class StockQueryDefaultTypeInternal;
 extern StockQueryDefaultTypeInternal _StockQuery_default_instance_;
+class TopList;
+class TopListDefaultTypeInternal;
+extern TopListDefaultTypeInternal _TopList_default_instance_;
 }  // namespace stock_api
 PROTOBUF_NAMESPACE_OPEN
 template<> ::stock_api::CodeList* Arena::CreateMaybeMessage<::stock_api::CodeList>(Arena*);
@@ -100,13 +109,16 @@ template<> ::stock_api::CompanyName* Arena::CreateMaybeMessage<::stock_api::Comp
 template<> ::stock_api::CybosBidAskTickData* Arena::CreateMaybeMessage<::stock_api::CybosBidAskTickData>(Arena*);
 template<> ::stock_api::CybosDayData* Arena::CreateMaybeMessage<::stock_api::CybosDayData>(Arena*);
 template<> ::stock_api::CybosDayDatas* Arena::CreateMaybeMessage<::stock_api::CybosDayDatas>(Arena*);
+template<> ::stock_api::CybosStockAlarm* Arena::CreateMaybeMessage<::stock_api::CybosStockAlarm>(Arena*);
 template<> ::stock_api::CybosSubjectTickData* Arena::CreateMaybeMessage<::stock_api::CybosSubjectTickData>(Arena*);
 template<> ::stock_api::CybosTickData* Arena::CreateMaybeMessage<::stock_api::CybosTickData>(Arena*);
 template<> ::stock_api::ListType* Arena::CreateMaybeMessage<::stock_api::ListType>(Arena*);
+template<> ::stock_api::Option* Arena::CreateMaybeMessage<::stock_api::Option>(Arena*);
 template<> ::stock_api::PastMinuteQuery* Arena::CreateMaybeMessage<::stock_api::PastMinuteQuery>(Arena*);
 template<> ::stock_api::SimulationStatus* Arena::CreateMaybeMessage<::stock_api::SimulationStatus>(Arena*);
 template<> ::stock_api::StockCodeQuery* Arena::CreateMaybeMessage<::stock_api::StockCodeQuery>(Arena*);
 template<> ::stock_api::StockQuery* Arena::CreateMaybeMessage<::stock_api::StockQuery>(Arena*);
+template<> ::stock_api::TopList* Arena::CreateMaybeMessage<::stock_api::TopList>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace stock_api {
 
@@ -390,6 +402,156 @@ class CodeList :
 };
 // -------------------------------------------------------------------
 
+class Option :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.Option) */ {
+ public:
+  Option();
+  virtual ~Option();
+
+  Option(const Option& from);
+  Option(Option&& from) noexcept
+    : Option() {
+    *this = ::std::move(from);
+  }
+
+  inline Option& operator=(const Option& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Option& operator=(Option&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const Option& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Option* internal_default_instance() {
+    return reinterpret_cast<const Option*>(
+               &_Option_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(Option& a, Option& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Option* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Option* New() const final {
+    return CreateMaybeMessage<Option>(nullptr);
+  }
+
+  Option* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Option>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const Option& from);
+  void MergeFrom(const Option& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Option* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "stock_api.Option";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
+    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTypeFieldNumber = 1,
+    kCatchPlusFieldNumber = 2,
+    kUseAccumulatedFieldNumber = 3,
+  };
+  // int32 type = 1;
+  void clear_type();
+  ::PROTOBUF_NAMESPACE_ID::int32 type() const;
+  void set_type(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_type() const;
+  void _internal_set_type(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // bool catch_plus = 2;
+  void clear_catch_plus();
+  bool catch_plus() const;
+  void set_catch_plus(bool value);
+  private:
+  bool _internal_catch_plus() const;
+  void _internal_set_catch_plus(bool value);
+  public:
+
+  // bool use_accumulated = 3;
+  void clear_use_accumulated();
+  bool use_accumulated() const;
+  void set_use_accumulated(bool value);
+  private:
+  bool _internal_use_accumulated() const;
+  void _internal_set_use_accumulated(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.Option)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::int32 type_;
+  bool catch_plus_;
+  bool use_accumulated_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_stock_5fprovider_2eproto;
+};
+// -------------------------------------------------------------------
+
 class StockQuery :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.StockQuery) */ {
  public:
@@ -432,7 +594,7 @@ class StockQuery :
                &_StockQuery_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(StockQuery& a, StockQuery& b) {
     a.Swap(&b);
@@ -559,6 +721,171 @@ class StockQuery :
 };
 // -------------------------------------------------------------------
 
+class TopList :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.TopList) */ {
+ public:
+  TopList();
+  virtual ~TopList();
+
+  TopList(const TopList& from);
+  TopList(TopList&& from) noexcept
+    : TopList() {
+    *this = ::std::move(from);
+  }
+
+  inline TopList& operator=(const TopList& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TopList& operator=(TopList&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const TopList& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const TopList* internal_default_instance() {
+    return reinterpret_cast<const TopList*>(
+               &_TopList_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(TopList& a, TopList& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TopList* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TopList* New() const final {
+    return CreateMaybeMessage<TopList>(nullptr);
+  }
+
+  TopList* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TopList>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const TopList& from);
+  void MergeFrom(const TopList& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TopList* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "stock_api.TopList";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
+    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kCodelistFieldNumber = 1,
+    kIsTodayDataFieldNumber = 2,
+    kDateFieldNumber = 3,
+  };
+  // repeated string codelist = 1;
+  int codelist_size() const;
+  private:
+  int _internal_codelist_size() const;
+  public:
+  void clear_codelist();
+  const std::string& codelist(int index) const;
+  std::string* mutable_codelist(int index);
+  void set_codelist(int index, const std::string& value);
+  void set_codelist(int index, std::string&& value);
+  void set_codelist(int index, const char* value);
+  void set_codelist(int index, const char* value, size_t size);
+  std::string* add_codelist();
+  void add_codelist(const std::string& value);
+  void add_codelist(std::string&& value);
+  void add_codelist(const char* value);
+  void add_codelist(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& codelist() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_codelist();
+  private:
+  const std::string& _internal_codelist(int index) const;
+  std::string* _internal_add_codelist();
+  public:
+
+  // bool is_today_data = 2;
+  void clear_is_today_data();
+  bool is_today_data() const;
+  void set_is_today_data(bool value);
+  private:
+  bool _internal_is_today_data() const;
+  void _internal_set_is_today_data(bool value);
+  public:
+
+  // uint32 date = 3;
+  void clear_date();
+  ::PROTOBUF_NAMESPACE_ID::uint32 date() const;
+  void set_date(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_date() const;
+  void _internal_set_date(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.TopList)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> codelist_;
+  bool is_today_data_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 date_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_stock_5fprovider_2eproto;
+};
+// -------------------------------------------------------------------
+
 class SimulationStatus :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.SimulationStatus) */ {
  public:
@@ -601,7 +928,7 @@ class SimulationStatus :
                &_SimulationStatus_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    5;
 
   friend void swap(SimulationStatus& a, SimulationStatus& b) {
     a.Swap(&b);
@@ -740,7 +1067,7 @@ class ListType :
                &_ListType_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    6;
 
   friend void swap(ListType& a, ListType& b) {
     a.Swap(&b);
@@ -875,7 +1202,7 @@ class CompanyName :
                &_CompanyName_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    7;
 
   friend void swap(CompanyName& a, CompanyName& b) {
     a.Swap(&b);
@@ -1010,7 +1337,7 @@ class PastMinuteQuery :
                &_PastMinuteQuery_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    8;
 
   friend void swap(PastMinuteQuery& a, PastMinuteQuery& b) {
     a.Swap(&b);
@@ -1173,7 +1500,7 @@ class CybosDayData :
                &_CybosDayData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    9;
 
   friend void swap(CybosDayData& a, CybosDayData& b) {
     a.Swap(&b);
@@ -1249,8 +1576,9 @@ class CybosDayData :
     kCumBuyVolumeFieldNumber = 10,
     kForeignerHoldVolumeFieldNumber = 11,
     kInstitutionBuyVolumeFieldNumber = 13,
-    kInstitutionCumBuyVolumeFieldNumber = 14,
     kForeignerHoldRateFieldNumber = 12,
+    kIsSynchronizedBiddingFieldNumber = 15,
+    kInstitutionCumBuyVolumeFieldNumber = 14,
   };
   // uint32 date = 1;
   void clear_date();
@@ -1306,13 +1634,13 @@ class CybosDayData :
   void _internal_set_close_price(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // uint64 volume = 7;
+  // int64 volume = 7;
   void clear_volume();
-  ::PROTOBUF_NAMESPACE_ID::uint64 volume() const;
-  void set_volume(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  ::PROTOBUF_NAMESPACE_ID::int64 volume() const;
+  void set_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_volume() const;
-  void _internal_set_volume(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_volume() const;
+  void _internal_set_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
   // uint64 amount = 8;
@@ -1360,15 +1688,6 @@ class CybosDayData :
   void _internal_set_institution_buy_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
-  // int64 institution_cum_buy_volume = 14;
-  void clear_institution_cum_buy_volume();
-  ::PROTOBUF_NAMESPACE_ID::int64 institution_cum_buy_volume() const;
-  void set_institution_cum_buy_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::int64 _internal_institution_cum_buy_volume() const;
-  void _internal_set_institution_cum_buy_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
-  public:
-
   // float foreigner_hold_rate = 12;
   void clear_foreigner_hold_rate();
   float foreigner_hold_rate() const;
@@ -1376,6 +1695,24 @@ class CybosDayData :
   private:
   float _internal_foreigner_hold_rate() const;
   void _internal_set_foreigner_hold_rate(float value);
+  public:
+
+  // bool is_synchronized_bidding = 15;
+  void clear_is_synchronized_bidding();
+  bool is_synchronized_bidding() const;
+  void set_is_synchronized_bidding(bool value);
+  private:
+  bool _internal_is_synchronized_bidding() const;
+  void _internal_set_is_synchronized_bidding(bool value);
+  public:
+
+  // int64 institution_cum_buy_volume = 14;
+  void clear_institution_cum_buy_volume();
+  ::PROTOBUF_NAMESPACE_ID::int64 institution_cum_buy_volume() const;
+  void set_institution_cum_buy_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_institution_cum_buy_volume() const;
+  void _internal_set_institution_cum_buy_volume(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
   // @@protoc_insertion_point(class_scope:stock_api.CybosDayData)
@@ -1389,14 +1726,15 @@ class CybosDayData :
   ::PROTOBUF_NAMESPACE_ID::uint32 highest_price_;
   ::PROTOBUF_NAMESPACE_ID::uint32 lowest_price_;
   ::PROTOBUF_NAMESPACE_ID::uint32 close_price_;
-  ::PROTOBUF_NAMESPACE_ID::uint64 volume_;
+  ::PROTOBUF_NAMESPACE_ID::int64 volume_;
   ::PROTOBUF_NAMESPACE_ID::uint64 amount_;
   ::PROTOBUF_NAMESPACE_ID::uint64 cum_sell_volume_;
   ::PROTOBUF_NAMESPACE_ID::uint64 cum_buy_volume_;
   ::PROTOBUF_NAMESPACE_ID::int64 foreigner_hold_volume_;
   ::PROTOBUF_NAMESPACE_ID::int64 institution_buy_volume_;
-  ::PROTOBUF_NAMESPACE_ID::int64 institution_cum_buy_volume_;
   float foreigner_hold_rate_;
+  bool is_synchronized_bidding_;
+  ::PROTOBUF_NAMESPACE_ID::int64 institution_cum_buy_volume_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_stock_5fprovider_2eproto;
 };
@@ -1444,7 +1782,7 @@ class CybosDayDatas :
                &_CybosDayDatas_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    10;
 
   friend void swap(CybosDayDatas& a, CybosDayDatas& b) {
     a.Swap(&b);
@@ -1581,7 +1919,7 @@ class CybosSubjectTickData :
                &_CybosSubjectTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    11;
 
   friend void swap(CybosSubjectTickData& a, CybosSubjectTickData& b) {
     a.Swap(&b);
@@ -1824,7 +2162,7 @@ class CybosTickData :
                &_CybosTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    12;
 
   friend void swap(CybosTickData& a, CybosTickData& b) {
     a.Swap(&b);
@@ -2225,7 +2563,7 @@ class CybosBidAskTickData :
                &_CybosBidAskTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    13;
 
   friend void swap(CybosBidAskTickData& a, CybosBidAskTickData& b) {
     a.Swap(&b);
@@ -2499,6 +2837,238 @@ class CybosBidAskTickData :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_stock_5fprovider_2eproto;
 };
+// -------------------------------------------------------------------
+
+class CybosStockAlarm :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.CybosStockAlarm) */ {
+ public:
+  CybosStockAlarm();
+  virtual ~CybosStockAlarm();
+
+  CybosStockAlarm(const CybosStockAlarm& from);
+  CybosStockAlarm(CybosStockAlarm&& from) noexcept
+    : CybosStockAlarm() {
+    *this = ::std::move(from);
+  }
+
+  inline CybosStockAlarm& operator=(const CybosStockAlarm& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CybosStockAlarm& operator=(CybosStockAlarm&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const CybosStockAlarm& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const CybosStockAlarm* internal_default_instance() {
+    return reinterpret_cast<const CybosStockAlarm*>(
+               &_CybosStockAlarm_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    14;
+
+  friend void swap(CybosStockAlarm& a, CybosStockAlarm& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CybosStockAlarm* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline CybosStockAlarm* New() const final {
+    return CreateMaybeMessage<CybosStockAlarm>(nullptr);
+  }
+
+  CybosStockAlarm* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<CybosStockAlarm>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const CybosStockAlarm& from);
+  void MergeFrom(const CybosStockAlarm& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CybosStockAlarm* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "stock_api.CybosStockAlarm";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
+    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kCodeFieldNumber = 5,
+    kTitleFieldNumber = 7,
+    kContentFieldNumber = 8,
+    kTickDateFieldNumber = 1,
+    kTimeFieldNumber = 2,
+    kTypeCategoryFieldNumber = 3,
+    kMarketCategoryFieldNumber = 4,
+    kAlarmCategoryFieldNumber = 6,
+  };
+  // string code = 5;
+  void clear_code();
+  const std::string& code() const;
+  void set_code(const std::string& value);
+  void set_code(std::string&& value);
+  void set_code(const char* value);
+  void set_code(const char* value, size_t size);
+  std::string* mutable_code();
+  std::string* release_code();
+  void set_allocated_code(std::string* code);
+  private:
+  const std::string& _internal_code() const;
+  void _internal_set_code(const std::string& value);
+  std::string* _internal_mutable_code();
+  public:
+
+  // string title = 7;
+  void clear_title();
+  const std::string& title() const;
+  void set_title(const std::string& value);
+  void set_title(std::string&& value);
+  void set_title(const char* value);
+  void set_title(const char* value, size_t size);
+  std::string* mutable_title();
+  std::string* release_title();
+  void set_allocated_title(std::string* title);
+  private:
+  const std::string& _internal_title() const;
+  void _internal_set_title(const std::string& value);
+  std::string* _internal_mutable_title();
+  public:
+
+  // string content = 8;
+  void clear_content();
+  const std::string& content() const;
+  void set_content(const std::string& value);
+  void set_content(std::string&& value);
+  void set_content(const char* value);
+  void set_content(const char* value, size_t size);
+  std::string* mutable_content();
+  std::string* release_content();
+  void set_allocated_content(std::string* content);
+  private:
+  const std::string& _internal_content() const;
+  void _internal_set_content(const std::string& value);
+  std::string* _internal_mutable_content();
+  public:
+
+  // .google.protobuf.Timestamp tick_date = 1;
+  bool has_tick_date() const;
+  private:
+  bool _internal_has_tick_date() const;
+  public:
+  void clear_tick_date();
+  const PROTOBUF_NAMESPACE_ID::Timestamp& tick_date() const;
+  PROTOBUF_NAMESPACE_ID::Timestamp* release_tick_date();
+  PROTOBUF_NAMESPACE_ID::Timestamp* mutable_tick_date();
+  void set_allocated_tick_date(PROTOBUF_NAMESPACE_ID::Timestamp* tick_date);
+  private:
+  const PROTOBUF_NAMESPACE_ID::Timestamp& _internal_tick_date() const;
+  PROTOBUF_NAMESPACE_ID::Timestamp* _internal_mutable_tick_date();
+  public:
+
+  // uint32 time = 2;
+  void clear_time();
+  ::PROTOBUF_NAMESPACE_ID::uint32 time() const;
+  void set_time(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_time() const;
+  void _internal_set_time(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // int32 type_category = 3;
+  void clear_type_category();
+  ::PROTOBUF_NAMESPACE_ID::int32 type_category() const;
+  void set_type_category(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_type_category() const;
+  void _internal_set_type_category(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 market_category = 4;
+  void clear_market_category();
+  ::PROTOBUF_NAMESPACE_ID::int32 market_category() const;
+  void set_market_category(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_market_category() const;
+  void _internal_set_market_category(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 alarm_category = 6;
+  void clear_alarm_category();
+  ::PROTOBUF_NAMESPACE_ID::int32 alarm_category() const;
+  void set_alarm_category(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_alarm_category() const;
+  void _internal_set_alarm_category(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.CybosStockAlarm)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr code_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr title_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr content_;
+  PROTOBUF_NAMESPACE_ID::Timestamp* tick_date_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 time_;
+  ::PROTOBUF_NAMESPACE_ID::int32 type_category_;
+  ::PROTOBUF_NAMESPACE_ID::int32 market_category_;
+  ::PROTOBUF_NAMESPACE_ID::int32 alarm_category_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_stock_5fprovider_2eproto;
+};
 // ===================================================================
 
 
@@ -2646,6 +3216,70 @@ inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
 CodeList::mutable_codelist() {
   // @@protoc_insertion_point(field_mutable_list:stock_api.CodeList.codelist)
   return &codelist_;
+}
+
+// -------------------------------------------------------------------
+
+// Option
+
+// int32 type = 1;
+inline void Option::clear_type() {
+  type_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Option::_internal_type() const {
+  return type_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Option::type() const {
+  // @@protoc_insertion_point(field_get:stock_api.Option.type)
+  return _internal_type();
+}
+inline void Option::_internal_set_type(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  type_ = value;
+}
+inline void Option::set_type(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_type(value);
+  // @@protoc_insertion_point(field_set:stock_api.Option.type)
+}
+
+// bool catch_plus = 2;
+inline void Option::clear_catch_plus() {
+  catch_plus_ = false;
+}
+inline bool Option::_internal_catch_plus() const {
+  return catch_plus_;
+}
+inline bool Option::catch_plus() const {
+  // @@protoc_insertion_point(field_get:stock_api.Option.catch_plus)
+  return _internal_catch_plus();
+}
+inline void Option::_internal_set_catch_plus(bool value) {
+  
+  catch_plus_ = value;
+}
+inline void Option::set_catch_plus(bool value) {
+  _internal_set_catch_plus(value);
+  // @@protoc_insertion_point(field_set:stock_api.Option.catch_plus)
+}
+
+// bool use_accumulated = 3;
+inline void Option::clear_use_accumulated() {
+  use_accumulated_ = false;
+}
+inline bool Option::_internal_use_accumulated() const {
+  return use_accumulated_;
+}
+inline bool Option::use_accumulated() const {
+  // @@protoc_insertion_point(field_get:stock_api.Option.use_accumulated)
+  return _internal_use_accumulated();
+}
+inline void Option::_internal_set_use_accumulated(bool value) {
+  
+  use_accumulated_ = value;
+}
+inline void Option::set_use_accumulated(bool value) {
+  _internal_set_use_accumulated(value);
+  // @@protoc_insertion_point(field_set:stock_api.Option.use_accumulated)
 }
 
 // -------------------------------------------------------------------
@@ -2820,6 +3454,124 @@ inline void StockQuery::set_allocated_until_datetime(PROTOBUF_NAMESPACE_ID::Time
   }
   until_datetime_ = until_datetime;
   // @@protoc_insertion_point(field_set_allocated:stock_api.StockQuery.until_datetime)
+}
+
+// -------------------------------------------------------------------
+
+// TopList
+
+// repeated string codelist = 1;
+inline int TopList::_internal_codelist_size() const {
+  return codelist_.size();
+}
+inline int TopList::codelist_size() const {
+  return _internal_codelist_size();
+}
+inline void TopList::clear_codelist() {
+  codelist_.Clear();
+}
+inline std::string* TopList::add_codelist() {
+  // @@protoc_insertion_point(field_add_mutable:stock_api.TopList.codelist)
+  return _internal_add_codelist();
+}
+inline const std::string& TopList::_internal_codelist(int index) const {
+  return codelist_.Get(index);
+}
+inline const std::string& TopList::codelist(int index) const {
+  // @@protoc_insertion_point(field_get:stock_api.TopList.codelist)
+  return _internal_codelist(index);
+}
+inline std::string* TopList::mutable_codelist(int index) {
+  // @@protoc_insertion_point(field_mutable:stock_api.TopList.codelist)
+  return codelist_.Mutable(index);
+}
+inline void TopList::set_codelist(int index, const std::string& value) {
+  // @@protoc_insertion_point(field_set:stock_api.TopList.codelist)
+  codelist_.Mutable(index)->assign(value);
+}
+inline void TopList::set_codelist(int index, std::string&& value) {
+  // @@protoc_insertion_point(field_set:stock_api.TopList.codelist)
+  codelist_.Mutable(index)->assign(std::move(value));
+}
+inline void TopList::set_codelist(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  codelist_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:stock_api.TopList.codelist)
+}
+inline void TopList::set_codelist(int index, const char* value, size_t size) {
+  codelist_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:stock_api.TopList.codelist)
+}
+inline std::string* TopList::_internal_add_codelist() {
+  return codelist_.Add();
+}
+inline void TopList::add_codelist(const std::string& value) {
+  codelist_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:stock_api.TopList.codelist)
+}
+inline void TopList::add_codelist(std::string&& value) {
+  codelist_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:stock_api.TopList.codelist)
+}
+inline void TopList::add_codelist(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  codelist_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:stock_api.TopList.codelist)
+}
+inline void TopList::add_codelist(const char* value, size_t size) {
+  codelist_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:stock_api.TopList.codelist)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+TopList::codelist() const {
+  // @@protoc_insertion_point(field_list:stock_api.TopList.codelist)
+  return codelist_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+TopList::mutable_codelist() {
+  // @@protoc_insertion_point(field_mutable_list:stock_api.TopList.codelist)
+  return &codelist_;
+}
+
+// bool is_today_data = 2;
+inline void TopList::clear_is_today_data() {
+  is_today_data_ = false;
+}
+inline bool TopList::_internal_is_today_data() const {
+  return is_today_data_;
+}
+inline bool TopList::is_today_data() const {
+  // @@protoc_insertion_point(field_get:stock_api.TopList.is_today_data)
+  return _internal_is_today_data();
+}
+inline void TopList::_internal_set_is_today_data(bool value) {
+  
+  is_today_data_ = value;
+}
+inline void TopList::set_is_today_data(bool value) {
+  _internal_set_is_today_data(value);
+  // @@protoc_insertion_point(field_set:stock_api.TopList.is_today_data)
+}
+
+// uint32 date = 3;
+inline void TopList::clear_date() {
+  date_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 TopList::_internal_date() const {
+  return date_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 TopList::date() const {
+  // @@protoc_insertion_point(field_get:stock_api.TopList.date)
+  return _internal_date();
+}
+inline void TopList::_internal_set_date(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  date_ = value;
+}
+inline void TopList::set_date(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_date(value);
+  // @@protoc_insertion_point(field_set:stock_api.TopList.date)
 }
 
 // -------------------------------------------------------------------
@@ -3257,22 +4009,22 @@ inline void CybosDayData::set_close_price(::PROTOBUF_NAMESPACE_ID::uint32 value)
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.close_price)
 }
 
-// uint64 volume = 7;
+// int64 volume = 7;
 inline void CybosDayData::clear_volume() {
-  volume_ = PROTOBUF_ULONGLONG(0);
+  volume_ = PROTOBUF_LONGLONG(0);
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint64 CybosDayData::_internal_volume() const {
+inline ::PROTOBUF_NAMESPACE_ID::int64 CybosDayData::_internal_volume() const {
   return volume_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint64 CybosDayData::volume() const {
+inline ::PROTOBUF_NAMESPACE_ID::int64 CybosDayData::volume() const {
   // @@protoc_insertion_point(field_get:stock_api.CybosDayData.volume)
   return _internal_volume();
 }
-inline void CybosDayData::_internal_set_volume(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+inline void CybosDayData::_internal_set_volume(::PROTOBUF_NAMESPACE_ID::int64 value) {
   
   volume_ = value;
 }
-inline void CybosDayData::set_volume(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+inline void CybosDayData::set_volume(::PROTOBUF_NAMESPACE_ID::int64 value) {
   _internal_set_volume(value);
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.volume)
 }
@@ -3415,6 +4167,26 @@ inline void CybosDayData::_internal_set_institution_cum_buy_volume(::PROTOBUF_NA
 inline void CybosDayData::set_institution_cum_buy_volume(::PROTOBUF_NAMESPACE_ID::int64 value) {
   _internal_set_institution_cum_buy_volume(value);
   // @@protoc_insertion_point(field_set:stock_api.CybosDayData.institution_cum_buy_volume)
+}
+
+// bool is_synchronized_bidding = 15;
+inline void CybosDayData::clear_is_synchronized_bidding() {
+  is_synchronized_bidding_ = false;
+}
+inline bool CybosDayData::_internal_is_synchronized_bidding() const {
+  return is_synchronized_bidding_;
+}
+inline bool CybosDayData::is_synchronized_bidding() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosDayData.is_synchronized_bidding)
+  return _internal_is_synchronized_bidding();
+}
+inline void CybosDayData::_internal_set_is_synchronized_bidding(bool value) {
+  
+  is_synchronized_bidding_ = value;
+}
+inline void CybosDayData::set_is_synchronized_bidding(bool value) {
+  _internal_set_is_synchronized_bidding(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosDayData.is_synchronized_bidding)
 }
 
 // -------------------------------------------------------------------
@@ -4825,9 +5597,334 @@ inline void CybosBidAskTickData::set_out_time_total_bid_remain(::PROTOBUF_NAMESP
   // @@protoc_insertion_point(field_set:stock_api.CybosBidAskTickData.out_time_total_bid_remain)
 }
 
+// -------------------------------------------------------------------
+
+// CybosStockAlarm
+
+// .google.protobuf.Timestamp tick_date = 1;
+inline bool CybosStockAlarm::_internal_has_tick_date() const {
+  return this != internal_default_instance() && tick_date_ != nullptr;
+}
+inline bool CybosStockAlarm::has_tick_date() const {
+  return _internal_has_tick_date();
+}
+inline const PROTOBUF_NAMESPACE_ID::Timestamp& CybosStockAlarm::_internal_tick_date() const {
+  const PROTOBUF_NAMESPACE_ID::Timestamp* p = tick_date_;
+  return p != nullptr ? *p : *reinterpret_cast<const PROTOBUF_NAMESPACE_ID::Timestamp*>(
+      &PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
+}
+inline const PROTOBUF_NAMESPACE_ID::Timestamp& CybosStockAlarm::tick_date() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosStockAlarm.tick_date)
+  return _internal_tick_date();
+}
+inline PROTOBUF_NAMESPACE_ID::Timestamp* CybosStockAlarm::release_tick_date() {
+  // @@protoc_insertion_point(field_release:stock_api.CybosStockAlarm.tick_date)
+  
+  PROTOBUF_NAMESPACE_ID::Timestamp* temp = tick_date_;
+  tick_date_ = nullptr;
+  return temp;
+}
+inline PROTOBUF_NAMESPACE_ID::Timestamp* CybosStockAlarm::_internal_mutable_tick_date() {
+  
+  if (tick_date_ == nullptr) {
+    auto* p = CreateMaybeMessage<PROTOBUF_NAMESPACE_ID::Timestamp>(GetArenaNoVirtual());
+    tick_date_ = p;
+  }
+  return tick_date_;
+}
+inline PROTOBUF_NAMESPACE_ID::Timestamp* CybosStockAlarm::mutable_tick_date() {
+  // @@protoc_insertion_point(field_mutable:stock_api.CybosStockAlarm.tick_date)
+  return _internal_mutable_tick_date();
+}
+inline void CybosStockAlarm::set_allocated_tick_date(PROTOBUF_NAMESPACE_ID::Timestamp* tick_date) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(tick_date_);
+  }
+  if (tick_date) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(tick_date)->GetArena();
+    if (message_arena != submessage_arena) {
+      tick_date = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, tick_date, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  tick_date_ = tick_date;
+  // @@protoc_insertion_point(field_set_allocated:stock_api.CybosStockAlarm.tick_date)
+}
+
+// uint32 time = 2;
+inline void CybosStockAlarm::clear_time() {
+  time_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosStockAlarm::_internal_time() const {
+  return time_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 CybosStockAlarm::time() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosStockAlarm.time)
+  return _internal_time();
+}
+inline void CybosStockAlarm::_internal_set_time(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  time_ = value;
+}
+inline void CybosStockAlarm::set_time(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_time(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosStockAlarm.time)
+}
+
+// int32 type_category = 3;
+inline void CybosStockAlarm::clear_type_category() {
+  type_category_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosStockAlarm::_internal_type_category() const {
+  return type_category_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosStockAlarm::type_category() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosStockAlarm.type_category)
+  return _internal_type_category();
+}
+inline void CybosStockAlarm::_internal_set_type_category(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  type_category_ = value;
+}
+inline void CybosStockAlarm::set_type_category(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_type_category(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosStockAlarm.type_category)
+}
+
+// int32 market_category = 4;
+inline void CybosStockAlarm::clear_market_category() {
+  market_category_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosStockAlarm::_internal_market_category() const {
+  return market_category_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosStockAlarm::market_category() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosStockAlarm.market_category)
+  return _internal_market_category();
+}
+inline void CybosStockAlarm::_internal_set_market_category(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  market_category_ = value;
+}
+inline void CybosStockAlarm::set_market_category(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_market_category(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosStockAlarm.market_category)
+}
+
+// string code = 5;
+inline void CybosStockAlarm::clear_code() {
+  code_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& CybosStockAlarm::code() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosStockAlarm.code)
+  return _internal_code();
+}
+inline void CybosStockAlarm::set_code(const std::string& value) {
+  _internal_set_code(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosStockAlarm.code)
+}
+inline std::string* CybosStockAlarm::mutable_code() {
+  // @@protoc_insertion_point(field_mutable:stock_api.CybosStockAlarm.code)
+  return _internal_mutable_code();
+}
+inline const std::string& CybosStockAlarm::_internal_code() const {
+  return code_.GetNoArena();
+}
+inline void CybosStockAlarm::_internal_set_code(const std::string& value) {
+  
+  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void CybosStockAlarm::set_code(std::string&& value) {
+  
+  code_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:stock_api.CybosStockAlarm.code)
+}
+inline void CybosStockAlarm::set_code(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:stock_api.CybosStockAlarm.code)
+}
+inline void CybosStockAlarm::set_code(const char* value, size_t size) {
+  
+  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:stock_api.CybosStockAlarm.code)
+}
+inline std::string* CybosStockAlarm::_internal_mutable_code() {
+  
+  return code_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* CybosStockAlarm::release_code() {
+  // @@protoc_insertion_point(field_release:stock_api.CybosStockAlarm.code)
+  
+  return code_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void CybosStockAlarm::set_allocated_code(std::string* code) {
+  if (code != nullptr) {
+    
+  } else {
+    
+  }
+  code_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), code);
+  // @@protoc_insertion_point(field_set_allocated:stock_api.CybosStockAlarm.code)
+}
+
+// int32 alarm_category = 6;
+inline void CybosStockAlarm::clear_alarm_category() {
+  alarm_category_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosStockAlarm::_internal_alarm_category() const {
+  return alarm_category_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosStockAlarm::alarm_category() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosStockAlarm.alarm_category)
+  return _internal_alarm_category();
+}
+inline void CybosStockAlarm::_internal_set_alarm_category(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  alarm_category_ = value;
+}
+inline void CybosStockAlarm::set_alarm_category(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_alarm_category(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosStockAlarm.alarm_category)
+}
+
+// string title = 7;
+inline void CybosStockAlarm::clear_title() {
+  title_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& CybosStockAlarm::title() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosStockAlarm.title)
+  return _internal_title();
+}
+inline void CybosStockAlarm::set_title(const std::string& value) {
+  _internal_set_title(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosStockAlarm.title)
+}
+inline std::string* CybosStockAlarm::mutable_title() {
+  // @@protoc_insertion_point(field_mutable:stock_api.CybosStockAlarm.title)
+  return _internal_mutable_title();
+}
+inline const std::string& CybosStockAlarm::_internal_title() const {
+  return title_.GetNoArena();
+}
+inline void CybosStockAlarm::_internal_set_title(const std::string& value) {
+  
+  title_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void CybosStockAlarm::set_title(std::string&& value) {
+  
+  title_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:stock_api.CybosStockAlarm.title)
+}
+inline void CybosStockAlarm::set_title(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  title_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:stock_api.CybosStockAlarm.title)
+}
+inline void CybosStockAlarm::set_title(const char* value, size_t size) {
+  
+  title_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:stock_api.CybosStockAlarm.title)
+}
+inline std::string* CybosStockAlarm::_internal_mutable_title() {
+  
+  return title_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* CybosStockAlarm::release_title() {
+  // @@protoc_insertion_point(field_release:stock_api.CybosStockAlarm.title)
+  
+  return title_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void CybosStockAlarm::set_allocated_title(std::string* title) {
+  if (title != nullptr) {
+    
+  } else {
+    
+  }
+  title_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), title);
+  // @@protoc_insertion_point(field_set_allocated:stock_api.CybosStockAlarm.title)
+}
+
+// string content = 8;
+inline void CybosStockAlarm::clear_content() {
+  content_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& CybosStockAlarm::content() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosStockAlarm.content)
+  return _internal_content();
+}
+inline void CybosStockAlarm::set_content(const std::string& value) {
+  _internal_set_content(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosStockAlarm.content)
+}
+inline std::string* CybosStockAlarm::mutable_content() {
+  // @@protoc_insertion_point(field_mutable:stock_api.CybosStockAlarm.content)
+  return _internal_mutable_content();
+}
+inline const std::string& CybosStockAlarm::_internal_content() const {
+  return content_.GetNoArena();
+}
+inline void CybosStockAlarm::_internal_set_content(const std::string& value) {
+  
+  content_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void CybosStockAlarm::set_content(std::string&& value) {
+  
+  content_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:stock_api.CybosStockAlarm.content)
+}
+inline void CybosStockAlarm::set_content(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  content_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:stock_api.CybosStockAlarm.content)
+}
+inline void CybosStockAlarm::set_content(const char* value, size_t size) {
+  
+  content_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:stock_api.CybosStockAlarm.content)
+}
+inline std::string* CybosStockAlarm::_internal_mutable_content() {
+  
+  return content_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* CybosStockAlarm::release_content() {
+  // @@protoc_insertion_point(field_release:stock_api.CybosStockAlarm.content)
+  
+  return content_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void CybosStockAlarm::set_allocated_content(std::string* content) {
+  if (content != nullptr) {
+    
+  } else {
+    
+  }
+  content_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), content);
+  // @@protoc_insertion_point(field_set_allocated:stock_api.CybosStockAlarm.content)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

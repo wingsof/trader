@@ -10,11 +10,64 @@
                 ],
                 "className": "DayView",
                 "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "name": "pinnedCode",
+                        "notify": "pinnedCodeChanged",
+                        "read": "pinnedCode",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setPinnedCode"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "name": "pcode",
+                        "notify": "pcodeChanged",
+                        "read": "pcode",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setPcode"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "name": "corporateName",
+                        "notify": "corporateNameChanged",
+                        "read": "corporateName",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false
+                    }
+                ],
                 "qualifiedClassName": "DayView",
                 "signals": [
                     {
                         "access": "public",
-                        "name": "stockCodeChanged",
+                        "name": "corporateNameChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "pinnedCodeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "pcodeChanged",
                         "returnType": "void"
                     }
                 ],

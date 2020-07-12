@@ -8,9 +8,9 @@
 #include "TickThread.h"
 #include "TimeThread.h"
 #include "BidAskThread.h"
+#include "AlarmThread.h"
 #include "StockListThread.h"
 #include "StockSelectionThread.h"
-#include "SpeedStatistics.h"
 #include "MinuteData.h"
 #include "DayDataProvider.h"
 #include "SimulationEvent.h"
@@ -43,23 +43,24 @@ using stock_api::CybosBidAskTickData;
 using stock_api::CybosSubjectTickData;
 using google::protobuf::Timestamp;
 using stock_api::SimulationStatus;
+using stock_api::Option;
 
 
 DataProvider::DataProvider()
 : QObject(0) {
-    //setenv("TZ", "UTC", 1);
     qRegisterMetaType<CybosTickData>("CybosTickData");
     qRegisterMetaType<CybosDayDatas>("CybosDayDatas");
     qRegisterMetaType<CybosBidAskTickData>("CybosBidAskTickData");
     qRegisterMetaType<CybosSubjectTickData>("CybosSubjectTickData");
     qRegisterMetaType<SimulationStatus>("SimulationStatus");
     qRegisterMetaType<Timestamp>("Timestamp");
+    qRegisterMetaType<CybosStockAlarm>("CybosStockAlarm");
 
     stub_ = Stock::NewStub(grpc::CreateChannel("localhost:50052", grpc::InsecureChannelCredentials()));
 
-    speedStatistics = NULL;
     minuteData = NULL;
     timeThread = NULL;
+    alarmThread = NULL;
     stockListThread = NULL;
 
     tickThread = new TickThread(stub_);
@@ -92,9 +93,8 @@ void DataProvider::stockCodeReceived(QString code) {
 }
 
 
-void DataProvider::createSpeedStatistics(int secs) {
-    if (speedStatistics == NULL)
-        speedStatistics = new SpeedStatistics(secs, this);
+void DataProvider::forceChangeStockCode(const QString &code) {
+    stockCodeReceived(code);
 }
 
 
@@ -116,6 +116,15 @@ void DataProvider::startTimeListening() {
         timeThread = new TimeThread(stub_);
         connect(timeThread, &TimeThread::timeInfoArrived, this, &DataProvider::convertTimeInfo);
         timeThread->start();
+    }
+}
+
+
+void DataProvider::startAlarmListening() {
+    if (alarmThread == NULL) {
+        alarmThread = new AlarmThread(stub_);
+        connect(alarmThread, &AlarmThread::alarmArrived, this, &DataProvider::alarmArrived);
+        alarmThread->start();
     }
 }
 
@@ -252,15 +261,42 @@ QStringList DataProvider::getFavoriteList() {
 }
 
 
-QStringList DataProvider::getYtopAmountList() {
+QStringList DataProvider::getViList(int option, bool catchPlus) {
     ClientContext context;
     CodeList * codeList = new CodeList;
-    Empty empty;
-    stub_->GetYesterdayTopAmountList(&context, empty, codeList);
+    Option opt;
+    opt.set_type(option);
+    opt.set_catch_plus(catchPlus);
+    stub_->GetViList(&context, opt, codeList);
     QStringList list;
     for (int i = 0; i < codeList->codelist_size(); i++)
         list.append(QString::fromStdString(codeList->codelist(i)));
     return list;
+}
+
+
+QStringList DataProvider::getTtopAmountList(int option, bool catchPlus, bool useAccumulated) {
+    ClientContext context;
+    CodeList * codeList = new CodeList;
+    Option opt;
+    opt.set_type(option);
+    opt.set_catch_plus(catchPlus);
+    opt.set_use_accumulated(useAccumulated);
+    stub_->GetTodayTopAmountList(&context, opt, codeList);
+    QStringList list;
+    for (int i = 0; i < codeList->codelist_size(); i++)
+        list.append(QString::fromStdString(codeList->codelist(i)));
+    return list;
+}
+
+
+TopList * DataProvider::getYtopAmountList() {
+    ClientContext context;
+    Timestamp ts = Timestamp(TimeUtil::TimeTToTimestamp(m_currentDateTime.toTime_t()));
+    TopList * topList = new TopList;
+    stub_->GetYesterdayTopAmountList(&context, ts, topList);
+    qWarning() << "topList count : " << topList->codelist_size() << "\tdate" << topList->date() << "\tis_today_data" << topList->is_today_data();
+    return topList;
 }
 
 

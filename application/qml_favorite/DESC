@@ -24,3 +24,11 @@
 
 * Test
     * Recent Search -> Click Favorite and check whether registered in favorite
+
+
+
+* Tick BULL(Amount based)
+    * Select option : Accumulated(Today), Period(Before last refresh time), Refresh Time
+    * Filter option:  today open -> current, yesterday close -> current
+
+* VI

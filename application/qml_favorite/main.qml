@@ -5,18 +5,28 @@ import QtQuick.Controls 2.12
 
 ApplicationWindow {
     id: root
-    width: 800; height: 800
+    width: 1200; height: 800
     visible: true
 
     RowLayout { 
         anchors.fill: parent
         spacing: 0.0
-        RecentList {
+        TtopAmountList {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
+
+        ViList {
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
 
         FavoriteList {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
+
+        RecentList {
             Layout.fillWidth: true
             Layout.fillHeight: true
         }

@@ -25,10 +25,18 @@ class CodeListDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<CodeList> _instance;
 } _CodeList_default_instance_;
+class OptionDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<Option> _instance;
+} _Option_default_instance_;
 class StockQueryDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<StockQuery> _instance;
 } _StockQuery_default_instance_;
+class TopListDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<TopList> _instance;
+} _TopList_default_instance_;
 class SimulationStatusDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<SimulationStatus> _instance;
@@ -65,6 +73,10 @@ class CybosBidAskTickDataDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<CybosBidAskTickData> _instance;
 } _CybosBidAskTickData_default_instance_;
+class CybosStockAlarmDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<CybosStockAlarm> _instance;
+} _CybosStockAlarm_default_instance_;
 }  // namespace stock_api
 static void InitDefaultsscc_info_CodeList_stock_5fprovider_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -138,6 +150,21 @@ static void InitDefaultsscc_info_CybosDayDatas_stock_5fprovider_2eproto() {
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_CybosDayDatas_stock_5fprovider_2eproto}, {
       &scc_info_CybosDayData_stock_5fprovider_2eproto.base,}};
 
+static void InitDefaultsscc_info_CybosStockAlarm_stock_5fprovider_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::stock_api::_CybosStockAlarm_default_instance_;
+    new (ptr) ::stock_api::CybosStockAlarm();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::stock_api::CybosStockAlarm::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_CybosStockAlarm_stock_5fprovider_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_CybosStockAlarm_stock_5fprovider_2eproto}, {
+      &scc_info_Timestamp_google_2fprotobuf_2ftimestamp_2eproto.base,}};
+
 static void InitDefaultsscc_info_CybosSubjectTickData_stock_5fprovider_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -181,6 +208,20 @@ static void InitDefaultsscc_info_ListType_stock_5fprovider_2eproto() {
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_ListType_stock_5fprovider_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_ListType_stock_5fprovider_2eproto}, {}};
+
+static void InitDefaultsscc_info_Option_stock_5fprovider_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::stock_api::_Option_default_instance_;
+    new (ptr) ::stock_api::Option();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::stock_api::Option::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Option_stock_5fprovider_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_Option_stock_5fprovider_2eproto}, {}};
 
 static void InitDefaultsscc_info_PastMinuteQuery_stock_5fprovider_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -240,7 +281,21 @@ static void InitDefaultsscc_info_StockQuery_stock_5fprovider_2eproto() {
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_StockQuery_stock_5fprovider_2eproto}, {
       &scc_info_Timestamp_google_2fprotobuf_2ftimestamp_2eproto.base,}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_stock_5fprovider_2eproto[12];
+static void InitDefaultsscc_info_TopList_stock_5fprovider_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::stock_api::_TopList_default_instance_;
+    new (ptr) ::stock_api::TopList();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::stock_api::TopList::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_TopList_stock_5fprovider_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_TopList_stock_5fprovider_2eproto}, {}};
+
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_stock_5fprovider_2eproto[15];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_stock_5fprovider_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_stock_5fprovider_2eproto = nullptr;
 
@@ -258,6 +313,14 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_stock_5fprovider_2eproto::offs
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::stock_api::CodeList, codelist_),
   ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::stock_api::Option, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::stock_api::Option, type_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::Option, catch_plus_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::Option, use_accumulated_),
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::stock_api::StockQuery, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -265,6 +328,14 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_stock_5fprovider_2eproto::offs
   PROTOBUF_FIELD_OFFSET(::stock_api::StockQuery, code_),
   PROTOBUF_FIELD_OFFSET(::stock_api::StockQuery, from_datetime_),
   PROTOBUF_FIELD_OFFSET(::stock_api::StockQuery, until_datetime_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::stock_api::TopList, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::stock_api::TopList, codelist_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::TopList, is_today_data_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::TopList, date_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::stock_api::SimulationStatus, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -311,6 +382,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_stock_5fprovider_2eproto::offs
   PROTOBUF_FIELD_OFFSET(::stock_api::CybosDayData, foreigner_hold_rate_),
   PROTOBUF_FIELD_OFFSET(::stock_api::CybosDayData, institution_buy_volume_),
   PROTOBUF_FIELD_OFFSET(::stock_api::CybosDayData, institution_cum_buy_volume_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::CybosDayData, is_synchronized_bidding_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::stock_api::CybosDayDatas, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -377,26 +449,44 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_stock_5fprovider_2eproto::offs
   PROTOBUF_FIELD_OFFSET(::stock_api::CybosBidAskTickData, total_bid_remain_),
   PROTOBUF_FIELD_OFFSET(::stock_api::CybosBidAskTickData, out_time_total_ask_remain_),
   PROTOBUF_FIELD_OFFSET(::stock_api::CybosBidAskTickData, out_time_total_bid_remain_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::stock_api::CybosStockAlarm, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::stock_api::CybosStockAlarm, tick_date_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::CybosStockAlarm, time_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::CybosStockAlarm, type_category_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::CybosStockAlarm, market_category_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::CybosStockAlarm, code_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::CybosStockAlarm, alarm_category_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::CybosStockAlarm, title_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::CybosStockAlarm, content_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::stock_api::StockCodeQuery)},
   { 6, -1, sizeof(::stock_api::CodeList)},
-  { 12, -1, sizeof(::stock_api::StockQuery)},
-  { 20, -1, sizeof(::stock_api::SimulationStatus)},
-  { 27, -1, sizeof(::stock_api::ListType)},
-  { 33, -1, sizeof(::stock_api::CompanyName)},
-  { 39, -1, sizeof(::stock_api::PastMinuteQuery)},
-  { 47, -1, sizeof(::stock_api::CybosDayData)},
-  { 66, -1, sizeof(::stock_api::CybosDayDatas)},
-  { 72, -1, sizeof(::stock_api::CybosSubjectTickData)},
-  { 86, -1, sizeof(::stock_api::CybosTickData)},
-  { 115, -1, sizeof(::stock_api::CybosBidAskTickData)},
+  { 12, -1, sizeof(::stock_api::Option)},
+  { 20, -1, sizeof(::stock_api::StockQuery)},
+  { 28, -1, sizeof(::stock_api::TopList)},
+  { 36, -1, sizeof(::stock_api::SimulationStatus)},
+  { 43, -1, sizeof(::stock_api::ListType)},
+  { 49, -1, sizeof(::stock_api::CompanyName)},
+  { 55, -1, sizeof(::stock_api::PastMinuteQuery)},
+  { 63, -1, sizeof(::stock_api::CybosDayData)},
+  { 83, -1, sizeof(::stock_api::CybosDayDatas)},
+  { 89, -1, sizeof(::stock_api::CybosSubjectTickData)},
+  { 103, -1, sizeof(::stock_api::CybosTickData)},
+  { 132, -1, sizeof(::stock_api::CybosBidAskTickData)},
+  { 149, -1, sizeof(::stock_api::CybosStockAlarm)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_StockCodeQuery_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_CodeList_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_Option_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_StockQuery_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_TopList_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_SimulationStatus_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_ListType_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_CompanyName_default_instance_),
@@ -406,135 +496,153 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_CybosSubjectTickData_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_CybosTickData_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_CybosBidAskTickData_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_CybosStockAlarm_default_instance_),
 };
 
 const char descriptor_table_protodef_stock_5fprovider_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\024stock_provider.proto\022\tstock_api\032\037googl"
   "e/protobuf/timestamp.proto\032\033google/proto"
   "buf/empty.proto\"\036\n\016StockCodeQuery\022\014\n\004cod"
-  "e\030\001 \001(\t\"\034\n\010CodeList\022\020\n\010codelist\030\001 \003(\t\"\201\001"
-  "\n\nStockQuery\022\014\n\004code\030\001 \001(\t\0221\n\rfrom_datet"
-  "ime\030\002 \001(\0132\032.google.protobuf.Timestamp\0222\n"
-  "\016until_datetime\030\003 \001(\0132\032.google.protobuf."
-  "Timestamp\"C\n\020SimulationStatus\022\025\n\rsimulat"
-  "ion_on\030\001 \001(\010\022\030\n\020simulation_speed\030\002 \001(\002\"\035"
-  "\n\010ListType\022\021\n\ttype_name\030\001 \001(\t\"#\n\013Company"
-  "Name\022\024\n\014company_name\030\001 \001(\t\"a\n\017PastMinute"
-  "Query\022\014\n\004code\030\001 \001(\t\022\025\n\rcount_of_days\030\002 \001"
-  "(\r\022)\n\005today\030\003 \001(\0132\032.google.protobuf.Time"
-  "stamp\"\322\002\n\014CybosDayData\022\014\n\004date\030\001 \001(\r\022\014\n\004"
-  "time\030\002 \001(\r\022\023\n\013start_price\030\003 \001(\r\022\025\n\rhighe"
-  "st_price\030\004 \001(\r\022\024\n\014lowest_price\030\005 \001(\r\022\023\n\013"
-  "close_price\030\006 \001(\r\022\016\n\006volume\030\007 \001(\004\022\016\n\006amo"
-  "unt\030\010 \001(\004\022\027\n\017cum_sell_volume\030\t \001(\004\022\026\n\016cu"
-  "m_buy_volume\030\n \001(\004\022\035\n\025foreigner_hold_vol"
-  "ume\030\013 \001(\003\022\033\n\023foreigner_hold_rate\030\014 \001(\002\022\036"
-  "\n\026institution_buy_volume\030\r \001(\003\022\"\n\032instit"
-  "ution_cum_buy_volume\030\016 \001(\003\":\n\rCybosDayDa"
-  "tas\022)\n\010day_data\030\001 \003(\0132\027.stock_api.CybosD"
-  "ayData\"\340\001\n\024CybosSubjectTickData\022-\n\ttick_"
+  "e\030\001 \001(\t\"\034\n\010CodeList\022\020\n\010codelist\030\001 \003(\t\"C\n"
+  "\006Option\022\014\n\004type\030\001 \001(\005\022\022\n\ncatch_plus\030\002 \001("
+  "\010\022\027\n\017use_accumulated\030\003 \001(\010\"\201\001\n\nStockQuer"
+  "y\022\014\n\004code\030\001 \001(\t\0221\n\rfrom_datetime\030\002 \001(\0132\032"
+  ".google.protobuf.Timestamp\0222\n\016until_date"
+  "time\030\003 \001(\0132\032.google.protobuf.Timestamp\"@"
+  "\n\007TopList\022\020\n\010codelist\030\001 \003(\t\022\025\n\ris_today_"
+  "data\030\002 \001(\010\022\014\n\004date\030\003 \001(\r\"C\n\020SimulationSt"
+  "atus\022\025\n\rsimulation_on\030\001 \001(\010\022\030\n\020simulatio"
+  "n_speed\030\002 \001(\002\"\035\n\010ListType\022\021\n\ttype_name\030\001"
+  " \001(\t\"#\n\013CompanyName\022\024\n\014company_name\030\001 \001("
+  "\t\"a\n\017PastMinuteQuery\022\014\n\004code\030\001 \001(\t\022\025\n\rco"
+  "unt_of_days\030\002 \001(\r\022)\n\005today\030\003 \001(\0132\032.googl"
+  "e.protobuf.Timestamp\"\363\002\n\014CybosDayData\022\014\n"
+  "\004date\030\001 \001(\r\022\014\n\004time\030\002 \001(\r\022\023\n\013start_price"
+  "\030\003 \001(\r\022\025\n\rhighest_price\030\004 \001(\r\022\024\n\014lowest_"
+  "price\030\005 \001(\r\022\023\n\013close_price\030\006 \001(\r\022\016\n\006volu"
+  "me\030\007 \001(\003\022\016\n\006amount\030\010 \001(\004\022\027\n\017cum_sell_vol"
+  "ume\030\t \001(\004\022\026\n\016cum_buy_volume\030\n \001(\004\022\035\n\025for"
+  "eigner_hold_volume\030\013 \001(\003\022\033\n\023foreigner_ho"
+  "ld_rate\030\014 \001(\002\022\036\n\026institution_buy_volume\030"
+  "\r \001(\003\022\"\n\032institution_cum_buy_volume\030\016 \001("
+  "\003\022\037\n\027is_synchronized_bidding\030\017 \001(\010\":\n\rCy"
+  "bosDayDatas\022)\n\010day_data\030\001 \003(\0132\027.stock_ap"
+  "i.CybosDayData\"\340\001\n\024CybosSubjectTickData\022"
+  "-\n\ttick_date\030\001 \001(\0132\032.google.protobuf.Tim"
+  "estamp\022\014\n\004time\030\002 \001(\r\022\014\n\004name\030\003 \001(\t\022\014\n\004co"
+  "de\030\004 \001(\t\022\024\n\014company_name\030\005 \001(\t\022\023\n\013buy_or"
+  "_sell\030\006 \001(\010\022\016\n\006volume\030\007 \001(\004\022\024\n\014total_vol"
+  "ume\030\010 \001(\003\022\036\n\026foreigner_total_volume\030\t \001("
+  "\003\"\270\004\n\rCybosTickData\022-\n\ttick_date\030\001 \001(\0132\032"
+  ".google.protobuf.Timestamp\022\014\n\004code\030\002 \001(\t"
+  "\022\024\n\014company_name\030\003 \001(\t\022\026\n\016yesterday_diff"
+  "\030\004 \001(\005\022\014\n\004time\030\005 \001(\r\022\023\n\013start_price\030\006 \001("
+  "\r\022\025\n\rhighest_price\030\007 \001(\r\022\024\n\014lowest_price"
+  "\030\010 \001(\r\022\021\n\task_price\030\t \001(\r\022\021\n\tbid_price\030\n"
+  " \001(\r\022\022\n\ncum_volume\030\013 \001(\004\022\022\n\ncum_amount\030\014"
+  " \001(\004\022\025\n\rcurrent_price\030\r \001(\r\022\023\n\013buy_or_se"
+  "ll\030\016 \001(\010\022 \n\030cum_sell_volume_by_price\030\017 \001"
+  "(\004\022\037\n\027cum_buy_volume_by_price\030\020 \001(\004\022\016\n\006v"
+  "olume\030\021 \001(\003\022\025\n\rtime_with_sec\030\022 \001(\r\022\027\n\017ma"
+  "rket_type_exp\030\023 \001(\r\022\023\n\013market_type\030\024 \001(\r"
+  "\022\027\n\017out_time_volume\030\025 \001(\004\022\027\n\017cum_sell_vo"
+  "lume\030\026 \001(\004\022\026\n\016cum_buy_volume\030\027 \001(\004\022\020\n\010is"
+  "_kospi\030\030 \001(\010\"\274\002\n\023CybosBidAskTickData\022-\n\t"
+  "tick_date\030\001 \001(\0132\032.google.protobuf.Timest"
+  "amp\022\014\n\004code\030\002 \001(\t\022\014\n\004time\030\003 \001(\r\022\016\n\006volum"
+  "e\030\004 \001(\004\022\022\n\nask_prices\030\005 \003(\005\022\022\n\nbid_price"
+  "s\030\006 \003(\005\022\023\n\013ask_remains\030\007 \003(\r\022\023\n\013bid_rema"
+  "ins\030\010 \003(\r\022\030\n\020total_ask_remain\030\t \001(\004\022\030\n\020t"
+  "otal_bid_remain\030\n \001(\004\022!\n\031out_time_total_"
+  "ask_remain\030\013 \001(\003\022!\n\031out_time_total_bid_r"
+  "emain\030\014 \001(\003\"\304\001\n\017CybosStockAlarm\022-\n\ttick_"
   "date\030\001 \001(\0132\032.google.protobuf.Timestamp\022\014"
-  "\n\004time\030\002 \001(\r\022\014\n\004name\030\003 \001(\t\022\014\n\004code\030\004 \001(\t"
-  "\022\024\n\014company_name\030\005 \001(\t\022\023\n\013buy_or_sell\030\006 "
-  "\001(\010\022\016\n\006volume\030\007 \001(\004\022\024\n\014total_volume\030\010 \001("
-  "\003\022\036\n\026foreigner_total_volume\030\t \001(\003\"\270\004\n\rCy"
-  "bosTickData\022-\n\ttick_date\030\001 \001(\0132\032.google."
-  "protobuf.Timestamp\022\014\n\004code\030\002 \001(\t\022\024\n\014comp"
-  "any_name\030\003 \001(\t\022\026\n\016yesterday_diff\030\004 \001(\005\022\014"
-  "\n\004time\030\005 \001(\r\022\023\n\013start_price\030\006 \001(\r\022\025\n\rhig"
-  "hest_price\030\007 \001(\r\022\024\n\014lowest_price\030\010 \001(\r\022\021"
-  "\n\task_price\030\t \001(\r\022\021\n\tbid_price\030\n \001(\r\022\022\n\n"
-  "cum_volume\030\013 \001(\004\022\022\n\ncum_amount\030\014 \001(\004\022\025\n\r"
-  "current_price\030\r \001(\r\022\023\n\013buy_or_sell\030\016 \001(\010"
-  "\022 \n\030cum_sell_volume_by_price\030\017 \001(\004\022\037\n\027cu"
-  "m_buy_volume_by_price\030\020 \001(\004\022\016\n\006volume\030\021 "
-  "\001(\003\022\025\n\rtime_with_sec\030\022 \001(\r\022\027\n\017market_typ"
-  "e_exp\030\023 \001(\r\022\023\n\013market_type\030\024 \001(\r\022\027\n\017out_"
-  "time_volume\030\025 \001(\004\022\027\n\017cum_sell_volume\030\026 \001"
-  "(\004\022\026\n\016cum_buy_volume\030\027 \001(\004\022\020\n\010is_kospi\030\030"
-  " \001(\010\"\274\002\n\023CybosBidAskTickData\022-\n\ttick_dat"
-  "e\030\001 \001(\0132\032.google.protobuf.Timestamp\022\014\n\004c"
-  "ode\030\002 \001(\t\022\014\n\004time\030\003 \001(\r\022\016\n\006volume\030\004 \001(\004\022"
-  "\022\n\nask_prices\030\005 \003(\005\022\022\n\nbid_prices\030\006 \003(\005\022"
-  "\023\n\013ask_remains\030\007 \003(\r\022\023\n\013bid_remains\030\010 \003("
-  "\r\022\030\n\020total_ask_remain\030\t \001(\004\022\030\n\020total_bid"
-  "_remain\030\n \001(\004\022!\n\031out_time_total_ask_rema"
-  "in\030\013 \001(\003\022!\n\031out_time_total_bid_remain\030\014 "
-  "\001(\0032\222\017\n\005Stock\022\?\n\nGetDayData\022\025.stock_api."
-  "StockQuery\032\030.stock_api.CybosDayDatas\"\000\022B"
-  "\n\rGetMinuteData\022\025.stock_api.StockQuery\032\030"
-  ".stock_api.CybosDayDatas\"\000\022K\n\022GetTodayMi"
-  "nuteData\022\031.stock_api.StockCodeQuery\032\030.st"
-  "ock_api.CybosDayDatas\"\000\022K\n\021GetPastMinute"
-  "Data\022\032.stock_api.PastMinuteQuery\032\030.stock"
-  "_api.CybosDayDatas\"\000\022K\n\024RequestCybosTick"
-  "Data\022\031.stock_api.StockCodeQuery\032\026.google"
-  ".protobuf.Empty\"\000\022I\n\022RequestCybosBidAsk\022"
-  "\031.stock_api.StockCodeQuery\032\026.google.prot"
-  "obuf.Empty\"\000\022J\n\023RequestCybosSubject\022\031.st"
-  "ock_api.StockCodeQuery\032\026.google.protobuf"
-  ".Empty\"\000\022F\n\017SetCurrentStock\022\031.stock_api."
-  "StockCodeQuery\032\026.google.protobuf.Empty\"\000"
-  "\022J\n\022SetCurrentDateTime\022\032.google.protobuf"
-  ".Timestamp\032\026.google.protobuf.Empty\"\000\022E\n\016"
-  "GetCompanyName\022\031.stock_api.StockCodeQuer"
-  "y\032\026.stock_api.CompanyName\"\000\022L\n\023SetSimula"
-  "tionStatus\022\033.stock_api.SimulationStatus\032"
-  "\026.google.protobuf.Empty\"\000\022L\n\023GetSimulati"
-  "onStatus\022\026.google.protobuf.Empty\032\033.stock"
-  "_api.SimulationStatus\"\000\022@\n\017GetFavoriteLi"
-  "st\022\026.google.protobuf.Empty\032\023.stock_api.C"
-  "odeList\"\000\022B\n\013AddFavorite\022\031.stock_api.Sto"
-  "ckCodeQuery\032\026.google.protobuf.Empty\"\000\022E\n"
-  "\016RemoveFavorite\022\031.stock_api.StockCodeQue"
-  "ry\032\026.google.protobuf.Empty\"\000\022J\n\031GetYeste"
-  "rdayTopAmountList\022\026.google.protobuf.Empt"
-  "y\032\023.stock_api.CodeList\"\000\022@\n\017GetRecentSea"
-  "rch\022\026.google.protobuf.Empty\032\023.stock_api."
-  "CodeList\"\000\022K\n\022ListenCurrentStock\022\026.googl"
-  "e.protobuf.Empty\032\031.stock_api.StockCodeQu"
-  "ery\"\0000\001\022D\n\021ListenListChanged\022\026.google.pr"
-  "otobuf.Empty\032\023.stock_api.ListType\"\0000\001\022K\n"
-  "\023ListenCybosTickData\022\026.google.protobuf.E"
-  "mpty\032\030.stock_api.CybosTickData\"\0000\001\022O\n\021Li"
-  "stenCybosBidAsk\022\026.google.protobuf.Empty\032"
-  "\036.stock_api.CybosBidAskTickData\"\0000\001\022K\n\021L"
-  "istenCurrentTime\022\026.google.protobuf.Empty"
-  "\032\032.google.protobuf.Timestamp\"\0000\001\022Q\n\022List"
-  "enCybosSubject\022\026.google.protobuf.Empty\032\037"
-  ".stock_api.CybosSubjectTickData\"\0000\001\022X\n\035L"
-  "istenSimulationStatusChanged\022\026.google.pr"
-  "otobuf.Empty\032\033.stock_api.SimulationStatu"
-  "s\"\0000\001\022E\n\017StartSimulation\022\026.google.protob"
-  "uf.Empty\032\026.google.protobuf.Empty\"\0000\001\022B\n\016"
-  "StopSimulation\022\026.google.protobuf.Empty\032\026"
-  ".google.protobuf.Empty\"\000b\006proto3"
+  "\n\004time\030\002 \001(\r\022\025\n\rtype_category\030\003 \001(\005\022\027\n\017m"
+  "arket_category\030\004 \001(\005\022\014\n\004code\030\005 \001(\t\022\026\n\016al"
+  "arm_category\030\006 \001(\005\022\r\n\005title\030\007 \001(\t\022\017\n\007con"
+  "tent\030\010 \001(\t2\333\020\n\005Stock\022\?\n\nGetDayData\022\025.sto"
+  "ck_api.StockQuery\032\030.stock_api.CybosDayDa"
+  "tas\"\000\022B\n\rGetMinuteData\022\025.stock_api.Stock"
+  "Query\032\030.stock_api.CybosDayDatas\"\000\022K\n\022Get"
+  "TodayMinuteData\022\031.stock_api.StockCodeQue"
+  "ry\032\030.stock_api.CybosDayDatas\"\000\022K\n\021GetPas"
+  "tMinuteData\022\032.stock_api.PastMinuteQuery\032"
+  "\030.stock_api.CybosDayDatas\"\000\022K\n\024RequestCy"
+  "bosTickData\022\031.stock_api.StockCodeQuery\032\026"
+  ".google.protobuf.Empty\"\000\022I\n\022RequestCybos"
+  "BidAsk\022\031.stock_api.StockCodeQuery\032\026.goog"
+  "le.protobuf.Empty\"\000\022J\n\023RequestCybosSubje"
+  "ct\022\031.stock_api.StockCodeQuery\032\026.google.p"
+  "rotobuf.Empty\"\000\022F\n\017SetCurrentStock\022\031.sto"
+  "ck_api.StockCodeQuery\032\026.google.protobuf."
+  "Empty\"\000\022J\n\022SetCurrentDateTime\022\032.google.p"
+  "rotobuf.Timestamp\032\026.google.protobuf.Empt"
+  "y\"\000\022E\n\016GetCompanyName\022\031.stock_api.StockC"
+  "odeQuery\032\026.stock_api.CompanyName\"\000\022L\n\023Se"
+  "tSimulationStatus\022\033.stock_api.Simulation"
+  "Status\032\026.google.protobuf.Empty\"\000\022L\n\023GetS"
+  "imulationStatus\022\026.google.protobuf.Empty\032"
+  "\033.stock_api.SimulationStatus\"\000\022@\n\017GetFav"
+  "oriteList\022\026.google.protobuf.Empty\032\023.stoc"
+  "k_api.CodeList\"\000\022B\n\013AddFavorite\022\031.stock_"
+  "api.StockCodeQuery\032\026.google.protobuf.Emp"
+  "ty\"\000\022E\n\016RemoveFavorite\022\031.stock_api.Stock"
+  "CodeQuery\032\026.google.protobuf.Empty\"\000\022M\n\031G"
+  "etYesterdayTopAmountList\022\032.google.protob"
+  "uf.Timestamp\032\022.stock_api.TopList\"\000\022A\n\025Ge"
+  "tTodayTopAmountList\022\021.stock_api.Option\032\023"
+  ".stock_api.CodeList\"\000\022@\n\017GetRecentSearch"
+  "\022\026.google.protobuf.Empty\032\023.stock_api.Cod"
+  "eList\"\000\0225\n\tGetViList\022\021.stock_api.Option\032"
+  "\023.stock_api.CodeList\"\000\022K\n\022ListenCurrentS"
+  "tock\022\026.google.protobuf.Empty\032\031.stock_api"
+  ".StockCodeQuery\"\0000\001\022D\n\021ListenListChanged"
+  "\022\026.google.protobuf.Empty\032\023.stock_api.Lis"
+  "tType\"\0000\001\022K\n\023ListenCybosTickData\022\026.googl"
+  "e.protobuf.Empty\032\030.stock_api.CybosTickDa"
+  "ta\"\0000\001\022O\n\021ListenCybosBidAsk\022\026.google.pro"
+  "tobuf.Empty\032\036.stock_api.CybosBidAskTickD"
+  "ata\"\0000\001\022K\n\021ListenCurrentTime\022\026.google.pr"
+  "otobuf.Empty\032\032.google.protobuf.Timestamp"
+  "\"\0000\001\022Q\n\022ListenCybosSubject\022\026.google.prot"
+  "obuf.Empty\032\037.stock_api.CybosSubjectTickD"
+  "ata\"\0000\001\022J\n\020ListenCybosAlarm\022\026.google.pro"
+  "tobuf.Empty\032\032.stock_api.CybosStockAlarm\""
+  "\0000\001\022X\n\035ListenSimulationStatusChanged\022\026.g"
+  "oogle.protobuf.Empty\032\033.stock_api.Simulat"
+  "ionStatus\"\0000\001\022E\n\017StartSimulation\022\026.googl"
+  "e.protobuf.Empty\032\026.google.protobuf.Empty"
+  "\"\0000\001\022B\n\016StopSimulation\022\026.google.protobuf"
+  ".Empty\032\026.google.protobuf.Empty\"\000b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_stock_5fprovider_2eproto_deps[2] = {
   &::descriptor_table_google_2fprotobuf_2fempty_2eproto,
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_stock_5fprovider_2eproto_sccs[12] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_stock_5fprovider_2eproto_sccs[15] = {
   &scc_info_CodeList_stock_5fprovider_2eproto.base,
   &scc_info_CompanyName_stock_5fprovider_2eproto.base,
   &scc_info_CybosBidAskTickData_stock_5fprovider_2eproto.base,
   &scc_info_CybosDayData_stock_5fprovider_2eproto.base,
   &scc_info_CybosDayDatas_stock_5fprovider_2eproto.base,
+  &scc_info_CybosStockAlarm_stock_5fprovider_2eproto.base,
   &scc_info_CybosSubjectTickData_stock_5fprovider_2eproto.base,
   &scc_info_CybosTickData_stock_5fprovider_2eproto.base,
   &scc_info_ListType_stock_5fprovider_2eproto.base,
+  &scc_info_Option_stock_5fprovider_2eproto.base,
   &scc_info_PastMinuteQuery_stock_5fprovider_2eproto.base,
   &scc_info_SimulationStatus_stock_5fprovider_2eproto.base,
   &scc_info_StockCodeQuery_stock_5fprovider_2eproto.base,
   &scc_info_StockQuery_stock_5fprovider_2eproto.base,
+  &scc_info_TopList_stock_5fprovider_2eproto.base,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_stock_5fprovider_2eproto_once;
 static bool descriptor_table_stock_5fprovider_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_stock_5fprovider_2eproto = {
-  &descriptor_table_stock_5fprovider_2eproto_initialized, descriptor_table_protodef_stock_5fprovider_2eproto, "stock_provider.proto", 3992,
-  &descriptor_table_stock_5fprovider_2eproto_once, descriptor_table_stock_5fprovider_2eproto_sccs, descriptor_table_stock_5fprovider_2eproto_deps, 12, 2,
+  &descriptor_table_stock_5fprovider_2eproto_initialized, descriptor_table_protodef_stock_5fprovider_2eproto, "stock_provider.proto", 4560,
+  &descriptor_table_stock_5fprovider_2eproto_once, descriptor_table_stock_5fprovider_2eproto_sccs, descriptor_table_stock_5fprovider_2eproto_deps, 15, 2,
   schemas, file_default_instances, TableStruct_stock_5fprovider_2eproto::offsets,
-  file_level_metadata_stock_5fprovider_2eproto, 12, file_level_enum_descriptors_stock_5fprovider_2eproto, file_level_service_descriptors_stock_5fprovider_2eproto,
+  file_level_metadata_stock_5fprovider_2eproto, 15, file_level_enum_descriptors_stock_5fprovider_2eproto, file_level_service_descriptors_stock_5fprovider_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -938,6 +1046,242 @@ void CodeList::InternalSwap(CodeList* other) {
 
 // ===================================================================
 
+void Option::InitAsDefaultInstance() {
+}
+class Option::_Internal {
+ public:
+};
+
+Option::Option()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:stock_api.Option)
+}
+Option::Option(const Option& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::memcpy(&type_, &from.type_,
+    static_cast<size_t>(reinterpret_cast<char*>(&use_accumulated_) -
+    reinterpret_cast<char*>(&type_)) + sizeof(use_accumulated_));
+  // @@protoc_insertion_point(copy_constructor:stock_api.Option)
+}
+
+void Option::SharedCtor() {
+  ::memset(&type_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&use_accumulated_) -
+      reinterpret_cast<char*>(&type_)) + sizeof(use_accumulated_));
+}
+
+Option::~Option() {
+  // @@protoc_insertion_point(destructor:stock_api.Option)
+  SharedDtor();
+}
+
+void Option::SharedDtor() {
+}
+
+void Option::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const Option& Option::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_Option_stock_5fprovider_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void Option::Clear() {
+// @@protoc_insertion_point(message_clear_start:stock_api.Option)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ::memset(&type_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&use_accumulated_) -
+      reinterpret_cast<char*>(&type_)) + sizeof(use_accumulated_));
+  _internal_metadata_.Clear();
+}
+
+const char* Option::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // int32 type = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          type_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // bool catch_plus = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          catch_plus_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // bool use_accumulated = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+          use_accumulated_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* Option::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:stock_api.Option)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 type = 1;
+  if (this->type() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_type(), target);
+  }
+
+  // bool catch_plus = 2;
+  if (this->catch_plus() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(2, this->_internal_catch_plus(), target);
+  }
+
+  // bool use_accumulated = 3;
+  if (this->use_accumulated() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(3, this->_internal_use_accumulated(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:stock_api.Option)
+  return target;
+}
+
+size_t Option::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:stock_api.Option)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // int32 type = 1;
+  if (this->type() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_type());
+  }
+
+  // bool catch_plus = 2;
+  if (this->catch_plus() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool use_accumulated = 3;
+  if (this->use_accumulated() != 0) {
+    total_size += 1 + 1;
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void Option::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:stock_api.Option)
+  GOOGLE_DCHECK_NE(&from, this);
+  const Option* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<Option>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:stock_api.Option)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:stock_api.Option)
+    MergeFrom(*source);
+  }
+}
+
+void Option::MergeFrom(const Option& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:stock_api.Option)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.type() != 0) {
+    _internal_set_type(from._internal_type());
+  }
+  if (from.catch_plus() != 0) {
+    _internal_set_catch_plus(from._internal_catch_plus());
+  }
+  if (from.use_accumulated() != 0) {
+    _internal_set_use_accumulated(from._internal_use_accumulated());
+  }
+}
+
+void Option::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:stock_api.Option)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Option::CopyFrom(const Option& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:stock_api.Option)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Option::IsInitialized() const {
+  return true;
+}
+
+void Option::InternalSwap(Option* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(type_, other->type_);
+  swap(catch_plus_, other->catch_plus_);
+  swap(use_accumulated_, other->use_accumulated_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata Option::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
 void StockQuery::InitAsDefaultInstance() {
   ::stock_api::_StockQuery_default_instance_._instance.get_mutable()->from_datetime_ = const_cast< PROTOBUF_NAMESPACE_ID::Timestamp*>(
       PROTOBUF_NAMESPACE_ID::Timestamp::internal_default_instance());
@@ -1232,6 +1576,257 @@ void StockQuery::InternalSwap(StockQuery* other) {
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata StockQuery::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void TopList::InitAsDefaultInstance() {
+}
+class TopList::_Internal {
+ public:
+};
+
+TopList::TopList()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:stock_api.TopList)
+}
+TopList::TopList(const TopList& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      codelist_(from.codelist_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::memcpy(&is_today_data_, &from.is_today_data_,
+    static_cast<size_t>(reinterpret_cast<char*>(&date_) -
+    reinterpret_cast<char*>(&is_today_data_)) + sizeof(date_));
+  // @@protoc_insertion_point(copy_constructor:stock_api.TopList)
+}
+
+void TopList::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_TopList_stock_5fprovider_2eproto.base);
+  ::memset(&is_today_data_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&date_) -
+      reinterpret_cast<char*>(&is_today_data_)) + sizeof(date_));
+}
+
+TopList::~TopList() {
+  // @@protoc_insertion_point(destructor:stock_api.TopList)
+  SharedDtor();
+}
+
+void TopList::SharedDtor() {
+}
+
+void TopList::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const TopList& TopList::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_TopList_stock_5fprovider_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void TopList::Clear() {
+// @@protoc_insertion_point(message_clear_start:stock_api.TopList)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  codelist_.Clear();
+  ::memset(&is_today_data_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&date_) -
+      reinterpret_cast<char*>(&is_today_data_)) + sizeof(date_));
+  _internal_metadata_.Clear();
+}
+
+const char* TopList::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // repeated string codelist = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_codelist();
+            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+            CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "stock_api.TopList.codelist"));
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
+        } else goto handle_unusual;
+        continue;
+      // bool is_today_data = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          is_today_data_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // uint32 date = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+          date_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* TopList::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:stock_api.TopList)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated string codelist = 1;
+  for (int i = 0, n = this->_internal_codelist_size(); i < n; i++) {
+    const auto& s = this->_internal_codelist(i);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      s.data(), static_cast<int>(s.length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "stock_api.TopList.codelist");
+    target = stream->WriteString(1, s, target);
+  }
+
+  // bool is_today_data = 2;
+  if (this->is_today_data() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(2, this->_internal_is_today_data(), target);
+  }
+
+  // uint32 date = 3;
+  if (this->date() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(3, this->_internal_date(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:stock_api.TopList)
+  return target;
+}
+
+size_t TopList::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:stock_api.TopList)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated string codelist = 1;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(codelist_.size());
+  for (int i = 0, n = codelist_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      codelist_.Get(i));
+  }
+
+  // bool is_today_data = 2;
+  if (this->is_today_data() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // uint32 date = 3;
+  if (this->date() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->_internal_date());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void TopList::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:stock_api.TopList)
+  GOOGLE_DCHECK_NE(&from, this);
+  const TopList* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<TopList>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:stock_api.TopList)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:stock_api.TopList)
+    MergeFrom(*source);
+  }
+}
+
+void TopList::MergeFrom(const TopList& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:stock_api.TopList)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  codelist_.MergeFrom(from.codelist_);
+  if (from.is_today_data() != 0) {
+    _internal_set_is_today_data(from._internal_is_today_data());
+  }
+  if (from.date() != 0) {
+    _internal_set_date(from._internal_date());
+  }
+}
+
+void TopList::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:stock_api.TopList)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void TopList::CopyFrom(const TopList& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:stock_api.TopList)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TopList::IsInitialized() const {
+  return true;
+}
+
+void TopList::InternalSwap(TopList* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  codelist_.InternalSwap(&other->codelist_);
+  swap(is_today_data_, other->is_today_data_);
+  swap(date_, other->date_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata TopList::GetMetadata() const {
   return GetMetadataStatic();
 }
 
@@ -2141,15 +2736,15 @@ CybosDayData::CybosDayData(const CybosDayData& from)
       _internal_metadata_(nullptr) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::memcpy(&date_, &from.date_,
-    static_cast<size_t>(reinterpret_cast<char*>(&foreigner_hold_rate_) -
-    reinterpret_cast<char*>(&date_)) + sizeof(foreigner_hold_rate_));
+    static_cast<size_t>(reinterpret_cast<char*>(&institution_cum_buy_volume_) -
+    reinterpret_cast<char*>(&date_)) + sizeof(institution_cum_buy_volume_));
   // @@protoc_insertion_point(copy_constructor:stock_api.CybosDayData)
 }
 
 void CybosDayData::SharedCtor() {
   ::memset(&date_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&foreigner_hold_rate_) -
-      reinterpret_cast<char*>(&date_)) + sizeof(foreigner_hold_rate_));
+      reinterpret_cast<char*>(&institution_cum_buy_volume_) -
+      reinterpret_cast<char*>(&date_)) + sizeof(institution_cum_buy_volume_));
 }
 
 CybosDayData::~CybosDayData() {
@@ -2176,8 +2771,8 @@ void CybosDayData::Clear() {
   (void) cached_has_bits;
 
   ::memset(&date_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&foreigner_hold_rate_) -
-      reinterpret_cast<char*>(&date_)) + sizeof(foreigner_hold_rate_));
+      reinterpret_cast<char*>(&institution_cum_buy_volume_) -
+      reinterpret_cast<char*>(&date_)) + sizeof(institution_cum_buy_volume_));
   _internal_metadata_.Clear();
 }
 
@@ -2230,7 +2825,7 @@ const char* CybosDayData::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // uint64 volume = 7;
+      // int64 volume = 7;
       case 7:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 56)) {
           volume_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
@@ -2283,6 +2878,13 @@ const char* CybosDayData::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
       case 14:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 112)) {
           institution_cum_buy_volume_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // bool is_synchronized_bidding = 15;
+      case 15:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 120)) {
+          is_synchronized_bidding_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -2348,10 +2950,10 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(6, this->_internal_close_price(), target);
   }
 
-  // uint64 volume = 7;
+  // int64 volume = 7;
   if (this->volume() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(7, this->_internal_volume(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(7, this->_internal_volume(), target);
   }
 
   // uint64 amount = 8;
@@ -2394,6 +2996,12 @@ failure:
   if (this->institution_cum_buy_volume() != 0) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(14, this->_internal_institution_cum_buy_volume(), target);
+  }
+
+  // bool is_synchronized_bidding = 15;
+  if (this->is_synchronized_bidding() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(15, this->_internal_is_synchronized_bidding(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2454,10 +3062,10 @@ size_t CybosDayData::ByteSizeLong() const {
         this->_internal_close_price());
   }
 
-  // uint64 volume = 7;
+  // int64 volume = 7;
   if (this->volume() != 0) {
     total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64Size(
         this->_internal_volume());
   }
 
@@ -2496,16 +3104,21 @@ size_t CybosDayData::ByteSizeLong() const {
         this->_internal_institution_buy_volume());
   }
 
+  // float foreigner_hold_rate = 12;
+  if (!(this->foreigner_hold_rate() <= 0 && this->foreigner_hold_rate() >= 0)) {
+    total_size += 1 + 4;
+  }
+
+  // bool is_synchronized_bidding = 15;
+  if (this->is_synchronized_bidding() != 0) {
+    total_size += 1 + 1;
+  }
+
   // int64 institution_cum_buy_volume = 14;
   if (this->institution_cum_buy_volume() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64Size(
         this->_internal_institution_cum_buy_volume());
-  }
-
-  // float foreigner_hold_rate = 12;
-  if (!(this->foreigner_hold_rate() <= 0 && this->foreigner_hold_rate() >= 0)) {
-    total_size += 1 + 4;
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2575,11 +3188,14 @@ void CybosDayData::MergeFrom(const CybosDayData& from) {
   if (from.institution_buy_volume() != 0) {
     _internal_set_institution_buy_volume(from._internal_institution_buy_volume());
   }
-  if (from.institution_cum_buy_volume() != 0) {
-    _internal_set_institution_cum_buy_volume(from._internal_institution_cum_buy_volume());
-  }
   if (!(from.foreigner_hold_rate() <= 0 && from.foreigner_hold_rate() >= 0)) {
     _internal_set_foreigner_hold_rate(from._internal_foreigner_hold_rate());
+  }
+  if (from.is_synchronized_bidding() != 0) {
+    _internal_set_is_synchronized_bidding(from._internal_is_synchronized_bidding());
+  }
+  if (from.institution_cum_buy_volume() != 0) {
+    _internal_set_institution_cum_buy_volume(from._internal_institution_cum_buy_volume());
   }
 }
 
@@ -2616,8 +3232,9 @@ void CybosDayData::InternalSwap(CybosDayData* other) {
   swap(cum_buy_volume_, other->cum_buy_volume_);
   swap(foreigner_hold_volume_, other->foreigner_hold_volume_);
   swap(institution_buy_volume_, other->institution_buy_volume_);
-  swap(institution_cum_buy_volume_, other->institution_cum_buy_volume_);
   swap(foreigner_hold_rate_, other->foreigner_hold_rate_);
+  swap(is_synchronized_bidding_, other->is_synchronized_bidding_);
+  swap(institution_cum_buy_volume_, other->institution_cum_buy_volume_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata CybosDayData::GetMetadata() const {
@@ -4618,6 +5235,437 @@ void CybosBidAskTickData::InternalSwap(CybosBidAskTickData* other) {
 }
 
 
+// ===================================================================
+
+void CybosStockAlarm::InitAsDefaultInstance() {
+  ::stock_api::_CybosStockAlarm_default_instance_._instance.get_mutable()->tick_date_ = const_cast< PROTOBUF_NAMESPACE_ID::Timestamp*>(
+      PROTOBUF_NAMESPACE_ID::Timestamp::internal_default_instance());
+}
+class CybosStockAlarm::_Internal {
+ public:
+  static const PROTOBUF_NAMESPACE_ID::Timestamp& tick_date(const CybosStockAlarm* msg);
+};
+
+const PROTOBUF_NAMESPACE_ID::Timestamp&
+CybosStockAlarm::_Internal::tick_date(const CybosStockAlarm* msg) {
+  return *msg->tick_date_;
+}
+void CybosStockAlarm::clear_tick_date() {
+  if (GetArenaNoVirtual() == nullptr && tick_date_ != nullptr) {
+    delete tick_date_;
+  }
+  tick_date_ = nullptr;
+}
+CybosStockAlarm::CybosStockAlarm()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:stock_api.CybosStockAlarm)
+}
+CybosStockAlarm::CybosStockAlarm(const CybosStockAlarm& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  code_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_code().empty()) {
+    code_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.code_);
+  }
+  title_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_title().empty()) {
+    title_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.title_);
+  }
+  content_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_content().empty()) {
+    content_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.content_);
+  }
+  if (from._internal_has_tick_date()) {
+    tick_date_ = new PROTOBUF_NAMESPACE_ID::Timestamp(*from.tick_date_);
+  } else {
+    tick_date_ = nullptr;
+  }
+  ::memcpy(&time_, &from.time_,
+    static_cast<size_t>(reinterpret_cast<char*>(&alarm_category_) -
+    reinterpret_cast<char*>(&time_)) + sizeof(alarm_category_));
+  // @@protoc_insertion_point(copy_constructor:stock_api.CybosStockAlarm)
+}
+
+void CybosStockAlarm::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_CybosStockAlarm_stock_5fprovider_2eproto.base);
+  code_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  title_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  content_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  ::memset(&tick_date_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&alarm_category_) -
+      reinterpret_cast<char*>(&tick_date_)) + sizeof(alarm_category_));
+}
+
+CybosStockAlarm::~CybosStockAlarm() {
+  // @@protoc_insertion_point(destructor:stock_api.CybosStockAlarm)
+  SharedDtor();
+}
+
+void CybosStockAlarm::SharedDtor() {
+  code_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  title_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  content_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete tick_date_;
+}
+
+void CybosStockAlarm::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const CybosStockAlarm& CybosStockAlarm::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_CybosStockAlarm_stock_5fprovider_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void CybosStockAlarm::Clear() {
+// @@protoc_insertion_point(message_clear_start:stock_api.CybosStockAlarm)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  code_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  title_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  content_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == nullptr && tick_date_ != nullptr) {
+    delete tick_date_;
+  }
+  tick_date_ = nullptr;
+  ::memset(&time_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&alarm_category_) -
+      reinterpret_cast<char*>(&time_)) + sizeof(alarm_category_));
+  _internal_metadata_.Clear();
+}
+
+const char* CybosStockAlarm::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // .google.protobuf.Timestamp tick_date = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr = ctx->ParseMessage(_internal_mutable_tick_date(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // uint32 time = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          time_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int32 type_category = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+          type_category_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int32 market_category = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
+          market_category_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string code = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+          auto str = _internal_mutable_code();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "stock_api.CybosStockAlarm.code"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int32 alarm_category = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
+          alarm_category_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string title = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 58)) {
+          auto str = _internal_mutable_title();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "stock_api.CybosStockAlarm.title"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string content = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 66)) {
+          auto str = _internal_mutable_content();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "stock_api.CybosStockAlarm.content"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* CybosStockAlarm::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:stock_api.CybosStockAlarm)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .google.protobuf.Timestamp tick_date = 1;
+  if (this->has_tick_date()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        1, _Internal::tick_date(this), target, stream);
+  }
+
+  // uint32 time = 2;
+  if (this->time() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(2, this->_internal_time(), target);
+  }
+
+  // int32 type_category = 3;
+  if (this->type_category() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_type_category(), target);
+  }
+
+  // int32 market_category = 4;
+  if (this->market_category() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(4, this->_internal_market_category(), target);
+  }
+
+  // string code = 5;
+  if (this->code().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_code().data(), static_cast<int>(this->_internal_code().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "stock_api.CybosStockAlarm.code");
+    target = stream->WriteStringMaybeAliased(
+        5, this->_internal_code(), target);
+  }
+
+  // int32 alarm_category = 6;
+  if (this->alarm_category() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(6, this->_internal_alarm_category(), target);
+  }
+
+  // string title = 7;
+  if (this->title().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_title().data(), static_cast<int>(this->_internal_title().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "stock_api.CybosStockAlarm.title");
+    target = stream->WriteStringMaybeAliased(
+        7, this->_internal_title(), target);
+  }
+
+  // string content = 8;
+  if (this->content().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_content().data(), static_cast<int>(this->_internal_content().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "stock_api.CybosStockAlarm.content");
+    target = stream->WriteStringMaybeAliased(
+        8, this->_internal_content(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:stock_api.CybosStockAlarm)
+  return target;
+}
+
+size_t CybosStockAlarm::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:stock_api.CybosStockAlarm)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string code = 5;
+  if (this->code().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_code());
+  }
+
+  // string title = 7;
+  if (this->title().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_title());
+  }
+
+  // string content = 8;
+  if (this->content().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_content());
+  }
+
+  // .google.protobuf.Timestamp tick_date = 1;
+  if (this->has_tick_date()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *tick_date_);
+  }
+
+  // uint32 time = 2;
+  if (this->time() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->_internal_time());
+  }
+
+  // int32 type_category = 3;
+  if (this->type_category() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_type_category());
+  }
+
+  // int32 market_category = 4;
+  if (this->market_category() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_market_category());
+  }
+
+  // int32 alarm_category = 6;
+  if (this->alarm_category() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_alarm_category());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void CybosStockAlarm::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:stock_api.CybosStockAlarm)
+  GOOGLE_DCHECK_NE(&from, this);
+  const CybosStockAlarm* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<CybosStockAlarm>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:stock_api.CybosStockAlarm)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:stock_api.CybosStockAlarm)
+    MergeFrom(*source);
+  }
+}
+
+void CybosStockAlarm::MergeFrom(const CybosStockAlarm& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:stock_api.CybosStockAlarm)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.code().size() > 0) {
+
+    code_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.code_);
+  }
+  if (from.title().size() > 0) {
+
+    title_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.title_);
+  }
+  if (from.content().size() > 0) {
+
+    content_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.content_);
+  }
+  if (from.has_tick_date()) {
+    _internal_mutable_tick_date()->PROTOBUF_NAMESPACE_ID::Timestamp::MergeFrom(from._internal_tick_date());
+  }
+  if (from.time() != 0) {
+    _internal_set_time(from._internal_time());
+  }
+  if (from.type_category() != 0) {
+    _internal_set_type_category(from._internal_type_category());
+  }
+  if (from.market_category() != 0) {
+    _internal_set_market_category(from._internal_market_category());
+  }
+  if (from.alarm_category() != 0) {
+    _internal_set_alarm_category(from._internal_alarm_category());
+  }
+}
+
+void CybosStockAlarm::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:stock_api.CybosStockAlarm)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CybosStockAlarm::CopyFrom(const CybosStockAlarm& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:stock_api.CybosStockAlarm)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CybosStockAlarm::IsInitialized() const {
+  return true;
+}
+
+void CybosStockAlarm::InternalSwap(CybosStockAlarm* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  code_.Swap(&other->code_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  title_.Swap(&other->title_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  content_.Swap(&other->content_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(tick_date_, other->tick_date_);
+  swap(time_, other->time_);
+  swap(type_category_, other->type_category_);
+  swap(market_category_, other->market_category_);
+  swap(alarm_category_, other->alarm_category_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata CybosStockAlarm::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace stock_api
 PROTOBUF_NAMESPACE_OPEN
@@ -4627,8 +5675,14 @@ template<> PROTOBUF_NOINLINE ::stock_api::StockCodeQuery* Arena::CreateMaybeMess
 template<> PROTOBUF_NOINLINE ::stock_api::CodeList* Arena::CreateMaybeMessage< ::stock_api::CodeList >(Arena* arena) {
   return Arena::CreateInternal< ::stock_api::CodeList >(arena);
 }
+template<> PROTOBUF_NOINLINE ::stock_api::Option* Arena::CreateMaybeMessage< ::stock_api::Option >(Arena* arena) {
+  return Arena::CreateInternal< ::stock_api::Option >(arena);
+}
 template<> PROTOBUF_NOINLINE ::stock_api::StockQuery* Arena::CreateMaybeMessage< ::stock_api::StockQuery >(Arena* arena) {
   return Arena::CreateInternal< ::stock_api::StockQuery >(arena);
+}
+template<> PROTOBUF_NOINLINE ::stock_api::TopList* Arena::CreateMaybeMessage< ::stock_api::TopList >(Arena* arena) {
+  return Arena::CreateInternal< ::stock_api::TopList >(arena);
 }
 template<> PROTOBUF_NOINLINE ::stock_api::SimulationStatus* Arena::CreateMaybeMessage< ::stock_api::SimulationStatus >(Arena* arena) {
   return Arena::CreateInternal< ::stock_api::SimulationStatus >(arena);
@@ -4656,6 +5710,9 @@ template<> PROTOBUF_NOINLINE ::stock_api::CybosTickData* Arena::CreateMaybeMessa
 }
 template<> PROTOBUF_NOINLINE ::stock_api::CybosBidAskTickData* Arena::CreateMaybeMessage< ::stock_api::CybosBidAskTickData >(Arena* arena) {
   return Arena::CreateInternal< ::stock_api::CybosBidAskTickData >(arena);
+}
+template<> PROTOBUF_NOINLINE ::stock_api::CybosStockAlarm* Arena::CreateMaybeMessage< ::stock_api::CybosStockAlarm >(Arena* arena) {
+  return Arena::CreateInternal< ::stock_api::CybosStockAlarm >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

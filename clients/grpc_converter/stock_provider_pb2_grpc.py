@@ -93,12 +93,22 @@ class StockStub(object):
         )
     self.GetYesterdayTopAmountList = channel.unary_unary(
         '/stock_api.Stock/GetYesterdayTopAmountList',
-        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        request_serializer=google_dot_protobuf_dot_timestamp__pb2.Timestamp.SerializeToString,
+        response_deserializer=stock__provider__pb2.TopList.FromString,
+        )
+    self.GetTodayTopAmountList = channel.unary_unary(
+        '/stock_api.Stock/GetTodayTopAmountList',
+        request_serializer=stock__provider__pb2.Option.SerializeToString,
         response_deserializer=stock__provider__pb2.CodeList.FromString,
         )
     self.GetRecentSearch = channel.unary_unary(
         '/stock_api.Stock/GetRecentSearch',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=stock__provider__pb2.CodeList.FromString,
+        )
+    self.GetViList = channel.unary_unary(
+        '/stock_api.Stock/GetViList',
+        request_serializer=stock__provider__pb2.Option.SerializeToString,
         response_deserializer=stock__provider__pb2.CodeList.FromString,
         )
     self.ListenCurrentStock = channel.unary_stream(
@@ -130,6 +140,11 @@ class StockStub(object):
         '/stock_api.Stock/ListenCybosSubject',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=stock__provider__pb2.CybosSubjectTickData.FromString,
+        )
+    self.ListenCybosAlarm = channel.unary_stream(
+        '/stock_api.Stock/ListenCybosAlarm',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=stock__provider__pb2.CybosStockAlarm.FromString,
         )
     self.ListenSimulationStatusChanged = channel.unary_stream(
         '/stock_api.Stock/ListenSimulationStatusChanged',
@@ -264,7 +279,21 @@ class StockServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetTodayTopAmountList(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def GetRecentSearch(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def GetViList(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -307,6 +336,13 @@ class StockServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def ListenCybosSubject(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def ListenCybosAlarm(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -414,12 +450,22 @@ def add_StockServicer_to_server(servicer, server):
       ),
       'GetYesterdayTopAmountList': grpc.unary_unary_rpc_method_handler(
           servicer.GetYesterdayTopAmountList,
-          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          request_deserializer=google_dot_protobuf_dot_timestamp__pb2.Timestamp.FromString,
+          response_serializer=stock__provider__pb2.TopList.SerializeToString,
+      ),
+      'GetTodayTopAmountList': grpc.unary_unary_rpc_method_handler(
+          servicer.GetTodayTopAmountList,
+          request_deserializer=stock__provider__pb2.Option.FromString,
           response_serializer=stock__provider__pb2.CodeList.SerializeToString,
       ),
       'GetRecentSearch': grpc.unary_unary_rpc_method_handler(
           servicer.GetRecentSearch,
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=stock__provider__pb2.CodeList.SerializeToString,
+      ),
+      'GetViList': grpc.unary_unary_rpc_method_handler(
+          servicer.GetViList,
+          request_deserializer=stock__provider__pb2.Option.FromString,
           response_serializer=stock__provider__pb2.CodeList.SerializeToString,
       ),
       'ListenCurrentStock': grpc.unary_stream_rpc_method_handler(
@@ -451,6 +497,11 @@ def add_StockServicer_to_server(servicer, server):
           servicer.ListenCybosSubject,
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=stock__provider__pb2.CybosSubjectTickData.SerializeToString,
+      ),
+      'ListenCybosAlarm': grpc.unary_stream_rpc_method_handler(
+          servicer.ListenCybosAlarm,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=stock__provider__pb2.CybosStockAlarm.SerializeToString,
       ),
       'ListenSimulationStatusChanged': grpc.unary_stream_rpc_method_handler(
           servicer.ListenSimulationStatusChanged,

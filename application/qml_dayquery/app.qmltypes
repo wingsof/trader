@@ -18,7 +18,9 @@ Module {
             "MorningChartView/DayView 1.7"
         ]
         exportMetaObjectRevisions: [0, 1, 11, 4, 7]
-        Signal { name: "stockCodeChanged" }
+        Property { name: "pinnedCode"; type: "bool" }
+        Property { name: "pcode"; type: "string" }
+        Property { name: "corporateName"; type: "string"; isReadonly: true }
         Method {
             name: "dataReceived"
             Parameter { type: "string" }

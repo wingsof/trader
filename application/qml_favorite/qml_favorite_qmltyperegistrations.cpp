@@ -9,12 +9,16 @@
 
 #include <FavoriteListModel.h>
 #include <RecentListModel.h>
+#include <TtopAmountListModel.h>
+#include <ViListModel.h>
 #include <YtopAmountListModel.h>
 
 void qml_register_types_favorite_backend()
 {
     qmlRegisterTypesAndRevisions<FavoriteListModel>("favorite.backend", 1);
     qmlRegisterTypesAndRevisions<RecentListModel>("favorite.backend", 1);
+    qmlRegisterTypesAndRevisions<TtopAmountListModel>("favorite.backend", 1);
+    qmlRegisterTypesAndRevisions<ViListModel>("favorite.backend", 1);
     qmlRegisterTypesAndRevisions<YtopAmountListModel>("favorite.backend", 1);
     qmlRegisterModule("favorite.backend", 1, 0);
 }

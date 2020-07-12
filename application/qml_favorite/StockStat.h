@@ -53,7 +53,9 @@ public:
 
     QStringList getRecentSearch();
     QStringList getFavoriteList();
-    QStringList getYtopAmountList();
+    QStringList getViList(int option, bool catchPlus);
+    TopList * getYtopAmountList();
+    QStringList getTtopAmountList(int option, bool catchPlus, bool useAccumulated);
     void addToFavorite(const QString &code);
     void removeFromFavorite(const QString &code);
 
@@ -71,6 +73,7 @@ private:
 private slots:
     void tickArrived(CybosTickData *);
     void timeInfoArrived(QDateTime dt);
+    void alarmArrived(CybosStockAlarm *);
 
 signals:
     void stockListTypeChanged(QString);

@@ -24,7 +24,17 @@ QStringList StockStat::getFavoriteList() {
 }
 
 
-QStringList StockStat::getYtopAmountList() {
+QStringList StockStat::getViList(int option, bool catchPlus) {
+    return DataProvider::getInstance()->getViList(option, catchPlus);
+}
+
+
+QStringList StockStat::getTtopAmountList(int option, bool catchPlus, bool useAccumulated) {
+    return DataProvider::getInstance()->getTtopAmountList(option, catchPlus, useAccumulated);
+}
+
+
+TopList * StockStat::getYtopAmountList() {
     return DataProvider::getInstance()->getYtopAmountList();
 }
 
@@ -41,7 +51,7 @@ void StockStat::removeFromFavorite(const QString &code) {
 
 void StockStat::timeInfoArrived(QDateTime dt) {
     qWarning() << "timeInfo arrived"  << dt << "\tisSimul: " << DataProvider::getInstance()->isSimulation();
-    if (!DataProvider::getInstance()->isSimulation()) {
+    if (!m_currentDateTime.isValid() || !DataProvider::getInstance()->isSimulation()) {
         m_currentDateTime = dt;
         clearStat();
         qWarning() << "clearStat";
@@ -89,6 +99,12 @@ void StockStat::tickArrived(CybosTickData *data) {
 }
 
 
+void StockStat::alarmArrived(CybosStockAlarm *alarm) {
+    qWarning() << "alarm arrived : " << QString::fromStdString(alarm->code()) << "\t" <<
+                    alarm->alarm_category() << "\t" << QString::fromStdString(alarm->title());
+}
+
+
 StockInfo::StockInfo(const QString &code, const QDateTime &dt)
 : QObject(nullptr) {
     m_code = code;
@@ -112,13 +128,14 @@ void StockInfo::dayDataReceived(QString code, CybosDayDatas *data) {
         const CybosDayData &d2 = data->day_data(count - 2);
         yesterdayData = d;
         beforeYesterdayData = d2;
-        qWarning() << code << "\tdate: " << d.date() << "\tamount: " << d.amount();
+        //qWarning() << code << "\tdate: " << d.date() << "\tamount: " << d.amount();
         emit infoUpdated(m_code);
     }
     else {
         qWarning() << code << " data size is under 2, actual: " << count;
     }
 }
+
 
 
 void StockInfo::setTodayData(int openPrice, int currentPrice, uint64_t amount) {

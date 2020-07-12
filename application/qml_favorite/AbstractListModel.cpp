@@ -54,6 +54,7 @@ void AbstractListModel::setCurrentIndex(int index) {
 
 
 void AbstractListModel::focusChanged(QString section) {
+    qWarning() << "focusChanged" << section;
     if (section != sectionName()) {
         emit clearCurrentIndex();
     }
@@ -92,9 +93,9 @@ void AbstractListModel::refreshList() {
         rclEndIndex--;
     }
 
-    qWarning() << "rcl count : " << rcl.count() << "\titemList count : " << itemList.count();
+    //qWarning() << "rcl count : " << rcl.count() << "\titemList count : " << itemList.count();
     for (int i = rcl.count() - itemList.count() - 1; i >= 0; i--) {
-        qWarning() << "start from : " << rcl.count() - itemList.count() - 1 << "\ti : " << i;
+        //qWarning() << "start from : " << rcl.count() - itemList.count() - 1 << "\ti : " << i;
         beginInsertRows(QModelIndex(), 0, 0);
         itemList.prepend(new ListItem(rcl.at(i),
                                 StockStat::instance()->currentDateTime()));

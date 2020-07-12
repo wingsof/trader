@@ -103,6 +103,16 @@
                         ],
                         "name": "timeInfoArrived",
                         "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "type": "CybosStockAlarm*"
+                            }
+                        ],
+                        "name": "alarmArrived",
+                        "returnType": "void"
                     }
                 ],
                 "superClasses": [
@@ -268,6 +278,118 @@
                         "value": "auto"
                     }
                 ],
+                "className": "ViListModel",
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "menuClicked",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "int"
+                            },
+                            {
+                                "name": "state",
+                                "type": "bool"
+                            }
+                        ],
+                        "name": "checkStateChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "name": "filterDynamic",
+                        "notify": "filterDynamicChanged",
+                        "read": "filterDynamic",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setFilterDynamic"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "name": "filterStatic",
+                        "notify": "filterStaticChanged",
+                        "read": "filterStatic",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setFilterStatic"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "name": "catchPlus",
+                        "notify": "catchPlusChanged",
+                        "read": "catchPlus",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setCatchPlus"
+                    }
+                ],
+                "qualifiedClassName": "ViListModel",
+                "signals": [
+                    {
+                        "access": "public",
+                        "name": "filterDynamicChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "filterStaticChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "catchPlusChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "AbstractListModel"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "ViListModel.h",
+        "outputRevision": 67
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "auto"
+                    }
+                ],
                 "className": "YtopAmountListModel",
                 "methods": [
                     {
@@ -283,7 +405,49 @@
                     }
                 ],
                 "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "name": "dateSymbol",
+                        "notify": "dateSymbolChanged",
+                        "read": "dateSymbol",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setDateSymbol"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "name": "listDate",
+                        "notify": "listDateChanged",
+                        "read": "listDate",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "uint",
+                        "user": false,
+                        "write": "setListDate"
+                    }
+                ],
                 "qualifiedClassName": "YtopAmountListModel",
+                "signals": [
+                    {
+                        "access": "public",
+                        "name": "dateSymbolChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "listDateChanged",
+                        "returnType": "void"
+                    }
+                ],
                 "superClasses": [
                     {
                         "access": "public",
@@ -293,6 +457,99 @@
             }
         ],
         "inputFile": "YtopAmountListModel.h",
+        "outputRevision": 67
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "auto"
+                    }
+                ],
+                "className": "TtopAmountListModel",
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "menuClicked",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "int"
+                            },
+                            {
+                                "name": "state",
+                                "type": "bool"
+                            }
+                        ],
+                        "name": "checkStateChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "name": "accumulatedPeriod",
+                        "notify": "accumulatedPeriodChanged",
+                        "read": "accumulatedPeriod",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setAccumulatedPeriod"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "name": "catchPlus",
+                        "notify": "catchPlusChanged",
+                        "read": "catchPlus",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setCatchPlus"
+                    }
+                ],
+                "qualifiedClassName": "TtopAmountListModel",
+                "signals": [
+                    {
+                        "access": "public",
+                        "name": "accumulatedPeriodChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "catchPlusChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "AbstractListModel"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "TtopAmountListModel.h",
         "outputRevision": 67
     },
     {

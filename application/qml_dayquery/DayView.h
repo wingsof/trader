@@ -19,7 +19,7 @@ public:
     void setData(QString, CybosDayDatas *);
     bool hasData();
 
-    void setTodayData(int o, int h, int l, int c, unsigned long v);
+    void setTodayData(int o, int h, int l, int c, unsigned long v, bool is_synchronized_bidding);
 
     const CybosDayData &getDayData(int i);
     const QList<int> &getPriceSteps();
@@ -62,12 +62,20 @@ private:
 class DayView : public QQuickPaintedItem {
     Q_OBJECT
     QML_ELEMENT
+    Q_PROPERTY(bool pinnedCode READ pinnedCode WRITE setPinnedCode NOTIFY pinnedCodeChanged)
+    Q_PROPERTY(QString pcode READ pcode WRITE setPcode NOTIFY pcodeChanged)
+    Q_PROPERTY(QString corporateName READ corporateName NOTIFY corporateNameChanged)
 
 public:
     DayView(QQuickItem *parent = 0);
     void paint(QPainter *painter);
 
     void search();
+    void setPinnedCode(bool isOn);
+    bool pinnedCode() { return mPinnedCode; }
+    QString pcode() { return mPcode; }
+    void setPcode(const QString &code);
+    QString corporateName() { return mCorporateName; }
 
 private:
     void fillBackground(QPainter *painter, const QSizeF &itemSize);
@@ -90,13 +98,18 @@ private:
     QDateTime currentDateTime;
     DayData *dayData;
     qreal priceEndY;
+    bool mPinnedCode;
+    QString mPcode;
+    QString mCorporateName;
 
     qreal drawHorizontalY;
 
     qreal getCandleLineWidth(qreal gap);
 
 signals:
-    void stockCodeChanged();
+    void corporateNameChanged();
+    void pinnedCodeChanged();
+    void pcodeChanged();
 
 private slots:
     void dataReceived(QString, CybosDayDatas *);

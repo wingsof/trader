@@ -60,7 +60,7 @@ private:
     void pushToQueue();
     void setPriceBoundary(int price);
     void setPriceBoundary(int high, int low);
-    void setVolumeBoundary(uint volume);
+    void setVolumeBoundary(long long volume);
 
 public:
     QString getDebugString();

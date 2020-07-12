@@ -62,9 +62,7 @@ QString VolumePriceChartView::numberToShortString(uint number) {
 }
 
 
-void VolumePriceChartView::setCurrentStock(QString code, QDateTime dt, int countOfDays) {
-    Q_UNUSED(countOfDays);
-    Q_UNUSED(dt);
+void VolumePriceChartView::setCurrentStock(QString code) {
     if (currentStockCode != code) {
         resetData();
         currentStockCode = code;

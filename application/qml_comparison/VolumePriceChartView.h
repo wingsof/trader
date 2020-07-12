@@ -55,7 +55,7 @@ private:
 
 private slots:
     void minuteTickUpdated(QString);
-    void setCurrentStock(QString, QDateTime, int);
+    void setCurrentStock(QString);
 };
 
 #endif

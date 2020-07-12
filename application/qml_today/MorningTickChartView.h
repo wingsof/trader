@@ -14,11 +14,13 @@ public:
     enum {
         ROW_COUNT = 16,
         PRICE_ROW_COUNT = 10,
-        PRICE_COLUMN_COUNT = 12,
+        TODAY_COLUMN_COUNT = 7,
+        YESTERDAY_COLUMN_COUNT = 6,
+        PRICE_COLUMN_COUNT = TODAY_COLUMN_COUNT + YESTERDAY_COLUMN_COUNT,
         VOLUME_ROW_COUNT = 2,
         TIME_LABEL_ROW_COUNT = 2,
         SUBJECT_ROW_COUNT = 2,
-        COLUMN_COUNT = 14,  // 6 * 2 + 2 (Label)
+        COLUMN_COUNT = 15,  // 7 * 2 + 2 (Label)
     };
     MorningTickChartView(QQuickItem *parent = 0);
     void paint(QPainter *painter);
@@ -29,7 +31,7 @@ private:
     MinInfo yesterdayMinInfo;
     uint currentVolumeMax;
     uint currentVolumeMin;
-    int todayStartHour;
+    QTime todayStartTime;
     bool pastMinuteDataReceived;
     QDateTime currentDateTime;
 
@@ -43,13 +45,14 @@ private:
 
     qreal mapPriceToPos(int price, qreal startY, qreal endY);
     qreal getCandleLineWidth(qreal w);
-    qreal getTimeToXPos(uint time, qreal tickWidth, uint dataStartHour);
+    //qreal getTimeToXPos(uint time, qreal tickWidth, uint dataStartHour);
+    qreal getTimeToXPos(uint t, qreal tickWidth, uint startTime);
     qreal getVolumeHeight(uint v, qreal ch);
 
     void drawGridLine(QPainter *painter, qreal cw, qreal ch);
     void drawCandle(QPainter *painter, const CybosDayData &data, qreal startX, qreal horizontalGridStep, qreal priceChartEndY);
     void drawVolume(QPainter *painter, const CybosDayData &data, qreal startX, qreal tickWidth, qreal ch, qreal volumeEndY);
-    void drawTimeLabels(QPainter *painter, qreal tickWidth, qreal cw, qreal ch, qreal startX, int startHour);
+    void drawTimeLabels(QPainter *painter, qreal tickWidth, qreal cw, qreal ch, qreal startX, int cellCount, uint startTime);
     void drawPriceLabels(QPainter *painter, qreal startX, qreal ch);
     void drawCurrentLineRange(QPainter *painter, MinuteTick * mt,const CybosDayData &data, qreal cw, qreal priceChartEndY);
 

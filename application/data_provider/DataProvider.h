@@ -10,19 +10,21 @@
 class BidAskThread;
 class StockSelectionThread;
 class TickThread;
-class SpeedStatistics;
 class MinuteData;
 class TimeThread;
 class MinuteTick;
 class DayDataProvider;
 class SimulationEvent;
 class StockListThread;
+class AlarmThread;
 
 using stock_api::CybosBidAskTickData;
 using stock_api::CybosTickData;
 using stock_api::CybosDayDatas;
 using stock_api::CybosDayData;
+using stock_api::CybosStockAlarm;
 using stock_api::SimulationStatus;
+using stock_api::TopList;
 using google::protobuf::Timestamp;
 
 
@@ -48,13 +50,13 @@ public:
     void startStockCodeListening();
     void startTimeListening();
     void startListTypeListening();
+    void startAlarmListening();
 
     MinuteTick *getMinuteTick(const QString &code);
 
     QString getCompanyName(const QString &code);
 
     bool isSimulation();
-    void createSpeedStatistics(int secs=60);
     void collectMinuteData(int min=1);
     void requestDayData(const QString &code, int countOfDays, const QDateTime &_untilTime);
     void requestMinuteData(const QString &code, const QDateTime &fromTime, const QDateTime &untilTime);
@@ -65,10 +67,14 @@ public:
 
     QStringList getRecentSearch();
     QStringList getFavoriteList();
-    QStringList getYtopAmountList();
+    QStringList getViList(int option, bool catchPlus);
+    QStringList getTtopAmountList(int option, bool catchPlus, bool useAccumulated);
+    TopList* getYtopAmountList();
     void addToFavorite(const QString &code);
     void removeFromFavorite(const QString &code);
     const QDateTime & currentDateTime() { return m_currentDateTime; }
+
+    void forceChangeStockCode(const QString &code);
 
 private:
     DataProvider();
@@ -77,8 +83,8 @@ private:
 
     TickThread *            tickThread;
     BidAskThread *          bidAskThread;
+    AlarmThread *           alarmThread;
     StockSelectionThread *  stockSelectionThread;
-    SpeedStatistics *       speedStatistics;
     MinuteData *            minuteData;
     TimeThread *            timeThread;
     DayDataProvider *       dayDataProvider;
@@ -105,6 +111,7 @@ signals:
     void stockCodeChanged(QString code);
     void tickArrived(CybosTickData *);
     void bidAskTickArrived(CybosBidAskTickData *);
+    void alarmArrived(CybosStockAlarm *);
     void minuteTickUpdated(QString);
     void dayDataReady(QString, CybosDayDatas *);
     void minuteDataReady(QString, CybosDayDatas *);

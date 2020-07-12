@@ -20,9 +20,11 @@ QStringList RecentListModel::getServerList() {
 
 void RecentListModel::menuClicked(int index) {
     qWarning() << "RecentListModel menuClicked: " << index << "\tindex : " << currentSelectIndex();
-    if (currentSelectIndex() >= itemList.count() || currentSelectIndex() == -1)
-        return;
+    if (index == 0) {
+        if (currentSelectIndex() >= itemList.count() || currentSelectIndex() == -1)
+            return;
 
-    const ListItem * li = itemList.at(currentSelectIndex());
-    StockStat::instance()->addToFavorite(li->code());
+        const ListItem * li = itemList.at(currentSelectIndex());
+        StockStat::instance()->addToFavorite(li->code());
+    }
 }

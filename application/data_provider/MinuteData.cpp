@@ -72,7 +72,8 @@ void MinuteTick::minuteDataReady(QString _code, CybosDayDatas * data) {
                 updateCurrentData(data->day_data(i));
         }
         qWarning() << "send minuteTickUpdated";
-        emit minuteTickUpdated(code);
+        if (inTimeCount > 0)
+            emit minuteTickUpdated(code);
     }
 }
 
@@ -86,12 +87,15 @@ void MinuteTick::setCurrentData(CybosTickData *d, long msec) {
     currentData.set_lowest_price(d->current_price());
     currentData.set_close_price(d->current_price());
     currentData.set_volume(d->volume());
+    currentData.set_is_synchronized_bidding(d->market_type() == 49);
 
     setVolumeBoundary(d->volume());
 
-    currentData.set_amount(d->volume() * d->current_price());
-    currentData.set_cum_sell_volume(d->cum_sell_volume());
-    currentData.set_cum_buy_volume(d->cum_buy_volume());
+    if (d->market_type() == 50) {
+        currentData.set_amount(d->volume() * d->current_price());
+        currentData.set_cum_sell_volume(d->cum_sell_volume());
+        currentData.set_cum_buy_volume(d->cum_buy_volume());
+    }
     //qWarning() << "setCurrentData Tick : " << dt;
     currentMSecs = msec;
 }
@@ -116,6 +120,7 @@ void MinuteTick::setCurrentData(const CybosDayData &d) {
     currentData.set_amount(d.amount());
     currentData.set_cum_sell_volume(d.cum_sell_volume());
     currentData.set_cum_buy_volume(d.cum_buy_volume());
+    currentData.set_is_synchronized_bidding(false);
     currentMSecs = dt.toMSecsSinceEpoch();
 }
 
@@ -135,37 +140,30 @@ bool MinuteTick::appendTick(CybosTickData *d) {
         return false;
 
     long msec = TimeUtil::TimestampToMilliseconds(d->tick_date());
+    yesterdayClose = d->current_price() - d->yesterday_diff();
 
-    if (d->market_type() == 49) {
-        if (currentMSecs > 0) {
-            pushToQueue();
-            currentMSecs = 0;
-            return true;
-        }
+    // open price will be zero, when market is not opened
+    openPrice = d->start_price();
+    setPriceBoundary(d->current_price());
+
+    if (currentMSecs == 0) {
+        setCurrentData(d, msec);
     }
-    else if (d->market_type() == 50) {
-        yesterdayClose = d->current_price() - d->yesterday_diff();
-        openPrice = d->start_price();
-        setPriceBoundary(d->current_price());
-        if (currentMSecs == 0) {
+    else {
+        if (isTimeout(msec) || (currentData.is_synchronized_bidding() ^ (d->market_type() == 49))) {
+            pushToQueue();
             setCurrentData(d, msec);
         }
         else {
-            if (isTimeout(msec)) {
-                pushToQueue();    
-                setCurrentData(d, msec);
-            }
-            else {
-                updateCurrentData(d);
-            }
+            updateCurrentData(d);
         }
-        return true;
     }
-    return false;
+
+    return true;
 }
 
 
-void MinuteTick::setVolumeBoundary(uint volume) {
+void MinuteTick::setVolumeBoundary(long long volume) {
     if (volume > highestVolume)
         highestVolume = volume;
 }
@@ -214,10 +212,11 @@ void MinuteTick::updateCurrentData(CybosTickData *d) {
     currentData.set_volume(currentData.volume() + d->volume());
 
     setVolumeBoundary(currentData.volume());
-
-    currentData.set_amount(d->volume() * d->current_price() + currentData.amount());
-    currentData.set_cum_sell_volume(d->cum_sell_volume());
-    currentData.set_cum_buy_volume(d->cum_buy_volume());
+    if (d->market_type() == 50) {
+        currentData.set_amount(d->volume() * d->current_price() + currentData.amount());
+        currentData.set_cum_sell_volume(d->cum_sell_volume());
+        currentData.set_cum_buy_volume(d->cum_buy_volume());
+    }
 }
 
 

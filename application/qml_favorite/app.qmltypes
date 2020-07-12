@@ -333,10 +333,47 @@ Module {
         }
     }
     Component {
+        name: "TtopAmountListModel"
+        prototype: "AbstractListModel"
+        exports: ["favorite.backend/TtopAmountListModel 1.0"]
+        exportMetaObjectRevisions: [0]
+        Property { name: "accumulatedPeriod"; type: "bool" }
+        Property { name: "catchPlus"; type: "bool" }
+        Method {
+            name: "menuClicked"
+            Parameter { name: "index"; type: "int" }
+        }
+        Method {
+            name: "checkStateChanged"
+            Parameter { name: "index"; type: "int" }
+            Parameter { name: "state"; type: "bool" }
+        }
+    }
+    Component {
+        name: "ViListModel"
+        prototype: "AbstractListModel"
+        exports: ["favorite.backend/ViListModel 1.0"]
+        exportMetaObjectRevisions: [0]
+        Property { name: "filterDynamic"; type: "bool" }
+        Property { name: "filterStatic"; type: "bool" }
+        Property { name: "catchPlus"; type: "bool" }
+        Method {
+            name: "menuClicked"
+            Parameter { name: "index"; type: "int" }
+        }
+        Method {
+            name: "checkStateChanged"
+            Parameter { name: "index"; type: "int" }
+            Parameter { name: "state"; type: "bool" }
+        }
+    }
+    Component {
         name: "YtopAmountListModel"
         prototype: "AbstractListModel"
         exports: ["favorite.backend/YtopAmountListModel 1.0"]
         exportMetaObjectRevisions: [0]
+        Property { name: "dateSymbol"; type: "string" }
+        Property { name: "listDate"; type: "uint" }
         Method {
             name: "menuClicked"
             Parameter { name: "index"; type: "int" }
