@@ -4,32 +4,8 @@
 #include <qqml.h>
 #include <QAbstractTableModel>
 #include "DataProvider.h"
+#include "BidAskData.h"
 
-class PriceModel {
-public:
-    PriceModel();
-    
-    void setTick(CybosTickData *data);
-    void setBidAskTick(CybosBidAskTickData *data);
-    int getPrice(int i);
-    uint getRemain(int i, bool isAsk);
-    int getRemainDiff(int i, bool isAsk);
-    int getIndexOfPrice(int price);
-
-private:
-    int *prices;
-    uint *remains;
-    int *remainDiff;
-    int *firstPrices;
-    bool isBidaskReceived;
-    bool isBuy;
-    uint currentVolume;
-
-    void replaceWithNewData(int newPrices[20], uint newRemains[20]);
-    void decreaseVolume(int price, uint volume, bool isBuy);
-    void movePrices(int askPrice, int bidPrice);
-    void rotatePrices(int count, bool isAsk);
-};
 
 
 class BidAskModel : public QAbstractTableModel {
@@ -73,7 +49,7 @@ public:
     QHash<int, QByteArray> roleNames() const override
     {
         return { {Qt::DisplayRole, "display"},
-                 {Qt::UserRole + 1, "vdiff" };
+                 {Qt::UserRole + 1, "vdiff" }};
     }
 
     void setHighlight(int row);
@@ -97,7 +73,8 @@ private:
     uint totalAskRemain;
 
     QString currentStockCode;
-    PriceModel *priceModel;
+    BidAskData mData;
+    QDateTime currentDateTime;
 
 private:
     int getPriceByRow(int row) const ;
@@ -110,6 +87,7 @@ private slots:
     void tickArrived(CybosTickData *);
     void bidAskTickArrived(CybosBidAskTickData *);
     void setCurrentStock(QString);
+    void timeInfoArrived(QDateTime dt);
 
 signals:
     void highlightChanged();

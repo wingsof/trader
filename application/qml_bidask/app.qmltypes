@@ -28,6 +28,10 @@ Module {
             name: "setCurrentStock"
             Parameter { type: "string" }
         }
+        Method {
+            name: "timeInfoArrived"
+            Parameter { name: "dt"; type: "QDateTime" }
+        }
         Method { name: "sell_immediately" }
         Method { name: "buy_immediately" }
     }

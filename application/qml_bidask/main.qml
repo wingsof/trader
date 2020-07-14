@@ -79,20 +79,38 @@ ApplicationWindow {
                     border.width: 1
 
                     Rectangle {
+                        id: askRemainBar
                         height: parent.height
                         color: "#100000ff"
                         anchors.right: askRemainColumn.right
                         width: {
                             if (model.row <= 10 && typeof(display) == "number" && bidaskModel.totalAskRemain > 0) {
-                                return parent.width * 2.0 * display / bidaskModel.totalAskRemain
+                                //console.log('BID BAR', model.row, display, bidaskModel.totalAskRemain, parent.width * 3.0 * display / bidaskModel.totalAskRemain)
+                                return parent.width * 3.0 * display / (bidaskModel.totalAskRemain + bidaskModel.totalBidRemain)
                             }
                             return 0
                         }
                     }
+
+                    Rectangle {
+                        height: parent.height
+                        color: vdiff > 0 ? "#40ff0000":"#400000ff"
+                        anchors.right: vdiff > 0 ? askRemainBar.left : undefined
+                        anchors.left: vdiff < 0 ? askRemainBar.left : undefined
+                        width: {
+                            if (model.row <= 10 && typeof(vdiff) == "number" && bidaskModel.totalAskRemain > 0) {
+                                return parent.width * 3.0 * Math.abs(vdiff) / (bidaskModel.totalAskRemain + bidaskModel.totalBidRemain)
+                            }
+                            return 0
+                        }
+                    }
+
                     Text {
                         text: {
                             if (model.row == 21)
                                 return bidaskModel.totalAskRemain
+                            else if (model.row >= 1 && model.row <= 10)
+                                return display + vdiff
                             else
                                 return display
                         }
@@ -100,7 +118,7 @@ ApplicationWindow {
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         font.pointSize: 11
-                        color: model.row == 11 ? "blue":"black"
+                        color: model.row > 10 && model.row <= 20 ? "blue":"black"
                     }
 
                 }
@@ -116,20 +134,38 @@ ApplicationWindow {
                     border.color: "#d7d7d7"
                     border.width: 1
                     Rectangle {
+                        id: bidRemainBar
                         height: parent.height
                         color: "#10ff0000"
                         anchors.left: bidRemainColumn.left
                         width: {
                             if (model.row >= 11 && typeof(display) == "number" && bidaskModel.totalBidRemain > 0) {
-                                return parent.width * 2.0 * display / bidaskModel.totalBidRemain
+                                //console.log('ASK BAR', model.row, display, bidaskModel.totalBidRemain, parent.width * 3.0 * display / bidaskModel.totalBidRemain)
+                                return parent.width * 3.0 * display / (bidaskModel.totalBidRemain + bidaskModel.totalAskRemain)
                             }
                             return 0
                         }
                     }
+
+                    Rectangle {
+                        height: parent.height
+                        color: vdiff > 0 ? "#40ff0000":"#400000ff"
+                        anchors.left: vdiff > 0? bidRemainBar.right : undefined
+                        anchors.right: vdiff < 0? bidRemainBar.right : undefined
+                        width: {
+                            if (model.row >= 11 && typeof(vdiff) == "number" && bidaskModel.totalBidRemain > 0) {
+                                return parent.width * 3.0 * Math.abs(vdiff) / (bidaskModel.totalBidRemain + bidaskModel.totalAskRemain)
+                            }
+                            return 0
+                        }
+                    }
+
                     Text {
                         text: {
                             if (model.row == 21)
                                 return bidaskModel.totalBidRemain
+                            else if (model.row >= 11 && model.row <= 20)
+                                return display + vdiff
                             else
                                 return display
                         }
@@ -137,7 +173,7 @@ ApplicationWindow {
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         font.pointSize: 11
-                        color: model.row == 10 ? "red":"black"
+                        color: model.row <= 10 && model.row >= 1? "red":"black"
                     }
 
                 }

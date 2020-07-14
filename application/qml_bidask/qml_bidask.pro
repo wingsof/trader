@@ -6,6 +6,7 @@ TEMPLATE = app
 CONFIG += link_pkgconfig
 CONFIG += qmltypes
 CONFIG += metatypes
+CONFIG += c++1z
 TARGET = morning_bidask
 INCLUDEPATH += . /home/nnnlife/workspace/trader/application/data_provider
 QT += widgets
@@ -28,7 +29,10 @@ MOC_DIR=generated_files
 
 # Input
 SOURCES += main.cpp \
+           BidAskData.cpp \
            BidAskModel.cpp 
 
-HEADERS += BidAskModel.h
+HEADERS += \
+           BidAskData.h \
+           BidAskModel.h
 

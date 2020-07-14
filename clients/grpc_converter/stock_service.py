@@ -376,16 +376,22 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                     out_time_total_ask_remain=data['25'],
                                                     out_time_total_bid_remain=data['26'])
         for i in range(3, 19+1, 4):
-            bidask.ask_prices.append(data[str(i)])
-            bidask.bid_prices.append(data[str(i+1)])
-            bidask.ask_remains.append(data[str(i+2)])
-            bidask.bid_remains.append(data[str(i+3)])
+            if data[str(i+1)] > 0:
+                bidask.bid_prices.append(data[str(i+1)])
+                bidask.bid_remains.append(data[str(i+3)])
+
+            if data[str(i)] > 0:
+                bidask.ask_prices.append(data[str(i)])
+                bidask.ask_remains.append(data[str(i+2)])
 
         for i in range(27, 43+1, 4):
-            bidask.ask_prices.append(data[str(i)])
-            bidask.bid_prices.append(data[str(i+1)])
-            bidask.ask_remains.append(data[str(i+2)])
-            bidask.bid_remains.append(data[str(i+3)])
+            if data[str(i+1)] > 0:
+                bidask.bid_prices.append(data[str(i+1)])
+                bidask.bid_remains.append(data[str(i+3)])
+
+            if data[str(i)] > 0:
+                bidask.ask_prices.append(data[str(i)])
+                bidask.ask_remains.append(data[str(i+2)])
 
         for q in self.bidask_subscribe_cilents:
             q.put_nowait(bidask)

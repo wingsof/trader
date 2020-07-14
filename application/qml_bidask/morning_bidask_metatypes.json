@@ -133,6 +133,17 @@
                         ],
                         "name": "setCurrentStock",
                         "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "dt",
+                                "type": "QDateTime"
+                            }
+                        ],
+                        "name": "timeInfoArrived",
+                        "returnType": "void"
                     }
                 ],
                 "superClasses": [
