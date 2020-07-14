@@ -51,6 +51,11 @@ class StockStub(object):
         request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
+    self.RequestOrder = channel.unary_unary(
+        '/stock_api.Stock/RequestOrder',
+        request_serializer=stock__provider__pb2.TradeMsg.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
     self.SetCurrentStock = channel.unary_unary(
         '/stock_api.Stock/SetCurrentStock',
         request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
@@ -146,6 +151,11 @@ class StockStub(object):
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=stock__provider__pb2.CybosStockAlarm.FromString,
         )
+    self.ListenTraderMsg = channel.unary_stream(
+        '/stock_api.Stock/ListenTraderMsg',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=stock__provider__pb2.TradeMsg.FromString,
+        )
     self.ListenSimulationStatusChanged = channel.unary_stream(
         '/stock_api.Stock/ListenSimulationStatusChanged',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -210,6 +220,13 @@ class StockServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def RequestCybosSubject(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def RequestOrder(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -349,6 +366,13 @@ class StockServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def ListenTraderMsg(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def ListenSimulationStatusChanged(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -406,6 +430,11 @@ def add_StockServicer_to_server(servicer, server):
       'RequestCybosSubject': grpc.unary_unary_rpc_method_handler(
           servicer.RequestCybosSubject,
           request_deserializer=stock__provider__pb2.StockCodeQuery.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'RequestOrder': grpc.unary_unary_rpc_method_handler(
+          servicer.RequestOrder,
+          request_deserializer=stock__provider__pb2.TradeMsg.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
       'SetCurrentStock': grpc.unary_unary_rpc_method_handler(
@@ -502,6 +531,11 @@ def add_StockServicer_to_server(servicer, server):
           servicer.ListenCybosAlarm,
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=stock__provider__pb2.CybosStockAlarm.SerializeToString,
+      ),
+      'ListenTraderMsg': grpc.unary_stream_rpc_method_handler(
+          servicer.ListenTraderMsg,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=stock__provider__pb2.TradeMsg.SerializeToString,
       ),
       'ListenSimulationStatusChanged': grpc.unary_stream_rpc_method_handler(
           servicer.ListenSimulationStatusChanged,

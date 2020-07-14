@@ -84,14 +84,14 @@ ApplicationWindow {
                         anchors.right: askRemainColumn.right
                         width: {
                             if (model.row <= 10 && typeof(display) == "number" && bidaskModel.totalAskRemain > 0) {
-                                return parent.width * display / bidaskModel.totalAskRemain
+                                return parent.width * 2.0 * display / bidaskModel.totalAskRemain
                             }
                             return 0
                         }
                     }
                     Text {
                         text: {
-                            if (model.row == 0)
+                            if (model.row == 21)
                                 return bidaskModel.totalAskRemain
                             else
                                 return display
@@ -121,7 +121,7 @@ ApplicationWindow {
                         anchors.left: bidRemainColumn.left
                         width: {
                             if (model.row >= 11 && typeof(display) == "number" && bidaskModel.totalBidRemain > 0) {
-                                return parent.width * display / bidaskModel.totalBidRemain
+                                return parent.width * 2.0 * display / bidaskModel.totalBidRemain
                             }
                             return 0
                         }
@@ -150,26 +150,35 @@ ApplicationWindow {
                     implicitHeight: (root.height - 20) / 22
                     color: "#ffffff"
                     border.color: "#d7d7d7"
-                    border.width: {
-                        if (model.column == 0 || model.column == 6)
-                            return 1
-                        return 0
-                    }
+                    border.width: 1
 
                     Text {
-                        text: display
+                        text: {
+                            if (model.row == 21 && model.column == 0)
+                                return "SELL"
+                            else if (model.row == 21 && model.column ==6)
+                                return "BUY"
+                            return display
+                        }
                         anchors.fill: parent
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         font.pointSize: 10
                         color: {
-                            if (typeof(display) == "number") {
-                                if (display > 0)
-                                    return "red"
-                                else
-                                    return "blue"
-                            }
-                            return "black"
+                            if (model.row == 21 && model.column == 0)
+                                return "red"
+                            else if (model.row == 21 && model.column ==6)
+                                return "blue"
+                            return "white"
+                        }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            if (model.row == 21 && model.column == 0)
+                                bidaskModel.sell_immediately()
+                            else if (model.row == 21 && model.column ==6)
+                                bidaskModel.buy_immediately()
                         }
                     }
                 }

@@ -28,6 +28,8 @@ Module {
             name: "setCurrentStock"
             Parameter { type: "string" }
         }
+        Method { name: "sell_immediately" }
+        Method { name: "buy_immediately" }
     }
     Component {
         name: "QAbstractItemModel"

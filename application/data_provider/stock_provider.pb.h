@@ -49,7 +49,7 @@ struct TableStruct_stock_5fprovider_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[15]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[17]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -102,6 +102,12 @@ extern StockQueryDefaultTypeInternal _StockQuery_default_instance_;
 class TopList;
 class TopListDefaultTypeInternal;
 extern TopListDefaultTypeInternal _TopList_default_instance_;
+class TradeCondition;
+class TradeConditionDefaultTypeInternal;
+extern TradeConditionDefaultTypeInternal _TradeCondition_default_instance_;
+class TradeMsg;
+class TradeMsgDefaultTypeInternal;
+extern TradeMsgDefaultTypeInternal _TradeMsg_default_instance_;
 }  // namespace stock_api
 PROTOBUF_NAMESPACE_OPEN
 template<> ::stock_api::CodeList* Arena::CreateMaybeMessage<::stock_api::CodeList>(Arena*);
@@ -119,6 +125,8 @@ template<> ::stock_api::SimulationStatus* Arena::CreateMaybeMessage<::stock_api:
 template<> ::stock_api::StockCodeQuery* Arena::CreateMaybeMessage<::stock_api::StockCodeQuery>(Arena*);
 template<> ::stock_api::StockQuery* Arena::CreateMaybeMessage<::stock_api::StockQuery>(Arena*);
 template<> ::stock_api::TopList* Arena::CreateMaybeMessage<::stock_api::TopList>(Arena*);
+template<> ::stock_api::TradeCondition* Arena::CreateMaybeMessage<::stock_api::TradeCondition>(Arena*);
+template<> ::stock_api::TradeMsg* Arena::CreateMaybeMessage<::stock_api::TradeMsg>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace stock_api {
 
@@ -1025,6 +1033,315 @@ class SimulationStatus :
 };
 // -------------------------------------------------------------------
 
+class TradeCondition :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.TradeCondition) */ {
+ public:
+  TradeCondition();
+  virtual ~TradeCondition();
+
+  TradeCondition(const TradeCondition& from);
+  TradeCondition(TradeCondition&& from) noexcept
+    : TradeCondition() {
+    *this = ::std::move(from);
+  }
+
+  inline TradeCondition& operator=(const TradeCondition& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TradeCondition& operator=(TradeCondition&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const TradeCondition& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const TradeCondition* internal_default_instance() {
+    return reinterpret_cast<const TradeCondition*>(
+               &_TradeCondition_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  friend void swap(TradeCondition& a, TradeCondition& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TradeCondition* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TradeCondition* New() const final {
+    return CreateMaybeMessage<TradeCondition>(nullptr);
+  }
+
+  TradeCondition* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TradeCondition>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const TradeCondition& from);
+  void MergeFrom(const TradeCondition& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TradeCondition* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "stock_api.TradeCondition";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
+    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kIsBuyFieldNumber = 1,
+    kStrategyFieldNumber = 2,
+  };
+  // bool is_buy = 1;
+  void clear_is_buy();
+  bool is_buy() const;
+  void set_is_buy(bool value);
+  private:
+  bool _internal_is_buy() const;
+  void _internal_set_is_buy(bool value);
+  public:
+
+  // int32 strategy = 2;
+  void clear_strategy();
+  ::PROTOBUF_NAMESPACE_ID::int32 strategy() const;
+  void set_strategy(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_strategy() const;
+  void _internal_set_strategy(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.TradeCondition)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  bool is_buy_;
+  ::PROTOBUF_NAMESPACE_ID::int32 strategy_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_stock_5fprovider_2eproto;
+};
+// -------------------------------------------------------------------
+
+class TradeMsg :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.TradeMsg) */ {
+ public:
+  TradeMsg();
+  virtual ~TradeMsg();
+
+  TradeMsg(const TradeMsg& from);
+  TradeMsg(TradeMsg&& from) noexcept
+    : TradeMsg() {
+    *this = ::std::move(from);
+  }
+
+  inline TradeMsg& operator=(const TradeMsg& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TradeMsg& operator=(TradeMsg&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const TradeMsg& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const TradeMsg* internal_default_instance() {
+    return reinterpret_cast<const TradeMsg*>(
+               &_TradeMsg_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    7;
+
+  friend void swap(TradeMsg& a, TradeMsg& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TradeMsg* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TradeMsg* New() const final {
+    return CreateMaybeMessage<TradeMsg>(nullptr);
+  }
+
+  TradeMsg* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TradeMsg>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const TradeMsg& from);
+  void MergeFrom(const TradeMsg& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TradeMsg* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "stock_api.TradeMsg";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
+    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kConditionsFieldNumber = 4,
+    kPriceFieldNumber = 1,
+    kQuantityFieldNumber = 2,
+    kPercentageFieldNumber = 3,
+  };
+  // repeated .stock_api.TradeCondition conditions = 4;
+  int conditions_size() const;
+  private:
+  int _internal_conditions_size() const;
+  public:
+  void clear_conditions();
+  ::stock_api::TradeCondition* mutable_conditions(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::stock_api::TradeCondition >*
+      mutable_conditions();
+  private:
+  const ::stock_api::TradeCondition& _internal_conditions(int index) const;
+  ::stock_api::TradeCondition* _internal_add_conditions();
+  public:
+  const ::stock_api::TradeCondition& conditions(int index) const;
+  ::stock_api::TradeCondition* add_conditions();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::stock_api::TradeCondition >&
+      conditions() const;
+
+  // int32 price = 1;
+  void clear_price();
+  ::PROTOBUF_NAMESPACE_ID::int32 price() const;
+  void set_price(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_price() const;
+  void _internal_set_price(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 quantity = 2;
+  void clear_quantity();
+  ::PROTOBUF_NAMESPACE_ID::int32 quantity() const;
+  void set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_quantity() const;
+  void _internal_set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 percentage = 3;
+  void clear_percentage();
+  ::PROTOBUF_NAMESPACE_ID::int32 percentage() const;
+  void set_percentage(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_percentage() const;
+  void _internal_set_percentage(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.TradeMsg)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::stock_api::TradeCondition > conditions_;
+  ::PROTOBUF_NAMESPACE_ID::int32 price_;
+  ::PROTOBUF_NAMESPACE_ID::int32 quantity_;
+  ::PROTOBUF_NAMESPACE_ID::int32 percentage_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_stock_5fprovider_2eproto;
+};
+// -------------------------------------------------------------------
+
 class ListType :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.ListType) */ {
  public:
@@ -1067,7 +1384,7 @@ class ListType :
                &_ListType_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    8;
 
   friend void swap(ListType& a, ListType& b) {
     a.Swap(&b);
@@ -1202,7 +1519,7 @@ class CompanyName :
                &_CompanyName_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    9;
 
   friend void swap(CompanyName& a, CompanyName& b) {
     a.Swap(&b);
@@ -1337,7 +1654,7 @@ class PastMinuteQuery :
                &_PastMinuteQuery_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    10;
 
   friend void swap(PastMinuteQuery& a, PastMinuteQuery& b) {
     a.Swap(&b);
@@ -1500,7 +1817,7 @@ class CybosDayData :
                &_CybosDayData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    11;
 
   friend void swap(CybosDayData& a, CybosDayData& b) {
     a.Swap(&b);
@@ -1782,7 +2099,7 @@ class CybosDayDatas :
                &_CybosDayDatas_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    12;
 
   friend void swap(CybosDayDatas& a, CybosDayDatas& b) {
     a.Swap(&b);
@@ -1919,7 +2236,7 @@ class CybosSubjectTickData :
                &_CybosSubjectTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    13;
 
   friend void swap(CybosSubjectTickData& a, CybosSubjectTickData& b) {
     a.Swap(&b);
@@ -2162,7 +2479,7 @@ class CybosTickData :
                &_CybosTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    14;
 
   friend void swap(CybosTickData& a, CybosTickData& b) {
     a.Swap(&b);
@@ -2563,7 +2880,7 @@ class CybosBidAskTickData :
                &_CybosBidAskTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    15;
 
   friend void swap(CybosBidAskTickData& a, CybosBidAskTickData& b) {
     a.Swap(&b);
@@ -2881,7 +3198,7 @@ class CybosStockAlarm :
                &_CybosStockAlarm_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    16;
 
   friend void swap(CybosStockAlarm& a, CybosStockAlarm& b) {
     a.Swap(&b);
@@ -3616,6 +3933,153 @@ inline void SimulationStatus::_internal_set_simulation_speed(float value) {
 inline void SimulationStatus::set_simulation_speed(float value) {
   _internal_set_simulation_speed(value);
   // @@protoc_insertion_point(field_set:stock_api.SimulationStatus.simulation_speed)
+}
+
+// -------------------------------------------------------------------
+
+// TradeCondition
+
+// bool is_buy = 1;
+inline void TradeCondition::clear_is_buy() {
+  is_buy_ = false;
+}
+inline bool TradeCondition::_internal_is_buy() const {
+  return is_buy_;
+}
+inline bool TradeCondition::is_buy() const {
+  // @@protoc_insertion_point(field_get:stock_api.TradeCondition.is_buy)
+  return _internal_is_buy();
+}
+inline void TradeCondition::_internal_set_is_buy(bool value) {
+  
+  is_buy_ = value;
+}
+inline void TradeCondition::set_is_buy(bool value) {
+  _internal_set_is_buy(value);
+  // @@protoc_insertion_point(field_set:stock_api.TradeCondition.is_buy)
+}
+
+// int32 strategy = 2;
+inline void TradeCondition::clear_strategy() {
+  strategy_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TradeCondition::_internal_strategy() const {
+  return strategy_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TradeCondition::strategy() const {
+  // @@protoc_insertion_point(field_get:stock_api.TradeCondition.strategy)
+  return _internal_strategy();
+}
+inline void TradeCondition::_internal_set_strategy(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  strategy_ = value;
+}
+inline void TradeCondition::set_strategy(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_strategy(value);
+  // @@protoc_insertion_point(field_set:stock_api.TradeCondition.strategy)
+}
+
+// -------------------------------------------------------------------
+
+// TradeMsg
+
+// int32 price = 1;
+inline void TradeMsg::clear_price() {
+  price_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TradeMsg::_internal_price() const {
+  return price_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TradeMsg::price() const {
+  // @@protoc_insertion_point(field_get:stock_api.TradeMsg.price)
+  return _internal_price();
+}
+inline void TradeMsg::_internal_set_price(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  price_ = value;
+}
+inline void TradeMsg::set_price(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_price(value);
+  // @@protoc_insertion_point(field_set:stock_api.TradeMsg.price)
+}
+
+// int32 quantity = 2;
+inline void TradeMsg::clear_quantity() {
+  quantity_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TradeMsg::_internal_quantity() const {
+  return quantity_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TradeMsg::quantity() const {
+  // @@protoc_insertion_point(field_get:stock_api.TradeMsg.quantity)
+  return _internal_quantity();
+}
+inline void TradeMsg::_internal_set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  quantity_ = value;
+}
+inline void TradeMsg::set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_quantity(value);
+  // @@protoc_insertion_point(field_set:stock_api.TradeMsg.quantity)
+}
+
+// int32 percentage = 3;
+inline void TradeMsg::clear_percentage() {
+  percentage_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TradeMsg::_internal_percentage() const {
+  return percentage_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TradeMsg::percentage() const {
+  // @@protoc_insertion_point(field_get:stock_api.TradeMsg.percentage)
+  return _internal_percentage();
+}
+inline void TradeMsg::_internal_set_percentage(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  percentage_ = value;
+}
+inline void TradeMsg::set_percentage(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_percentage(value);
+  // @@protoc_insertion_point(field_set:stock_api.TradeMsg.percentage)
+}
+
+// repeated .stock_api.TradeCondition conditions = 4;
+inline int TradeMsg::_internal_conditions_size() const {
+  return conditions_.size();
+}
+inline int TradeMsg::conditions_size() const {
+  return _internal_conditions_size();
+}
+inline void TradeMsg::clear_conditions() {
+  conditions_.Clear();
+}
+inline ::stock_api::TradeCondition* TradeMsg::mutable_conditions(int index) {
+  // @@protoc_insertion_point(field_mutable:stock_api.TradeMsg.conditions)
+  return conditions_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::stock_api::TradeCondition >*
+TradeMsg::mutable_conditions() {
+  // @@protoc_insertion_point(field_mutable_list:stock_api.TradeMsg.conditions)
+  return &conditions_;
+}
+inline const ::stock_api::TradeCondition& TradeMsg::_internal_conditions(int index) const {
+  return conditions_.Get(index);
+}
+inline const ::stock_api::TradeCondition& TradeMsg::conditions(int index) const {
+  // @@protoc_insertion_point(field_get:stock_api.TradeMsg.conditions)
+  return _internal_conditions(index);
+}
+inline ::stock_api::TradeCondition* TradeMsg::_internal_add_conditions() {
+  return conditions_.Add();
+}
+inline ::stock_api::TradeCondition* TradeMsg::add_conditions() {
+  // @@protoc_insertion_point(field_add:stock_api.TradeMsg.conditions)
+  return _internal_add_conditions();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::stock_api::TradeCondition >&
+TradeMsg::conditions() const {
+  // @@protoc_insertion_point(field_list:stock_api.TradeMsg.conditions)
+  return conditions_;
 }
 
 // -------------------------------------------------------------------
@@ -5919,6 +6383,10 @@ inline void CybosStockAlarm::set_allocated_content(std::string* content) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

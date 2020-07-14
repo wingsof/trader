@@ -20,6 +20,7 @@ private:
     int *prices;
     uint *remains;
     int *remainDiff;
+    int *firstPrices;
     bool isBidaskReceived;
     bool isBuy;
     uint currentVolume;
@@ -71,7 +72,8 @@ public:
 
     QHash<int, QByteArray> roleNames() const override
     {
-        return { {Qt::DisplayRole, "display"} };
+        return { {Qt::DisplayRole, "display"},
+                 {Qt::UserRole + 1, "vdiff" };
     }
 
     void setHighlight(int row);
@@ -84,6 +86,9 @@ public:
     void setTotalAskRemain(uint br);
     uint getTotalBidRemain() { return totalBidRemain; }
     uint getTotalAskRemain() { return totalAskRemain; }
+
+    Q_INVOKABLE void sell_immediately();
+    Q_INVOKABLE void buy_immediately();
 
 private:
     int highlight;

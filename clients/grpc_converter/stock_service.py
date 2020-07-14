@@ -156,6 +156,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.list_changed_subscribe_clients = []
         self.current_stock_selection_subscribe_clients = []
         self.simulation_changed_subscribe_clients = []
+        self.trader_clients = []
         self.current_stock_code = ""
         self.current_datetime = None
 
@@ -297,6 +298,10 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
     def send_list_changed(self, type_name):
         for c in self.list_changed_subscribe_clients:
             c.put_nowait(stock_provider_pb2.ListType(type_name=type_name))
+
+    def RequestOrder(self, request, context):
+        for o in self.trader_clients:
+            o.put_nowait(request)
 
     def SetCurrentStock(self, request, context):
         global recent_search_codes
@@ -614,6 +619,20 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         client_list.remove(q)
         print('Done', title, len(client_list))
 
+    def ListenTraderMsg(self, request, context):
+        title = 'ListenTraderMsg'
+        client_list = self.trader_clients    
+        q = Queue()
+        client_list.append(q)
+        print(title, len(client_list))
+        while context.is_active():
+            try:
+                data = q.get(True, 1)
+                yield data
+            except gevent.queue.Empty as ge:
+                pass
+        client_list.remove(q)
+        print('Done', title, len(client_list))
 
     def GetRecentSearch(self, request, context):
         return stock_provider_pb2.CodeList(codelist=recent_search_codes)

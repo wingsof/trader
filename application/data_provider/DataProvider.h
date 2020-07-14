@@ -17,6 +17,7 @@ class DayDataProvider;
 class SimulationEvent;
 class StockListThread;
 class AlarmThread;
+class TraderThread;
 
 using stock_api::CybosBidAskTickData;
 using stock_api::CybosTickData;
@@ -76,6 +77,8 @@ public:
 
     void forceChangeStockCode(const QString &code);
 
+    void requestOrder(int price, int quantity, int percentage, int option);
+
 private:
     DataProvider();
 
@@ -90,6 +93,7 @@ private:
     DayDataProvider *       dayDataProvider;
     SimulationEvent *       simulationEvent;
     StockListThread *       stockListThread;
+    TraderThread *          traderThread;
 
 
     QString currentStockCode;

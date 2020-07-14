@@ -9,6 +9,18 @@
                     }
                 ],
                 "className": "BidAskModel",
+                "methods": [
+                    {
+                        "access": "public",
+                        "name": "sell_immediately",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "buy_immediately",
+                        "returnType": "void"
+                    }
+                ],
                 "object": true,
                 "properties": [
                     {

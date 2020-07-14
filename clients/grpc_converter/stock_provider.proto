@@ -15,6 +15,7 @@ service Stock {
   rpc RequestCybosTickData(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosBidAsk(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosSubject(StockCodeQuery) returns (google.protobuf.Empty) {}
+  rpc RequestOrder(TradeMsg) returns (google.protobuf.Empty) {}
 
   rpc SetCurrentStock(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc SetCurrentDateTime(google.protobuf.Timestamp) returns (google.protobuf.Empty) {}
@@ -40,6 +41,8 @@ service Stock {
   rpc ListenCurrentTime(google.protobuf.Empty) returns (stream google.protobuf.Timestamp) {}
   rpc ListenCybosSubject(google.protobuf.Empty) returns (stream CybosSubjectTickData) {}
   rpc ListenCybosAlarm(google.protobuf.Empty) returns (stream CybosStockAlarm) {}
+
+  rpc ListenTraderMsg(google.protobuf.Empty) returns (stream TradeMsg) {}
 
   rpc ListenSimulationStatusChanged(google.protobuf.Empty) returns (stream SimulationStatus) {}
 
@@ -82,6 +85,20 @@ message TopList {
 message SimulationStatus {
     bool simulation_on = 1;
     float simulation_speed = 2;
+}
+
+
+message TradeCondition {
+    bool is_buy = 1;
+    int32 strategy = 2; 
+}
+
+
+message TradeMsg {
+    int32 price = 1;
+    int32 quantity = 2;
+    int32 percentage = 3;
+    repeated TradeCondition conditions = 4;
 }
 
 

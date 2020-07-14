@@ -36,6 +36,7 @@ SOURCES += \
            AlarmThread.cpp \
            StockSelectionThread.cpp \
            StockListThread.cpp \
+           TraderThread.cpp \
            MinuteData.cpp \
            DayDataProvider.cpp \
            MinInfo.cpp \
@@ -48,6 +49,7 @@ HEADERS += stock_provider.grpc.pb.h \
            TickThread.h \
            BidAskThread.h \
            StockListThread.h \
+           TraderThread.h \
            TimeThread.h \
            AlarmThread.h \
            StockSelectionThread.h \

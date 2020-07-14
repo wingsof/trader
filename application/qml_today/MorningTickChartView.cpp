@@ -4,7 +4,7 @@
 #include <QDebug>
 
 
-#define TICK_SPACE_RATIO    (2.0/3.0)
+#define TICK_SPACE_RATIO    (3.0/4.0)
 
 
 MorningTickChartView::MorningTickChartView(QQuickItem *parent)
@@ -109,11 +109,11 @@ void MorningTickChartView::calculateMinMaxRange() {
     if (mt != NULL) {
         qWarning() << "(mt) " << mt->getHighestPrice() << ", " << mt->getLowestPrice();
         if (mt->getHighestPrice() > highest)
-            highest = mt->getHighestPrice();
+            highest = mt->getHighestPrice() * 1.05;
 
         // Start Simulation -> Launch Tick App -> Tick is arrived first but not lowest price is calculated yet
         if (mt->getLowestPrice() != 0 && mt->getLowestPrice() < lowest)
-            lowest = mt->getLowestPrice();
+            lowest = mt->getLowestPrice() * 0.95;
 
         if (mt->getHighestVolume() > highestVolume)
             highestVolume = mt->getHighestVolume();

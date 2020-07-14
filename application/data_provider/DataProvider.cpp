@@ -15,6 +15,7 @@
 #include "DayDataProvider.h"
 #include "SimulationEvent.h"
 #include "RunSimulation.h"
+#include "TraderThread.h"
 
 
 using grpc::Channel;
@@ -68,6 +69,7 @@ DataProvider::DataProvider()
     stockSelectionThread = new StockSelectionThread(stub_);
     dayDataProvider = new DayDataProvider(stub_);
     SimulationEvent *simulationEvent = new SimulationEvent(stub_);
+    traderThread = new TraderThread(stub_);
     m_simulationStatus = _isSimulation() ? RUNNING: STOP;
 
     connect(tickThread, &TickThread::tickArrived, this, &DataProvider::tickArrived);
@@ -100,6 +102,11 @@ void DataProvider::forceChangeStockCode(const QString &code) {
 
 void DataProvider::setCurrentDateTime(const QDateTime &dt) {
     _setCurrentDateTime(dt); 
+}
+
+
+void DataProvider::requestOrder(int price, int quantity, int percentage, int option) {
+    traderThread->requestOrder(price, quantity, percentage, option);
 }
 
 
