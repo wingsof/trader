@@ -42,3 +42,26 @@ modify,113480,A005930,61200
 {'flag': '4', 'code': 'A005930', 'order_number': 113628, 'quantity': 1, 'price': 61200, 'order_type': '2', 'total_quantity': 0}
 {'flag': '2', 'code': 'A005930', 'order_number': 113628, 'quantity': 1, 'price': 61200, 'order_type': '2', 'total_quantity': 0}
 
+
+1주 구매 후 다시 1주 구매
+buy,A005930,55500,1
+['buy', 'A005930', '55500', '1']
+{'status': 0, 'msg': '10766 매수주문이 접수되었습니다.(ordss.cststkord)'}
+TRADE {'flag': '4', 'code': 'A005930', 'order_number': 197281, 'quantity': 1, 'price': 55500, 'order_type': '2', 'total_quantity': 1}
+TRADE {'flag': '1', 'code': 'A005930', 'order_number': 197281, 'quantity': 1, 'price': 55300, 'order_type': '2', 'total_quantity': 2}
+
+
+
+{'status': 0, 'msg': '10725 매도주문이 접수되었습니다.(ordss.cststkord)'}
+TRADE {'flag': '4', 'code': 'A005930', 'order_number': 198192, 'quantity': 2, 'price': 55100, 'order_type': '1', 'total_quantity': 2}
+TRADE {'flag': '1', 'code': 'A005930', 'order_number': 198192, 'quantity': 2, 'price': 55200, 'order_type': '1', 'total_quantity': 0}
+
+
+
+buy,A005930,100,1
+['buy', 'A005930', '100', '1']
+{'status': -1, 'msg': '10428 단가가 상,하한범위를 넘었습니다. : 상한가[  70400], 하한가[  38000](ordss.cststkord)'}
+buy,A005930,54000,0
+['buy', 'A005930', '54000', '0']
+{'status': -1, 'msg': 'Order Process Error(quantity=0)'}
+

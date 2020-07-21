@@ -24,6 +24,7 @@ using stock_api::CybosTickData;
 using stock_api::CybosDayDatas;
 using stock_api::CybosDayData;
 using stock_api::CybosStockAlarm;
+using stock_api::OrderMsg;
 using stock_api::SimulationStatus;
 using stock_api::TopList;
 using google::protobuf::Timestamp;
@@ -77,7 +78,8 @@ public:
 
     void forceChangeStockCode(const QString &code);
 
-    void requestOrder(int price, int quantity, int percentage, int option);
+    void buy(const QString &code, int price, int qty, int per, OrderMsg::Method m);
+    void sell(const QString &code, int price, int qty, int per, OrderMsg::Method m);
 
 private:
     DataProvider();

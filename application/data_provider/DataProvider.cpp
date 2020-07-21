@@ -105,8 +105,13 @@ void DataProvider::setCurrentDateTime(const QDateTime &dt) {
 }
 
 
-void DataProvider::requestOrder(int price, int quantity, int percentage, int option) {
-    traderThread->requestOrder(price, quantity, percentage, option);
+void DataProvider::buy(const QString &code, int price, int qty, int per, OrderMsg::Method m) {
+    traderThread->order(code, price, qty, per, m, true);
+}
+
+
+void DataProvider::sell(const QString &code, int price, int qty, int per, OrderMsg::Method m) {
+    traderThread->order(code, price, qty, per, m, false);
 }
 
 

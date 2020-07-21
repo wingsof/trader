@@ -183,6 +183,18 @@ def get_today_minute_data(code):
     return _convert_min_data_readable(code, minute_data)
 
 
+def get_balance(): # return amount  {'balance': 1543974}
+    result = stock_api.get_balance(get_reader())
+    if 'balance' in result:
+        return result['balance']
+    
+    return 0
+
+
+def get_long_list():
+    return stock_api.request_long_list(get_reader())
+
+
 def get_yesterday_top_amount(dt):
     if dt.hour >= 18:
         tday = dt
@@ -214,8 +226,9 @@ def setup():
 
 
 if __name__ == '__main__':
-
-    print(get_today_minute_data('A005930'))
+    print(get_balance())
+    print(get_long_list())
+    #print(get_today_minute_data('A005930'))
     #print(get_yesterday_top_amount())
     #result = get_past_day_data('A005930', date(2020, 7, 1), date(2020, 7, 8))
     #for data in result:

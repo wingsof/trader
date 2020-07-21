@@ -32,8 +32,14 @@ Module {
             name: "timeInfoArrived"
             Parameter { name: "dt"; type: "QDateTime" }
         }
-        Method { name: "sell_immediately" }
-        Method { name: "buy_immediately" }
+        Method {
+            name: "sell_immediately"
+            Parameter { name: "percentage"; type: "int" }
+        }
+        Method {
+            name: "buy_immediately"
+            Parameter { name: "percentage"; type: "int" }
+        }
     }
     Component {
         name: "QAbstractItemModel"

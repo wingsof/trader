@@ -12,11 +12,23 @@
                 "methods": [
                     {
                         "access": "public",
+                        "arguments": [
+                            {
+                                "name": "percentage",
+                                "type": "int"
+                            }
+                        ],
                         "name": "sell_immediately",
                         "returnType": "void"
                     },
                     {
                         "access": "public",
+                        "arguments": [
+                            {
+                                "name": "percentage",
+                                "type": "int"
+                            }
+                        ],
                         "name": "buy_immediately",
                         "returnType": "void"
                     }

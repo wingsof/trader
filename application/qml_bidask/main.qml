@@ -212,9 +212,9 @@ ApplicationWindow {
                         anchors.fill: parent
                         onClicked: {
                             if (model.row == 21 && model.column == 0)
-                                bidaskModel.sell_immediately()
+                                bidaskModel.sell_immediately(100)
                             else if (model.row == 21 && model.column ==6)
-                                bidaskModel.buy_immediately()
+                                bidaskModel.buy_immediately(100)
                         }
                     }
                 }

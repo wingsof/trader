@@ -63,8 +63,8 @@ public:
     uint getTotalBidRemain() { return totalBidRemain; }
     uint getTotalAskRemain() { return totalAskRemain; }
 
-    Q_INVOKABLE void sell_immediately();
-    Q_INVOKABLE void buy_immediately();
+    Q_INVOKABLE void sell_immediately(int percentage);
+    Q_INVOKABLE void buy_immediately(int percentage);
 
 private:
     int highlight;

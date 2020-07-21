@@ -1,0 +1,5 @@
+code name cp prof "b status" "b method" "target p" "b qty" "b not complete qty" "s status" "s method" "target p" "s qty" "s complete qty" "cut p" time last_update_time
+
+when click
+b not complete qty -> cancel
+cut p -> immediate sell all

@@ -7,12 +7,15 @@
 #include "stock_provider.grpc.pb.h"
 
 
+using stock_api::OrderMsg;
+
+
 class TraderThread : public QThread {
 Q_OBJECT
 public:
     TraderThread(std::shared_ptr<stock_api::Stock::Stub> stub);
 
-    void requestOrder(int price, int quantity, int percentage, int option);
+    void order(const QString &code, int price, int quantity, int percentage, OrderMsg::Method m, bool isBuy);
 
 protected:
     void run();

@@ -32,6 +32,12 @@ simulation_progressing = [False, False, False]
 request_stop_simulation = False
 recent_search_codes = []
 TIME_SPEED = 1.0
+is_subscribe_alarm = False
+is_subscribe_trade = False
+is_subscribe_tick = {}
+is_subscribe_bidask = {}
+is_subscribe_subject = {}
+
 
 
 def get_yesterday_data(today, market_code):
@@ -156,6 +162,8 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.list_changed_subscribe_clients = []
         self.current_stock_selection_subscribe_clients = []
         self.simulation_changed_subscribe_clients = []
+        self.order_result_subscribe_clients  = []
+        self.cybos_order_result_subscribe_clients = []
         self.trader_clients = []
         self.current_stock_code = ""
         self.current_datetime = None
@@ -272,36 +280,74 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return stock_provider_pb2.CompanyName(company_name=company_name)
 
     def RequestCybosTickData(self, request, context):
-        stock_api.subscribe_stock(morning_client.get_reader(),
-                                request.code, self.handle_stock_tick)
-        print('Start SubscribeStock', request.code)
+        global is_subscribe_tick
+        if request.code not in is_subscribe_tick:
+            stock_api.subscribe_stock(morning_client.get_reader(),
+                                    request.code, self.handle_stock_tick)
+            print('Start SubscribeStock', request.code)
+            is_subscribe_tick[request.code] = True
+        else:
+            print('Already SubscribeStock', request.code)
         return Empty()
 
     def RequestCybosBidAsk(self, request, context):
-        stock_api.subscribe_stock_bidask(morning_client.get_reader(),
-                                        request.code, self.handle_bidask_tick)
-        print('Start Subscribe BidAsk', request.code)
+        global is_subscribe_bidask
+        if request.code not in is_subscribe_bidask:
+            stock_api.subscribe_stock_bidask(morning_client.get_reader(),
+                                            request.code, self.handle_bidask_tick)
+            print('Start Subscribe BidAsk', request.code)
+            is_subscribe_bidask[request.code] = True
+        else:
+            print('Already Subscribe BidAsk', request.code)
         return Empty()
 
     def RequestCybosSubject(self, request, context):
-        stock_api.subscribe_stock_subject(morning_client.get_reader(),
-                                        request.code, self.handle_subject_tick) 
-        print('Start Subscribe Subject', request.code)
+        global is_subscribe_subject
+        if request.code not in is_subscribe_subject:
+            stock_api.subscribe_stock_subject(morning_client.get_reader(),
+                                            request.code, self.handle_subject_tick) 
+            print('Start Subscribe Subject', request.code)
+            is_subscribe_subject[request.code] = True
+        else:
+            print('Already Subscribe Subject', request.code)
         return Empty()
 
     def RequestCybosAlarm(self, request, context):
-        stock_api.subscribe_alarm(morning_client.get_reader(),
-                                    self.handle_alarm_tick)
-        print('Start Subscribe alarm')
+        global is_subscribe_alarm
+
+        if not is_subscribe_alarm:
+            stock_api.subscribe_alarm(morning_client.get_reader(),
+                                        self.handle_alarm_tick)
+            print('Start Subscribe alarm')
+            is_subscribe_alarm = True
+        else:
+            print('Already subscribe alarm')
         return Empty()
+
+    def RequestCybosTradeResult(self, request, context):
+        global is_subscribe_trade
+
+        if not is_subscribe_trade:
+            print('Start Trade Result')
+            stock_api.subscribe_trade(morning_client.get_reader(),
+                                        self.handle_trade_result)
+            is_subscribe_trade = True
+        else:
+            print('Already subscribe trade')
+        return Empty()
+
+    def GetBalance(self, request, context):
+        balance = morning_client.get_balance()
+        return stock_provider_pb2.Balance(balance=balance)
 
     def send_list_changed(self, type_name):
         for c in self.list_changed_subscribe_clients:
             c.put_nowait(stock_provider_pb2.ListType(type_name=type_name))
 
-    def RequestOrder(self, request, context):
+    def RequestToTrader(self, request, context):
         for o in self.trader_clients:
             o.put_nowait(request)
+        return Empty()
 
     def SetCurrentStock(self, request, context):
         global recent_search_codes
@@ -311,7 +357,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.current_stock_code = request.code
 
         for q in self.current_stock_selection_subscribe_clients:
-            q.put_nowait(request.code)
+            q.put_nowait(stock_provider_pb2.StockCodeQuery(code=request.code))
 
         if request.code not in recent_search_codes:
             recent_search_codes.insert(0, request.code)
@@ -480,22 +526,17 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         for q in self.alarm_subscribe_clients:
             q.put_nowait(data)
 
-    def ListenCurrentStock(self, request, context):
-        q = Queue()
-        self.current_stock_selection_subscribe_clients.append(q)
-        print('Run Listen Current Stock', len(self.current_stock_selection_subscribe_clients))
+    def handle_trade_result(self, _, data):
+        if len(data) != 1:
+            return
 
-        if len(self.current_stock_code) > 0:
-            yield stock_provider_pb2.StockCodeQuery(code=self.current_stock_code)
+        data = data[0]
+        #if data['flag'] == -5:
+        #    data = stock_provider_pb2.TradeResult(
+        #else:
+        #    data = stock_provider_pb2.TradeResult(flag=data['flag'],
+        #                                        order_num=data['order_num']
 
-        while context.is_active():
-            try:
-                data = q.get(True, 1)
-                yield stock_provider_pb2.StockCodeQuery(code=data)
-            except gevent.queue.Empty as ge:
-                pass
-        self.current_stock_selection_subscribe_clients.remove(q)
-        print('Done ListenCurrentStock', len(self.current_stock_selection_subscribe_clients)) 
 
     def handle_time(self, d):
         self.current_datetime = d
@@ -533,9 +574,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         client_list.remove(q)
         print('Done', title, len(client_list))
 
-    def ListenListChanged(self, request, context):
-        title = 'ListenListChanged' 
-        client_list = self.list_changed_subscribe_clients
+    def handle_queue_based_listener(self, title, client_list, context):
         q = Queue()
         client_list.append(q)
         print(title, len(client_list))
@@ -547,98 +586,82 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                 pass
         client_list.remove(q)
         print('Done', title, len(client_list))
+
+
+
+    def ListenCurrentStock(self, request, context):
+        if len(self.current_stock_code) > 0:
+            yield stock_provider_pb2.StockCodeQuery(code=self.current_stock_code)
+
+        data = self.handle_queue_based_listener('ListenCurrentStock',
+                                                self.current_stock_selection_subscribe_clients,
+                                                context)
+        for d in data:
+            yield d 
+
+    def ListenListChanged(self, request, context):
+        data = self.handle_queue_based_listener('ListenListChanged',
+                                                self.list_changed_subscribe_clients,
+                                                context)
+        for d in data:
+            yield d
 
     def ListenCybosTickData(self, request, context):
-        title = 'ListenCybosTickData' 
-        client_list = self.stock_subscribe_clients
-        q = Queue()
-        client_list.append(q)
-        print(title, len(client_list))
-        while context.is_active():
-            try:
-                data = q.get(True, 1)
-                yield data
-            except gevent.queue.Empty as ge:
-                pass
-        client_list.remove(q)
-        print('Done', title, len(client_list))
-
+        data = self.handle_queue_based_listener('ListenCybosTickData',
+                                                self.stock_subscribe_clients,
+                                                context)
+        for d in data:
+            yield d
 
     def ListenCybosBidAsk(self, request, context):
-        title = 'ListenCybosBidAsk' 
-        client_list = self.bidask_subscribe_cilents
-        q = Queue()
-        client_list.append(q)
-        print(title, len(client_list))
-        while context.is_active():
-            try:
-                data = q.get(True, 1)
-                yield data
-            except gevent.queue.Empty as ge:
-                pass
-        client_list.remove(q)
-        print('Done', title, len(client_list))
+        data = self.handle_queue_based_listener('ListenCybosBidAsk',
+                                                self.bidask_subscribe_cilents,
+                                                context)
+        for d in data:
+            yield d
 
 
     def ListenCybosSubject(self, request, context):
-        title = 'ListenCybosSubject' 
-        client_list = self.subject_subscribe_clients
-        q = Queue()
-        client_list.append(q)
-        print(title, len(client_list))
-        while context.is_active():
-            try:
-                data = q.get(True, 1)
-                yield data
-            except gevent.queue.Empty as ge:
-                pass
-        client_list.remove(q)
-        print('Done', title, len(client_list))
+        data = self.handle_queue_based_listener('ListenCybosSubject',
+                                                self.subject_subscribe_clients,
+                                                context)
+        for d in data:
+            yield d
 
     def ListenCybosAlarm(self, request, context):
-        title = 'ListenCybosAlarm'
-        client_list = self.alarm_subscribe_clients
-        q = Queue()
-        client_list.append(q)
-        print(title, len(client_list))
-        while context.is_active():
-            try:
-                data = q.get(True, 1)
-                yield data
-            except gevent.queue.Empty as ge:
-                pass
-        client_list.remove(q)
-        print('Done', title, len(client_list))
+        data = self.handle_queue_based_listener('ListenCybosAlarm',
+                                                self.alarm_subscribe_clients,
+                                                context)
+        for d in data:
+            yield d
+
+    def ListenOrderResult(self, request, context):
+        data = self.handle_queue_based_listener('ListenOrderResult',
+                                                self.order_result_subscribe_clients,
+                                                context)
+        for d in data:
+            yield d
+
+    def ListenCybosOrderResult(self, request, context):
+        data = self.handle_queue_based_listener('ListenCybosOrderResult',
+                                                self.cybos_order_result_subscribe_clients,
+                                                context)
+        for d in data:
+            yield d
 
     def ListenSimulationStatusChanged(self, request, context):
-        title = 'ListenSimulationStatusChanged' 
-        client_list = self.simulation_changed_subscribe_clients
-        q = Queue()
-        client_list.append(q)
-        print(title, len(client_list))
-        while context.is_active():
-            try:
-                data = q.get(True, 1)
-                yield data
-            except gevent.queue.Empty as ge:
-                pass
-        client_list.remove(q)
-        print('Done', title, len(client_list))
+        data = self.handle_queue_based_listener('ListenSimulationStatusChanged',
+                                                self.simulation_changed_subscribe_clients,
+                                                context)
+        for d in data:
+            yield d
 
     def ListenTraderMsg(self, request, context):
-        title = 'ListenTraderMsg'
-        client_list = self.trader_clients    
-        q = Queue()
-        client_list.append(q)
-        print(title, len(client_list))
-        while context.is_active():
-            try:
-                data = q.get(True, 1)
-                yield data
-            except gevent.queue.Empty as ge:
-                pass
-        client_list.remove(q)
-        print('Done', title, len(client_list))
+        data = self.handle_queue_based_listener('ListenTraderMsg',
+                                                self.trader_clients,
+                                                context)
+        for d in data:
+            yield d
 
     def GetRecentSearch(self, request, context):
         return stock_provider_pb2.CodeList(codelist=recent_search_codes)

@@ -12,10 +12,18 @@ service Stock {
   rpc GetTodayMinuteData(StockCodeQuery) returns (CybosDayDatas) {}
   rpc GetPastMinuteData(PastMinuteQuery) returns (CybosDayDatas) {}
 
+  rpc GetBalance(google.protobuf.Empty) returns (Balance) {}
+
   rpc RequestCybosTickData(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosBidAsk(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosSubject(StockCodeQuery) returns (google.protobuf.Empty) {}
-  rpc RequestOrder(TradeMsg) returns (google.protobuf.Empty) {}
+
+  rpc RequestToTrader(TradeMsg) returns (google.protobuf.Empty) {}
+  rpc RequestCybosOrderResult(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc ReportOrderResult(OrderResult) returns (google.protobuf.Empty) {}
+  rpc ListenTraderMsg(google.protobuf.Empty) returns (stream TradeMsg) {}
+  rpc ListenCybosOrderResult(google.protobuf.Empty) returns (stream CybosOrderResult) {}
+  rpc ListenOrderResult(google.protobuf.Empty) returns (stream OrderResult) {}
 
   rpc SetCurrentStock(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc SetCurrentDateTime(google.protobuf.Timestamp) returns (google.protobuf.Empty) {}
@@ -42,8 +50,6 @@ service Stock {
   rpc ListenCybosSubject(google.protobuf.Empty) returns (stream CybosSubjectTickData) {}
   rpc ListenCybosAlarm(google.protobuf.Empty) returns (stream CybosStockAlarm) {}
 
-  rpc ListenTraderMsg(google.protobuf.Empty) returns (stream TradeMsg) {}
-
   rpc ListenSimulationStatusChanged(google.protobuf.Empty) returns (stream SimulationStatus) {}
 
   rpc StartSimulation(google.protobuf.Empty) returns (stream google.protobuf.Empty) {}
@@ -68,6 +74,11 @@ message Option {
 }
 
 
+message Balance {
+    int32 balance = 1;
+}
+
+
 message StockQuery {
     string code = 1;
     google.protobuf.Timestamp from_datetime = 2;
@@ -88,17 +99,62 @@ message SimulationStatus {
 }
 
 
-message TradeCondition {
-    bool is_buy = 1;
-    int32 strategy = 2; 
+enum OrderStatusFlag {
+    STATUS_UNKNOWN = 0;
+    STATUS_REGISTERED = 1;
+    STATUS_TRADED = 49;
+    STATUS_CONFIRM = 50;
+    STATUS_DENIED = 51;
+    STATUS_SUBMITTED = 52;
+}
+
+enum OrderMethod {
+    TRADE_UNKNOWN = 0;
+    TRADE_IMMEDIATELY = 1;
+    TRADE_ON_BID_ASK_MEET = 2;
+    TRADE_ON_PRICE = 3;
+    TRADE_CANCEL = 4;
+    TRADE_MODIFY = 5;
+}
+
+enum TradeMsgType{
+    UNKNOWN = 0;
+    ORDER_MSG = 1;
+    REQ_ALL_ORDER = 2;
+}
+
+
+message OrderMsg {
+    string code = 1;
+    bool is_buy = 2;
+    int32 price = 3;
+    int32 quantity = 4;
+    int32 percentage = 5;
+    OrderMethod method = 6;
+    string order_num = 7;
 }
 
 
 message TradeMsg {
-    int32 price = 1;
-    int32 quantity = 2;
-    int32 percentage = 3;
-    repeated TradeCondition conditions = 4;
+    int32 msg_type = 1;
+    OrderMsg order_msg = 2;
+}
+
+
+message OrderResult {
+    string code = 1;
+}
+
+
+message CybosOrderResult {
+    OrderStatusFlag flag = 1;
+    string code = 2;
+    string order_number = 3;
+    int32 quantity = 4;
+    int32 price = 5;
+    bool is_buy = 6;
+    //string order_type = 6; // '1': Sell, '2': Buy
+    int32 total_quantity = 7;
 }
 
 

@@ -31,6 +31,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
+#include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
 #include <google/protobuf/timestamp.pb.h>
 #include <google/protobuf/empty.pb.h>
@@ -49,7 +50,7 @@ struct TableStruct_stock_5fprovider_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[17]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[20]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -57,6 +58,9 @@ struct TableStruct_stock_5fprovider_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_stock_5fprovider_2eproto;
 namespace stock_api {
+class Balance;
+class BalanceDefaultTypeInternal;
+extern BalanceDefaultTypeInternal _Balance_default_instance_;
 class CodeList;
 class CodeListDefaultTypeInternal;
 extern CodeListDefaultTypeInternal _CodeList_default_instance_;
@@ -72,6 +76,9 @@ extern CybosDayDataDefaultTypeInternal _CybosDayData_default_instance_;
 class CybosDayDatas;
 class CybosDayDatasDefaultTypeInternal;
 extern CybosDayDatasDefaultTypeInternal _CybosDayDatas_default_instance_;
+class CybosOrderResult;
+class CybosOrderResultDefaultTypeInternal;
+extern CybosOrderResultDefaultTypeInternal _CybosOrderResult_default_instance_;
 class CybosStockAlarm;
 class CybosStockAlarmDefaultTypeInternal;
 extern CybosStockAlarmDefaultTypeInternal _CybosStockAlarm_default_instance_;
@@ -87,6 +94,12 @@ extern ListTypeDefaultTypeInternal _ListType_default_instance_;
 class Option;
 class OptionDefaultTypeInternal;
 extern OptionDefaultTypeInternal _Option_default_instance_;
+class OrderMsg;
+class OrderMsgDefaultTypeInternal;
+extern OrderMsgDefaultTypeInternal _OrderMsg_default_instance_;
+class OrderResult;
+class OrderResultDefaultTypeInternal;
+extern OrderResultDefaultTypeInternal _OrderResult_default_instance_;
 class PastMinuteQuery;
 class PastMinuteQueryDefaultTypeInternal;
 extern PastMinuteQueryDefaultTypeInternal _PastMinuteQuery_default_instance_;
@@ -102,34 +115,84 @@ extern StockQueryDefaultTypeInternal _StockQuery_default_instance_;
 class TopList;
 class TopListDefaultTypeInternal;
 extern TopListDefaultTypeInternal _TopList_default_instance_;
-class TradeCondition;
-class TradeConditionDefaultTypeInternal;
-extern TradeConditionDefaultTypeInternal _TradeCondition_default_instance_;
 class TradeMsg;
 class TradeMsgDefaultTypeInternal;
 extern TradeMsgDefaultTypeInternal _TradeMsg_default_instance_;
 }  // namespace stock_api
 PROTOBUF_NAMESPACE_OPEN
+template<> ::stock_api::Balance* Arena::CreateMaybeMessage<::stock_api::Balance>(Arena*);
 template<> ::stock_api::CodeList* Arena::CreateMaybeMessage<::stock_api::CodeList>(Arena*);
 template<> ::stock_api::CompanyName* Arena::CreateMaybeMessage<::stock_api::CompanyName>(Arena*);
 template<> ::stock_api::CybosBidAskTickData* Arena::CreateMaybeMessage<::stock_api::CybosBidAskTickData>(Arena*);
 template<> ::stock_api::CybosDayData* Arena::CreateMaybeMessage<::stock_api::CybosDayData>(Arena*);
 template<> ::stock_api::CybosDayDatas* Arena::CreateMaybeMessage<::stock_api::CybosDayDatas>(Arena*);
+template<> ::stock_api::CybosOrderResult* Arena::CreateMaybeMessage<::stock_api::CybosOrderResult>(Arena*);
 template<> ::stock_api::CybosStockAlarm* Arena::CreateMaybeMessage<::stock_api::CybosStockAlarm>(Arena*);
 template<> ::stock_api::CybosSubjectTickData* Arena::CreateMaybeMessage<::stock_api::CybosSubjectTickData>(Arena*);
 template<> ::stock_api::CybosTickData* Arena::CreateMaybeMessage<::stock_api::CybosTickData>(Arena*);
 template<> ::stock_api::ListType* Arena::CreateMaybeMessage<::stock_api::ListType>(Arena*);
 template<> ::stock_api::Option* Arena::CreateMaybeMessage<::stock_api::Option>(Arena*);
+template<> ::stock_api::OrderMsg* Arena::CreateMaybeMessage<::stock_api::OrderMsg>(Arena*);
+template<> ::stock_api::OrderResult* Arena::CreateMaybeMessage<::stock_api::OrderResult>(Arena*);
 template<> ::stock_api::PastMinuteQuery* Arena::CreateMaybeMessage<::stock_api::PastMinuteQuery>(Arena*);
 template<> ::stock_api::SimulationStatus* Arena::CreateMaybeMessage<::stock_api::SimulationStatus>(Arena*);
 template<> ::stock_api::StockCodeQuery* Arena::CreateMaybeMessage<::stock_api::StockCodeQuery>(Arena*);
 template<> ::stock_api::StockQuery* Arena::CreateMaybeMessage<::stock_api::StockQuery>(Arena*);
 template<> ::stock_api::TopList* Arena::CreateMaybeMessage<::stock_api::TopList>(Arena*);
-template<> ::stock_api::TradeCondition* Arena::CreateMaybeMessage<::stock_api::TradeCondition>(Arena*);
 template<> ::stock_api::TradeMsg* Arena::CreateMaybeMessage<::stock_api::TradeMsg>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace stock_api {
 
+enum OrderMsg_Method : int {
+  OrderMsg_Method_TRADE_IMMEDIATELY = 0,
+  OrderMsg_Method_TRADE_ON_BID_ASK_MEET = 1,
+  OrderMsg_Method_OrderMsg_Method_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  OrderMsg_Method_OrderMsg_Method_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+};
+bool OrderMsg_Method_IsValid(int value);
+constexpr OrderMsg_Method OrderMsg_Method_Method_MIN = OrderMsg_Method_TRADE_IMMEDIATELY;
+constexpr OrderMsg_Method OrderMsg_Method_Method_MAX = OrderMsg_Method_TRADE_ON_BID_ASK_MEET;
+constexpr int OrderMsg_Method_Method_ARRAYSIZE = OrderMsg_Method_Method_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* OrderMsg_Method_descriptor();
+template<typename T>
+inline const std::string& OrderMsg_Method_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, OrderMsg_Method>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function OrderMsg_Method_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    OrderMsg_Method_descriptor(), enum_t_value);
+}
+inline bool OrderMsg_Method_Parse(
+    const std::string& name, OrderMsg_Method* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<OrderMsg_Method>(
+    OrderMsg_Method_descriptor(), name, value);
+}
+enum TradeMsg_MsgType : int {
+  TradeMsg_MsgType_ORDER_MSG = 0,
+  TradeMsg_MsgType_REQ_ALL_ORDER = 1,
+  TradeMsg_MsgType_TradeMsg_MsgType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  TradeMsg_MsgType_TradeMsg_MsgType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+};
+bool TradeMsg_MsgType_IsValid(int value);
+constexpr TradeMsg_MsgType TradeMsg_MsgType_MsgType_MIN = TradeMsg_MsgType_ORDER_MSG;
+constexpr TradeMsg_MsgType TradeMsg_MsgType_MsgType_MAX = TradeMsg_MsgType_REQ_ALL_ORDER;
+constexpr int TradeMsg_MsgType_MsgType_ARRAYSIZE = TradeMsg_MsgType_MsgType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* TradeMsg_MsgType_descriptor();
+template<typename T>
+inline const std::string& TradeMsg_MsgType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, TradeMsg_MsgType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function TradeMsg_MsgType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    TradeMsg_MsgType_descriptor(), enum_t_value);
+}
+inline bool TradeMsg_MsgType_Parse(
+    const std::string& name, TradeMsg_MsgType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<TradeMsg_MsgType>(
+    TradeMsg_MsgType_descriptor(), name, value);
+}
 // ===================================================================
 
 class StockCodeQuery :
@@ -560,6 +623,134 @@ class Option :
 };
 // -------------------------------------------------------------------
 
+class Balance :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.Balance) */ {
+ public:
+  Balance();
+  virtual ~Balance();
+
+  Balance(const Balance& from);
+  Balance(Balance&& from) noexcept
+    : Balance() {
+    *this = ::std::move(from);
+  }
+
+  inline Balance& operator=(const Balance& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Balance& operator=(Balance&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const Balance& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Balance* internal_default_instance() {
+    return reinterpret_cast<const Balance*>(
+               &_Balance_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(Balance& a, Balance& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Balance* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Balance* New() const final {
+    return CreateMaybeMessage<Balance>(nullptr);
+  }
+
+  Balance* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Balance>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const Balance& from);
+  void MergeFrom(const Balance& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Balance* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "stock_api.Balance";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
+    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kBalanceFieldNumber = 1,
+  };
+  // int32 balance = 1;
+  void clear_balance();
+  ::PROTOBUF_NAMESPACE_ID::int32 balance() const;
+  void set_balance(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_balance() const;
+  void _internal_set_balance(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.Balance)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::int32 balance_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_stock_5fprovider_2eproto;
+};
+// -------------------------------------------------------------------
+
 class StockQuery :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.StockQuery) */ {
  public:
@@ -602,7 +793,7 @@ class StockQuery :
                &_StockQuery_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(StockQuery& a, StockQuery& b) {
     a.Swap(&b);
@@ -771,7 +962,7 @@ class TopList :
                &_TopList_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(TopList& a, TopList& b) {
     a.Swap(&b);
@@ -936,7 +1127,7 @@ class SimulationStatus :
                &_SimulationStatus_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(SimulationStatus& a, SimulationStatus& b) {
     a.Swap(&b);
@@ -1033,23 +1224,23 @@ class SimulationStatus :
 };
 // -------------------------------------------------------------------
 
-class TradeCondition :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.TradeCondition) */ {
+class OrderMsg :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.OrderMsg) */ {
  public:
-  TradeCondition();
-  virtual ~TradeCondition();
+  OrderMsg();
+  virtual ~OrderMsg();
 
-  TradeCondition(const TradeCondition& from);
-  TradeCondition(TradeCondition&& from) noexcept
-    : TradeCondition() {
+  OrderMsg(const OrderMsg& from);
+  OrderMsg(OrderMsg&& from) noexcept
+    : OrderMsg() {
     *this = ::std::move(from);
   }
 
-  inline TradeCondition& operator=(const TradeCondition& from) {
+  inline OrderMsg& operator=(const OrderMsg& from) {
     CopyFrom(from);
     return *this;
   }
-  inline TradeCondition& operator=(TradeCondition&& from) noexcept {
+  inline OrderMsg& operator=(OrderMsg&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -1067,37 +1258,37 @@ class TradeCondition :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const TradeCondition& default_instance();
+  static const OrderMsg& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const TradeCondition* internal_default_instance() {
-    return reinterpret_cast<const TradeCondition*>(
-               &_TradeCondition_default_instance_);
+  static inline const OrderMsg* internal_default_instance() {
+    return reinterpret_cast<const OrderMsg*>(
+               &_OrderMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
-  friend void swap(TradeCondition& a, TradeCondition& b) {
+  friend void swap(OrderMsg& a, OrderMsg& b) {
     a.Swap(&b);
   }
-  inline void Swap(TradeCondition* other) {
+  inline void Swap(OrderMsg* other) {
     if (other == this) return;
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline TradeCondition* New() const final {
-    return CreateMaybeMessage<TradeCondition>(nullptr);
+  inline OrderMsg* New() const final {
+    return CreateMaybeMessage<OrderMsg>(nullptr);
   }
 
-  TradeCondition* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<TradeCondition>(arena);
+  OrderMsg* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<OrderMsg>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const TradeCondition& from);
-  void MergeFrom(const TradeCondition& from);
+  void CopyFrom(const OrderMsg& from);
+  void MergeFrom(const OrderMsg& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -1111,10 +1302,10 @@ class TradeCondition :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(TradeCondition* other);
+  void InternalSwap(OrderMsg* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "stock_api.TradeCondition";
+    return "stock_api.OrderMsg";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -1136,13 +1327,63 @@ class TradeCondition :
 
   // nested types ----------------------------------------------------
 
+  typedef OrderMsg_Method Method;
+  static constexpr Method TRADE_IMMEDIATELY =
+    OrderMsg_Method_TRADE_IMMEDIATELY;
+  static constexpr Method TRADE_ON_BID_ASK_MEET =
+    OrderMsg_Method_TRADE_ON_BID_ASK_MEET;
+  static inline bool Method_IsValid(int value) {
+    return OrderMsg_Method_IsValid(value);
+  }
+  static constexpr Method Method_MIN =
+    OrderMsg_Method_Method_MIN;
+  static constexpr Method Method_MAX =
+    OrderMsg_Method_Method_MAX;
+  static constexpr int Method_ARRAYSIZE =
+    OrderMsg_Method_Method_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  Method_descriptor() {
+    return OrderMsg_Method_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& Method_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, Method>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function Method_Name.");
+    return OrderMsg_Method_Name(enum_t_value);
+  }
+  static inline bool Method_Parse(const std::string& name,
+      Method* value) {
+    return OrderMsg_Method_Parse(name, value);
+  }
+
   // accessors -------------------------------------------------------
 
   enum : int {
-    kIsBuyFieldNumber = 1,
-    kStrategyFieldNumber = 2,
+    kCodeFieldNumber = 1,
+    kIsBuyFieldNumber = 2,
+    kPriceFieldNumber = 3,
+    kQuantityFieldNumber = 4,
+    kPercentageFieldNumber = 5,
+    kMethodFieldNumber = 6,
   };
-  // bool is_buy = 1;
+  // string code = 1;
+  void clear_code();
+  const std::string& code() const;
+  void set_code(const std::string& value);
+  void set_code(std::string&& value);
+  void set_code(const char* value);
+  void set_code(const char* value, size_t size);
+  std::string* mutable_code();
+  std::string* release_code();
+  void set_allocated_code(std::string* code);
+  private:
+  const std::string& _internal_code() const;
+  void _internal_set_code(const std::string& value);
+  std::string* _internal_mutable_code();
+  public:
+
+  // bool is_buy = 2;
   void clear_is_buy();
   bool is_buy() const;
   void set_is_buy(bool value);
@@ -1151,22 +1392,53 @@ class TradeCondition :
   void _internal_set_is_buy(bool value);
   public:
 
-  // int32 strategy = 2;
-  void clear_strategy();
-  ::PROTOBUF_NAMESPACE_ID::int32 strategy() const;
-  void set_strategy(::PROTOBUF_NAMESPACE_ID::int32 value);
+  // int32 price = 3;
+  void clear_price();
+  ::PROTOBUF_NAMESPACE_ID::int32 price() const;
+  void set_price(::PROTOBUF_NAMESPACE_ID::int32 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_strategy() const;
-  void _internal_set_strategy(::PROTOBUF_NAMESPACE_ID::int32 value);
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_price() const;
+  void _internal_set_price(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:stock_api.TradeCondition)
+  // int32 quantity = 4;
+  void clear_quantity();
+  ::PROTOBUF_NAMESPACE_ID::int32 quantity() const;
+  void set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_quantity() const;
+  void _internal_set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 percentage = 5;
+  void clear_percentage();
+  ::PROTOBUF_NAMESPACE_ID::int32 percentage() const;
+  void set_percentage(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_percentage() const;
+  void _internal_set_percentage(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // .stock_api.OrderMsg.Method method = 6;
+  void clear_method();
+  ::stock_api::OrderMsg_Method method() const;
+  void set_method(::stock_api::OrderMsg_Method value);
+  private:
+  ::stock_api::OrderMsg_Method _internal_method() const;
+  void _internal_set_method(::stock_api::OrderMsg_Method value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.OrderMsg)
  private:
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr code_;
   bool is_buy_;
-  ::PROTOBUF_NAMESPACE_ID::int32 strategy_;
+  ::PROTOBUF_NAMESPACE_ID::int32 price_;
+  ::PROTOBUF_NAMESPACE_ID::int32 quantity_;
+  ::PROTOBUF_NAMESPACE_ID::int32 percentage_;
+  int method_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_stock_5fprovider_2eproto;
 };
@@ -1214,7 +1486,7 @@ class TradeMsg :
                &_TradeMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(TradeMsg& a, TradeMsg& b) {
     a.Swap(&b);
@@ -1275,42 +1547,362 @@ class TradeMsg :
 
   // nested types ----------------------------------------------------
 
+  typedef TradeMsg_MsgType MsgType;
+  static constexpr MsgType ORDER_MSG =
+    TradeMsg_MsgType_ORDER_MSG;
+  static constexpr MsgType REQ_ALL_ORDER =
+    TradeMsg_MsgType_REQ_ALL_ORDER;
+  static inline bool MsgType_IsValid(int value) {
+    return TradeMsg_MsgType_IsValid(value);
+  }
+  static constexpr MsgType MsgType_MIN =
+    TradeMsg_MsgType_MsgType_MIN;
+  static constexpr MsgType MsgType_MAX =
+    TradeMsg_MsgType_MsgType_MAX;
+  static constexpr int MsgType_ARRAYSIZE =
+    TradeMsg_MsgType_MsgType_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  MsgType_descriptor() {
+    return TradeMsg_MsgType_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& MsgType_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, MsgType>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function MsgType_Name.");
+    return TradeMsg_MsgType_Name(enum_t_value);
+  }
+  static inline bool MsgType_Parse(const std::string& name,
+      MsgType* value) {
+    return TradeMsg_MsgType_Parse(name, value);
+  }
+
   // accessors -------------------------------------------------------
 
   enum : int {
-    kConditionsFieldNumber = 4,
-    kPriceFieldNumber = 1,
-    kQuantityFieldNumber = 2,
-    kPercentageFieldNumber = 3,
+    kOrderMsgFieldNumber = 2,
+    kMsgTypeFieldNumber = 1,
   };
-  // repeated .stock_api.TradeCondition conditions = 4;
-  int conditions_size() const;
+  // .stock_api.OrderMsg order_msg = 2;
+  bool has_order_msg() const;
   private:
-  int _internal_conditions_size() const;
+  bool _internal_has_order_msg() const;
   public:
-  void clear_conditions();
-  ::stock_api::TradeCondition* mutable_conditions(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::stock_api::TradeCondition >*
-      mutable_conditions();
+  void clear_order_msg();
+  const ::stock_api::OrderMsg& order_msg() const;
+  ::stock_api::OrderMsg* release_order_msg();
+  ::stock_api::OrderMsg* mutable_order_msg();
+  void set_allocated_order_msg(::stock_api::OrderMsg* order_msg);
   private:
-  const ::stock_api::TradeCondition& _internal_conditions(int index) const;
-  ::stock_api::TradeCondition* _internal_add_conditions();
-  public:
-  const ::stock_api::TradeCondition& conditions(int index) const;
-  ::stock_api::TradeCondition* add_conditions();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::stock_api::TradeCondition >&
-      conditions() const;
-
-  // int32 price = 1;
-  void clear_price();
-  ::PROTOBUF_NAMESPACE_ID::int32 price() const;
-  void set_price(::PROTOBUF_NAMESPACE_ID::int32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_price() const;
-  void _internal_set_price(::PROTOBUF_NAMESPACE_ID::int32 value);
+  const ::stock_api::OrderMsg& _internal_order_msg() const;
+  ::stock_api::OrderMsg* _internal_mutable_order_msg();
   public:
 
-  // int32 quantity = 2;
+  // int32 msg_type = 1;
+  void clear_msg_type();
+  ::PROTOBUF_NAMESPACE_ID::int32 msg_type() const;
+  void set_msg_type(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_msg_type() const;
+  void _internal_set_msg_type(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.TradeMsg)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::stock_api::OrderMsg* order_msg_;
+  ::PROTOBUF_NAMESPACE_ID::int32 msg_type_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_stock_5fprovider_2eproto;
+};
+// -------------------------------------------------------------------
+
+class OrderResult :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.OrderResult) */ {
+ public:
+  OrderResult();
+  virtual ~OrderResult();
+
+  OrderResult(const OrderResult& from);
+  OrderResult(OrderResult&& from) noexcept
+    : OrderResult() {
+    *this = ::std::move(from);
+  }
+
+  inline OrderResult& operator=(const OrderResult& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline OrderResult& operator=(OrderResult&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const OrderResult& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const OrderResult* internal_default_instance() {
+    return reinterpret_cast<const OrderResult*>(
+               &_OrderResult_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    9;
+
+  friend void swap(OrderResult& a, OrderResult& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(OrderResult* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline OrderResult* New() const final {
+    return CreateMaybeMessage<OrderResult>(nullptr);
+  }
+
+  OrderResult* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<OrderResult>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const OrderResult& from);
+  void MergeFrom(const OrderResult& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(OrderResult* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "stock_api.OrderResult";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
+    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kCodeFieldNumber = 1,
+  };
+  // string code = 1;
+  void clear_code();
+  const std::string& code() const;
+  void set_code(const std::string& value);
+  void set_code(std::string&& value);
+  void set_code(const char* value);
+  void set_code(const char* value, size_t size);
+  std::string* mutable_code();
+  std::string* release_code();
+  void set_allocated_code(std::string* code);
+  private:
+  const std::string& _internal_code() const;
+  void _internal_set_code(const std::string& value);
+  std::string* _internal_mutable_code();
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.OrderResult)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr code_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_stock_5fprovider_2eproto;
+};
+// -------------------------------------------------------------------
+
+class CybosOrderResult :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.CybosOrderResult) */ {
+ public:
+  CybosOrderResult();
+  virtual ~CybosOrderResult();
+
+  CybosOrderResult(const CybosOrderResult& from);
+  CybosOrderResult(CybosOrderResult&& from) noexcept
+    : CybosOrderResult() {
+    *this = ::std::move(from);
+  }
+
+  inline CybosOrderResult& operator=(const CybosOrderResult& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CybosOrderResult& operator=(CybosOrderResult&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const CybosOrderResult& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const CybosOrderResult* internal_default_instance() {
+    return reinterpret_cast<const CybosOrderResult*>(
+               &_CybosOrderResult_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  friend void swap(CybosOrderResult& a, CybosOrderResult& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CybosOrderResult* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline CybosOrderResult* New() const final {
+    return CreateMaybeMessage<CybosOrderResult>(nullptr);
+  }
+
+  CybosOrderResult* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<CybosOrderResult>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const CybosOrderResult& from);
+  void MergeFrom(const CybosOrderResult& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CybosOrderResult* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "stock_api.CybosOrderResult";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
+    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kCodeFieldNumber = 5,
+    kFlagFieldNumber = 1,
+    kOrderNumFieldNumber = 2,
+    kQuantityFieldNumber = 3,
+    kPriceFieldNumber = 4,
+    kOrderTypeFieldNumber = 6,
+    kTotalQuantityFieldNumber = 7,
+  };
+  // string code = 5;
+  void clear_code();
+  const std::string& code() const;
+  void set_code(const std::string& value);
+  void set_code(std::string&& value);
+  void set_code(const char* value);
+  void set_code(const char* value, size_t size);
+  std::string* mutable_code();
+  std::string* release_code();
+  void set_allocated_code(std::string* code);
+  private:
+  const std::string& _internal_code() const;
+  void _internal_set_code(const std::string& value);
+  std::string* _internal_mutable_code();
+  public:
+
+  // int32 flag = 1;
+  void clear_flag();
+  ::PROTOBUF_NAMESPACE_ID::int32 flag() const;
+  void set_flag(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_flag() const;
+  void _internal_set_flag(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 order_num = 2;
+  void clear_order_num();
+  ::PROTOBUF_NAMESPACE_ID::int32 order_num() const;
+  void set_order_num(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_order_num() const;
+  void _internal_set_order_num(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 quantity = 3;
   void clear_quantity();
   ::PROTOBUF_NAMESPACE_ID::int32 quantity() const;
   void set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value);
@@ -1319,24 +1911,45 @@ class TradeMsg :
   void _internal_set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // int32 percentage = 3;
-  void clear_percentage();
-  ::PROTOBUF_NAMESPACE_ID::int32 percentage() const;
-  void set_percentage(::PROTOBUF_NAMESPACE_ID::int32 value);
+  // int32 price = 4;
+  void clear_price();
+  ::PROTOBUF_NAMESPACE_ID::int32 price() const;
+  void set_price(::PROTOBUF_NAMESPACE_ID::int32 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_percentage() const;
-  void _internal_set_percentage(::PROTOBUF_NAMESPACE_ID::int32 value);
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_price() const;
+  void _internal_set_price(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:stock_api.TradeMsg)
+  // int32 order_type = 6;
+  void clear_order_type();
+  ::PROTOBUF_NAMESPACE_ID::int32 order_type() const;
+  void set_order_type(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_order_type() const;
+  void _internal_set_order_type(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 total_quantity = 7;
+  void clear_total_quantity();
+  ::PROTOBUF_NAMESPACE_ID::int32 total_quantity() const;
+  void set_total_quantity(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_total_quantity() const;
+  void _internal_set_total_quantity(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.CybosOrderResult)
  private:
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::stock_api::TradeCondition > conditions_;
-  ::PROTOBUF_NAMESPACE_ID::int32 price_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr code_;
+  ::PROTOBUF_NAMESPACE_ID::int32 flag_;
+  ::PROTOBUF_NAMESPACE_ID::int32 order_num_;
   ::PROTOBUF_NAMESPACE_ID::int32 quantity_;
-  ::PROTOBUF_NAMESPACE_ID::int32 percentage_;
+  ::PROTOBUF_NAMESPACE_ID::int32 price_;
+  ::PROTOBUF_NAMESPACE_ID::int32 order_type_;
+  ::PROTOBUF_NAMESPACE_ID::int32 total_quantity_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_stock_5fprovider_2eproto;
 };
@@ -1384,7 +1997,7 @@ class ListType :
                &_ListType_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    11;
 
   friend void swap(ListType& a, ListType& b) {
     a.Swap(&b);
@@ -1519,7 +2132,7 @@ class CompanyName :
                &_CompanyName_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    12;
 
   friend void swap(CompanyName& a, CompanyName& b) {
     a.Swap(&b);
@@ -1654,7 +2267,7 @@ class PastMinuteQuery :
                &_PastMinuteQuery_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    13;
 
   friend void swap(PastMinuteQuery& a, PastMinuteQuery& b) {
     a.Swap(&b);
@@ -1817,7 +2430,7 @@ class CybosDayData :
                &_CybosDayData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    14;
 
   friend void swap(CybosDayData& a, CybosDayData& b) {
     a.Swap(&b);
@@ -2099,7 +2712,7 @@ class CybosDayDatas :
                &_CybosDayDatas_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    15;
 
   friend void swap(CybosDayDatas& a, CybosDayDatas& b) {
     a.Swap(&b);
@@ -2236,7 +2849,7 @@ class CybosSubjectTickData :
                &_CybosSubjectTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    16;
 
   friend void swap(CybosSubjectTickData& a, CybosSubjectTickData& b) {
     a.Swap(&b);
@@ -2479,7 +3092,7 @@ class CybosTickData :
                &_CybosTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    17;
 
   friend void swap(CybosTickData& a, CybosTickData& b) {
     a.Swap(&b);
@@ -2880,7 +3493,7 @@ class CybosBidAskTickData :
                &_CybosBidAskTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    18;
 
   friend void swap(CybosBidAskTickData& a, CybosBidAskTickData& b) {
     a.Swap(&b);
@@ -3198,7 +3811,7 @@ class CybosStockAlarm :
                &_CybosStockAlarm_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    19;
 
   friend void swap(CybosStockAlarm& a, CybosStockAlarm& b) {
     a.Swap(&b);
@@ -3601,6 +4214,30 @@ inline void Option::set_use_accumulated(bool value) {
 
 // -------------------------------------------------------------------
 
+// Balance
+
+// int32 balance = 1;
+inline void Balance::clear_balance() {
+  balance_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Balance::_internal_balance() const {
+  return balance_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Balance::balance() const {
+  // @@protoc_insertion_point(field_get:stock_api.Balance.balance)
+  return _internal_balance();
+}
+inline void Balance::_internal_set_balance(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  balance_ = value;
+}
+inline void Balance::set_balance(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_balance(value);
+  // @@protoc_insertion_point(field_set:stock_api.Balance.balance)
+}
+
+// -------------------------------------------------------------------
+
 // StockQuery
 
 // string code = 1;
@@ -3937,149 +4574,498 @@ inline void SimulationStatus::set_simulation_speed(float value) {
 
 // -------------------------------------------------------------------
 
-// TradeCondition
+// OrderMsg
 
-// bool is_buy = 1;
-inline void TradeCondition::clear_is_buy() {
+// string code = 1;
+inline void OrderMsg::clear_code() {
+  code_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& OrderMsg::code() const {
+  // @@protoc_insertion_point(field_get:stock_api.OrderMsg.code)
+  return _internal_code();
+}
+inline void OrderMsg::set_code(const std::string& value) {
+  _internal_set_code(value);
+  // @@protoc_insertion_point(field_set:stock_api.OrderMsg.code)
+}
+inline std::string* OrderMsg::mutable_code() {
+  // @@protoc_insertion_point(field_mutable:stock_api.OrderMsg.code)
+  return _internal_mutable_code();
+}
+inline const std::string& OrderMsg::_internal_code() const {
+  return code_.GetNoArena();
+}
+inline void OrderMsg::_internal_set_code(const std::string& value) {
+  
+  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void OrderMsg::set_code(std::string&& value) {
+  
+  code_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:stock_api.OrderMsg.code)
+}
+inline void OrderMsg::set_code(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:stock_api.OrderMsg.code)
+}
+inline void OrderMsg::set_code(const char* value, size_t size) {
+  
+  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:stock_api.OrderMsg.code)
+}
+inline std::string* OrderMsg::_internal_mutable_code() {
+  
+  return code_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* OrderMsg::release_code() {
+  // @@protoc_insertion_point(field_release:stock_api.OrderMsg.code)
+  
+  return code_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void OrderMsg::set_allocated_code(std::string* code) {
+  if (code != nullptr) {
+    
+  } else {
+    
+  }
+  code_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), code);
+  // @@protoc_insertion_point(field_set_allocated:stock_api.OrderMsg.code)
+}
+
+// bool is_buy = 2;
+inline void OrderMsg::clear_is_buy() {
   is_buy_ = false;
 }
-inline bool TradeCondition::_internal_is_buy() const {
+inline bool OrderMsg::_internal_is_buy() const {
   return is_buy_;
 }
-inline bool TradeCondition::is_buy() const {
-  // @@protoc_insertion_point(field_get:stock_api.TradeCondition.is_buy)
+inline bool OrderMsg::is_buy() const {
+  // @@protoc_insertion_point(field_get:stock_api.OrderMsg.is_buy)
   return _internal_is_buy();
 }
-inline void TradeCondition::_internal_set_is_buy(bool value) {
+inline void OrderMsg::_internal_set_is_buy(bool value) {
   
   is_buy_ = value;
 }
-inline void TradeCondition::set_is_buy(bool value) {
+inline void OrderMsg::set_is_buy(bool value) {
   _internal_set_is_buy(value);
-  // @@protoc_insertion_point(field_set:stock_api.TradeCondition.is_buy)
+  // @@protoc_insertion_point(field_set:stock_api.OrderMsg.is_buy)
 }
 
-// int32 strategy = 2;
-inline void TradeCondition::clear_strategy() {
-  strategy_ = 0;
+// int32 price = 3;
+inline void OrderMsg::clear_price() {
+  price_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 TradeCondition::_internal_strategy() const {
-  return strategy_;
+inline ::PROTOBUF_NAMESPACE_ID::int32 OrderMsg::_internal_price() const {
+  return price_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 TradeCondition::strategy() const {
-  // @@protoc_insertion_point(field_get:stock_api.TradeCondition.strategy)
-  return _internal_strategy();
+inline ::PROTOBUF_NAMESPACE_ID::int32 OrderMsg::price() const {
+  // @@protoc_insertion_point(field_get:stock_api.OrderMsg.price)
+  return _internal_price();
 }
-inline void TradeCondition::_internal_set_strategy(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void OrderMsg::_internal_set_price(::PROTOBUF_NAMESPACE_ID::int32 value) {
   
-  strategy_ = value;
+  price_ = value;
 }
-inline void TradeCondition::set_strategy(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_strategy(value);
-  // @@protoc_insertion_point(field_set:stock_api.TradeCondition.strategy)
+inline void OrderMsg::set_price(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_price(value);
+  // @@protoc_insertion_point(field_set:stock_api.OrderMsg.price)
+}
+
+// int32 quantity = 4;
+inline void OrderMsg::clear_quantity() {
+  quantity_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 OrderMsg::_internal_quantity() const {
+  return quantity_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 OrderMsg::quantity() const {
+  // @@protoc_insertion_point(field_get:stock_api.OrderMsg.quantity)
+  return _internal_quantity();
+}
+inline void OrderMsg::_internal_set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  quantity_ = value;
+}
+inline void OrderMsg::set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_quantity(value);
+  // @@protoc_insertion_point(field_set:stock_api.OrderMsg.quantity)
+}
+
+// int32 percentage = 5;
+inline void OrderMsg::clear_percentage() {
+  percentage_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 OrderMsg::_internal_percentage() const {
+  return percentage_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 OrderMsg::percentage() const {
+  // @@protoc_insertion_point(field_get:stock_api.OrderMsg.percentage)
+  return _internal_percentage();
+}
+inline void OrderMsg::_internal_set_percentage(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  percentage_ = value;
+}
+inline void OrderMsg::set_percentage(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_percentage(value);
+  // @@protoc_insertion_point(field_set:stock_api.OrderMsg.percentage)
+}
+
+// .stock_api.OrderMsg.Method method = 6;
+inline void OrderMsg::clear_method() {
+  method_ = 0;
+}
+inline ::stock_api::OrderMsg_Method OrderMsg::_internal_method() const {
+  return static_cast< ::stock_api::OrderMsg_Method >(method_);
+}
+inline ::stock_api::OrderMsg_Method OrderMsg::method() const {
+  // @@protoc_insertion_point(field_get:stock_api.OrderMsg.method)
+  return _internal_method();
+}
+inline void OrderMsg::_internal_set_method(::stock_api::OrderMsg_Method value) {
+  
+  method_ = value;
+}
+inline void OrderMsg::set_method(::stock_api::OrderMsg_Method value) {
+  _internal_set_method(value);
+  // @@protoc_insertion_point(field_set:stock_api.OrderMsg.method)
 }
 
 // -------------------------------------------------------------------
 
 // TradeMsg
 
-// int32 price = 1;
-inline void TradeMsg::clear_price() {
-  price_ = 0;
+// int32 msg_type = 1;
+inline void TradeMsg::clear_msg_type() {
+  msg_type_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 TradeMsg::_internal_price() const {
-  return price_;
+inline ::PROTOBUF_NAMESPACE_ID::int32 TradeMsg::_internal_msg_type() const {
+  return msg_type_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 TradeMsg::price() const {
-  // @@protoc_insertion_point(field_get:stock_api.TradeMsg.price)
-  return _internal_price();
+inline ::PROTOBUF_NAMESPACE_ID::int32 TradeMsg::msg_type() const {
+  // @@protoc_insertion_point(field_get:stock_api.TradeMsg.msg_type)
+  return _internal_msg_type();
 }
-inline void TradeMsg::_internal_set_price(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void TradeMsg::_internal_set_msg_type(::PROTOBUF_NAMESPACE_ID::int32 value) {
   
-  price_ = value;
+  msg_type_ = value;
 }
-inline void TradeMsg::set_price(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_price(value);
-  // @@protoc_insertion_point(field_set:stock_api.TradeMsg.price)
+inline void TradeMsg::set_msg_type(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_msg_type(value);
+  // @@protoc_insertion_point(field_set:stock_api.TradeMsg.msg_type)
 }
 
-// int32 quantity = 2;
-inline void TradeMsg::clear_quantity() {
+// .stock_api.OrderMsg order_msg = 2;
+inline bool TradeMsg::_internal_has_order_msg() const {
+  return this != internal_default_instance() && order_msg_ != nullptr;
+}
+inline bool TradeMsg::has_order_msg() const {
+  return _internal_has_order_msg();
+}
+inline void TradeMsg::clear_order_msg() {
+  if (GetArenaNoVirtual() == nullptr && order_msg_ != nullptr) {
+    delete order_msg_;
+  }
+  order_msg_ = nullptr;
+}
+inline const ::stock_api::OrderMsg& TradeMsg::_internal_order_msg() const {
+  const ::stock_api::OrderMsg* p = order_msg_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::stock_api::OrderMsg*>(
+      &::stock_api::_OrderMsg_default_instance_);
+}
+inline const ::stock_api::OrderMsg& TradeMsg::order_msg() const {
+  // @@protoc_insertion_point(field_get:stock_api.TradeMsg.order_msg)
+  return _internal_order_msg();
+}
+inline ::stock_api::OrderMsg* TradeMsg::release_order_msg() {
+  // @@protoc_insertion_point(field_release:stock_api.TradeMsg.order_msg)
+  
+  ::stock_api::OrderMsg* temp = order_msg_;
+  order_msg_ = nullptr;
+  return temp;
+}
+inline ::stock_api::OrderMsg* TradeMsg::_internal_mutable_order_msg() {
+  
+  if (order_msg_ == nullptr) {
+    auto* p = CreateMaybeMessage<::stock_api::OrderMsg>(GetArenaNoVirtual());
+    order_msg_ = p;
+  }
+  return order_msg_;
+}
+inline ::stock_api::OrderMsg* TradeMsg::mutable_order_msg() {
+  // @@protoc_insertion_point(field_mutable:stock_api.TradeMsg.order_msg)
+  return _internal_mutable_order_msg();
+}
+inline void TradeMsg::set_allocated_order_msg(::stock_api::OrderMsg* order_msg) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete order_msg_;
+  }
+  if (order_msg) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      order_msg = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, order_msg, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  order_msg_ = order_msg;
+  // @@protoc_insertion_point(field_set_allocated:stock_api.TradeMsg.order_msg)
+}
+
+// -------------------------------------------------------------------
+
+// OrderResult
+
+// string code = 1;
+inline void OrderResult::clear_code() {
+  code_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& OrderResult::code() const {
+  // @@protoc_insertion_point(field_get:stock_api.OrderResult.code)
+  return _internal_code();
+}
+inline void OrderResult::set_code(const std::string& value) {
+  _internal_set_code(value);
+  // @@protoc_insertion_point(field_set:stock_api.OrderResult.code)
+}
+inline std::string* OrderResult::mutable_code() {
+  // @@protoc_insertion_point(field_mutable:stock_api.OrderResult.code)
+  return _internal_mutable_code();
+}
+inline const std::string& OrderResult::_internal_code() const {
+  return code_.GetNoArena();
+}
+inline void OrderResult::_internal_set_code(const std::string& value) {
+  
+  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void OrderResult::set_code(std::string&& value) {
+  
+  code_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:stock_api.OrderResult.code)
+}
+inline void OrderResult::set_code(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:stock_api.OrderResult.code)
+}
+inline void OrderResult::set_code(const char* value, size_t size) {
+  
+  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:stock_api.OrderResult.code)
+}
+inline std::string* OrderResult::_internal_mutable_code() {
+  
+  return code_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* OrderResult::release_code() {
+  // @@protoc_insertion_point(field_release:stock_api.OrderResult.code)
+  
+  return code_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void OrderResult::set_allocated_code(std::string* code) {
+  if (code != nullptr) {
+    
+  } else {
+    
+  }
+  code_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), code);
+  // @@protoc_insertion_point(field_set_allocated:stock_api.OrderResult.code)
+}
+
+// -------------------------------------------------------------------
+
+// CybosOrderResult
+
+// int32 flag = 1;
+inline void CybosOrderResult::clear_flag() {
+  flag_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderResult::_internal_flag() const {
+  return flag_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderResult::flag() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosOrderResult.flag)
+  return _internal_flag();
+}
+inline void CybosOrderResult::_internal_set_flag(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  flag_ = value;
+}
+inline void CybosOrderResult::set_flag(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_flag(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosOrderResult.flag)
+}
+
+// int32 order_num = 2;
+inline void CybosOrderResult::clear_order_num() {
+  order_num_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderResult::_internal_order_num() const {
+  return order_num_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderResult::order_num() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosOrderResult.order_num)
+  return _internal_order_num();
+}
+inline void CybosOrderResult::_internal_set_order_num(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  order_num_ = value;
+}
+inline void CybosOrderResult::set_order_num(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_order_num(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosOrderResult.order_num)
+}
+
+// int32 quantity = 3;
+inline void CybosOrderResult::clear_quantity() {
   quantity_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 TradeMsg::_internal_quantity() const {
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderResult::_internal_quantity() const {
   return quantity_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 TradeMsg::quantity() const {
-  // @@protoc_insertion_point(field_get:stock_api.TradeMsg.quantity)
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderResult::quantity() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosOrderResult.quantity)
   return _internal_quantity();
 }
-inline void TradeMsg::_internal_set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void CybosOrderResult::_internal_set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value) {
   
   quantity_ = value;
 }
-inline void TradeMsg::set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void CybosOrderResult::set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_quantity(value);
-  // @@protoc_insertion_point(field_set:stock_api.TradeMsg.quantity)
+  // @@protoc_insertion_point(field_set:stock_api.CybosOrderResult.quantity)
 }
 
-// int32 percentage = 3;
-inline void TradeMsg::clear_percentage() {
-  percentage_ = 0;
+// int32 price = 4;
+inline void CybosOrderResult::clear_price() {
+  price_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 TradeMsg::_internal_percentage() const {
-  return percentage_;
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderResult::_internal_price() const {
+  return price_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 TradeMsg::percentage() const {
-  // @@protoc_insertion_point(field_get:stock_api.TradeMsg.percentage)
-  return _internal_percentage();
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderResult::price() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosOrderResult.price)
+  return _internal_price();
 }
-inline void TradeMsg::_internal_set_percentage(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void CybosOrderResult::_internal_set_price(::PROTOBUF_NAMESPACE_ID::int32 value) {
   
-  percentage_ = value;
+  price_ = value;
 }
-inline void TradeMsg::set_percentage(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_percentage(value);
-  // @@protoc_insertion_point(field_set:stock_api.TradeMsg.percentage)
+inline void CybosOrderResult::set_price(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_price(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosOrderResult.price)
 }
 
-// repeated .stock_api.TradeCondition conditions = 4;
-inline int TradeMsg::_internal_conditions_size() const {
-  return conditions_.size();
+// string code = 5;
+inline void CybosOrderResult::clear_code() {
+  code_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline int TradeMsg::conditions_size() const {
-  return _internal_conditions_size();
+inline const std::string& CybosOrderResult::code() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosOrderResult.code)
+  return _internal_code();
 }
-inline void TradeMsg::clear_conditions() {
-  conditions_.Clear();
+inline void CybosOrderResult::set_code(const std::string& value) {
+  _internal_set_code(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosOrderResult.code)
 }
-inline ::stock_api::TradeCondition* TradeMsg::mutable_conditions(int index) {
-  // @@protoc_insertion_point(field_mutable:stock_api.TradeMsg.conditions)
-  return conditions_.Mutable(index);
+inline std::string* CybosOrderResult::mutable_code() {
+  // @@protoc_insertion_point(field_mutable:stock_api.CybosOrderResult.code)
+  return _internal_mutable_code();
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::stock_api::TradeCondition >*
-TradeMsg::mutable_conditions() {
-  // @@protoc_insertion_point(field_mutable_list:stock_api.TradeMsg.conditions)
-  return &conditions_;
+inline const std::string& CybosOrderResult::_internal_code() const {
+  return code_.GetNoArena();
 }
-inline const ::stock_api::TradeCondition& TradeMsg::_internal_conditions(int index) const {
-  return conditions_.Get(index);
+inline void CybosOrderResult::_internal_set_code(const std::string& value) {
+  
+  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline const ::stock_api::TradeCondition& TradeMsg::conditions(int index) const {
-  // @@protoc_insertion_point(field_get:stock_api.TradeMsg.conditions)
-  return _internal_conditions(index);
+inline void CybosOrderResult::set_code(std::string&& value) {
+  
+  code_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:stock_api.CybosOrderResult.code)
 }
-inline ::stock_api::TradeCondition* TradeMsg::_internal_add_conditions() {
-  return conditions_.Add();
+inline void CybosOrderResult::set_code(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:stock_api.CybosOrderResult.code)
 }
-inline ::stock_api::TradeCondition* TradeMsg::add_conditions() {
-  // @@protoc_insertion_point(field_add:stock_api.TradeMsg.conditions)
-  return _internal_add_conditions();
+inline void CybosOrderResult::set_code(const char* value, size_t size) {
+  
+  code_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:stock_api.CybosOrderResult.code)
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::stock_api::TradeCondition >&
-TradeMsg::conditions() const {
-  // @@protoc_insertion_point(field_list:stock_api.TradeMsg.conditions)
-  return conditions_;
+inline std::string* CybosOrderResult::_internal_mutable_code() {
+  
+  return code_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* CybosOrderResult::release_code() {
+  // @@protoc_insertion_point(field_release:stock_api.CybosOrderResult.code)
+  
+  return code_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void CybosOrderResult::set_allocated_code(std::string* code) {
+  if (code != nullptr) {
+    
+  } else {
+    
+  }
+  code_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), code);
+  // @@protoc_insertion_point(field_set_allocated:stock_api.CybosOrderResult.code)
+}
+
+// int32 order_type = 6;
+inline void CybosOrderResult::clear_order_type() {
+  order_type_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderResult::_internal_order_type() const {
+  return order_type_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderResult::order_type() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosOrderResult.order_type)
+  return _internal_order_type();
+}
+inline void CybosOrderResult::_internal_set_order_type(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  order_type_ = value;
+}
+inline void CybosOrderResult::set_order_type(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_order_type(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosOrderResult.order_type)
+}
+
+// int32 total_quantity = 7;
+inline void CybosOrderResult::clear_total_quantity() {
+  total_quantity_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderResult::_internal_total_quantity() const {
+  return total_quantity_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderResult::total_quantity() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosOrderResult.total_quantity)
+  return _internal_total_quantity();
+}
+inline void CybosOrderResult::_internal_set_total_quantity(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  total_quantity_ = value;
+}
+inline void CybosOrderResult::set_total_quantity(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_total_quantity(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosOrderResult.total_quantity)
 }
 
 // -------------------------------------------------------------------
@@ -6415,10 +7401,31 @@ inline void CybosStockAlarm::set_allocated_content(std::string* content) {
 
 // -------------------------------------------------------------------
 
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
 }  // namespace stock_api
+
+PROTOBUF_NAMESPACE_OPEN
+
+template <> struct is_proto_enum< ::stock_api::OrderMsg_Method> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::stock_api::OrderMsg_Method>() {
+  return ::stock_api::OrderMsg_Method_descriptor();
+}
+template <> struct is_proto_enum< ::stock_api::TradeMsg_MsgType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::stock_api::TradeMsg_MsgType>() {
+  return ::stock_api::TradeMsg_MsgType_descriptor();
+}
+
+PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
 

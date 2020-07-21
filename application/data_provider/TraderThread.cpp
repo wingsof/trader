@@ -22,15 +22,21 @@ TraderThread::TraderThread(std::shared_ptr<stock_api::Stock::Stub> stub)
 }
 
 
-void TraderThread::requestOrder(int price, int quantity, int percentage, int option) {
-    qWarning()  << "TraderThread : " << price << "\t" << quantity << "\t" << percentage << "\t" << option;
+void TraderThread::order(const QString &code, int price, int quantity, int percentage, OrderMsg::Method m, bool isBuy) {
     ClientContext context;
     TradeMsg msg;
-    msg.set_price(price);
-    msg.set_quantity(quantity);
-    msg.set_percentage(percentage);
+    msg.set_msg_type(TradeMsg::ORDER_MSG);
+    OrderMsg *orderMsg = new OrderMsg;
+    orderMsg->set_code(code.toStdString());
+    orderMsg->set_is_buy(isBuy);
+    orderMsg->set_price(price);
+    orderMsg->set_quantity(quantity);
+    orderMsg->set_percentage(percentage);
+    orderMsg->set_method(m);
+    msg.set_allocated_order_msg(orderMsg);
+
     Empty empty;
-    stub_->RequestOrder(&context, msg, &empty);
+    stub_->RequestToTrader(&context, msg, &empty);
 }
 
 
