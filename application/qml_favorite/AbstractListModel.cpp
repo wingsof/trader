@@ -186,7 +186,7 @@ qreal ListItem::yesterdayProfit() const {
 
 qreal ListItem::todayProfit() const {
     StockInfo * info = StockStat::instance()->getInfo(m_code);
-    if (info->todayCurrentPrice() > 0) {
+    if (info->todayCurrentPrice() > 0 && info->getYesterdayData().close_price() > 0.0) {
         qreal profit = ((qreal)info->todayCurrentPrice() - info->getYesterdayData().close_price()) / info->getYesterdayData().close_price() * 100.0;
         return profit;
     }

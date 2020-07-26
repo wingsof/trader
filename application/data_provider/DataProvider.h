@@ -27,6 +27,8 @@ using stock_api::CybosStockAlarm;
 using stock_api::OrderMsg;
 using stock_api::SimulationStatus;
 using stock_api::TopList;
+using stock_api::OrderMethod;
+using stock_api::OrderResult;
 using google::protobuf::Timestamp;
 
 
@@ -53,6 +55,7 @@ public:
     void startTimeListening();
     void startListTypeListening();
     void startAlarmListening();
+    void startOrderListening();
 
     MinuteTick *getMinuteTick(const QString &code);
 
@@ -78,8 +81,10 @@ public:
 
     void forceChangeStockCode(const QString &code);
 
-    void buy(const QString &code, int price, int qty, int per, OrderMsg::Method m);
-    void sell(const QString &code, int price, int qty, int per, OrderMsg::Method m);
+    void buy(const QString &code, int price, int qty, int per, OrderMethod m);
+    void sell(const QString &code, int price, int qty, int per, OrderMethod m);
+    void changeToImmediate(const QString &code, const QString &orderNum);
+    void sendBalanceRequest();
 
 private:
     DataProvider();
@@ -124,6 +129,7 @@ signals:
     void timeInfoArrived(QDateTime dt);
     void simulationStatusChanged(bool);
     void stockListTypeChanged(QString);
+    void orderResultArrived(OrderResult *);
 };
 
 

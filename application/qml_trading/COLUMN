@@ -1,5 +1,5 @@
 code name cp prof "b status" "b method" "target p" "b qty" "b not complete qty" "s status" "s method" "target p" "s qty" "s complete qty" "cut p" time last_update_time
 
-when click
-b not complete qty -> cancel
-cut p -> immediate sell all
+
+final
+code name buy/sell current hold_price hold_profit flag(status) method price quantity actions order_num last_update

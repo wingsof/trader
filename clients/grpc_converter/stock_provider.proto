@@ -102,6 +102,7 @@ message SimulationStatus {
 enum OrderStatusFlag {
     STATUS_UNKNOWN = 0;
     STATUS_REGISTERED = 1;
+    STATUS_AUTO_CUT = 2;
     STATUS_TRADED = 49;
     STATUS_CONFIRM = 50;
     STATUS_DENIED = 51;
@@ -113,14 +114,21 @@ enum OrderMethod {
     TRADE_IMMEDIATELY = 1;
     TRADE_ON_BID_ASK_MEET = 2;
     TRADE_ON_PRICE = 3;
-    TRADE_CANCEL = 4;
-    TRADE_MODIFY = 5;
 }
+
+
+enum OrderType {
+    NEW = 0;
+    MODIFY = 1;
+    CANCEL = 2;
+}
+
 
 enum TradeMsgType{
     UNKNOWN = 0;
     ORDER_MSG = 1;
     REQ_ALL_ORDER = 2;
+    GET_BALANCE = 3;
 }
 
 
@@ -132,6 +140,7 @@ message OrderMsg {
     int32 percentage = 5;
     OrderMethod method = 6;
     string order_num = 7;
+    OrderType order_type = 8;
 }
 
 
@@ -141,8 +150,24 @@ message TradeMsg {
 }
 
 
-message OrderResult {
+message Report {
     string code = 1;
+    string company_name = 2;
+    bool is_buy = 3;
+    google.protobuf.Timestamp last_update_datetime = 4;
+    OrderStatusFlag flag = 5;
+    OrderMethod method = 6;
+    int32 hold_price = 7;
+    int32 price = 8;
+    int32 quantity = 9;
+    string internal_order_num = 10;
+    string order_num = 11;
+}
+
+
+message OrderResult {
+    repeated Report report = 1;
+    int32 current_balance = 2;
 }
 
 

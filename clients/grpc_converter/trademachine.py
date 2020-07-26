@@ -4,6 +4,7 @@ from google.protobuf.empty_pb2 import Empty
 import stock_provider_pb2 as stock_provider
 import simulstatus
 import markettime
+import account
 from datetime import timedelta
 
 
@@ -15,51 +16,6 @@ simulation_queue = Queue()
 order_number = 111110
 
 
-class CybosOrder:
-    ORDER=1
-    MODIFY=2
-    CANCEL=3
-
-    def __init__(self, request_type, code, price, quantity, is_buy, callback, order_num = ''):
-        self.request_type = request_type
-        self.status = stock_provider.OrderStatusFlag.STATUS_REGISTERED
-        self.code = code
-        self.price = price
-        self.quantity = quantity
-        self.left_count = quantity
-        self.is_buy = is_buy
-        self.callback = callback
-        self.order_num = order_num
-
-    def set_traded(self, order_msg):
-        print('Traded', order_msg)
-        self.left_count -= order_msg.quantity
-        if self.left_count == 0:
-            order_list.remove(self)
-        self.status = order_msg.flag
-
-
-    def set_submitted(self, order_msg):
-        print('Get Submit', order_msg)
-        if self.request_type == CybosOrder.ORDER:
-            self.order_num = order_msg.order_number
-            self.status = order_msg.flag
-
-    def set_confirmed(self, order_msg):
-        pass
-
-    def set_denied(self, order_msg):
-        pass
-    
-    def get_order_object(self):
-        return stock_provider.CybosOrderResult(flag=self.status,
-                                               code=self.code,
-                                               order_number=self.order_num,
-                                               quantity=self.quantity,
-                                               price=self.price,
-                                               is_buy=self.is_buy,
-                                               total_quantity=0)
-
 
 def get_order_number():
     global order_number
@@ -69,7 +25,8 @@ def get_order_number():
 
 def move_to_order_list(cybos_order, msg):
     order_list.append(cybos_order)
-    request_list.remove(cybos_order)
+    if cybos_order in request_list:
+        request_list.remove(cybos_order)
     cybos_order.set_submitted(msg)
 
 
@@ -80,38 +37,39 @@ def cancel_order_list(cybos_order, msg):
 
 def request_order(order_obj):
     # return value (result, msg)
-    cybos_order = CybosOrder(CybosOrder.ORDER, code, price, quantity, is_buy, callback)
-
-    request_list.append(cybos_order)
+    request_list.append(order_obj)
     if not simulstatus.is_simulation():
         pass # send cybos command return result, remove from request_list if get failed, 
     else:
-        trade_queue.put_nowait(cybos_order)
+        if order_obj.is_buy and (order_obj.price * order_obj.quantity > account.get_balance()):
+            return -1, 'Not enough balance'
+        else:
+            account.pay_for_stock(order_obj.quantity * order_obj.price)
+            trade_queue.put_nowait(order_obj)
 
     return 0, ''
 
 
-def request_cancel(code, order_num, quantity, is_buy, callback):
-    original_order = None
+def request_cancel(order_obj):
+    found = False
     for order in order_list:
-        if order.num == order_num:
-            original_order = order
+        if order == order_obj:
+            found = True
             break
-
-    if original_order is not None:
-        original_order.request_type = CybosOrder.CANCEL
-        original_order.status = stock_provider.OrderStatusFlag.STATUS_REGISTERED
-        if simulstatus.is_simulation(): 
-            trade_queue.put_nowait(original_order)
-        else:
-            pass # send cancel and remove it when get confirm
-    else:
+    
+    if not found:
         return False
+
+    order_list.remove(order_obj)
+    if simulstatus.is_simulation(): 
+        trade_queue.put_nowait(order_obj)
+    else:
+        pass # send cancel and remove it when get confirm
 
     return True
 
 
-def request_modify(code, order_num, price, is_buy, callback):
+def request_modify(order_obj):
     pass
 
 
@@ -123,17 +81,11 @@ def run_trade(stub):
         while markettime.get_current_datetime() - t < timedelta(seconds=3):
             gevent.sleep(0.1)
 
-        if data.request_type == CybosOrder.ORDER:
-            order_obj = data.get_order_object()
-            order_obj.order_number = str(get_order_number())
-            order_obj.total_quantity = get_total_quantity(data.code)
-            order_obj.flag = stock_provider.OrderStatusFlag.STATUS_SUBMITTED
-            move_to_order_list(data, order_obj)
-        elif data.request_type == CybosOrder.CANCEL:
-            order_obj = data.get_order_object()
-            order_obj.total_quantity = 0
-            order_obj.flag = stock_provider.OrderStatusFlag.STATUS_SUBMITTED
-            cancel_order_list(data, order_obj)
+        order_obj = data.get_cybos_order_result()
+        order_obj.order_number = str(get_order_number())
+        order_obj.total_quantity = get_total_quantity(data.code)
+        order_obj.flag = stock_provider.OrderStatusFlag.STATUS_SUBMITTED
+        move_to_order_list(data, order_obj)
             
 
 def tick_arrived(code, msg):
@@ -142,20 +94,34 @@ def tick_arrived(code, msg):
 
     for order in order_list:
         if order.code == code:
-            if order.is_buy:
-                if order.price >= msg.bid_price:
-                    order_obj = order.get_order_object()
-                    add_total_quantity(order.code, order.quantity)
-                    order_obj.total_quantity = get_total_quantity(order.code)
-                    order_obj.flag = stock_provider.OrderStatusFlag.STATUS_TRADED
-                    simulation_queue.put_nowait(order_obj)
+            if order.order_type == stock_provider.OrderType.CANCEL:
+                order_obj = order.get_cybos_order_result()
+                add_total_quantity(order.code, -order.quantity)
+                order_obj.total_quantity = get_total_quantity(order.code)
+                order_obj.flag = stock_provider.OrderStatusFlag.STATUS_CONFIRM
+                simulation_queue.put_nowait(order_obj)
+            elif order.order_type == stock_provider.OrderType.MODIFY:
+                pass
             else:
-                if order.price <= msg.ask_price:
-                    order_obj = order.get_order_object()
-                    add_total_quantity(order.code, -(order.quantity))
-                    order_obj.total_quantity = get_total_quantity(order.code)
-                    order_obj.flag = stock_provider.OrderStatusFlag.STATUS_TRADED
-                    simulation_queue.put_nowait(order_obj)
+                if order.quantity == 0:
+                    continue
+
+                if order.is_buy:
+                    if order.price >= msg.ask_price:
+                        order_obj = order.get_cybos_order_result()
+                        add_total_quantity(order.code, order.quantity)
+                        order_obj.total_quantity = get_total_quantity(order.code)
+                        order_obj.price = msg.ask_price
+                        order_obj.flag = stock_provider.OrderStatusFlag.STATUS_TRADED
+                        simulation_queue.put_nowait(order_obj)
+                else:
+                    if order.price <= msg.bid_price:
+                        order_obj = order.get_cybos_order_result()
+                        add_total_quantity(order.code, -(order.quantity))
+                        order_obj.total_quantity = get_total_quantity(order.code)
+                        order_obj.price = msg.bid_price
+                        order_obj.flag = stock_provider.OrderStatusFlag.STATUS_TRADED
+                        simulation_queue.put_nowait(order_obj)
 
 
 def get_total_quantity(code):
@@ -178,26 +144,31 @@ def bidask_arrived(code, msg):
 def handle_server_order(msg):
     if msg.flag == stock_provider.OrderStatusFlag.STATUS_SUBMITTED:
         for cybos_order in request_list:
-            if len(cybos_order.order_num) > 0:
-                if cybos_order.order_num == msg.order_number:
-                    break
-            else:
-                if (cybos_order.code == msg.code and
-                        cybos_order.price == msg.price and
-                        cybos_order.quantity == msg.quantity and
-                        cybos_order.is_buy == msg.is_buy):
-                    move_to_order_list(r)
-                    break
+            if (cybos_order.code == msg.code and
+                                cybos_order.price == msg.price and
+                                cybos_order.quantity == msg.quantity and
+                                cybos_order.is_buy == msg.is_buy):
+                move_to_order_list(r)
+                break
     elif msg.flag == stock_provider.OrderStatusFlag.STATUS_TRADED:
         for cybos_order in order_list:
-            if cybos_order.order_num == msg.order_number:
+            if cybos_order.order_num == msg.order_number and cybos_order.quantity > 0:
+                if not cybos_order.is_buy:
+                    account.pay_for_stock(-(msg.quantity * msg.price))    
+
                 cybos_order.set_traded(msg)
                 break
-    elif msg.flag == stock_provider.OrderStatusFlag.STATUS_CONFIRMED:
+    elif msg.flag == stock_provider.OrderStatusFlag.STATUS_CONFIRM:
         for cybos_order in order_list:
             if cybos_order.order_num == msg.order_number:
-                cybos_order.set_confirmed(msg)
-                break
+                if cybos_order.method == stock_provider.OrderMethod.TRADE_CANCEL:
+                    order_list.remove(cybos_order)
+                    cybos_order.set_confirmed(msg)
+                    # TODO: buy and cancel then set account
+                    break
+                elif cybos_order.method == stock_provider.OrderMethod.TRADE_MODIFY:
+                    # TODO: buy and modify then set account
+                    pass
     elif msg.flag == stock_provider.OrderStatusFlag.STATUS_DENIED:
         for cybos_order in order_list:
             if cybos_order.order_num == msg.order_number:

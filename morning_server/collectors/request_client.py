@@ -256,6 +256,7 @@ def run(client_name, client_type, client_index, client_count_info):
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             server_address = (message.SERVER_IP, message.CLIENT_SOCKET_PORT)
             sock.connect(server_address)
+            sock.settimeout(None)
             print('Connected to apiserver')
             break
         except socket.error:

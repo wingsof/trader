@@ -47,7 +47,7 @@ def bidask_subscriber():
 
 
 def order_callback(result):
-    pass
+    stub.ReportOrderResult(stock_provider.OrderResult(report=result, current_balance=account.get_balance()))
 
 
 def handle_order():
@@ -61,13 +61,11 @@ def handle_order():
 
             spread_dict[data.code] = sp.Spread(data.code, order_callback)
 
-        if data.method == stock_provider.OrderMethod.TRADE_IMMEDIATELY:
-            price = spread_dict[data.code].get_immediate_price(data.is_buy)
-            if price == 0:
-                continue
-            data.price = price
+        if not spread_dict[data.code].has_company_name():
+            cname = stub.GetCompanyName(stock_provider.StockCodeQuery(code=data.code))
+            spread_dict[data.code].set_company_name(cname.company_name)
 
-        spread_dict[data.code].add_order(markettime.get_current_datetime(), account.get_balance(stub), data)
+        spread_dict[data.code].add_order(account.get_balance(), data)
 
 
 def trade_subscriber():
@@ -76,6 +74,8 @@ def trade_subscriber():
         print(msg.msg_type, msg.order_msg)
         if msg.msg_type == stock_provider.TradeMsgType.ORDER_MSG:
             order_queue.put_nowait(msg.order_msg)
+        elif msg.msg_type == stock_provider.TradeMsgType.GET_BALANCE:
+            stub.ReportOrderResult(stock_provider.OrderResult(current_balance=account.get_balance()))
 
 
 def run():
@@ -83,6 +83,7 @@ def run():
     with grpc.insecure_channel('localhost:50052') as channel:  
         subscribe_handlers = []
         stub = stock_provider_pb2_grpc.StockStub(channel)
+        account._stub = stub
         subscribe_handlers.append(gevent.spawn(tick_subscriber))
         subscribe_handlers.append(gevent.spawn(bidask_subscriber))
         subscribe_handlers.append(gevent.spawn(trade_subscriber))

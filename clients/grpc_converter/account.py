@@ -3,14 +3,19 @@ from google.protobuf.empty_pb2 import Empty
 import simulstatus
 
 
-_balance = 10000000
+_balance = 1000000
+TAX_RATE = 0.0025
+_stub = None
 
 
-def get_balance(stub):
+def get_balance():
     if simulstatus.is_simulation():
         return _balance
 
-    balance = stub.GetBalance(Empty())
+    if _stub is None:
+        return 0
+
+    balance = _stub.GetBalance(Empty())
     return balance.balance
 
 
@@ -18,14 +23,18 @@ def pay_for_stock(amount):
     global _balance
 
     if simulstatus.is_simulation():
+        if amount < 0.0:
+            amount = amount * (1 - TAX_RATE)
+
         _balance -= amount
+        print('CURRENT ACCOUNT: ', _balance, amount)
 
 
 def set_simulation(is_simulation):
     global _balance
 
     if simulstatus.is_simulation():
-        _balance = 10000000
+        _balance = 1000000
 
 
 

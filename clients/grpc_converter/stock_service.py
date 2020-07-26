@@ -167,6 +167,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.trader_clients = []
         self.current_stock_code = ""
         self.current_datetime = None
+        morning_client.get_all_market_code()
 
     def GetDayData(self, request, context):
         print('GetDayData', request.code,
@@ -278,6 +279,11 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         company_name = morning_client.code_to_name(request.code)
         #print('GetCompanyName', request.code, company_name)
         return stock_provider_pb2.CompanyName(company_name=company_name)
+
+    def ReportOrderResult(self, request, context):
+        for o in self.order_result_subscribe_clients:
+            o.put_nowait(request)
+        return Empty()
 
     def RequestCybosTickData(self, request, context):
         global is_subscribe_tick
@@ -696,6 +702,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             request_stop_simulation = False
             simulation_progressing[0] = False
             print('Stop Simulation Mode')
+        
         yield Empty()
 
     def StopSimulation(self, request, context):

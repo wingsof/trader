@@ -45,6 +45,11 @@ using stock_api::CybosSubjectTickData;
 using google::protobuf::Timestamp;
 using stock_api::SimulationStatus;
 using stock_api::Option;
+using stock_api::OrderResult;
+using stock_api::OrderMsg;
+using stock_api::TradeMsg;
+using stock_api::TradeMsgType;
+using stock_api::OrderType;
 
 
 DataProvider::DataProvider()
@@ -54,6 +59,7 @@ DataProvider::DataProvider()
     qRegisterMetaType<CybosBidAskTickData>("CybosBidAskTickData");
     qRegisterMetaType<CybosSubjectTickData>("CybosSubjectTickData");
     qRegisterMetaType<SimulationStatus>("SimulationStatus");
+    qRegisterMetaType<OrderResult>("OrderResult");
     qRegisterMetaType<Timestamp>("Timestamp");
     qRegisterMetaType<CybosStockAlarm>("CybosStockAlarm");
 
@@ -105,12 +111,12 @@ void DataProvider::setCurrentDateTime(const QDateTime &dt) {
 }
 
 
-void DataProvider::buy(const QString &code, int price, int qty, int per, OrderMsg::Method m) {
+void DataProvider::buy(const QString &code, int price, int qty, int per, OrderMethod m) {
     traderThread->order(code, price, qty, per, m, true);
 }
 
 
-void DataProvider::sell(const QString &code, int price, int qty, int per, OrderMsg::Method m) {
+void DataProvider::sell(const QString &code, int price, int qty, int per, OrderMethod m) {
     traderThread->order(code, price, qty, per, m, false);
 }
 
@@ -146,6 +152,15 @@ void DataProvider::startListTypeListening() {
         stockListThread = new StockListThread(stub_);
         connect(stockListThread, &StockListThread::stockListChanged, this, &DataProvider::stockListTypeChanged);
         stockListThread->start();
+    }
+}
+
+
+void DataProvider::startOrderListening() {
+    if (!traderThread->isRunning()) {
+        disconnect(traderThread, nullptr, nullptr, nullptr);
+        connect(traderThread, &TraderThread::orderResultArrived, this, &DataProvider::orderResultArrived);
+        traderThread->start();
     }
 }
 
@@ -285,6 +300,31 @@ QStringList DataProvider::getViList(int option, bool catchPlus) {
         list.append(QString::fromStdString(codeList->codelist(i)));
     return list;
 }
+
+
+void DataProvider::changeToImmediate(const QString &code, const QString &orderNum) {
+    ClientContext context;
+    Empty empty;
+    TradeMsg tradeMsg;
+    tradeMsg.set_msg_type(TradeMsgType::ORDER_MSG);
+    OrderMsg *msg = new OrderMsg;
+    msg->set_code(code.toStdString());
+    msg->set_order_num(orderNum.toStdString());
+    msg->set_method(OrderMethod::TRADE_IMMEDIATELY);
+    msg->set_order_type(OrderType::MODIFY);
+    tradeMsg.set_allocated_order_msg(msg);
+    stub_->RequestToTrader(&context, tradeMsg, &empty);
+}
+
+
+void DataProvider::sendBalanceRequest() {
+    ClientContext context;
+    Empty empty;
+    TradeMsg tradeMsg;
+    tradeMsg.set_msg_type(TradeMsgType::GET_BALANCE);
+    stub_->RequestToTrader(&context, tradeMsg, &empty);
+}
+
 
 
 QStringList DataProvider::getTtopAmountList(int option, bool catchPlus, bool useAccumulated) {

@@ -4,6 +4,7 @@
 
 using google::protobuf::util::TimeUtil;
 using stock_api::OrderMsg;
+using stock_api::OrderMethod;
 
 #define VOLUME_DIFF_ROLE    (Qt::UserRole + 1)
 
@@ -80,7 +81,7 @@ void BidAskModel::setYesterdayClose(int yc) {
 
 void BidAskModel::sell_immediately(int percentage) {
     if (mData.getCurrentPrice() > 0) {
-        DataProvider::getInstance()->sell(currentStockCode, mData.getCurrentPrice(), 0, percentage, OrderMsg::TRADE_IMMEDIATELY);
+        //DataProvider::getInstance()->sell(currentStockCode, mData.getCurrentPrice(), 0, percentage, OrderMsg::TRADE_IMMEDIATELY);
         qWarning() << "SELL IMMEDIATE ";
     }
 }
@@ -88,7 +89,7 @@ void BidAskModel::sell_immediately(int percentage) {
 
 void BidAskModel::buy_immediately(int percentage) {
     if (mData.getCurrentPrice() > 0) {
-        DataProvider::getInstance()->buy(currentStockCode, mData.getCurrentPrice(), 0, percentage, OrderMsg::TRADE_IMMEDIATELY);
+        DataProvider::getInstance()->buy(currentStockCode, mData.getCurrentPrice(), 0, percentage, OrderMethod::TRADE_IMMEDIATELY);
         qWarning() << "BUY IMMEDIATE";
     }
 }

@@ -173,8 +173,22 @@ def key_input(stub):
                                         price=get_current_price(code),
                                         quantity = 0,
                                         percentage = 100,
-                                        method = sp.OrderMethod.TRADE_IMMEDIATELY)
+                                        method = sp.OrderMethod.TRADE_IMMEDIATELY,
+                                        order_type=sp.OrderType.NEW)
                 stub.RequestToTrader(sp.TradeMsg(msg_type=sp.TradeMsgType.ORDER_MSG, order_msg=order_msg))
+        elif result.startswith('changemi'):
+            tokens = result.split(',')
+            if len(tokens) != 3:
+                print('changemi,code,order_num')
+                continue
+            order_msg = sp.OrderMsg(code=tokens[1],
+                                    order_num=tokens[2],
+                                    quantity=0,
+                                    percentage=0,
+                                    price=0,
+                                    method = sp.OrderMethod.TRADE_IMMEDIATELY,
+                                    order_type=sp.OrderType.MODIFY)
+            stub.RequestToTrader(sp.TradeMsg(msg_type=sp.TradeMsgType.ORDER_MSG, order_msg=order_msg))
         elif result.startswith('buys'):
             tokens = result.split(',')  
             if len(tokens) != 3:
@@ -189,7 +203,24 @@ def key_input(stub):
                                         price=price,
                                         quantity=quantity,
                                         percentage = 0,
-                                        method = sp.OrderMethod.TRADE_ON_PRICE)
+                                        method = sp.OrderMethod.TRADE_ON_PRICE,
+                                        order_type=sp.OrderType.NEW)
+                stub.RequestToTrader(sp.TradeMsg(msg_type=sp.TradeMsgType.ORDER_MSG, order_msg=order_msg))
+        elif result.startswith('cancel'):
+            token = result.split(',')
+            if len(token) != 2:
+                print('cancel,order_num')
+                continue
+            code = 'A005930'
+            order_num = token[1] 
+            if code in stock_dict:
+                order_msg = sp.OrderMsg(code=code,
+                                        is_buy=True,
+                                        quantity=0,
+                                        percentage = 0,
+                                        order_num=order_num,
+                                        method = sp.OrderMethod.TRADE_UNKNOWN,
+                                        order_type=sp.OrderType.CANCEL)
                 stub.RequestToTrader(sp.TradeMsg(msg_type=sp.TradeMsgType.ORDER_MSG, order_msg=order_msg))
         elif result == 'sell':
             code = 'A005930'
@@ -199,7 +230,8 @@ def key_input(stub):
                                         price=get_current_price(code),
                                         quantity=0,
                                         percentage=100,
-                                        method=sp.OrderMethod.TRADE_IMMEDIATELY)
+                                        method=sp.OrderMethod.TRADE_IMMEDIATELY,
+                                        order_type=sp.OrderType.NEW)
                 stub.RequestToTrader(sp.TradeMsg(msg_type=sp.TradeMsgType.ORDER_MSG, order_msg=order_msg))
         elif result == 'exit':
             break
