@@ -71,6 +71,11 @@ class StockStub(object):
         request_serializer=stock__provider__pb2.OrderResult.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
+    self.IsKospi = channel.unary_unary(
+        '/stock_api.Stock/IsKospi',
+        request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
+        response_deserializer=stock__provider__pb2.Bool.FromString,
+        )
     self.ListenTraderMsg = channel.unary_stream(
         '/stock_api.Stock/ListenTraderMsg',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -273,6 +278,13 @@ class StockServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def ReportOrderResult(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def IsKospi(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -511,6 +523,11 @@ def add_StockServicer_to_server(servicer, server):
           servicer.ReportOrderResult,
           request_deserializer=stock__provider__pb2.OrderResult.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'IsKospi': grpc.unary_unary_rpc_method_handler(
+          servicer.IsKospi,
+          request_deserializer=stock__provider__pb2.StockCodeQuery.FromString,
+          response_serializer=stock__provider__pb2.Bool.SerializeToString,
       ),
       'ListenTraderMsg': grpc.unary_stream_rpc_method_handler(
           servicer.ListenTraderMsg,

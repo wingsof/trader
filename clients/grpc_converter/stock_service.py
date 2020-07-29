@@ -274,6 +274,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
         return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
       
+    def IsKospi(self, request, context):
+        return stock_provider_pb2.Bool(ret= morning_client.is_kospi_code(request.code))
+
     def GetCompanyName(self, request, context):
         #print('Before get company name', request.code)
         company_name = morning_client.code_to_name(request.code)
@@ -715,7 +718,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
 
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=30))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=60))
     stock_provider_pb2_grpc.add_StockServicer_to_server(StockServicer(), server)
     server.add_insecure_port('[::]:50052')
     server.start()

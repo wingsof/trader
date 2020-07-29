@@ -19,14 +19,15 @@ def get_balance():
     return balance.balance
 
 
-def pay_for_stock(amount):
+def pay_for_stock(amount, use_tax=True):
     global _balance
 
     if simulstatus.is_simulation():
-        if amount < 0.0:
+        if amount < 0.0 and use_tax:
             amount = amount * (1 - TAX_RATE)
 
         _balance -= amount
+        _balance = int(_balance)
         print('CURRENT ACCOUNT: ', _balance, amount)
 
 

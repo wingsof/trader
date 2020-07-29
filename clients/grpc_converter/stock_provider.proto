@@ -21,6 +21,9 @@ service Stock {
   rpc RequestToTrader(TradeMsg) returns (google.protobuf.Empty) {}
   rpc RequestCybosOrderResult(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   rpc ReportOrderResult(OrderResult) returns (google.protobuf.Empty) {}
+
+  rpc IsKospi(StockCodeQuery) returns (Bool) {}
+
   rpc ListenTraderMsg(google.protobuf.Empty) returns (stream TradeMsg) {}
   rpc ListenCybosOrderResult(google.protobuf.Empty) returns (stream CybosOrderResult) {}
   rpc ListenOrderResult(google.protobuf.Empty) returns (stream OrderResult) {}
@@ -64,6 +67,11 @@ message StockCodeQuery {
 
 message CodeList {
     repeated string codelist = 1;
+}
+
+
+message Bool {
+    bool ret = 1;
 }
 
 

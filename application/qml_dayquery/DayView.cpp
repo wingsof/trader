@@ -14,6 +14,7 @@ DayView::DayView(QQuickItem *parent) : QQuickPaintedItem(parent) {
     connect(DataProvider::getInstance(), &DataProvider::timeInfoArrived, this, &DayView::timeInfoArrived);
     connect(DataProvider::getInstance(), &DataProvider::dayDataReady, this, &DayView::dataReceived);
     connect(DataProvider::getInstance(), &DataProvider::tickArrived, this, &DayView::tickDataArrived);
+    connect(DataProvider::getInstance(), &DataProvider::simulationStatusChanged, this, &DayView::simulationStatusChanged);
     DataProvider::getInstance()->startStockCodeListening();
     DataProvider::getInstance()->startStockTick();
 }
@@ -54,8 +55,14 @@ void DayView::setPinnedCode(bool isOn) {
 void DayView::timeInfoArrived(QDateTime dt) {
     if (!currentDateTime.isValid() || (currentDateTime.date() != dt.date())) {
         currentDateTime = dt;
+        mTickMap.clear();
         search();
     }
+}
+
+
+void DayView::simulationStatusChanged(bool isOn) {
+    mTickMap.clear();
 }
 
 
@@ -68,7 +75,7 @@ void DayView::search() {
 
 
 void DayView::dataReceived(QString code, CybosDayDatas *datas) {
-    dayData->setData(code, datas);
+    dayData->setData(code, datas, mTickMap);
     update();
 }
 
@@ -83,7 +90,7 @@ void DayView::fillBackground(QPainter *painter, const QSizeF &itemSize) {
 }
 
 
-void DayView::drawGridLine(QPainter *painter, const QSizeF &itemSize, qreal lineVerticalSpace, qreal endX, int spaceCount) {
+void DayView::drawGridLine(QPainter *painter, qreal lineVerticalSpace, qreal endX, int spaceCount) {
     painter->save();
     QPen pen = painter->pen();
     pen.setWidth(1);
@@ -224,7 +231,7 @@ void DayView::paint(QPainter *painter) {
     painter->setRenderHint(QPainter::Antialiasing);
 
     fillBackground(painter, itemSize);
-    drawGridLine(painter, itemSize, verticalGridStep * 2, itemSize.width() - priceLabelWidth,
+    drawGridLine(painter, verticalGridStep * 2, itemSize.width() - priceLabelWidth,
                         (int)(horizontalLineCount / 2));
 
     if (!dayData->hasData() || dayData->countOfData() == 0) 
@@ -365,10 +372,17 @@ qreal DayView::getCandleLineWidth(qreal w) {
 
 
 void DayView::tickDataArrived(CybosTickData *data) {
+    QString code = QString::fromStdString(data->code());
+    if (!mTickMap.contains(code))
+        mTickMap[code] = TickStat();
+    mTickMap[code].setStat(
+        (data->highest_price() > data->current_price() ? data->highest_price() : data->current_price()),
+        (data->lowest_price() < data->current_price() ? data->lowest_price() : data->current_price()), data->cum_volume());
+
     if (!dayData->hasData() || dayData->countOfData() == 0)
         return;
 
-    if (QString::fromStdString(data->code()) == stockCode) {
+    if (code == stockCode) {
         //qWarning() << "start : " << data->start_price() << "\t" <<
         //                "highest : " << data->highest_price() << "\t" <<
         //               "lowest : " << data->lowest_price() << "\t" <<
@@ -438,11 +452,11 @@ void DayData::setTodayData(int o, int h, int l, int c, unsigned long v, bool is_
         int highest = todayData->close_price() > todayData->highest_price() ? todayData->close_price() : todayData->highest_price();
         int lowest = todayData->close_price() < todayData->lowest_price() ? todayData->close_price() : todayData->lowest_price();
 
-        if (highest > priceSteps.at(stepCount - 1)) {
+        if (highest * 1.05 > priceSteps.at(stepCount - 1)) {
             setPriceSteps(priceSteps.at(0), highest);
             setPPS();
         }
-        else if ( lowest < priceSteps.at(0)) {
+        else if ( lowest * 0.95 < priceSteps.at(0)) {
             setPriceSteps(lowest, priceSteps.at(stepCount - 1));
             setPPS();
         }
@@ -450,14 +464,8 @@ void DayData::setTodayData(int o, int h, int l, int c, unsigned long v, bool is_
 }
 
 
-void DayData::setData(QString _code, CybosDayDatas *dayData) {
+void DayData::setData(QString _code, CybosDayDatas *dayData, const QMap<QString, TickStat> &tickStatMap) {
     code = _code;
-
-    /*
-    if (data != NULL) {
-        data->clear_day_data();
-        delete data;
-    }*/
 
     data = dayData;
     qWarning() << "setData count : " << data->day_data_size();
@@ -481,6 +489,16 @@ void DayData::setData(QString _code, CybosDayDatas *dayData) {
         if (data->day_data(i).volume() < lowestVolume)
             lowestVolume = data->day_data(i).volume();
         //qWarning() << data->day_data(i).date() << "\tvolume:" << data->day_data(i).volume() << "\tfhold:" << data->day_data(i).foreigner_hold_volume() << "\tibuy:" << data->day_data(i).institution_buy_volume() << "\ticum_buy:" << data->day_data(i).institution_cum_buy_volume() << "\tfhold_rate:" << data->day_data(i).foreigner_hold_rate() << "\tcum_buy:" << data->day_data(i).cum_buy_volume() << "\tcum_sell" << data->day_data(i).cum_sell_volume();
+    }
+    if (tickStatMap.contains(code)) {
+        if (tickStatMap[code].getHighestPrice() > highestPrice)
+            highestPrice = tickStatMap[code].getHighestPrice();
+
+        if (tickStatMap[code].getLowestPrice() < lowestPrice)
+            lowestPrice = tickStatMap[code].getLowestPrice();
+
+        if (tickStatMap[code].getMaxVolume() > highestVolume)
+            highestVolume = tickStatMap[code].getMaxVolume();
     }
     setPriceSteps(lowestPrice, highestPrice);
     setPPS();
@@ -524,6 +542,8 @@ void DayData::setPriceSteps(int l, int h) {
     institutionPPS.clear();
 
     //const int PRICE_STEPS = 12;
+    h = int(h * 1.1);
+    l = int(l * 0.9);
     int priceGap = (h - l) / 10;
     if (priceGap < 100)
         priceGap = 10;
@@ -532,9 +552,10 @@ void DayData::setPriceSteps(int l, int h) {
 
     int minimumUnit = l - (l % priceGap);
     int step = (h - minimumUnit) / 10;
-    step = step - (step % priceGap);
+    step = step - (step % priceGap) + priceGap;
+
     while (step * PRICE_STEPS + minimumUnit < h) 
-        step += 5;
+        step += priceGap;
 
     for (int i = 0; i < PRICE_STEPS + 1; i++) 
         priceSteps.append(minimumUnit + step * i);

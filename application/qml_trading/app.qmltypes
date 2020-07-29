@@ -305,5 +305,10 @@ Module {
             Parameter { name: "row"; type: "int" }
             Parameter { name: "orderNum"; type: "string" }
         }
+        Method {
+            name: "cancelOrder"
+            Parameter { name: "row"; type: "int" }
+            Parameter { name: "orderNum"; type: "string" }
+        }
     }
 }

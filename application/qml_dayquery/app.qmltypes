@@ -38,5 +38,9 @@ Module {
             name: "timeInfoArrived"
             Parameter { name: "dt"; type: "QDateTime" }
         }
+        Method {
+            name: "simulationStatusChanged"
+            Parameter { type: "bool" }
+        }
     }
 }

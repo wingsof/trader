@@ -15,7 +15,6 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
-
         ViList {
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -25,12 +24,10 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
-
         RecentList {
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
-
         YtopAmountList {
             Layout.fillWidth: true
             Layout.fillHeight: true

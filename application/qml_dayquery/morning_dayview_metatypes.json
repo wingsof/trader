@@ -115,6 +115,16 @@
                         ],
                         "name": "timeInfoArrived",
                         "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "type": "bool"
+                            }
+                        ],
+                        "name": "simulationStatusChanged",
+                        "returnType": "void"
                     }
                 ],
                 "superClasses": [

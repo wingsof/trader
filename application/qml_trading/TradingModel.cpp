@@ -46,7 +46,15 @@ void TradingModel::tickArrived(CybosTickData *data) {
 void TradingModel::changeToImmediate(int row, const QString &orderNum) {
     qWarning() << "changeToImmediate : " << row << " " << orderNum;
     if (mTradeData.at(row).getOrderNum() == orderNum) {
-        DataProvider::getInstance()->changeToImmediate(mTradeData.at(row).getCode(), orderNum);
+        DataProvider::getInstance()->changeToImmediate(mTradeData.at(row).getCode(), orderNum, 100);
+    }
+}
+
+
+void TradingModel::cancelOrder(int row, const QString &orderNum) {
+    qWarning() << "cancelOrder : " << row << " " << orderNum;
+    if (mTradeData.at(row).getOrderNum() == orderNum) {
+        DataProvider::getInstance()->cancelOrder(mTradeData.at(row).getCode(), orderNum);
     }
 }
 

@@ -50,6 +50,7 @@ using stock_api::OrderMsg;
 using stock_api::TradeMsg;
 using stock_api::TradeMsgType;
 using stock_api::OrderType;
+using stock_api::Bool;
 
 
 DataProvider::DataProvider()
@@ -302,7 +303,7 @@ QStringList DataProvider::getViList(int option, bool catchPlus) {
 }
 
 
-void DataProvider::changeToImmediate(const QString &code, const QString &orderNum) {
+void DataProvider::changeToImmediate(const QString &code, const QString &orderNum, int percentage) {
     ClientContext context;
     Empty empty;
     TradeMsg tradeMsg;
@@ -310,8 +311,23 @@ void DataProvider::changeToImmediate(const QString &code, const QString &orderNu
     OrderMsg *msg = new OrderMsg;
     msg->set_code(code.toStdString());
     msg->set_order_num(orderNum.toStdString());
+    msg->set_percentage(percentage);
     msg->set_method(OrderMethod::TRADE_IMMEDIATELY);
     msg->set_order_type(OrderType::MODIFY);
+    tradeMsg.set_allocated_order_msg(msg);
+    stub_->RequestToTrader(&context, tradeMsg, &empty);
+}
+
+
+void DataProvider::cancelOrder(const QString &code, const QString &orderNum) {
+    ClientContext context;
+    Empty empty;
+    TradeMsg tradeMsg;
+    tradeMsg.set_msg_type(TradeMsgType::ORDER_MSG);
+    OrderMsg *msg = new OrderMsg;
+    msg->set_code(code.toStdString());
+    msg->set_order_num(orderNum.toStdString());
+    msg->set_order_type(OrderType::CANCEL);
     tradeMsg.set_allocated_order_msg(msg);
     stub_->RequestToTrader(&context, tradeMsg, &empty);
 }
@@ -359,6 +375,16 @@ void DataProvider::addToFavorite(const QString &code) {
     data.set_code(code.toStdString());
     Empty empty;
     stub_->AddFavorite(&context, data, &empty);
+}
+
+
+bool DataProvider::isKospi(const QString &code) {
+    ClientContext context;
+    StockCodeQuery data; 
+    data.set_code(code.toStdString());
+    Bool ret;
+    stub_->IsKospi(&context, data, &ret);
+    return ret.ret();
 }
 
 

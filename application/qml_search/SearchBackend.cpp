@@ -17,12 +17,12 @@ SearchBackend::SearchBackend(QObject *parent)
     connect(DataProvider::getInstance(), &DataProvider::simulationStatusChanged, this, &SearchBackend::setSimulationStatus);
     DataProvider::getInstance()->startStockCodeListening();
     m_simulationRunning = DataProvider::getInstance()->isSimulation();
-    qWarning() << "SearchBackend";
+    //qWarning() << "SearchBackend";
 }
 
 
 void SearchBackend::timeInfoArrived(QDateTime dt) {
-    qWarning() << "SearchBackend>\t" << "timeInfoArrived : " << dt;
+    //qWarning() << "SearchBackend>\t" << "timeInfoArrived : " << dt;
     setServerDateTime(dt);
 }
 

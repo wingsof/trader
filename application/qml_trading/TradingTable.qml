@@ -103,6 +103,7 @@ TableView {
                         implicitHeight: 30
                         anchors.verticalCenter: parent.verticalCenter
                         text: "C"
+                        onClicked: tradingTable.model.cancelOrder(model.row, order_num)
                     }
                 }
             }

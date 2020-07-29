@@ -59,6 +59,7 @@ public:
     void addToFavorite(const QString &code);
     void removeFromFavorite(const QString &code);
 
+    bool isInFavoriteList(const QString &code) const;
     StockInfo * getInfo(const QString &code);
     void setCurrentCode(const QString &section, const QString &code);
     const QDateTime &currentDateTime() { return m_currentDateTime; }
@@ -69,6 +70,7 @@ private:
     QMap<QString, StockInfo *> infoMap;
     QDateTime m_currentDateTime;
     void clearStat();
+    QStringList mCurrentFavoriteList;
 
 private slots:
     void tickArrived(CybosTickData *);

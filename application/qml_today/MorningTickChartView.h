@@ -3,6 +3,8 @@
 
 #include <QQuickPaintedItem>
 #include <QPainter>
+#include <QTransform>
+#include <QWheelEvent>
 #include "DataProvider.h"
 #include "MinInfo.h"
 
@@ -34,6 +36,9 @@ private:
     QTime todayStartTime;
     bool pastMinuteDataReceived;
     QDateTime currentDateTime;
+    QTransform mTransform;
+    qreal mScale = 1.0;
+    QPoint mPrevPoint;
 
     void resetData();
     void sendRequestData();
@@ -55,6 +60,11 @@ private:
     void drawTimeLabels(QPainter *painter, qreal tickWidth, qreal cw, qreal ch, qreal startX, int cellCount, uint startTime);
     void drawPriceLabels(QPainter *painter, qreal startX, qreal ch);
     void drawCurrentLineRange(QPainter *painter, MinuteTick * mt,const CybosDayData &data, qreal cw, qreal priceChartEndY);
+
+protected:
+    void wheelEvent(QWheelEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private slots:
     void setCurrentStock(QString);

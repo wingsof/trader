@@ -48,6 +48,7 @@ def bidask_subscriber():
 
 def order_callback(result):
     stub.ReportOrderResult(stock_provider.OrderResult(report=result, current_balance=account.get_balance()))
+    print('report order result')
 
 
 def handle_order():

@@ -54,7 +54,7 @@ ListView {
             columns: 6
             rowSpacing: 0
             columnSpacing: 0
-            Text {
+            Rectangle {
                 Layout.row: 0
                 Layout.column: 0
                 Layout.minimumWidth: parent.width * 4 / 6
@@ -64,11 +64,15 @@ ListView {
                 height: parent.height * 2 / 3
                 Layout.rowSpan: 2
                 Layout.columnSpan: 4
-                text: display
-                verticalAlignment: Text.AlignVCenter
-                leftPadding: 3
-                elide: Text.ElideRight
-                font.pointSize: 13
+                color: is_favorite?"#50FFFF00":"#FFFFFF"
+                Text {
+                    text: display
+                    anchors.fill: parent
+                    verticalAlignment: Text.AlignVCenter
+                    leftPadding: 3
+                    elide: Text.ElideRight
+                    font.pointSize: 13
+                }
             }
 
             Loader {

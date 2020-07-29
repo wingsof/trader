@@ -9,6 +9,9 @@
 
 MorningTickChartView::MorningTickChartView(QQuickItem *parent)
 : QQuickPaintedItem(parent), yesterdayMinInfo(3) {
+    //setOpaquePainting(true);
+    setAntialiasing(true);
+    setAcceptedMouseButtons(Qt::AllButtons);
     //todayStartHour = 9;
     todayStartTime = QTime(8, 30);
     connect(DataProvider::getInstance(), &DataProvider::minuteTickUpdated,
@@ -27,9 +30,41 @@ MorningTickChartView::MorningTickChartView(QQuickItem *parent)
 }
 
 
+void MorningTickChartView::wheelEvent(QWheelEvent *event) {
+    if (event->orientation() == Qt::Vertical) {
+        auto pos = event->pos();
+        mScale = 1 + (float(event->delta())/1200);
+        auto tm = QTransform()
+                .translate(pos.x(), pos.y())
+                .scale(mScale, mScale)
+                .translate(-pos.x(), -pos.y());
+        mTransform *= tm;
+        update();
+    }
+}
+
+
+void MorningTickChartView::mousePressEvent(QMouseEvent *event) {
+    mPrevPoint = event->pos();
+}
+
+
+void MorningTickChartView::mouseMoveEvent(QMouseEvent *event) {
+    auto curPos = event->pos();
+    auto offsetPos = curPos - mPrevPoint;
+    auto tm = QTransform()
+            .translate(offsetPos.x(), offsetPos.y());
+    mPrevPoint = curPos;
+    mTransform *= tm;
+    update();
+}
+
+
 void MorningTickChartView::resetData() {
     currentVolumeMin = currentVolumeMax = 0;
     pastMinuteDataReceived = false;
+    mScale = 1.0;
+    mTransform.reset();
     priceSteps.clear();
     yesterdayMinInfo.clear();
 }
@@ -101,19 +136,16 @@ void MorningTickChartView::calculateMinMaxRange() {
     int lowest = yesterdayMinInfo.getLowestPrice();
     uint highestVolume = yesterdayMinInfo.getHighestVolume();
     qWarning() << "(yesterday) " << highest << ", " << lowest;
-    if (yesterdayMinInfo.isCloserToMaximum()) 
-        setPriceSteps((int)(highest * 1.05), lowest);
-    else 
-        setPriceSteps(highest, (int)(lowest * 0.95));
+    setPriceSteps(highest, lowest);
 
     if (mt != NULL) {
         qWarning() << "(mt) " << mt->getHighestPrice() << ", " << mt->getLowestPrice();
         if (mt->getHighestPrice() > highest)
-            highest = mt->getHighestPrice() * 1.05;
+            highest = mt->getHighestPrice();
 
         // Start Simulation -> Launch Tick App -> Tick is arrived first but not lowest price is calculated yet
         if (mt->getLowestPrice() != 0 && mt->getLowestPrice() < lowest)
-            lowest = mt->getLowestPrice() * 0.95;
+            lowest = mt->getLowestPrice();
 
         if (mt->getHighestVolume() > highestVolume)
             highestVolume = mt->getHighestVolume();
@@ -197,18 +229,45 @@ void MorningTickChartView::drawGridLine(QPainter *painter, qreal cw, qreal ch) {
 
 
 void MorningTickChartView::setPriceSteps(int h, int l) {
+    qWarning() << "setPriceSteps : " << h << " " << l;
+    int high = 0, low = 0;
+    if (priceSteps.count() == 0) {
+        high = int(h * 1.05);
+        low = int(l * 0.95);
+    }
+    else {
+        if (h == 0) {
+            high = priceSteps.at(priceSteps.count() - 1);
+            low = int(l * 0.95);
+        }
+        
+        if (l == 0) {
+            high = int(h * 1.05);
+            low = priceSteps.at(0);
+        }
+
+        if (h != 0 && l != 0) {
+            high = int(h * 1.05);
+            low = int(l * 0.95);
+        }
+    }
     priceSteps.clear();
-    int priceGap = (h - l) / PRICE_ROW_COUNT;
+
+
+    int priceGap = (high - low) / PRICE_ROW_COUNT;
+    qWarning() << "priceGap : " << high << " " << low << " gap: " << priceGap;
     if (priceGap < 100)
         priceGap = 10;
     else
         priceGap = 100;
 
-    int minimumUnit = l - (l % priceGap);
-    int step = (h - minimumUnit) / PRICE_ROW_COUNT;
+    int minimumUnit = low - (low % priceGap);
+    int step = (high - minimumUnit) / PRICE_ROW_COUNT;
     step = step - (step % priceGap);
-    while (step * PRICE_ROW_COUNT + minimumUnit < h) 
+    qWarning() << "minimumUnit : " << minimumUnit << " STEP : " << step << " HIGH : " << high << " SUM : " << step * PRICE_ROW_COUNT + minimumUnit;
+    while (step * PRICE_ROW_COUNT + minimumUnit < high) 
         step += priceGap;
+    qWarning() << "STEP 2 : " << step;
 
     for (int i = 0; i < PRICE_ROW_COUNT + 1; i++) 
         priceSteps.append(minimumUnit + step * i);
@@ -217,15 +276,16 @@ void MorningTickChartView::setPriceSteps(int h, int l) {
 
 
 void MorningTickChartView::updatePriceSteps(int h, int l) {
+    qWarning() << "updatePriceSteps : " << h << " " << l;
     if (priceSteps.count() == 0) {
-        setPriceSteps((int)(h * 1.05), (int)(l * 0.95));
+        setPriceSteps(h, l);
     }
     else {
-        if (l < priceSteps.at(0)) 
-            setPriceSteps(priceSteps.at(priceSteps.count() - 1), int(l * 0.95));
+        if (l * 0.97 < priceSteps.at(0))
+            setPriceSteps(0, l);
 
-        if (h > priceSteps.at(priceSteps.count() - 1)) 
-            setPriceSteps((int)(h * 1.05), priceSteps.at(0));
+        if (h * 1.03 > priceSteps.at(priceSteps.count() - 1)) 
+            setPriceSteps(h, 0);
     }
 }
 
@@ -414,7 +474,8 @@ void MorningTickChartView::drawCurrentLineRange(QPainter *painter, MinuteTick *m
 
 void MorningTickChartView::paint(QPainter *painter) {
     //qWarning() << "MorningTickChartView paint";
-    painter->setRenderHint(QPainter::Antialiasing);
+    //painter->setRenderHint(QPainter::Antialiasing);
+    painter->setTransform(mTransform);
     QSizeF canvasSize = size();
     qreal cellHeight = canvasSize.height() / ROW_COUNT;
     qreal cellWidth = canvasSize.width() / COLUMN_COUNT;

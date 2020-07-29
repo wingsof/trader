@@ -24,6 +24,21 @@
                         ],
                         "name": "changeToImmediate",
                         "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "row",
+                                "type": "int"
+                            },
+                            {
+                                "name": "orderNum",
+                                "type": "QString"
+                            }
+                        ],
+                        "name": "cancelOrder",
+                        "returnType": "void"
                     }
                 ],
                 "object": true,

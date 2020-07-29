@@ -83,8 +83,11 @@ public:
 
     void buy(const QString &code, int price, int qty, int per, OrderMethod m);
     void sell(const QString &code, int price, int qty, int per, OrderMethod m);
-    void changeToImmediate(const QString &code, const QString &orderNum);
+    void changeToImmediate(const QString &code, const QString &orderNum, int percentage);
+    void cancelOrder(const QString &code, const QString &orderNum);
     void sendBalanceRequest();
+
+    bool isKospi(const QString &code);
 
 private:
     DataProvider();

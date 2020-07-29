@@ -8,6 +8,9 @@ from datetime import timedelta
 import stock_provider_pb2 as stock_provider
 
 
+IMMEDIATE_PRICE_POS = 3
+
+
 class OrderSheet:
     def __init__(self, code, order_callback):
         self.order_callback = order_callback
@@ -36,15 +39,27 @@ class OrderSheet:
         else:
             self.sell.append(new_order)
 
-    def change_order(self, order):
+    def find_match_order(self, order):
         all_orders = []
         all_orders.extend(self.buy)
         all_orders.extend(self.sell)
         for ao in all_orders:
             print(order.order_num, ao.order_num, ao.internal_order_num, ao.quantity)
             if (order.order_num == ao.order_num or order.order_num == ao.internal_order_num) and ao.quantity > 0:
-                return ao.change_order(order)
+                return ao
+        return None
 
+    def change_order(self, order):
+        matched_order = self.find_match_order(order)
+        if matched_order is not None:
+            return matched_order.change_order(order)
+
+        return False
+
+    def cancel_order(self, order):
+        matched_order = self.find_match_order(order)
+        if matched_order is not None:
+            return matched_order.cancel_order(order)
         return False
 
     def get_remain_sell_count(self):
@@ -69,6 +84,8 @@ class OrderSheet:
             if is_buy and self.total_quantity > 0 and self.get_remain_sell_count() == 0:
                 if self.cut_rate == 0.0:
                     self.create_sell_order()
+        elif status == stock_provider.OrderStatusFlag.STATUS_CONFIRM:
+            pass
                     
         self.send_report()
 
@@ -136,13 +153,13 @@ class Spread:
 
     def get_immediate_price(self, is_buy):
         if is_buy and len(self.ask_spread) > 0:
-            if len(self.ask_spread) > 2:
-                return self.ask_spread[2]
+            if len(self.ask_spread) > IMMEDIATE_PRICE_POS:
+                return self.ask_spread[IMMEDIATE_PRICE_POS]
             else:
                 return self.ask_spread[-1]
         elif not is_buy and len(self.bid_spread) > 0:
-            if len(self.bid_spread) > 2:
-                return self.bid_spread[2]
+            if len(self.bid_spread) > IMMEDIATE_PRICE_POS:
+                return self.bid_spread[IMMEDIATE_PRICE_POS]
             else:
                 return self.bid_spread[-1]
         print('Cannot find immmediate price', is_buy, self.bid_spread, self.ask_spread)
@@ -168,22 +185,26 @@ class Spread:
         self.ask_remains = ar
 
     def add_order(self, cash, order):
-        if order.order_type == stock_provider.OrderType.NEW:
-            if order.method == stock_provider.OrderMethod.TRADE_IMMEDIATELY:
-                order.price = self.get_immediate_price(order.is_buy)
-                if order.price == 0:
-                    print('Price is zero')
-                    return
-
-                if order.is_buy and order.percentage > 0:
-                    order.quantity = int(cash * order.percentage / 100.0 / order.price)
-                elif not order.is_buy and order.percentage > 0:
-                    order.quantity = int(math.ceil(self.get_sell_available() * order.percentage / 100))
-                # Later consider this case, when no available sell but want 50% sell in specific price
-
-            if order.quantity == 0 or order.price == 0:
-                print('Order quantity or price is zero', order.quantity, order.price)
+        if order.method == stock_provider.OrderMethod.TRADE_IMMEDIATELY:
+            order.price = self.get_immediate_price(order.is_buy)
+            if order.price == 0:
+                print('Price is zero')
                 return
+
+            if order.is_buy and order.percentage > 0:
+                order.quantity = int(cash * order.percentage / 100.0 / order.price)
+            elif not order.is_buy and order.percentage > 0:
+                order.quantity = int(math.ceil(self.get_sell_available() * order.percentage / 100))
+            # Later consider this case, when no available sell but want 50% sell in specific price
+
+        if order.order_type != stock_provider.OrderType.CANCEL and (order.quantity == 0 or order.price == 0):
+            print('Order quantity or price is zero', order.quantity, order.price)
+            return
+
+
+        if order.order_type == stock_provider.OrderType.NEW:
             self.ordersheet.add_new_order(order)
         elif order.order_type == stock_provider.OrderType.MODIFY: 
             self.ordersheet.change_order(order)
+        elif order.order_type == stock_provider.OrderType.CANCEL:
+            self.ordersheet.cancel_order(order)

@@ -8,6 +8,30 @@
 #include "stock_provider.grpc.pb.h"
 
 
+class TickStat {
+public:
+    TickStat() {
+        mHighestPrice = mLowestPrice = 0;
+        mMaxVolume = 0;
+    }
+
+    void setStat(int l, int h, unsigned long maxV) {
+        mHighestPrice = h;
+        mLowestPrice = l;
+        mMaxVolume = maxV;
+    }
+
+    int getHighestPrice() const { return mHighestPrice; }
+    int getLowestPrice() const { return mLowestPrice; }
+    unsigned long getMaxVolume() const { return mMaxVolume; }
+private:
+    int mHighestPrice;
+    int mLowestPrice;
+    unsigned long mMaxVolume;
+
+};
+
+
 class DayData {
 public:
     static const int PRICE_STEPS = 12;
@@ -16,7 +40,7 @@ public:
     ~DayData();
 
     int countOfData();
-    void setData(QString, CybosDayDatas *);
+    void setData(QString, CybosDayDatas *, const QMap<QString, TickStat> &tickStatMap);
     bool hasData();
 
     void setTodayData(int o, int h, int l, int c, unsigned long v, bool is_synchronized_bidding);
@@ -76,10 +100,11 @@ public:
     QString pcode() { return mPcode; }
     void setPcode(const QString &code);
     QString corporateName() { return mCorporateName; }
+    QMap<QString, TickStat> mTickMap;
 
 private:
     void fillBackground(QPainter *painter, const QSizeF &itemSize);
-    void drawGridLine(QPainter *painter, const QSizeF &itemSize, qreal lineVerticalSpace, qreal endX, int spaceCount);
+    void drawGridLine(QPainter *painter, qreal lineVerticalSpace, qreal endX, int spaceCount);
     void drawPriceDistribution(QPainter *painter, qreal startX, qreal dWidth, qreal priceChartEndY, qreal priceHeightSpace);
     void drawForeignerPriceDistribution(QPainter *painter, qreal startX, qreal dWidth, qreal priceChartEndY, qreal priceHeightSpace);
     void drawInstitutionPriceDistribution(QPainter *painter, qreal startX, qreal dWidth, qreal priceChartEndY, qreal priceHeightSpace);
@@ -116,6 +141,7 @@ private slots:
     void searchReceived(QString);
     void tickDataArrived(CybosTickData *);
     void timeInfoArrived(QDateTime dt);
+    void simulationStatusChanged(bool);
 };
 
 

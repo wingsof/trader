@@ -50,7 +50,7 @@ struct TableStruct_stock_5fprovider_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[21]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[22]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -61,6 +61,9 @@ namespace stock_api {
 class Balance;
 class BalanceDefaultTypeInternal;
 extern BalanceDefaultTypeInternal _Balance_default_instance_;
+class Bool;
+class BoolDefaultTypeInternal;
+extern BoolDefaultTypeInternal _Bool_default_instance_;
 class CodeList;
 class CodeListDefaultTypeInternal;
 extern CodeListDefaultTypeInternal _CodeList_default_instance_;
@@ -124,6 +127,7 @@ extern TradeMsgDefaultTypeInternal _TradeMsg_default_instance_;
 }  // namespace stock_api
 PROTOBUF_NAMESPACE_OPEN
 template<> ::stock_api::Balance* Arena::CreateMaybeMessage<::stock_api::Balance>(Arena*);
+template<> ::stock_api::Bool* Arena::CreateMaybeMessage<::stock_api::Bool>(Arena*);
 template<> ::stock_api::CodeList* Arena::CreateMaybeMessage<::stock_api::CodeList>(Arena*);
 template<> ::stock_api::CompanyName* Arena::CreateMaybeMessage<::stock_api::CompanyName>(Arena*);
 template<> ::stock_api::CybosBidAskTickData* Arena::CreateMaybeMessage<::stock_api::CybosBidAskTickData>(Arena*);
@@ -537,6 +541,134 @@ class CodeList :
 };
 // -------------------------------------------------------------------
 
+class Bool :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.Bool) */ {
+ public:
+  Bool();
+  virtual ~Bool();
+
+  Bool(const Bool& from);
+  Bool(Bool&& from) noexcept
+    : Bool() {
+    *this = ::std::move(from);
+  }
+
+  inline Bool& operator=(const Bool& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Bool& operator=(Bool&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const Bool& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Bool* internal_default_instance() {
+    return reinterpret_cast<const Bool*>(
+               &_Bool_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(Bool& a, Bool& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Bool* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Bool* New() const final {
+    return CreateMaybeMessage<Bool>(nullptr);
+  }
+
+  Bool* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Bool>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const Bool& from);
+  void MergeFrom(const Bool& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Bool* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "stock_api.Bool";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
+    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRetFieldNumber = 1,
+  };
+  // bool ret = 1;
+  void clear_ret();
+  bool ret() const;
+  void set_ret(bool value);
+  private:
+  bool _internal_ret() const;
+  void _internal_set_ret(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.Bool)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  bool ret_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_stock_5fprovider_2eproto;
+};
+// -------------------------------------------------------------------
+
 class Option :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.Option) */ {
  public:
@@ -579,7 +711,7 @@ class Option :
                &_Option_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(Option& a, Option& b) {
     a.Swap(&b);
@@ -729,7 +861,7 @@ class Balance :
                &_Balance_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(Balance& a, Balance& b) {
     a.Swap(&b);
@@ -857,7 +989,7 @@ class StockQuery :
                &_StockQuery_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(StockQuery& a, StockQuery& b) {
     a.Swap(&b);
@@ -1026,7 +1158,7 @@ class TopList :
                &_TopList_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(TopList& a, TopList& b) {
     a.Swap(&b);
@@ -1191,7 +1323,7 @@ class SimulationStatus :
                &_SimulationStatus_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(SimulationStatus& a, SimulationStatus& b) {
     a.Swap(&b);
@@ -1330,7 +1462,7 @@ class OrderMsg :
                &_OrderMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(OrderMsg& a, OrderMsg& b) {
     a.Swap(&b);
@@ -1549,7 +1681,7 @@ class TradeMsg :
                &_TradeMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    9;
 
   friend void swap(TradeMsg& a, TradeMsg& b) {
     a.Swap(&b);
@@ -1694,7 +1826,7 @@ class Report :
                &_Report_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    10;
 
   friend void swap(Report& a, Report& b) {
     a.Swap(&b);
@@ -1966,7 +2098,7 @@ class OrderResult :
                &_OrderResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    11;
 
   friend void swap(OrderResult& a, OrderResult& b) {
     a.Swap(&b);
@@ -2114,7 +2246,7 @@ class CybosOrderResult :
                &_CybosOrderResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(CybosOrderResult& a, CybosOrderResult& b) {
     a.Swap(&b);
@@ -2322,7 +2454,7 @@ class ListType :
                &_ListType_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(ListType& a, ListType& b) {
     a.Swap(&b);
@@ -2457,7 +2589,7 @@ class CompanyName :
                &_CompanyName_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(CompanyName& a, CompanyName& b) {
     a.Swap(&b);
@@ -2592,7 +2724,7 @@ class PastMinuteQuery :
                &_PastMinuteQuery_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(PastMinuteQuery& a, PastMinuteQuery& b) {
     a.Swap(&b);
@@ -2755,7 +2887,7 @@ class CybosDayData :
                &_CybosDayData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    16;
 
   friend void swap(CybosDayData& a, CybosDayData& b) {
     a.Swap(&b);
@@ -3037,7 +3169,7 @@ class CybosDayDatas :
                &_CybosDayDatas_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    17;
 
   friend void swap(CybosDayDatas& a, CybosDayDatas& b) {
     a.Swap(&b);
@@ -3174,7 +3306,7 @@ class CybosSubjectTickData :
                &_CybosSubjectTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    18;
 
   friend void swap(CybosSubjectTickData& a, CybosSubjectTickData& b) {
     a.Swap(&b);
@@ -3417,7 +3549,7 @@ class CybosTickData :
                &_CybosTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    19;
 
   friend void swap(CybosTickData& a, CybosTickData& b) {
     a.Swap(&b);
@@ -3818,7 +3950,7 @@ class CybosBidAskTickData :
                &_CybosBidAskTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    20;
 
   friend void swap(CybosBidAskTickData& a, CybosBidAskTickData& b) {
     a.Swap(&b);
@@ -4136,7 +4268,7 @@ class CybosStockAlarm :
                &_CybosStockAlarm_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    21;
 
   friend void swap(CybosStockAlarm& a, CybosStockAlarm& b) {
     a.Swap(&b);
@@ -4471,6 +4603,30 @@ inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
 CodeList::mutable_codelist() {
   // @@protoc_insertion_point(field_mutable_list:stock_api.CodeList.codelist)
   return &codelist_;
+}
+
+// -------------------------------------------------------------------
+
+// Bool
+
+// bool ret = 1;
+inline void Bool::clear_ret() {
+  ret_ = false;
+}
+inline bool Bool::_internal_ret() const {
+  return ret_;
+}
+inline bool Bool::ret() const {
+  // @@protoc_insertion_point(field_get:stock_api.Bool.ret)
+  return _internal_ret();
+}
+inline void Bool::_internal_set_ret(bool value) {
+  
+  ret_ = value;
+}
+inline void Bool::set_ret(bool value) {
+  _internal_set_ret(value);
+  // @@protoc_insertion_point(field_set:stock_api.Bool.ret)
 }
 
 // -------------------------------------------------------------------
@@ -8232,6 +8388,8 @@ inline void CybosStockAlarm::set_allocated_content(std::string* content) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

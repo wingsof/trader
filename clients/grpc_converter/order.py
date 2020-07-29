@@ -59,6 +59,14 @@ class Order:
         """
         return True
 
+
+    def cancel_order(self, order_msg):
+        if self.status == sp.OrderStatusFlag.STATUS_SUBMITTED:
+            self.order_type = sp.OrderType.CANCEL
+            trademachine.request_cancel(self) 
+        elif self.status == sp.OrderStatusFlag.STATUS_TRADED:
+            pass # TODO: handle when partial traded then add new sell as registered?
+            
     def set_submitted(self, msg):
         self.order_num = msg.order_number
         self.status = sp.OrderStatusFlag.STATUS_SUBMITTED
@@ -72,6 +80,10 @@ class Order:
 
     def set_confirmed(self, msg):
         print('set confirm', msg.order_number)
+        if self.order_type == sp.OrderType.CANCEL:
+            self.quantity = 0
+            self.status = sp.OrderStatusFlag.STATUS_CONFIRM
+            self.callback(self.status, msg.is_buy, msg.price, msg.quantity, msg.total_quantity)
 
     def get_cybos_order_result(self):
         return sp.CybosOrderResult(flag=self.status,

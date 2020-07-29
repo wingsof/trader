@@ -7,6 +7,7 @@
 #define TPROFIT_ROLE    (Qt::UserRole + 2)
 #define YAMOUNT_ROLE    (Qt::UserRole + 3)
 #define TAMOUNT_ROLE    (Qt::UserRole + 4)
+#define FAVORITE_ROLE   (Qt::UserRole + 5)
 
 
 AbstractListModel::AbstractListModel(QObject *parent)
@@ -143,6 +144,8 @@ QVariant AbstractListModel::data(const QModelIndex &index, int role) const {
         return uint64ToString(rc->yesterdayAmount());
     else if (role == TAMOUNT_ROLE)
         return uint64ToString(rc->todayAmount());
+    else if (role == FAVORITE_ROLE)
+        return QVariant(rc->isFavorite());
 
     return "";
 }
@@ -203,4 +206,9 @@ uint64_t ListItem::yesterdayAmount() const {
 uint64_t ListItem::todayAmount() const {
     StockInfo * info = StockStat::instance()->getInfo(m_code);
     return info->todayAmount();
+}
+
+
+bool ListItem::isFavorite() const {
+    return StockStat::instance()->isInFavoriteList(m_code);
 }

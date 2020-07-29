@@ -54,6 +54,7 @@ public:
     }
 
     Q_INVOKABLE void changeToImmediate(int row, const QString &orderNum);
+    Q_INVOKABLE void cancelOrder(int row, const QString &orderNum);
 
 private:
     QList<TradeData> mTradeData;

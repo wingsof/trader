@@ -20,7 +20,13 @@ QStringList StockStat::getRecentSearch() {
 
 
 QStringList StockStat::getFavoriteList() {
-    return DataProvider::getInstance()->getFavoriteList();
+    mCurrentFavoriteList = DataProvider::getInstance()->getFavoriteList();
+    return mCurrentFavoriteList;
+}
+
+
+bool StockStat::isInFavoriteList(const QString &code) const {
+    return mCurrentFavoriteList.contains(code);
 }
 
 
@@ -50,7 +56,7 @@ void StockStat::removeFromFavorite(const QString &code) {
 
 
 void StockStat::timeInfoArrived(QDateTime dt) {
-    qWarning() << "timeInfo arrived"  << dt << "\tisSimul: " << DataProvider::getInstance()->isSimulation();
+    //qWarning() << "timeInfo arrived"  << dt << "\tisSimul: " << DataProvider::getInstance()->isSimulation();
     if (!m_currentDateTime.isValid() || !DataProvider::getInstance()->isSimulation()) {
         m_currentDateTime = dt;
         clearStat();
@@ -123,6 +129,7 @@ void StockInfo::dayDataReceived(QString code, CybosDayDatas *data) {
     if (m_code != code) 
         return;
     int count = data->day_data_size();
+    // TODO: conside new stocked
     if (count > 1) {
         const CybosDayData &d = data->day_data(count - 1);
         const CybosDayData &d2 = data->day_data(count - 2);
