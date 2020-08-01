@@ -24,6 +24,6 @@ def get_uni_data(code):
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        print(get_uni_data(sys.argv(1)))
+        print(get_uni_data(sys.argv[1]))
     else:
         print('Usage)', sys.argv[0], 'code')
