@@ -19,7 +19,7 @@ def get_uni_data(code):
     for i in range(139):
         d[str(i)] = chart_obj.GetHeaderValue(i)
 
-    return d
+    return [d]
 
 
 if __name__ == '__main__':
