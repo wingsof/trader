@@ -37,11 +37,12 @@ def get_uni_week_data(code):
         for j in range(9):
             d[str(j)] = chart_obj.GetDataValue(j, i)
         data.append(d)
-    return reversed(data)
+    return list(reversed(data))
 
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        print(get_uni_week_data(sys.argv[1]))
+        for d in get_uni_week_data(sys.argv[1]):
+            print(d)
     else:
         print('Usage)', sys.argv[0], 'code')
