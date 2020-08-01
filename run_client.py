@@ -37,7 +37,7 @@ class ClientRunner(threading.Thread):
 if __name__ == '__main__':
     skip_login = False
 
-    if len(sys.argv > 1) and sys.argv[1] == 'skip':
+    if len(sys.argv) > 1 and sys.argv[1] == 'skip':
         skip_login = True
 
     multiprocessing.set_start_method('spawn')
