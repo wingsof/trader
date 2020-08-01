@@ -5,7 +5,8 @@ code_to_name_map = dict()
 
 
 def check_cacheable_data(header, body):
-    cache_code_to_name(header, body)
+    if header['method'] == message.CODE_TO_NAME_DATA:
+        cache_code_to_name(header, body)
 
 
 def get_cached_data(header, body):
@@ -27,6 +28,5 @@ def get_code_to_name(code):
 def cache_code_to_name(header, body):
     global code_to_name_map
 
-    if header['method'] == message.CODE_TO_NAME_DATA:
-        if 'code' in header and isinstance(body, list) and len(body) > 0:
-            code_to_name_map[header['code']] = body[0]
+    if 'code' in header and isinstance(body, list) and len(body) > 0:
+        code_to_name_map[header['code']] = body[0]

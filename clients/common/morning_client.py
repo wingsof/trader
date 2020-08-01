@@ -174,21 +174,26 @@ def get_past_day_data(code, from_date, until_date, mavg=MAVG):
     return cut_by_date_data
 
 
-def get_uni_detail_data(code, from_date, until_date):
+def get_uni_current_period_data(code, from_date, until_date):
     from_date = from_date if from_date.__class__.__name__ == 'date' else from_date.date()
     until_date = until_date if until_date.__class__.__name__ == 'date' else until_date.date()
-    uni_data = stock_api.request_stock_uni_detail_data(get_reader(), code, from_date, until_date)
+    uni_data = stock_api.request_stock_uni_current_period_data(get_reader(), code, from_date, until_date)
     return uni_data
 
 
 def get_uni_current_data(code):
-    return stock_api.request_stock_uni_current_data(code)
+    return stock_api.request_stock_uni_current_data(get_reader(), code)
 
-def get_uni_data(code, from_date, until_date):
+
+def get_uni_day_period_data(code, from_date, until_date):
     from_date = from_date if from_date.__class__.__name__ == 'date' else from_date.date()
     until_date = until_date if until_date.__class__.__name__ == 'date' else until_date.date()
-    uni_data = stock_api.request_stock_uni_data(get_reader(), code, from_date, until_date)
+    uni_data = stock_api.request_stock_uni_day_period_data(get_reader(), code, from_date, until_date)
     return uni_data
+
+
+def get_uni_day_data(code):
+    return stock_api.request_stock_uni_day_data(code)
 
 
 def get_minute_data(code, from_date, until_date, t = 0):
@@ -271,6 +276,7 @@ def db_setup():
 
 if __name__ == '__main__':
     print(get_uni_current_data('A005930'))
+    print(get_uni_day_data('A005930'))
     #codes = get_all_market_code()
     #print(len(codes))
     #print(get_balance())

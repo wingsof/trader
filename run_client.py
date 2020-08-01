@@ -35,23 +35,30 @@ class ClientRunner(threading.Thread):
 
 
 if __name__ == '__main__':
+    skip_login = False
+
+    if len(sys.argv > 1) and sys.argv[1] == 'skip':
+        skip_login = True
+
     multiprocessing.set_start_method('spawn')
     #time.sleep(600) # wait until dhcp related packet is finished
-    login_process = Process(target=auto.run)
-    login_process.start()
-    login_process.join()
 
-    if login_process.exitcode != 0:
-        shutdown.go_shutdown(1)
+    if not skip_login:
+        login_process = Process(target=auto.run)
+        login_process.start()
+        login_process.join()
+
+        if login_process.exitcode != 0:
+            shutdown.go_shutdown(1)
+            time.sleep(10)
+
         time.sleep(10)
 
-    time.sleep(10)
+        gen_com_process = Process(target=cybos_com_gen.run)
+        gen_com_process.start()
+        gen_com_process.join()
 
-    gen_com_process = Process(target=cybos_com_gen.run)
-    gen_com_process.start()
-    gen_com_process.join()
-
-    time.sleep(10)
+        time.sleep(10)
 
     threads = []
 
