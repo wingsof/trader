@@ -23,6 +23,7 @@ service Stock {
   rpc ReportOrderResult(OrderResult) returns (google.protobuf.Empty) {}
 
   rpc IsKospi(StockCodeQuery) returns (Bool) {}
+  rpc GetViPrice(StockCodeQuery) returns (Prices) {}
 
   rpc ListenTraderMsg(google.protobuf.Empty) returns (stream TradeMsg) {}
   rpc ListenCybosOrderResult(google.protobuf.Empty) returns (stream CybosOrderResult) {}
@@ -67,6 +68,11 @@ message StockCodeQuery {
 
 message CodeList {
     repeated string codelist = 1;
+}
+
+
+message Prices {
+    repeated int32 price = 1;
 }
 
 

@@ -10,7 +10,7 @@
 MorningTickChartView::MorningTickChartView(QQuickItem *parent)
 : QQuickPaintedItem(parent), yesterdayMinInfo(3) {
     //setOpaquePainting(true);
-    setAntialiasing(true);
+    //setAntialiasing(true);
     setAcceptedMouseButtons(Qt::AllButtons);
     //todayStartHour = 9;
     todayStartTime = QTime(8, 30);
@@ -354,6 +354,7 @@ void MorningTickChartView::drawCandle(QPainter *painter, const CybosDayData &dat
 
     qreal line_x = startX + (horizontalGridStep / 2);
     painter->drawLine(QLineF(line_x, candle_y_high, line_x, candle_y_low));
+    painter->setPen(Qt::NoPen);
     painter->drawRect(QRectF(startX, candle_y_open, horizontalGridStep, candle_y_close - candle_y_open));
 
     painter->restore();
@@ -426,7 +427,7 @@ void MorningTickChartView::drawTimeLabels(QPainter *painter,
 }
 
 
-void MorningTickChartView::drawCurrentLineRange(QPainter *painter, MinuteTick *mt, const CybosDayData &data, qreal cw, qreal priceChartEndY) {
+void MorningTickChartView::drawCurrentLineRange(QPainter *painter, MinuteTick *mt, qreal startX, const CybosDayData &data, qreal cw, qreal priceChartEndY) {
     painter->save();
     QPen pen;
     pen.setStyle(Qt::DashLine);
@@ -454,7 +455,7 @@ void MorningTickChartView::drawCurrentLineRange(QPainter *painter, MinuteTick *m
         else
             pen.setColor("#ff0000");
         painter->setPen(pen);
-        painter->drawText(int(cw * PRICE_COLUMN_COUNT + cw), int(current_y + 20), QString::number(yesterdayDiff, 'f', 1));
+        painter->drawText(/*int(cw * PRICE_COLUMN_COUNT + cw)*/ startX + 10, int(current_y + 20), QString::number(yesterdayDiff, 'f', 1));
     }
 
     if (mt->getOpenPrice() != 0) {
@@ -465,7 +466,7 @@ void MorningTickChartView::drawCurrentLineRange(QPainter *painter, MinuteTick *m
         else
             pen.setColor("#ff0000");
         painter->setPen(pen);
-        painter->drawText(int(cw * PRICE_COLUMN_COUNT + cw), int(current_y - 20), QString::number(openDiff, 'f', 1));
+        painter->drawText(/*int(cw * PRICE_COLUMN_COUNT + cw)*/ startX + 10, int(current_y - 20), QString::number(openDiff, 'f', 1));
     }
 
     painter->restore();
@@ -531,7 +532,7 @@ void MorningTickChartView::paint(QPainter *painter) {
             qreal xPos = getTimeToXPos(d.time(), todayTickWidth, todayStartTime.hour() * 100 + todayStartTime.minute());
             drawCandle(painter, d, startX + xPos, todayTickWidth, cellHeight * PRICE_ROW_COUNT);
             drawVolume(painter, d, startX + xPos, todayTickWidth, cellHeight, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
-            drawCurrentLineRange(painter, mt, d, cellWidth, cellHeight * PRICE_ROW_COUNT);
+            drawCurrentLineRange(painter, mt, startX + xPos, d, cellWidth, cellHeight * PRICE_ROW_COUNT);
         }
     }
 }

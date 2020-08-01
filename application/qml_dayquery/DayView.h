@@ -42,6 +42,7 @@ public:
     int countOfData();
     void setData(QString, CybosDayDatas *, const QMap<QString, TickStat> &tickStatMap);
     bool hasData();
+    void resetData();
 
     void setTodayData(int o, int h, int l, int c, unsigned long v, bool is_synchronized_bidding);
 

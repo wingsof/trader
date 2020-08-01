@@ -44,6 +44,11 @@ ApplicationWindow {
                         verticalAlignment: Text.AlignVCenter
                         anchors.fill: parent
                         font.pointSize: 12
+                        font.bold: {
+                            if (typeof(display) == "number" && bidaskModel.todayHigh == display)
+                                return true;
+                            return false;
+                        }
                         color: {
                             var fcolor = "black"
 
@@ -58,6 +63,34 @@ ApplicationWindow {
                             // console.log("display", typeof(display), parseInt(display), bidaskModel.yesterdayClose, typeof(bidaskModel.yesterdayClose), fcolor)
                             return fcolor;
                         }
+                    }
+                    Text {
+                        text: {
+                            if (typeof(profit) == "number") {
+                                return profit.toFixed(2)
+                            }
+                            return ""
+                        }
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        font.pointSize: 8
+                        color: {
+                            if (typeof(display) == "number") {
+                                if (profit > 0) 
+                                    return "red"
+                                else if (profit < 0) 
+                                    return "blue"
+                            }
+                            return "black"
+                        }
+                    }
+                    Rectangle {
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        width: parent.width / 10
+                        height: parent.height / 4
+                        color: "green"
+                        visible: is_vi
                     }
                     MouseArea {
                         anchors.fill: parent
@@ -178,7 +211,45 @@ ApplicationWindow {
 
                 }
             }
+            DelegateChoice {
+                row: 0
+                column: 0
+                Rectangle {
+                    implicitWidth: (root.width - 6) / 7
+                    implicitHeight: (root.height - 20) / 22
+                    Rectangle {
+                        color: "blue"
+                        height: parent.height
+                        width: {
+                            if (typeof(display) == "number") {
+                                return parent.width * (1.0 - display)
+                            }
+                            return 0
+                        }
+                    }
+                }
+            }
 
+            DelegateChoice {
+                row: 0
+                column: 6
+                Rectangle {
+                    id: buyVolumeBar
+                    implicitWidth: (root.width - 6) / 7
+                    implicitHeight: (root.height - 20) / 22
+                    Rectangle {
+                        color: "red"
+                        height: parent.height
+                        anchors.right: buyVolumeBar.right
+                        width: {
+                            if (typeof(display) == "number") {
+                                return parent.width * display
+                            }
+                            return 0
+                        }
+                    }
+                }
+            }
 
             DelegateChoice {
                 Rectangle {
@@ -192,9 +263,13 @@ ApplicationWindow {
                         text: {
                             if (model.row == 21 && model.column == 0)
                                 return "SELL"
-                            else if (model.row == 21 && model.column ==6)
+                            else if (model.row == 21 && model.column == 6)
                                 return "BUY"
-                            return display
+                            else if (model.column == 0 || model.column == 6) {
+                                if (typeof(display) == "number" && display > 0) 
+                                    return display
+                            }
+                            return ""
                         }
                         anchors.fill: parent
                         horizontalAlignment: Text.AlignHCenter
@@ -205,7 +280,7 @@ ApplicationWindow {
                                 return "red"
                             else if (model.row == 21 && model.column ==6)
                                 return "blue"
-                            return "white"
+                            return "black"
                         }
                     }
                     MouseArea {

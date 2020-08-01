@@ -50,7 +50,7 @@ struct TableStruct_stock_5fprovider_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[22]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[23]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -106,6 +106,9 @@ extern OrderResultDefaultTypeInternal _OrderResult_default_instance_;
 class PastMinuteQuery;
 class PastMinuteQueryDefaultTypeInternal;
 extern PastMinuteQueryDefaultTypeInternal _PastMinuteQuery_default_instance_;
+class Prices;
+class PricesDefaultTypeInternal;
+extern PricesDefaultTypeInternal _Prices_default_instance_;
 class Report;
 class ReportDefaultTypeInternal;
 extern ReportDefaultTypeInternal _Report_default_instance_;
@@ -142,6 +145,7 @@ template<> ::stock_api::Option* Arena::CreateMaybeMessage<::stock_api::Option>(A
 template<> ::stock_api::OrderMsg* Arena::CreateMaybeMessage<::stock_api::OrderMsg>(Arena*);
 template<> ::stock_api::OrderResult* Arena::CreateMaybeMessage<::stock_api::OrderResult>(Arena*);
 template<> ::stock_api::PastMinuteQuery* Arena::CreateMaybeMessage<::stock_api::PastMinuteQuery>(Arena*);
+template<> ::stock_api::Prices* Arena::CreateMaybeMessage<::stock_api::Prices>(Arena*);
 template<> ::stock_api::Report* Arena::CreateMaybeMessage<::stock_api::Report>(Arena*);
 template<> ::stock_api::SimulationStatus* Arena::CreateMaybeMessage<::stock_api::SimulationStatus>(Arena*);
 template<> ::stock_api::StockCodeQuery* Arena::CreateMaybeMessage<::stock_api::StockCodeQuery>(Arena*);
@@ -541,6 +545,148 @@ class CodeList :
 };
 // -------------------------------------------------------------------
 
+class Prices :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.Prices) */ {
+ public:
+  Prices();
+  virtual ~Prices();
+
+  Prices(const Prices& from);
+  Prices(Prices&& from) noexcept
+    : Prices() {
+    *this = ::std::move(from);
+  }
+
+  inline Prices& operator=(const Prices& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Prices& operator=(Prices&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const Prices& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Prices* internal_default_instance() {
+    return reinterpret_cast<const Prices*>(
+               &_Prices_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(Prices& a, Prices& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Prices* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Prices* New() const final {
+    return CreateMaybeMessage<Prices>(nullptr);
+  }
+
+  Prices* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Prices>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const Prices& from);
+  void MergeFrom(const Prices& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Prices* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "stock_api.Prices";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
+    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kPriceFieldNumber = 1,
+  };
+  // repeated int32 price = 1;
+  int price_size() const;
+  private:
+  int _internal_price_size() const;
+  public:
+  void clear_price();
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_price(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+      _internal_price() const;
+  void _internal_add_price(::PROTOBUF_NAMESPACE_ID::int32 value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+      _internal_mutable_price();
+  public:
+  ::PROTOBUF_NAMESPACE_ID::int32 price(int index) const;
+  void set_price(int index, ::PROTOBUF_NAMESPACE_ID::int32 value);
+  void add_price(::PROTOBUF_NAMESPACE_ID::int32 value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+      price() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+      mutable_price();
+
+  // @@protoc_insertion_point(class_scope:stock_api.Prices)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 > price_;
+  mutable std::atomic<int> _price_cached_byte_size_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_stock_5fprovider_2eproto;
+};
+// -------------------------------------------------------------------
+
 class Bool :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.Bool) */ {
  public:
@@ -583,7 +729,7 @@ class Bool :
                &_Bool_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(Bool& a, Bool& b) {
     a.Swap(&b);
@@ -711,7 +857,7 @@ class Option :
                &_Option_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(Option& a, Option& b) {
     a.Swap(&b);
@@ -861,7 +1007,7 @@ class Balance :
                &_Balance_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(Balance& a, Balance& b) {
     a.Swap(&b);
@@ -989,7 +1135,7 @@ class StockQuery :
                &_StockQuery_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(StockQuery& a, StockQuery& b) {
     a.Swap(&b);
@@ -1158,7 +1304,7 @@ class TopList :
                &_TopList_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(TopList& a, TopList& b) {
     a.Swap(&b);
@@ -1323,7 +1469,7 @@ class SimulationStatus :
                &_SimulationStatus_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(SimulationStatus& a, SimulationStatus& b) {
     a.Swap(&b);
@@ -1462,7 +1608,7 @@ class OrderMsg :
                &_OrderMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    9;
 
   friend void swap(OrderMsg& a, OrderMsg& b) {
     a.Swap(&b);
@@ -1681,7 +1827,7 @@ class TradeMsg :
                &_TradeMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    10;
 
   friend void swap(TradeMsg& a, TradeMsg& b) {
     a.Swap(&b);
@@ -1826,7 +1972,7 @@ class Report :
                &_Report_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    11;
 
   friend void swap(Report& a, Report& b) {
     a.Swap(&b);
@@ -2098,7 +2244,7 @@ class OrderResult :
                &_OrderResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(OrderResult& a, OrderResult& b) {
     a.Swap(&b);
@@ -2246,7 +2392,7 @@ class CybosOrderResult :
                &_CybosOrderResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(CybosOrderResult& a, CybosOrderResult& b) {
     a.Swap(&b);
@@ -2454,7 +2600,7 @@ class ListType :
                &_ListType_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(ListType& a, ListType& b) {
     a.Swap(&b);
@@ -2589,7 +2735,7 @@ class CompanyName :
                &_CompanyName_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(CompanyName& a, CompanyName& b) {
     a.Swap(&b);
@@ -2724,7 +2870,7 @@ class PastMinuteQuery :
                &_PastMinuteQuery_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    16;
 
   friend void swap(PastMinuteQuery& a, PastMinuteQuery& b) {
     a.Swap(&b);
@@ -2887,7 +3033,7 @@ class CybosDayData :
                &_CybosDayData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    17;
 
   friend void swap(CybosDayData& a, CybosDayData& b) {
     a.Swap(&b);
@@ -3169,7 +3315,7 @@ class CybosDayDatas :
                &_CybosDayDatas_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    18;
 
   friend void swap(CybosDayDatas& a, CybosDayDatas& b) {
     a.Swap(&b);
@@ -3306,7 +3452,7 @@ class CybosSubjectTickData :
                &_CybosSubjectTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    19;
 
   friend void swap(CybosSubjectTickData& a, CybosSubjectTickData& b) {
     a.Swap(&b);
@@ -3549,7 +3695,7 @@ class CybosTickData :
                &_CybosTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    20;
 
   friend void swap(CybosTickData& a, CybosTickData& b) {
     a.Swap(&b);
@@ -3950,7 +4096,7 @@ class CybosBidAskTickData :
                &_CybosBidAskTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    21;
 
   friend void swap(CybosBidAskTickData& a, CybosBidAskTickData& b) {
     a.Swap(&b);
@@ -4268,7 +4414,7 @@ class CybosStockAlarm :
                &_CybosStockAlarm_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    22;
 
   friend void swap(CybosStockAlarm& a, CybosStockAlarm& b) {
     a.Swap(&b);
@@ -4603,6 +4749,57 @@ inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
 CodeList::mutable_codelist() {
   // @@protoc_insertion_point(field_mutable_list:stock_api.CodeList.codelist)
   return &codelist_;
+}
+
+// -------------------------------------------------------------------
+
+// Prices
+
+// repeated int32 price = 1;
+inline int Prices::_internal_price_size() const {
+  return price_.size();
+}
+inline int Prices::price_size() const {
+  return _internal_price_size();
+}
+inline void Prices::clear_price() {
+  price_.Clear();
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Prices::_internal_price(int index) const {
+  return price_.Get(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Prices::price(int index) const {
+  // @@protoc_insertion_point(field_get:stock_api.Prices.price)
+  return _internal_price(index);
+}
+inline void Prices::set_price(int index, ::PROTOBUF_NAMESPACE_ID::int32 value) {
+  price_.Set(index, value);
+  // @@protoc_insertion_point(field_set:stock_api.Prices.price)
+}
+inline void Prices::_internal_add_price(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  price_.Add(value);
+}
+inline void Prices::add_price(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_add_price(value);
+  // @@protoc_insertion_point(field_add:stock_api.Prices.price)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+Prices::_internal_price() const {
+  return price_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+Prices::price() const {
+  // @@protoc_insertion_point(field_list:stock_api.Prices.price)
+  return _internal_price();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+Prices::_internal_mutable_price() {
+  return &price_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+Prices::mutable_price() {
+  // @@protoc_insertion_point(field_mutable_list:stock_api.Prices.price)
+  return _internal_mutable_price();
 }
 
 // -------------------------------------------------------------------
@@ -8388,6 +8585,8 @@ inline void CybosStockAlarm::set_allocated_content(std::string* content) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

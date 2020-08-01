@@ -31,6 +31,17 @@
                         ],
                         "name": "buy_immediately",
                         "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "price",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "isViPrice",
+                        "returnType": "bool"
                     }
                 ],
                 "object": true,
@@ -90,6 +101,20 @@
                         "type": "int",
                         "user": false,
                         "write": "setTotalAskRemain"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "name": "todayHigh",
+                        "notify": "todayHighChanged",
+                        "read": "getTodayHigh",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "write": "setTodayHigh"
                     }
                 ],
                 "qualifiedClassName": "BidAskModel",
@@ -112,6 +137,11 @@
                     {
                         "access": "public",
                         "name": "totalBidRemainChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "todayHighChanged",
                         "returnType": "void"
                     }
                 ],

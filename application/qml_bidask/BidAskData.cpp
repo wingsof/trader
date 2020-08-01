@@ -76,9 +76,7 @@ void BidAskData::setTick(CybosTickData *d) {
     debugTick(d);
     debugCurrentBidAsk();
 #endif
-    mTradeUnit.setVolume(d->volume());
-    mTradeUnit.setIsBuy(d->buy_or_sell());
-    mTradeUnit.setPrice(d->current_price());
+    mTradeUnit.setData(d->current_price(), d->volume(), d->buy_or_sell());
 
     if (!mBidAskTickReceived) {
         if (mBidSpread.count() == 0) 

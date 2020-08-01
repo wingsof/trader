@@ -68,6 +68,7 @@ void DayView::simulationStatusChanged(bool isOn) {
 
 void DayView::search() {
     if (!stockCode.isEmpty() && currentDateTime.isValid()) {
+        dayData->resetData();
         priceEndY = 0.0;
         DataProvider::getInstance()->requestDayData(stockCode, countDays, currentDateTime.addDays(-1));
     }
@@ -191,6 +192,7 @@ void DayView::drawCandle(QPainter *painter, const CybosDayData *data, qreal star
 
     qreal line_x = startX + (horizontalGridStep / 2);
     painter->drawLine(QLineF(line_x, candle_y_high, line_x, candle_y_low));
+    painter->setPen(Qt::NoPen);
     painter->drawRect(QRectF(startX, candle_y_open, horizontalGridStep, candle_y_close - candle_y_open));
 
     painter->restore();
@@ -383,11 +385,11 @@ void DayView::tickDataArrived(CybosTickData *data) {
         return;
 
     if (code == stockCode) {
-        //qWarning() << "start : " << data->start_price() << "\t" <<
-        //                "highest : " << data->highest_price() << "\t" <<
-        //               "lowest : " << data->lowest_price() << "\t" <<
-        //               "cum volume : " << data->cum_volume() << "\t" <<
-        //               "market type : " << data->market_type();
+        qWarning() << "start : " << data->start_price() << "\t" <<
+                        "highest : " << data->highest_price() << "\t" <<
+                       "lowest : " << data->lowest_price() << "\t" <<
+                       "cum volume : " << data->cum_volume() << "\t" <<
+                       "market type : " << data->market_type();
         dayData->setTodayData(data->start_price(),
                                 data->highest_price(),
                                 data->lowest_price(),
@@ -403,14 +405,14 @@ void DayView::mousePressEvent(QMouseEvent *e) {}
 
 
 void DayView::mouseReleaseEvent(QMouseEvent *e) {
-    qWarning() << "mouseReleaseEvent : " << e->localPos();
+    //qWarning() << "mouseReleaseEvent : " << e->localPos();
     drawHorizontalY = 0.0;
     update();
 }
 
 
 void DayView::mouseMoveEvent(QMouseEvent *e) {
-    qWarning() << "mouseMoveEvent : " << e->y();
+    //qWarning() << "mouseMoveEvent : " << e->y();
     if (priceEndY == 0.0)
         drawHorizontalY = 0.0;
     else 
@@ -439,6 +441,13 @@ bool DayData::hasData() {
 }
 
 
+void DayData::resetData() {
+    todayData->set_close_price(0);
+    todayData->Clear();
+    data = NULL;
+}
+
+
 void DayData::setTodayData(int o, int h, int l, int c, unsigned long v, bool is_synchronized_bidding) {
     todayData->set_start_price(o);
     todayData->set_highest_price(h);
@@ -460,6 +469,10 @@ void DayData::setTodayData(int o, int h, int l, int c, unsigned long v, bool is_
             setPriceSteps(lowest, priceSteps.at(stepCount - 1));
             setPPS();
         }
+    }
+
+    if (v > highestVolume) {
+        highestVolume = v;
     }
 }
 

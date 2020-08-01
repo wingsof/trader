@@ -59,7 +59,7 @@ private:
     void drawVolume(QPainter *painter, const CybosDayData &data, qreal startX, qreal tickWidth, qreal ch, qreal volumeEndY);
     void drawTimeLabels(QPainter *painter, qreal tickWidth, qreal cw, qreal ch, qreal startX, int cellCount, uint startTime);
     void drawPriceLabels(QPainter *painter, qreal startX, qreal ch);
-    void drawCurrentLineRange(QPainter *painter, MinuteTick * mt,const CybosDayData &data, qreal cw, qreal priceChartEndY);
+    void drawCurrentLineRange(QPainter *painter, MinuteTick * mt, qreal startX, const CybosDayData &data, qreal cw, qreal priceChartEndY);
 
 protected:
     void wheelEvent(QWheelEvent *event) override;

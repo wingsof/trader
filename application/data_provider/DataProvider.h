@@ -87,7 +87,10 @@ public:
     void cancelOrder(const QString &code, const QString &orderNum);
     void sendBalanceRequest();
 
+
+    QList<int> getViPrices(const QString &code);
     bool isKospi(const QString &code);
+    int getBidUnit(bool isKospi, int price);
 
 private:
     DataProvider();

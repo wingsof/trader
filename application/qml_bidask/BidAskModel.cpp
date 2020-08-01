@@ -7,6 +7,8 @@ using stock_api::OrderMsg;
 using stock_api::OrderMethod;
 
 #define VOLUME_DIFF_ROLE    (Qt::UserRole + 1)
+#define PROFIT_ROLE         (Qt::UserRole + 2)
+#define VI_ROLE             (Qt::UserRole + 3)
 
 BidAskModel::BidAskModel(QObject *parent)
 : QAbstractTableModel(parent) {
@@ -37,12 +39,16 @@ void BidAskModel::timeInfoArrived(QDateTime dt) {
 
 
 void BidAskModel::resetData() {
+    beginResetModel();
     mData.resetData();
-
+    mViType = 48; // not received
+    mViPrices.clear();
     setTotalBidRemain(0);
     setTotalAskRemain(0);
     setYesterdayClose(0);
+    setTodayOpen(0);
     setHighlight(-1);
+    endResetModel();
 }
 
 
@@ -65,8 +71,26 @@ void BidAskModel::setTotalAskRemain(uint br) {
 void BidAskModel::setCurrentStock(QString code) {
     if (currentStockCode != code) {
         resetData();
+        mIsKospi = DataProvider::getInstance()->isKospi(code);
         currentStockCode = code;
+        if (currentDateTime.isValid())
+            mViPrices = DataProvider::getInstance()->getViPrices(code);
         qWarning() << "currentStock: " << currentStockCode;
+    }
+}
+
+
+void BidAskModel::setTodayOpen(int tc) {
+    if (mTodayOpen != tc) {
+        mTodayOpen = tc;
+    }
+}
+
+
+void BidAskModel::setTodayHigh(int th) {
+    if (mTodayHigh != th) {
+        mTodayHigh = th;
+        emit todayHighChanged();
     }
 }
 
@@ -97,14 +121,26 @@ void BidAskModel::buy_immediately(int percentage) {
 
 QVariant BidAskModel::data(const QModelIndex &index, int role) const
 {
-    if (index.column() >= BidAskModel::ASK_DIFF_COLUMN &&
-                index.column() <= BidAskModel::BID_DIFF_COLUMN &&
-                index.row() >= BidAskModel::START_ROW && index.row() <= BidAskModel::STEPS * 2) {
+    if (index.row() >= BidAskModel::START_ROW && index.row() <= BidAskModel::STEPS * 2) {
 
         if (index.column() == BidAskModel::PRICE_COLUMN) {
             int price = mData.getPriceByRow(index.row() - 1);
-            if (price != 0)
-                return QVariant(price);
+            if (role == Qt::DisplayRole) {
+                if (price != 0)
+                    return QVariant(price);
+            }
+            else if (role == PROFIT_ROLE) {
+                if (price != 0 && getYesterdayClose() != 0) {
+                    return QVariant((price - getYesterdayClose()) / qreal(getYesterdayClose()) * 100.0);
+                }
+            }
+            else if (role == VI_ROLE) {
+                if (price != 0) {
+                    if (mViPrices.contains(price))
+                        return QVariant(true);
+                }
+                return QVariant(false);
+            }
         }
         else if ((index.column() == BidAskModel::ASK_REMAIN_COLUMN && index.row() >= START_ROW && index.row () <= START_ROW + 9) || 
                 (index.column() == BidAskModel::BID_REMAIN_COLUMN && index.row() >= START_ROW + 10 && index.row() <= START_ROW + 19)) {
@@ -125,6 +161,14 @@ QVariant BidAskModel::data(const QModelIndex &index, int role) const
         else if (index.row() == highlight && index.column() == BidAskModel::BID_REMAIN_COLUMN && mData.getIsCurrentBuy() && mData.getCurrentPrice() != 0) {
             return QVariant(mData.getCurrentVolume());
         }
+        else if (index.column() == 0 || index.column() == COLUMN_COUNT - 1) {
+            bool isBuyCol = index.column() != 0;
+            int price = mData.getPriceByRow(index.row() - 1);
+            return QVariant(mData.getVolumeByPrice(isBuyCol, price));
+        }
+    }
+    else if (index.row() == 0 && (index.column() == 0 || index.column() == 6)) {
+        return QVariant(mData.getBuyRate());
     }
     return QVariant(QString());
 }
@@ -134,12 +178,21 @@ void BidAskModel::tickArrived(CybosTickData *data) {
     if (currentStockCode != QString::fromStdString(data->code()))
         return;
 
+    if (mViType == 48 || (data->market_type() == 50 && mViType == 49)) {
+        mViPrices = DataProvider::getInstance()->getViPrices(currentStockCode);
+        mViType = 50;
+    }
     //long msec = TimeUtil::TimestampToMilliseconds(data->tick_date());
     //qWarning() << QDateTime::fromMSecsSinceEpoch(msec) << "\tcurrent: " << data->current_price() << ", volume: " << data->volume() << "\tBUY:" << data->buy_or_sell() << "\task: " << data->ask_price() << ", bid: " << data->bid_price();
     setYesterdayClose(data->current_price() - data->yesterday_diff());
+    setTodayOpen(data->start_price());
+    setTodayHigh(data->highest_price());
     setHighlightPosition(data->current_price());
     mData.setTick(data);
-    dataChanged(createIndex(1, 2), createIndex(20, 4));
+    if (data->market_type() == 49)
+        mViType = 49;
+
+    dataChanged(createIndex(0, 0), createIndex(20, 8));
 }
 
 
@@ -169,4 +222,8 @@ void BidAskModel::setHighlight(int row) {
         highlight = row;
         emit highlightChanged();
     }
+}
+
+
+bool BidAskModel::isViPrice(int price) {
 }

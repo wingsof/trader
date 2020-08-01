@@ -51,6 +51,7 @@ using stock_api::TradeMsg;
 using stock_api::TradeMsgType;
 using stock_api::OrderType;
 using stock_api::Bool;
+using stock_api::Prices;
 
 
 DataProvider::DataProvider()
@@ -342,7 +343,6 @@ void DataProvider::sendBalanceRequest() {
 }
 
 
-
 QStringList DataProvider::getTtopAmountList(int option, bool catchPlus, bool useAccumulated) {
     ClientContext context;
     CodeList * codeList = new CodeList;
@@ -430,5 +430,38 @@ void DataProvider::_setCurrentDateTime(const QDateTime &dt) {
     Timestamp data = Timestamp(TimeUtil::TimeTToTimestamp(dt.toTime_t()));
     Empty empty;
     stub_->SetCurrentDateTime(&context, data, &empty);
+}
 
+
+QList<int> DataProvider::getViPrices(const QString &code) {
+    ClientContext context;
+    StockCodeQuery data;
+    Prices prices;
+    data.set_code(code.toStdString());
+    stub_->GetViPrice(&context, data, &prices);
+    QList<int> priceList;
+    for (int i = 0; i < prices.price_size(); i++)
+        priceList.append(prices.price(i));
+    return priceList;
+}
+
+
+int DataProvider::getBidUnit(bool isKospi, int price) {
+    if (price < 1000)
+        return 1;
+    else if (price < 5000)
+        return 5;
+    else if (price < 10000)
+        return 10;
+    else if (price < 50000)
+        return 50;
+
+    if (isKospi) {
+        if (price < 100000)
+            return 100;
+        else if (price < 500000)
+            return 500;
+        return 1000;
+    }
+    return 100;
 }

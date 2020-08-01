@@ -14,6 +14,7 @@ class BidAskModel : public QAbstractTableModel {
     Q_PROPERTY(int yesterdayClose READ getYesterdayClose WRITE setYesterdayClose NOTIFY yesterdayCloseChanged)
     Q_PROPERTY(int totalBidRemain READ getTotalBidRemain WRITE setTotalBidRemain NOTIFY totalBidRemainChanged)
     Q_PROPERTY(int totalAskRemain READ getTotalAskRemain WRITE setTotalAskRemain NOTIFY totalAskRemainChanged)
+    Q_PROPERTY(int todayHigh READ getTodayHigh WRITE setTodayHigh NOTIFY todayHighChanged)
     QML_ELEMENT
 
 public:
@@ -49,14 +50,22 @@ public:
     QHash<int, QByteArray> roleNames() const override
     {
         return { {Qt::DisplayRole, "display"},
-                 {Qt::UserRole + 1, "vdiff" }};
+                 {Qt::UserRole + 1, "vdiff" },
+                 {Qt::UserRole + 2, "profit"},
+                 {Qt::UserRole + 3, "is_vi"}};
     }
 
     void setHighlight(int row);
     int getHighlight() { return highlight; }
 
     void setYesterdayClose(int yc);
-    int getYesterdayClose() { return yesterdayClose; }
+    int getYesterdayClose() const { return yesterdayClose; }
+
+    void setTodayOpen(int to);
+    int getTodayOpen() const { return mTodayOpen; }
+
+    void setTodayHigh(int th);
+    int getTodayHigh() const { return mTodayHigh; }
 
     void setTotalBidRemain(uint br);
     void setTotalAskRemain(uint br);
@@ -65,10 +74,16 @@ public:
 
     Q_INVOKABLE void sell_immediately(int percentage);
     Q_INVOKABLE void buy_immediately(int percentage);
+    Q_INVOKABLE bool isViPrice(int price);
 
 private:
     int highlight;
     int yesterdayClose;
+    int mTodayOpen;
+    int mTodayHigh;
+    bool mIsKospi;
+    int mViType;
+    QList<int> mViPrices;
     uint totalBidRemain;
     uint totalAskRemain;
 
@@ -94,6 +109,7 @@ signals:
     void yesterdayCloseChanged();
     void totalAskRemainChanged();
     void totalBidRemainChanged();
+    void todayHighChanged();
 };
 
 

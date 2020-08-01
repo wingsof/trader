@@ -25,6 +25,7 @@ import os.path
 
 
 _message_reader = None
+_mongo_collection = None
 MAVG=20
 _kosdaq_code = None
 _kospi_code = None
@@ -50,6 +51,12 @@ def get_reader():
 
     return _message_reader
 
+
+def get_collection():
+    if _mongo_collection is None:
+        db_setup()
+    
+    return _mongo_collection
 
 def code_to_name(code):
     result = stock_api.request_code_to_name(get_reader(), code)
@@ -209,6 +216,22 @@ def get_yesterday_top_amount(dt):
     return codes, False, yesterday_date
 
 
+def get_tick_data(code, tick_date):
+    tick_date = tick_date if tick_date.__class__.__name__ == 'date' else tick_date.date()
+
+    from_datetime = datetime.combine(tick_date, time(0,0))
+    until_datetime = datetime.combine(tick_date + timedelta(days=1), time(0,0))
+    data = list(get_collection()[code].find({'date': {'$gte': from_datetime, '$lte': until_datetime}}))
+    converted_data = []
+    for td in data:
+        if code.endswith(message.BIDASK_SUFFIX):
+            converted = dt.cybos_stock_ba_tick_convert(td)
+        else:
+            converted = dt.cybos_stock_tick_convert(td)
+        converted_data.append(converted)
+    return converted_data
+
+
 def setup():
     global _message_reader
     while True:
@@ -225,9 +248,15 @@ def setup():
     _message_reader.start()
 
 
+def db_setup():
+    global _mongo_collection
+    _mongo_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
+
 if __name__ == '__main__':
-    print(get_balance())
-    print(get_long_list())
+    codes = get_all_market_code()
+    print(len(codes))
+    #print(get_balance())
+    #print(get_long_list())
     #print(get_today_minute_data('A005930'))
     #print(get_yesterday_top_amount())
     #result = get_past_day_data('A005930', date(2020, 7, 1), date(2020, 7, 8))

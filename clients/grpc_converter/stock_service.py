@@ -153,7 +153,7 @@ def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_han
 
 class StockServicer(stock_provider_pb2_grpc.StockServicer):
     def __init__(self):
-        print('StockService init')
+        print('StockService init start')
         self.stock_subscribe_clients = []
         self.bidask_subscribe_cilents = []
         self.subject_subscribe_clients = []
@@ -167,7 +167,10 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.trader_clients = []
         self.current_stock_code = ""
         self.current_datetime = None
-        morning_client.get_all_market_code()
+        codes = morning_client.get_all_market_code()
+        for code in codes:
+            todaytick.set_code_classification(code, morning_client.is_kospi_code(code))
+        print('StockService init ready')
 
     def GetDayData(self, request, context):
         print('GetDayData', request.code,
@@ -275,7 +278,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
       
     def IsKospi(self, request, context):
-        return stock_provider_pb2.Bool(ret= morning_client.is_kospi_code(request.code))
+        return stock_provider_pb2.Bool(ret=todaytick.get_code_classification(request.code))
 
     def GetCompanyName(self, request, context):
         #print('Before get company name', request.code)
@@ -357,6 +360,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         for o in self.trader_clients:
             o.put_nowait(request)
         return Empty()
+
+    def GetViPrice(self, request, context):
+        return stock_provider_pb2.Prices(price=todaytick.get_vi_prices(request.code))
 
     def SetCurrentStock(self, request, context):
         global recent_search_codes
