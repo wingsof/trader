@@ -8,7 +8,7 @@ import socket
 
 from morning_server import message, stream_readwriter
 from morning_server.collectors.cybos_api import stock_chart, stock_subscribe, bidask_subscribe, connection, stock_code, abroad_chart, investor_7254, stock_today_data
-from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance, trade_subject, world_subscribe, index_subscribe, stock_alarm
+from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, order, modify_order, cancel_order, order_in_queue, balance, trade_subject, world_subscribe, index_subscribe, stock_alarm, stock_uni_chart
 from configs import client_info
 
 from morning_server.collectors import shutdown
@@ -57,6 +57,8 @@ def handle_request(sock, header, body):
     elif header['method'] == message.INVESTOR_DATA:
         data = investor_7254.check_investor_trend(header['code'], header['from'], header['until'])
         stream_readwriter.write(sock, header, data)
+    elif header['method'] == message.UNI_DATA:
+        stream_readwriter.write(stock, header, stock_uni_chart.get_uni_data(header['code'])
 
 
 def callback_stock_subscribe(code, datas):

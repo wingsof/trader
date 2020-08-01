@@ -39,6 +39,7 @@ CODE_TO_NAME_DATA = 'code_name_data'
 USCODE_DATA = 'uscode_data'
 INVESTOR_DATA = 'investor_data'
 INVESTOR_ACCUMULATE_DATA = 'investor_accumulate_data'
+UNI_DATA = 'outcur_uni'
 
 GET_LONG_LIST = 'long_list'
 ORDER_STOCK = 'order_stock'

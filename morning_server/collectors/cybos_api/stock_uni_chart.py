@@ -11,7 +11,7 @@ def get_uni_data(code):
     conn = connection.Connection()
     conn.wait_until_available()
 
-    chart_obj= win32com.client.gencache.EnsureDispatch("CpSysDib.StockChart")
+    chart_obj= win32com.client.gencache.EnsureDispatch("CpSysDib.StockUniMst")
     chart_obj.SetInputValue(0, code)
     chart_obj.BlockRequest()
 
@@ -23,4 +23,7 @@ def get_uni_data(code):
 
 
 if __name__ == '__main__':
-    print(get_uni_data(sys.argv(1)))
+    if len(sys.argv) > 1:
+        print(get_uni_data(sys.argv(1)))
+    else:
+        print('Usage)', sys.argv[0], 'code')

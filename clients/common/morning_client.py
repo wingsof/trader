@@ -174,6 +174,10 @@ def get_past_day_data(code, from_date, until_date, mavg=MAVG):
     return cut_by_date_data
 
 
+def get_current_uni_data(code):
+    return stock_api.request_stock_uni_data(get_reader(), code)
+
+
 def get_minute_data(code, from_date, until_date, t = 0):
     from_date = from_date if from_date.__class__.__name__ == 'date' else from_date.date()
     until_date = until_date if until_date.__class__.__name__ == 'date' else until_date.date()
@@ -253,8 +257,9 @@ def db_setup():
     _mongo_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
 
 if __name__ == '__main__':
-    codes = get_all_market_code()
-    print(len(codes))
+    get_current_uni_data('A005930')
+    #codes = get_all_market_code()
+    #print(len(codes))
     #print(get_balance())
     #print(get_long_list())
     #print(get_today_minute_data('A005930'))
