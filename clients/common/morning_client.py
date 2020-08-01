@@ -257,7 +257,7 @@ def db_setup():
     _mongo_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
 
 if __name__ == '__main__':
-    get_current_uni_data('A005930')
+    print(get_current_uni_data('A005930'))
     #codes = get_all_market_code()
     #print(len(codes))
     #print(get_balance())

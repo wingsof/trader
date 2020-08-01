@@ -22,8 +22,26 @@ def get_uni_data(code):
     return [d]
 
 
+def get_uni_week_data(code):
+    conn = connection.Connection()
+    conn.wait_until_available()
+
+    data = []
+    chart_obj= win32com.client.gencache.EnsureDispatch("CpSysDib.StockUniWeek")
+    chart_obj.SetInputValue(0, code)
+    chart_obj.BlockRequest()
+
+    data_len = chart_obj.GetHeaderValue(1)
+    for i in range(data_len):
+        d = {}
+        for j in range(9):
+            d[str(j)] = chart_obj.GetDataValue(j, i)
+        data.append(d)
+    return reversed(data)
+
+
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        print(get_uni_data(sys.argv[1]))
+        print(get_uni_week_data(sys.argv[1]))
     else:
         print('Usage)', sys.argv[0], 'code')
