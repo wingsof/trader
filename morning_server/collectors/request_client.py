@@ -58,7 +58,7 @@ def handle_request(sock, header, body):
         data = investor_7254.check_investor_trend(header['code'], header['from'], header['until'])
         stream_readwriter.write(sock, header, data)
     elif header['method'] == message.UNI_DATA:
-        stream_readwriter.write(stock, header, stock_uni_chart.get_uni_data(header['code']))
+        stream_readwriter.write(sock, header, stock_uni_chart.get_uni_data(header['code']))
 
 
 def callback_stock_subscribe(code, datas):
