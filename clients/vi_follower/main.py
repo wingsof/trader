@@ -41,7 +41,6 @@ def record_uni_data():
     while True:
         now = datetime.now()
         result = morning_client.get_uni_day_data('A005930')
-        print(result[-1]['date'])
         if len(result) > 0 and result[-1]['date'] == time_converter.datetime_to_intdate(now.date()):
             break
         gevent.sleep(60)
