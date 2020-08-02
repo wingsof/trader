@@ -80,6 +80,49 @@ class CybosStockDayTick:
     INSTITUTION_CUM_BUY_VOLUME = '13'
 
 
+class CybosStockUniCurrentTick:
+    CODE = '0'
+    COMPANY_NAME = '1'
+    TIME = '2'
+    MARKET_CLOSE_DIFF = '3' # Yesterday Close - Today Close, not uni
+    WARNING_TYPE = '4'
+    TRADE_TYPE = '5'
+    HIGHEST_IN_YEAR = '6'
+    HIGHEST_DAY = '7'
+    LOWEST_IN_YEAR = '8'
+    LOWEST_DAY = '9'
+    YESTERDAY_CLOSE = '10'
+    BASE_PRICE = '11'
+    PROFIT_TYPE_MARKET = '12'
+    PROFIT_TYPE = '13'
+    TODAY_CLOSE_DIFF = '14'
+    CURRENT_PRICE = '15'
+    UNI_START_PRICE = '16'
+    UNI_HIGHEST_PRICE = '17'
+    UNI_LOWEST_PRICE = '18'
+    HIGHEST_BOUND = '19'
+    LOWEST_BOUND = '20'
+    ASK_PRICE = '21'
+    BID_PRICE = '22'
+    ASK_REMAIN = '23'
+    BID_REMAIN = '24'
+    VOLUME = '25'
+    AMOUNT = '26'   # KOSPI: * 10000, KOSDAQ: * 1000
+    DATE = '27'
+
+
+class CybosStockUniDayTick:
+    DATE = '0'
+    START_PRICE = '1'
+    HIGHEST_PRICE = '2'
+    LOWEST_PRICE = '3'
+    CLOSE_PRICE = '4'
+    MARKET_CLOSE_DIFF = '5'
+    MARKET_CLOSE_PROFIT = '6'
+    PROFIT_TYPE = '7'
+    VOLUME = '8'
+
+
 class CybosStockInvestor:
     INDIVIDUAL = '1'
     FOREIGNER = '2'
@@ -104,6 +147,8 @@ stock_tick = {}
 stock_ba_tick = {}
 stock_day_tick = {}
 investor_tick = {}
+stock_uni_day_tick = {}
+stock_uni_current_tick = {}
 
 for k, v in vars(CybosStockTick).items():
     if not k.startswith('_'):
@@ -120,6 +165,14 @@ for k, v in vars(CybosStockDayTick).items():
 for k, v in vars(CybosStockInvestor).items():
     if not k.startswith('_'):
         investor_tick[v] = k.lower()
+
+for k, v in vars(CybosStockUniCurrentTick).items():
+    if not k.startswith('_'):
+        stock_uni_current_tick[v] = k.lower()
+
+for k, v in vars(CybosStockUniDayTick).items():
+    if not k.startswith('_'):
+        stock_uni_day_tick[v] = k.lower()
 
 
 def cybos_stock_tick_convert(raw_data):
@@ -160,3 +213,24 @@ def cybos_stock_investor_convert(raw_data):
         else:
             converted[k] = v
     return converted
+
+
+def cybos_stock_uni_current_tick_convert(raw_data):
+    converted = {}
+    for k, v in raw_data.items():
+        if k in stock_uni_current_tick:
+            converted[stock_uni_current_tick[k]] = v
+        else:
+            converted[k] = v
+    return converted
+
+
+def cybos_stock_uni_day_tick_convert(raw_data):
+    converted = {}
+    for k, v in raw_data.items():
+        if k in stock_uni_day_tick:
+            converted[stock_uni_day_tick[k]] = v
+        else:
+            converted[k] = v
+    return converted
+
