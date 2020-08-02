@@ -39,7 +39,7 @@ def request_stock_uni_current_data(reader, code):
     return reader.block_write(header, body)
 
 
-def request_stock_uni_current_period_data(reader, from_date, until_date):
+def request_stock_uni_current_period_data(reader, code, from_date, until_date):
     header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.UNI_CURRENT_PERIOD_DATA)
     header['code'] = code
     header['from'] = from_date
@@ -60,8 +60,6 @@ def request_stock_uni_day_period_data(reader, code, from_date, until_date):
 def request_stock_uni_day_data(reader, code):
     header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.UNI_DATA)
     header['code'] = code
-    header['from'] = from_date
-    header['until'] = until_date
     body = []
     return reader.block_write(header, body)
 

@@ -120,6 +120,24 @@ def _convert_min_data_readable(code, min_data):
 
     return converted_data
 
+
+def _convert_uni_current_data_readable(code, current_data):
+    converted_data = []
+    for d in current_data:
+        converted = dt.cybos_stock_uni_current_tick_convert(d)
+        converted_data.append(converted)
+    return converted_data
+
+
+def _convert_uni_day_data_readable(code, day_data):
+    converted_data = []
+    for d in day_data:
+        converted = dt.cybos_stock_uni_day_tick_convert(d)
+        converted['code'] = code
+        converted_data.append(converted)
+    return converted_data
+
+
 def _convert_data_readable(code, past_data):
     converted_data = []
     avg_prices = np.array([])
@@ -178,22 +196,22 @@ def get_uni_current_period_data(code, from_date, until_date):
     from_date = from_date if from_date.__class__.__name__ == 'date' else from_date.date()
     until_date = until_date if until_date.__class__.__name__ == 'date' else until_date.date()
     uni_data = stock_api.request_stock_uni_current_period_data(get_reader(), code, from_date, until_date)
-    return uni_data
+    return _convert_uni_current_data_readable(code, uni_data)
 
 
 def get_uni_current_data(code):
-    return stock_api.request_stock_uni_current_data(get_reader(), code)
+    return _convert_uni_current_data_readable(code, stock_api.request_stock_uni_current_data(get_reader(), code))
 
 
 def get_uni_day_period_data(code, from_date, until_date):
     from_date = from_date if from_date.__class__.__name__ == 'date' else from_date.date()
     until_date = until_date if until_date.__class__.__name__ == 'date' else until_date.date()
     uni_data = stock_api.request_stock_uni_day_period_data(get_reader(), code, from_date, until_date)
-    return uni_data
+    return _convert_uni_day_data_readable(code, uni_data)
 
 
 def get_uni_day_data(code):
-    return stock_api.request_stock_uni_day_data(code)
+    return _convert_uni_day_data_readable(code, stock_api.request_stock_uni_day_data(get_reader(), code))
 
 
 def get_minute_data(code, from_date, until_date, t = 0):
@@ -276,7 +294,8 @@ def db_setup():
 
 if __name__ == '__main__':
     print(get_uni_current_data('A005930'))
-    print(get_uni_day_data('A005930'))
+    #print(get_uni_day_data('A005930'))
+    #print(get_uni_current_period_data('A005930', date(2020, 7, 31), date(2020, 8, 1)))
     #codes = get_all_market_code()
     #print(len(codes))
     #print(get_balance())

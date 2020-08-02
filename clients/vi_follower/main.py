@@ -37,10 +37,24 @@ def check_time():
         gevent.sleep(60)
 
 
+def record_uni_data():
+    while True:
+        now = datetime.now()
+        result = morning_client.get_uni_day_data('A005930')
+        print(result[-1]['date'])
+        if len(result) > 0 and result[-1]['date'] == time_converter.datetime_to_intdate(now.date()):
+            break
+        gevent.sleep(60)
+    market_code = morning_client.get_all_market_code()
+    for code in market_code:    
+        morning_client.get_uni_current_data(code)
+        morning_client.get_uni_day_data(code)
+
+
 def today_bull_record():
     while True:
         now = datetime.now()
-        start_time = now.replace(hour=16, minute=30)
+        start_time = now.replace(hour=18, minute=5)
         if now > start_time:
             result = morning_client.get_past_day_data('A005930', date(now.year, now.month, now.day), date(now.year, now.month, now.day))
             print('today result len', len(result))
@@ -62,6 +76,7 @@ def today_bull_record():
         codes = [c['code'] for c in today_list]
         db_collection['yamount'].insert_one({'date': now_date, 'codes': codes})
 
+    record_uni_data()
     slack.send_slack_message('VI FOLLOWER COLLECT TODAY BULL DONE')
 
 
@@ -129,4 +144,7 @@ def start_vi_follower():
 
 
 if __name__ == '__main__':
-    start_vi_follower()
+    if len(sys.argv) > 1 and sys.argv[1] == 'uni':
+        record_uni_data()
+    else:
+        start_vi_follower()

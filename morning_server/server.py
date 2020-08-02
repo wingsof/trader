@@ -22,6 +22,7 @@ from morning_server import server_util
 from morning_server.server_util import stream_write
 from morning_server import morning_stats
 from morning_server import yesterday_top_amount as yta
+from morning_server import post_db_store
 from configs import time_info
 from morning_server import trade_machine
 from morning_server import clientmanager
@@ -51,6 +52,7 @@ def handle_collector(sock, header, body):
         test_body = []
         stream_write(sock, test_header, body)
 
+
 def handle_response(sock, header, body):
     logger.info('HANDLE RESPONSE %s', header)
     item = partial_request.get_item(header['_id'])
@@ -62,6 +64,7 @@ def handle_response(sock, header, body):
             partial_request.pop_item(header['_id'])
     else:
         memcache.check_cacheable_data(header, body)
+        post_db_store.check_post_store_data(header, body)
         client_manager.handle_block_response(header, body)
 
     logger.info('HANDLE RESPONSE DONE')
@@ -101,6 +104,12 @@ def handle_request(sock, header, body):
     elif header['method'] == message.YESTERDAY_TOP_AMOUNT_DATA:
         header['type'] = message.RESPONSE
         stream_write(sock, header, yta.get_yesterday_top_amount(header['date']))
+    elif header['method'] == message.UNI_PERIOD_DATA:
+        header['type'] = message.RESPONSE
+        stream_write(sock, header, post_db_store.query_uni_period_data(header['code'], header['from'], header['until']))
+    elif header['method'] == message.UNI_CURRENT_PERIOD_DATA:
+        header['type'] = message.RESPONSE
+        stream_write(sock, header, post_db_store.query_uni_current_period_data(header['code'], header['from'], header['until']))
     elif header['vendor'] == message.CYBOS:
         handle_request_cybos(sock, header, body)
     elif header['vendor'] == message.KIWOOM:
