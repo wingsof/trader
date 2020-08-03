@@ -43,7 +43,7 @@
                     },
                     {
                         "access": "public",
-                        "name": "launchVolumeGraph",
+                        "name": "launchTrader",
                         "returnType": "void"
                     },
                     {
@@ -69,6 +69,11 @@
                     {
                         "access": "public",
                         "name": "stopSimulation",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "name": "startSubscribeCodes",
                         "returnType": "void"
                     }
                 ],

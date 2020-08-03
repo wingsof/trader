@@ -377,6 +377,14 @@ void DayView::tickDataArrived(CybosTickData *data) {
     QString code = QString::fromStdString(data->code());
     if (!mTickMap.contains(code))
         mTickMap[code] = TickStat();
+
+    if (code == "U001" || code == "U201") {
+        data->set_highest_price(int(data->highest_price() / 100));
+        data->set_current_price(int(data->current_price() / 100));
+        data->set_lowest_price(int(data->lowest_price() / 100));
+        data->set_start_price(int(data->start_price() / 100));
+    }
+
     mTickMap[code].setStat(
         (data->highest_price() > data->current_price() ? data->highest_price() : data->current_price()),
         (data->lowest_price() < data->current_price() ? data->lowest_price() : data->current_price()), data->cum_volume());

@@ -28,6 +28,8 @@ MOC_DIR=generated_files
 
 # Input
 SOURCES += main.cpp \
-           MorningTickChartView.cpp
+           MorningTickChartView.cpp \
+           AuxiliaryInfo.cpp
 
-HEADERS += MorningTickChartView.h
+HEADERS += MorningTickChartView.h \
+           AuxiliaryInfo.h

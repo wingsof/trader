@@ -36,13 +36,14 @@ public:
     Q_INVOKABLE void sendCurrentStock(const QString &code);
     Q_INVOKABLE void sendCurrentDateTime(const QDateTime &dt);
     Q_INVOKABLE void launchTick();
-    Q_INVOKABLE void launchVolumeGraph();
+    Q_INVOKABLE void launchTrader();
     Q_INVOKABLE void launchBidAsk();
     Q_INVOKABLE void launchDayChart();
     Q_INVOKABLE void launchFavorite();
 
     Q_INVOKABLE void startSimulation();
     Q_INVOKABLE void stopSimulation();
+    Q_INVOKABLE void startSubscribeCodes();
 
 private:
     QString m_currentCode;

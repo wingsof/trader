@@ -286,6 +286,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         #print('GetCompanyName', request.code, company_name)
         return stock_provider_pb2.CompanyName(company_name=company_name)
 
+    def GetSubscribeCodes(self, request, context):
+        return stock_provider_pb2.CodeList(codelist=morning_client.get_subscribe_codes())
+
     def ReportOrderResult(self, request, context):
         for o in self.order_result_subscribe_clients:
             o.put_nowait(request)
@@ -352,6 +355,11 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         balance = morning_client.get_balance()
         return stock_provider_pb2.Balance(balance=balance)
 
+    def ClearRecentList(self, request, context):
+        if len(recent_search_codes) > 0:
+            recent_search_codes.clear()
+            self.send_list_changed('recent')
+
     def send_list_changed(self, type_name):
         for c in self.list_changed_subscribe_clients:
             c.put_nowait(stock_provider_pb2.ListType(type_name=type_name))
@@ -374,7 +382,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         for q in self.current_stock_selection_subscribe_clients:
             q.put_nowait(stock_provider_pb2.StockCodeQuery(code=request.code))
 
-        if request.code not in recent_search_codes:
+        if request.code not in recent_search_codes: # TODO: when code is selected in recent list then?
             recent_search_codes.insert(0, request.code)
             self.send_list_changed('recent')
 

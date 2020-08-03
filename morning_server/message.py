@@ -27,6 +27,7 @@ SHUTDOWN = 'shutdown'
 
 SUBSCRIBE_STATS = 'subscribe_stats'
 COLLECTOR_STATS = 'collector_stats'
+SUBSCRIBE_CODES = 'subscribe_codes'
 
 
 DAY_DATA = 'day_data'

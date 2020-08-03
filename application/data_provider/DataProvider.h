@@ -70,11 +70,13 @@ public:
     void startSimulation();
     void stopSimulation();
 
+    QStringList getSubscribeCodes();
     QStringList getRecentSearch();
     QStringList getFavoriteList();
     QStringList getViList(int option, bool catchPlus);
     QStringList getTtopAmountList(int option, bool catchPlus, bool useAccumulated);
     TopList* getYtopAmountList();
+    void clearRecentList();
     void addToFavorite(const QString &code);
     void removeFromFavorite(const QString &code);
     const QDateTime & currentDateTime() { return m_currentDateTime; }
@@ -86,6 +88,10 @@ public:
     void changeToImmediate(const QString &code, const QString &orderNum, int percentage);
     void cancelOrder(const QString &code, const QString &orderNum);
     void sendBalanceRequest();
+
+    void requestTickSubscribe(const QString &code);
+    void requestBidAskSubscribe(const QString &code);
+    void requestSubjectSubscribe(const QString &code);
 
 
     QList<int> getViPrices(const QString &code);

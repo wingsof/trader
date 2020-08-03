@@ -63,6 +63,7 @@ public:
     StockInfo * getInfo(const QString &code);
     void setCurrentCode(const QString &section, const QString &code);
     const QDateTime &currentDateTime() { return m_currentDateTime; }
+    void clearRecentList();
 
 private:
     StockStat();

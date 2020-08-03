@@ -11,6 +11,7 @@ service Stock {
   rpc GetMinuteData(StockQuery) returns (CybosDayDatas) {}
   rpc GetTodayMinuteData(StockCodeQuery) returns (CybosDayDatas) {}
   rpc GetPastMinuteData(PastMinuteQuery) returns (CybosDayDatas) {}
+  rpc GetSubscribeCodes(google.protobuf.Empty) returns (CodeList) {}
 
   rpc GetBalance(google.protobuf.Empty) returns (Balance) {}
 
@@ -39,6 +40,7 @@ service Stock {
   rpc GetFavoriteList(google.protobuf.Empty) returns (CodeList) {}
   rpc AddFavorite(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RemoveFavorite(StockCodeQuery) returns (google.protobuf.Empty) {}
+  rpc ClearRecentList(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 
   rpc GetYesterdayTopAmountList(google.protobuf.Timestamp) returns (TopList) {}
   rpc GetTodayTopAmountList(Option) returns (CodeList) {}

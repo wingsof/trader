@@ -4,9 +4,11 @@
 #include <QQuickPaintedItem>
 #include <QPainter>
 #include <QTransform>
+#include <QPair>
 #include <QWheelEvent>
 #include "DataProvider.h"
 #include "MinInfo.h"
+#include "AuxiliaryInfo.h"
 
 
 class MorningTickChartView : public QQuickPaintedItem {
@@ -27,6 +29,8 @@ public:
     MorningTickChartView(QQuickItem *parent = 0);
     void paint(QPainter *painter);
 
+    qreal mapPriceToPos(int price, qreal startY, qreal endY);
+
 private:
     QString currentStockCode;
     QList<int> priceSteps;
@@ -39,6 +43,8 @@ private:
     QTransform mTransform;
     qreal mScale = 1.0;
     QPoint mPrevPoint;
+    qreal mDrawHorizontalCurrentX = 0.0;
+    qreal mDrawHorizontalStartX = 0.0;
 
     void resetData();
     void sendRequestData();
@@ -47,8 +53,8 @@ private:
     void updatePriceSteps(int h, int l);
     void setVolumeMinMax(uint h, uint l);
     void updateVolumeMax(uint h);
+    void addToTimePricePair(QList<QPair<int,int> > &lp, const CybosDayData &);
 
-    qreal mapPriceToPos(int price, qreal startY, qreal endY);
     qreal getCandleLineWidth(qreal w);
     //qreal getTimeToXPos(uint time, qreal tickWidth, uint dataStartHour);
     qreal getTimeToXPos(uint t, qreal tickWidth, uint startTime);

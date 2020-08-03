@@ -60,3 +60,9 @@ class MorningStats:
             info['capability'] = capability
             msg.append(info)
         return msg
+
+    def get_subscribe_codes(self):
+        codes = []
+        for c in self.collectors:
+            codes.extend(c.subscribe_code)
+        return codes

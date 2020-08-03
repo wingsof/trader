@@ -15,11 +15,11 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
+        /*
         ViList {
             Layout.fillWidth: true
             Layout.fillHeight: true
-        }
-
+        }*/
         FavoriteList {
             Layout.fillWidth: true
             Layout.fillHeight: true

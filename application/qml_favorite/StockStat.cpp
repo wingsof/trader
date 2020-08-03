@@ -111,6 +111,11 @@ void StockStat::alarmArrived(CybosStockAlarm *alarm) {
 }
 
 
+void StockStat::clearRecentList() {
+    DataProvider::getInstance()->clearRecentList();
+}
+
+
 StockInfo::StockInfo(const QString &code, const QDateTime &dt)
 : QObject(nullptr) {
     m_code = code;

@@ -45,18 +45,29 @@ void MorningTickChartView::wheelEvent(QWheelEvent *event) {
 
 
 void MorningTickChartView::mousePressEvent(QMouseEvent *event) {
-    mPrevPoint = event->pos();
+    if (event->button() == Qt::LeftButton) {
+        mPrevPoint = event->pos();
+    }
+    else if (event->button() == Qt::RightButton) {
+        mDrawHorizontalStartX = event->x();
+    }
 }
 
 
 void MorningTickChartView::mouseMoveEvent(QMouseEvent *event) {
-    auto curPos = event->pos();
-    auto offsetPos = curPos - mPrevPoint;
-    auto tm = QTransform()
-            .translate(offsetPos.x(), offsetPos.y());
-    mPrevPoint = curPos;
-    mTransform *= tm;
-    update();
+    if (event->button() == Qt::LeftButton) {
+        auto curPos = event->pos();
+        auto offsetPos = curPos - mPrevPoint;
+        auto tm = QTransform()
+                .translate(offsetPos.x(), offsetPos.y());
+        mPrevPoint = curPos;
+        mTransform *= tm;
+        update();
+    }
+    else if (event->button() == Qt::RightButton) {
+        mDrawHorizontalCurrentX = event->x();
+        update();
+    }
 }
 
 
@@ -64,6 +75,8 @@ void MorningTickChartView::resetData() {
     currentVolumeMin = currentVolumeMax = 0;
     pastMinuteDataReceived = false;
     mScale = 1.0;
+    mDrawHorizontalCurrentX = 0.0;
+    mDrawHorizontalStartX = 0.0;
     mTransform.reset();
     priceSteps.clear();
     yesterdayMinInfo.clear();
@@ -495,6 +508,7 @@ void MorningTickChartView::paint(QPainter *painter) {
     qreal yesterdayTickCount = 131;
     qreal yesterdaySpaceCount = yesterdayTickCount - 1;
 
+    AuxiliaryInfo aInfo(this);
     // Space width between tick is 2/3 tick width, area_width = (count + (count - 1) * 2/3) * tickWidth
     qreal todayTickWidth = cellWidth * TODAY_COLUMN_COUNT / (todayTickCount + todaySpaceCount * TICK_SPACE_RATIO);
     qreal yesterdayTickWidth = cellWidth * YESTERDAY_COLUMN_COUNT / (yesterdayTickCount + yesterdaySpaceCount * TICK_SPACE_RATIO);
@@ -505,6 +519,7 @@ void MorningTickChartView::paint(QPainter *painter) {
         for (int i = 0; i < yesterdayMinInfo.count(); i++) {
             const CybosDayData &d = yesterdayMinInfo.get(i);
             qreal xPos = getTimeToXPos(d.time(), yesterdayTickWidth, st);
+            aInfo.addPriceWithXAxis(xPos, d.close_price(), d.highest_price());
             drawCandle(painter, d, startX + xPos, yesterdayTickWidth, cellHeight * PRICE_ROW_COUNT);
             drawVolume(painter, d, startX + xPos, yesterdayTickWidth, cellHeight, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
         }
@@ -523,6 +538,7 @@ void MorningTickChartView::paint(QPainter *painter) {
         for (int i = 0; i < queue.day_data_size(); i++) {
             const CybosDayData &d = queue.day_data(i);
             qreal xPos = getTimeToXPos(d.time(), todayTickWidth, todayStartTime.hour() * 100 + todayStartTime.minute());
+            aInfo.addPriceWithXAxis(xPos, d.close_price(), d.highest_price());
             drawCandle(painter, d, startX + xPos, todayTickWidth, cellHeight * PRICE_ROW_COUNT);
             drawVolume(painter, d, startX + xPos, todayTickWidth, cellHeight, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
         }
@@ -532,7 +548,15 @@ void MorningTickChartView::paint(QPainter *painter) {
             qreal xPos = getTimeToXPos(d.time(), todayTickWidth, todayStartTime.hour() * 100 + todayStartTime.minute());
             drawCandle(painter, d, startX + xPos, todayTickWidth, cellHeight * PRICE_ROW_COUNT);
             drawVolume(painter, d, startX + xPos, todayTickWidth, cellHeight, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
+            aInfo.addPriceWithXAxis(xPos, d.close_price(), d.highest_price());
             drawCurrentLineRange(painter, mt, startX + xPos, d, cellWidth, cellHeight * PRICE_ROW_COUNT);
         }
     }
+
+    aInfo.drawAverageLine(painter, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
+
+    if (mDrawHorizontalStartX > 0 && mDrawHorizontalCurrentX > 0 &&
+        mDrawHorizontalStartX < cellWidth * PRICE_COLUMN_COUNT &&
+        mDrawHorizontalCurrentX < cellWidth * PRICE_COLUMN_COUNT)
+        aInfo.drawCandleSelection(painter, mDrawHorizontalStartX, mDrawHorizontalCurrentX, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
 }

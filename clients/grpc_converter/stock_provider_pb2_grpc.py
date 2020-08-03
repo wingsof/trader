@@ -36,6 +36,11 @@ class StockStub(object):
         request_serializer=stock__provider__pb2.PastMinuteQuery.SerializeToString,
         response_deserializer=stock__provider__pb2.CybosDayDatas.FromString,
         )
+    self.GetSubscribeCodes = channel.unary_unary(
+        '/stock_api.Stock/GetSubscribeCodes',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=stock__provider__pb2.CodeList.FromString,
+        )
     self.GetBalance = channel.unary_unary(
         '/stock_api.Stock/GetBalance',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -136,6 +141,11 @@ class StockStub(object):
         request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
+    self.ClearRecentList = channel.unary_unary(
+        '/stock_api.Stock/ClearRecentList',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
     self.GetYesterdayTopAmountList = channel.unary_unary(
         '/stock_api.Stock/GetYesterdayTopAmountList',
         request_serializer=google_dot_protobuf_dot_timestamp__pb2.Timestamp.SerializeToString,
@@ -234,6 +244,13 @@ class StockServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def GetPastMinuteData(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def GetSubscribeCodes(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -380,6 +397,13 @@ class StockServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def ClearRecentList(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def GetYesterdayTopAmountList(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -501,6 +525,11 @@ def add_StockServicer_to_server(servicer, server):
           request_deserializer=stock__provider__pb2.PastMinuteQuery.FromString,
           response_serializer=stock__provider__pb2.CybosDayDatas.SerializeToString,
       ),
+      'GetSubscribeCodes': grpc.unary_unary_rpc_method_handler(
+          servicer.GetSubscribeCodes,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=stock__provider__pb2.CodeList.SerializeToString,
+      ),
       'GetBalance': grpc.unary_unary_rpc_method_handler(
           servicer.GetBalance,
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
@@ -599,6 +628,11 @@ def add_StockServicer_to_server(servicer, server):
       'RemoveFavorite': grpc.unary_unary_rpc_method_handler(
           servicer.RemoveFavorite,
           request_deserializer=stock__provider__pb2.StockCodeQuery.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'ClearRecentList': grpc.unary_unary_rpc_method_handler(
+          servicer.ClearRecentList,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
       'GetYesterdayTopAmountList': grpc.unary_unary_rpc_method_handler(

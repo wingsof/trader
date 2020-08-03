@@ -266,6 +266,20 @@ MinuteTick * DataProvider::getMinuteTick(const QString &code) {
 }
 
 
+QStringList DataProvider::getSubscribeCodes() {
+    ClientContext context;
+    CodeList * codeList = new CodeList;
+    Empty empty;
+    qWarning() << "Request Subscribe codes";
+    stub_->GetSubscribeCodes(&context, empty, codeList);
+    qWarning() << "Request Subscribe codes OK " << codeList->codelist_size();
+    QStringList list;
+    for (int i = 0; i < codeList->codelist_size(); i++)
+        list.append(QString::fromStdString(codeList->codelist(i)));
+    return list;
+}
+
+
 QStringList DataProvider::getRecentSearch() {
     ClientContext context;
     CodeList * codeList = new CodeList;
@@ -443,6 +457,41 @@ QList<int> DataProvider::getViPrices(const QString &code) {
     for (int i = 0; i < prices.price_size(); i++)
         priceList.append(prices.price(i));
     return priceList;
+}
+
+
+void DataProvider::requestTickSubscribe(const QString &code) {
+    ClientContext context;
+    StockCodeQuery data;
+    Empty empty;
+    data.set_code(code.toStdString());
+    stub_->RequestCybosTickData(&context, data, &empty);
+}
+
+
+void DataProvider::requestBidAskSubscribe(const QString &code) {
+    ClientContext context;
+    StockCodeQuery data;
+    Empty empty;
+    data.set_code(code.toStdString());
+    stub_->RequestCybosBidAsk(&context, data, &empty);
+}
+
+
+void DataProvider::requestSubjectSubscribe(const QString &code) {
+    ClientContext context;
+    StockCodeQuery data;
+    Empty empty;
+    data.set_code(code.toStdString());
+    stub_->RequestCybosSubject(&context, data, &empty);
+}
+
+
+void DataProvider::clearRecentList() {
+    ClientContext context;
+    Empty empty;
+    Empty emptyRet;
+    stub_->ClearRecentList(&context, empty, &emptyRet);
 }
 
 

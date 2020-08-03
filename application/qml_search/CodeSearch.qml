@@ -16,10 +16,5 @@ Item {
             text: SearchBackend.currentCode
             onAccepted: root.codeEntered()
         }
-
-        Button {
-            Layout.preferredWidth: 80
-            text: "Search"
-        }
     }
 }

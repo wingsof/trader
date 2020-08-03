@@ -10,6 +10,7 @@ Item {
         anchors.fill: parent
         MenuButton {
             firstText: 'ADD'
+            secondText: 'CLEAR'
             buttonColor: '#87ea55'
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             Layout.preferredWidth: 200

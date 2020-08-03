@@ -16,6 +16,12 @@ def request_collector_stat(reader):
     return reader.block_write(header, body)
 
 
+def request_subscribe_codes(reader):
+    header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.SUBSCRIBE_CODES)
+    body = []
+    return reader.block_write(header, body)
+
+
 def request_stock_day_data(reader, code, from_date, until_date, method=message.DAY_DATA):
     header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, method)
     header['code'] = code

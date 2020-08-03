@@ -66,6 +66,10 @@ def code_to_name(code):
     return ''
 
 
+def get_subscribe_codes():
+    return stock_api.request_subscribe_codes(get_reader())
+
+
 def is_kospi_code(code):
     global _kospi_code
     if _kospi_code is not None and code in _kospi_code:

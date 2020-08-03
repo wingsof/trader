@@ -27,4 +27,8 @@ void RecentListModel::menuClicked(int index) {
         const ListItem * li = itemList.at(currentSelectIndex());
         StockStat::instance()->addToFavorite(li->code());
     }
+    else if (index == 1) {
+        emit clearCurrentIndex();
+        StockStat::instance()->clearRecentList();
+    }
 }

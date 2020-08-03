@@ -141,8 +141,8 @@ void SearchBackend::launchTick() {
 }
 
 
-void SearchBackend::launchVolumeGraph() {
-    launchApp("/application/qml_comparison", "qml_comparison");
+void SearchBackend::launchTrader() {
+    launchApp("/application/qml_trading", "qml_trading");
 }
 
 
@@ -158,4 +158,15 @@ void SearchBackend::launchDayChart() {
 
 void SearchBackend::launchFavorite() {
     launchApp("/application/qml_favorite", "qml_favorite");
+}
+
+
+void SearchBackend::startSubscribeCodes() {
+    QStringList subscribeCodes = DataProvider::getInstance()->getSubscribeCodes();
+    qWarning() << "Subscrbie Code count : " << subscribeCodes.size();
+    for (int i = 0; i < subscribeCodes.size(); i++) {
+        DataProvider::getInstance()->requestTickSubscribe(subscribeCodes.at(i));
+        DataProvider::getInstance()->requestBidAskSubscribe(subscribeCodes.at(i));
+        DataProvider::getInstance()->requestSubjectSubscribe(subscribeCodes.at(i));
+    }
 }

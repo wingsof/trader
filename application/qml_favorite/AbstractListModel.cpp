@@ -24,6 +24,7 @@ void AbstractListModel::clearList() {
     if (itemList.count() == 0)
         return;
 
+    clearCurrentIndex();
     beginResetModel();
     QMutableListIterator<ListItem *> i(itemList);
     while (i.hasNext()) {

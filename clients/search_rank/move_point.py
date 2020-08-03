@@ -129,7 +129,9 @@ def start_trading(tdate, codes):
                                        'current profit:': get_profit(data['close_price'], yesterday_close[code]),
                                        'mavg': mavg,
                                        'current_close': data['close_price'],
-                                       'current_highest': data['highest_price']})
+                                       'current_highest': data['highest_price'],
+                                       'yesterday_amount': yesterday_amount[code],
+                                       'today_930_amount': today_amount})
                     print(meet_codes)
                     break
                     # calculate target price
@@ -139,9 +141,9 @@ def start_trading(tdate, codes):
 
 if __name__ == '__main__':
     target_date = datetime.strptime(sys.argv[1], '%Y-%m-%d').date()
-    kosdaq_market_code = morning_client.get_market_code()
+    market_codes = morning_client.get_all_market_code()
     #kosdaq_market_code = ['A001540']
-    result = start_trading(target_date, kosdaq_market_code)
+    result = start_trading(target_date, market_codes)
     
     df = pd.DataFrame(result)
     df.to_excel('mpoint' + sys.argv[1] + '.xlsx')

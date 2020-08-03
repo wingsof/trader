@@ -37,7 +37,7 @@ ApplicationWindow {
 
             CodeSearch {
                 id: codeSearch
-                Layout.preferredWidth: 180 
+                Layout.preferredWidth: 80
                 Layout.preferredHeight: 40
                 Layout.rightMargin: 20
                 Connections {
@@ -48,6 +48,14 @@ ApplicationWindow {
                 }
             }
 
+            Button {
+                id: subscribeButton
+                Layout.leftMargin: 50
+                Layout.preferredWidth: 80
+                Layout.preferredHeight: 40
+                text: "Subscribe"
+                onClicked: SearchBackend.startSubscribeCodes()
+            }
             
             Button {
                 id: startButton
@@ -127,11 +135,11 @@ ApplicationWindow {
             }
 
             Button {
-                text: "VOL Trend"
+                text: "Trader"
                 Layout.preferredWidth: 85 
                 Layout.preferredHeight: 30 
                 onClicked: {
-                    SearchBackend.launchVolumeGraph()
+                    SearchBackend.launchTrader()
                 }
             }
 
