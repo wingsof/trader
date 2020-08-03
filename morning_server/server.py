@@ -103,7 +103,7 @@ def handle_request(sock, header, body):
         stream_write(sock, header, morning_stat.get_collector_info())
     elif header['method'] == message.SUBSCRIBE_CODES:
         header['type'] = message.RESPONSE
-        stream_write(sock, header, morning_stat.get_subscribe_codes()
+        stream_write(sock, header, morning_stat.get_subscribe_codes())
     elif header['method'] == message.YESTERDAY_TOP_AMOUNT_DATA:
         header['type'] = message.RESPONSE
         stream_write(sock, header, yta.get_yesterday_top_amount(header['date']))
