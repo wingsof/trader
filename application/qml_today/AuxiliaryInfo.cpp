@@ -160,6 +160,7 @@ void AuxiliaryInfo::drawCandleSelection(QPainter *painter, qreal startX, qreal e
             endDiff = qAbs(timePriceList.at(i).xPos - endX);
         }
     }
+    //qWarning() << "startIndex : " << startPointIndex << "\tendIndex : " << endPointIndex;
 
     if (startPointIndex != -1 && endPointIndex != -1 && startPointIndex != endPointIndex) {
         QColor color;
@@ -172,16 +173,40 @@ void AuxiliaryInfo::drawCandleSelection(QPainter *painter, qreal startX, qreal e
         qreal rEndX = timePriceList.at(endPointIndex).xPos;
         qreal rStartY = mtcv->mapPriceToPos(timePriceList.at(startPointIndex).highest, endY, 0);
         qreal rEndY = mtcv->mapPriceToPos(timePriceList.at(endPointIndex).highest, endY, 0);
+
         painter->fillRect(QRectF(rStartX, rStartY, rEndX - rStartX, rEndY - rStartY), color);
+
+        QFont font = painter->font();
+        font.setPointSize(5);
+        painter->setFont(font);
+        QPen pen = painter->pen();
+        pen.setColor(Qt::black);
+        painter->setPen(pen);
+        qreal smallY = rStartY < rEndY ? rStartY : rEndY;
+        qreal profit = (qreal(timePriceList.at(endPointIndex).highest) - timePriceList.at(startPointIndex).highest) / timePriceList.at(startPointIndex).highest * 100.0;
+        painter->drawText(QPointF(rStartX, rStartY - 10), QString::number(timePriceList.at(startPointIndex).highest));
+        painter->drawText(QPointF(rEndX, rEndY - 10), QString::number(timePriceList.at(endPointIndex).highest));
+        if (timePriceList.at(endPointIndex).highest >= timePriceList.at(startPointIndex).highest)
+            pen.setColor(Qt::red);
+        else
+            pen.setColor(Qt::blue);
+        painter->setPen(pen);
+        painter->drawText(QPointF(rEndX, smallY - 20), QString::number(profit, 'f', 1));
     }
 }
 
 
 void AuxiliaryInfo::drawAverageLine(QPainter *painter, qreal endY, int count) {
+    painter->save();
     QVector<QPointF> points;
+    if (timePriceList.count() < count) {
+        painter->restore();
+        return;
+    }
+
     for (int i = count - 1; i < timePriceList.count(); i++) {
         long long priceSum = 0;
-        for (int j = i - count - 1; j <= i; j++) {
+        for (int j = i - count + 1; j <= i; j++) {
             priceSum += (long long) timePriceList.at(j).close;
         }
         points.append(QPointF(timePriceList.at(i).xPos, 
@@ -190,9 +215,10 @@ void AuxiliaryInfo::drawAverageLine(QPainter *painter, qreal endY, int count) {
 
     if (points.size() > 0) {
         QPen pen;
-        pen.setColor(Qt::yellow);
+        pen.setColor(Qt::green);
         painter->setPen(pen);
         QPainterPath path = splineFromPoints(points, 2);
         painter->drawPath(path);
     }
+    painter->restore();
 }

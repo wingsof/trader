@@ -49,13 +49,20 @@ void MorningTickChartView::mousePressEvent(QMouseEvent *event) {
         mPrevPoint = event->pos();
     }
     else if (event->button() == Qt::RightButton) {
-        mDrawHorizontalStartX = event->x();
+        QPoint pos = mTransform.inverted().map(event->pos());
+        mDrawHorizontalStartX = pos.x();
     }
 }
 
 
+void MorningTickChartView::mouseReleaseEvent(QMouseEvent *event) {
+    mDrawHorizontalStartX = mDrawHorizontalCurrentX = 0.0;
+    update();
+}
+
+
 void MorningTickChartView::mouseMoveEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton) {
+    if (event->buttons() & Qt::LeftButton) {
         auto curPos = event->pos();
         auto offsetPos = curPos - mPrevPoint;
         auto tm = QTransform()
@@ -64,8 +71,9 @@ void MorningTickChartView::mouseMoveEvent(QMouseEvent *event) {
         mTransform *= tm;
         update();
     }
-    else if (event->button() == Qt::RightButton) {
-        mDrawHorizontalCurrentX = event->x();
+    else if (event->buttons() & Qt::RightButton) {
+        QPoint pos = mTransform.inverted().map(event->pos());
+        mDrawHorizontalCurrentX = pos.x();
         update();
     }
 }
@@ -289,7 +297,7 @@ void MorningTickChartView::setPriceSteps(int h, int l) {
 
 
 void MorningTickChartView::updatePriceSteps(int h, int l) {
-    qWarning() << "updatePriceSteps : " << h << " " << l;
+    //qWarning() << "updatePriceSteps : " << h << " " << l;
     if (priceSteps.count() == 0) {
         setPriceSteps(h, l);
     }
@@ -519,7 +527,7 @@ void MorningTickChartView::paint(QPainter *painter) {
         for (int i = 0; i < yesterdayMinInfo.count(); i++) {
             const CybosDayData &d = yesterdayMinInfo.get(i);
             qreal xPos = getTimeToXPos(d.time(), yesterdayTickWidth, st);
-            aInfo.addPriceWithXAxis(xPos, d.close_price(), d.highest_price());
+            aInfo.addPriceWithXAxis(startX + xPos, d.close_price(), d.highest_price());
             drawCandle(painter, d, startX + xPos, yesterdayTickWidth, cellHeight * PRICE_ROW_COUNT);
             drawVolume(painter, d, startX + xPos, yesterdayTickWidth, cellHeight, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
         }
@@ -538,7 +546,7 @@ void MorningTickChartView::paint(QPainter *painter) {
         for (int i = 0; i < queue.day_data_size(); i++) {
             const CybosDayData &d = queue.day_data(i);
             qreal xPos = getTimeToXPos(d.time(), todayTickWidth, todayStartTime.hour() * 100 + todayStartTime.minute());
-            aInfo.addPriceWithXAxis(xPos, d.close_price(), d.highest_price());
+            aInfo.addPriceWithXAxis(startX + xPos, d.close_price(), d.highest_price());
             drawCandle(painter, d, startX + xPos, todayTickWidth, cellHeight * PRICE_ROW_COUNT);
             drawVolume(painter, d, startX + xPos, todayTickWidth, cellHeight, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
         }
@@ -548,15 +556,15 @@ void MorningTickChartView::paint(QPainter *painter) {
             qreal xPos = getTimeToXPos(d.time(), todayTickWidth, todayStartTime.hour() * 100 + todayStartTime.minute());
             drawCandle(painter, d, startX + xPos, todayTickWidth, cellHeight * PRICE_ROW_COUNT);
             drawVolume(painter, d, startX + xPos, todayTickWidth, cellHeight, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
-            aInfo.addPriceWithXAxis(xPos, d.close_price(), d.highest_price());
+            aInfo.addPriceWithXAxis(startX + xPos, d.close_price(), d.highest_price());
             drawCurrentLineRange(painter, mt, startX + xPos, d, cellWidth, cellHeight * PRICE_ROW_COUNT);
         }
     }
 
-    aInfo.drawAverageLine(painter, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
+    aInfo.drawAverageLine(painter, cellHeight * PRICE_ROW_COUNT);
 
     if (mDrawHorizontalStartX > 0 && mDrawHorizontalCurrentX > 0 &&
         mDrawHorizontalStartX < cellWidth * PRICE_COLUMN_COUNT &&
         mDrawHorizontalCurrentX < cellWidth * PRICE_COLUMN_COUNT)
-        aInfo.drawCandleSelection(painter, mDrawHorizontalStartX, mDrawHorizontalCurrentX, cellHeight * (PRICE_ROW_COUNT + VOLUME_ROW_COUNT));
+        aInfo.drawCandleSelection(painter, mDrawHorizontalStartX, mDrawHorizontalCurrentX, cellHeight * PRICE_ROW_COUNT);
 }

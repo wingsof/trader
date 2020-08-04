@@ -106,7 +106,7 @@ def start_trading(tdate, codes):
                 continue
             else:
                 if yesterday_amount[code] > today_amount:
-                    continue
+                    break
 
                 mavg = statistics.mean([d['close_price'] for d in current_data[-60:]])
 

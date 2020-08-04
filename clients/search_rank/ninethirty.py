@@ -25,7 +25,8 @@ def get_day_data(query_date, market_code):
         if len(data) == 1:
             data = data[0]
             data['code'] = code
-            yesterday_data[code] = data
+            if data['amount'] >= 1000000000:
+                yesterday_data[code] = data
     print('')
 
 
@@ -42,12 +43,10 @@ def start_trading(tdate, codes):
         amount = 0
         start_watch = False
         found_point = None
-        post_time = None
         previous_data = None
         start_data = None
-        report = {'date': tdate.year * 10000 + tdate.month * 100 + tdate.day, 'code': code, 'amount': 0, 'yesterday_amount': 0, 'buy_point_profit': 0, 'from_open_profit': 0,
-                  'pre_highest': 0, 'post_highest': 0, 'over_pre_high_time': 0, 'buy_price': 0, 'post_high_time': 0, 'amount_x': 0,
-                  'post_low_time': 0, 'low_price': 0, 'high_profit': 0, 'low_profit': 0}
+        report = {'date': tdate.year * 10000 + tdate.month * 100 + tdate.day, 'code': code, 'amount': 0, 'yesterday_amount': 0, 'open_profit': 0,
+                  'pre_highest': 0, 'amount_x': 0, 'catch_highest_time': 0, 'buy_price': 0, 'highest_price': 0, 'over_time': 0, 'low_price': 0, 'low_time': 0}
 
         for data in tdata:
             if start_data is None:
@@ -58,29 +57,54 @@ def start_trading(tdate, codes):
                 if data['highest_price'] > report['pre_highest']:
                     report['pre_highest'] = data['highest_price']
                 continue
-            elif not start_watch and data['time'] > 930 and amount > yesterday_data[code]['amount'] and data['highest_price'] < report['pre_highest'] and amount > 1000000000:
+            elif not start_watch and data['time'] > 930 and amount > yesterday_data[code]['amount'] and data['highest_price'] < report['pre_highest']:
                 start_watch = True
                 report['amount'] = amount
                 report['yesterday_amount'] = yesterday_data[code]['amount']
+                report['over_time'] = data['time']
+                print('found 1', code)
 
             if not start_watch:
                 break
-
+            
             if found_point is None:
                 if data['time'] >= 1449:
                     break
                 else:
+                    if data['start_price'] > report['pre_highest']:
+                        print('found 2', code)
+                        report['catch_highest_time'] = data['time']
+                        report['open_profit'] = float("{0:.2f}".format((data['start_price'] - start_data['start_price']) / start_data['start_price'] * 100.0))
+                        report['amount_x'] = float("{0:.2f}".format(amount / yesterday_data[code]['amount']))
+                        report['buy_price'] = data['start_price']
+                        found_point = datetime(tdate.year, tdate.month, tdate.day, int(data['time'] / 100), int(data['time'] % 100), 0)
+            else:
+                dt = datetime(tdate.year, tdate.month, tdate.day, int(data['time'] / 100), int(data['time'] % 100), 0)
+                if dt - found_point >= timedelta(minutes=30):
+                    report['high_profit'] = float("{0:.2f}".format((report['highest_price'] - report['buy_price']) / report['buy_price'] * 100.0))
+                    report['low_profit'] = float("{0:.2f}".format((report['low_price'] - report['buy_price']) / report['buy_price'] * 100.0))
+                    result.append(report)
+                    print('report len', len(result))
+                    break
+                else:
+                    if data['highest_price'] > report['highest_price']:
+                        report['highest_price'] = data['highest_price']
+                        report['post_high_time'] = data['time']
+
+                    if report['low_price'] == 0 or data['lowest_price'] < report['low_price']:
+                        report['low_price'] = data['lowest_price']
+                        report['low_time'] = data['time']
+
+                    """
                     if data['close_price'] > data['start_price'] and data['highest_price'] > report['pre_highest']:
                         found_point = datetime(tdate.year, tdate.month, tdate.day, int(data['time'] / 100), int(data['time'] % 100), 0)
                         report['over_pre_high_time'] = data['time']
                         report['buy_price'] = data['highest_price']
                         report['buy_point_profit'] = float("{0:.2f}".format((report['buy_price'] - yesterday_data[code]['close_price']) / yesterday_data[code]['close_price'] * 100.0))
-                        report['from_open_profit'] = float("{0:.2f}".format((report['buy_price'] - start_data['start_price']) / start_data['start_price'] * 100.0))
             else:
                 dt = datetime(tdate.year, tdate.month, tdate.day, int(data['time'] / 100), int(data['time'] % 100), 0)
 
                 if dt - found_point >= timedelta(minutes=30):
-                    report['amount_x'] = float("{0:.2f}".format(amount / yesterday_data[code]['amount']))
                     report['high_profit'] = float("{0:.2f}".format((report['post_highest'] - report['buy_price']) / report['buy_price'] * 100.0))
                     report['low_profit'] = float("{0:.2f}".format((report['low_price'] - report['buy_price']) / report['buy_price'] * 100.0))
                     result.append(report)
@@ -93,18 +117,18 @@ def start_trading(tdate, codes):
                     if report['low_price'] == 0 or data['lowest_price'] < report['low_price']:
                         report['low_price'] = data['lowest_price']
                         report['post_low_time'] = data['time']
+                    """
 
 if __name__ == '__main__':
     target_date = datetime.strptime(sys.argv[1], '%Y-%m-%d').date()
-    kosdaq_market_code = morning_client.get_market_code()
+    market_codes = morning_client.get_all_market_code()
 
-    while target_date <= datetime(2020, 6, 15, 0, 0, 0).date():
+    while target_date <= datetime(2020, 6, 12, 0, 0, 0).date():
         if holidays.is_holidays(target_date):
             target_date += timedelta(days=1)
             continue
-        start_trading(target_date, kosdaq_market_code)
+        start_trading(target_date, market_codes)
         target_date += timedelta(days=1)
 
-
     df = pd.DataFrame(result)
-    df.to_excel('930.xlsx')
+    df.to_excel('930_' + str(target_date.year * 10000 + target_date.month * 100 + target_date.day) + '.xlsx')

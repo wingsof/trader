@@ -8,21 +8,21 @@
         - 현재가가 15% 넘지 않고, 다음 VI 이전 4% 이상 수익 가능 종목
 
 * 구현 목록
-    * 현재 Listen 종목 List 받기 및 QML Search 에 Subscribe 버튼 추가    ########
-    * Today 에서 오른쪽 마우스 클릭시 가까운 가격 찾아 거리 표시(금액,%) ########
+    * 현재 Listen 종목 List 받기 및 QML Search 에 Subscribe 버튼 추가    ######## *
+    * Today 에서 오른쪽 마우스 클릭시 가까운 가격 찾아 거리 표시(금액,%) ######## *
     * server 에서 매번 db connect 할지 아니면 한 군데에서 instance 생성
     * 1/2 imm sell, ALL SELL
-    * KOSPI, KOSDAQ (U001, U201 -> 가격 조정)                           ########
+    * KOSPI, KOSDAQ (U001, U201 -> 가격 조정)                           ######## * Open, High, Low 가격이 Tick 데이터에 없음
     * ON MEET
     * 실제 Trading 거래
     * RUN AND GUN
     * Favorite
         - 전날 시간외 종목
         - 9:30 거래량 2배 종목
-        - Recent Clear 버튼 추가                                                ###
+        - Recent Clear 버튼 추가                                                ### *
         - Recent 최신 항목이 위로 올라가게 수정 (기존 있는 항목 삭제 및 위로)  Recent 에서 선택시 어떻게 할지 애매
-        - Favorite 갱신시 이동되는 버그 수정                                    ###
-        - VI Column 삭제                                                        ###
+        - Favorite 갱신시 이동되는 버그 수정                                    ### *
+        - VI Column 삭제                                                        ### *
 
 
 

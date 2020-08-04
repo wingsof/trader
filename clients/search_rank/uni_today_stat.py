@@ -18,7 +18,7 @@ import pandas as pd
 
 
 def get_yesterday_day_data(query_date, market_code):
-    yesterday_dict{}
+    yesterday_dict = {}
     for progress, code in enumerate(market_code):
         print('collect data', f'{progress+1}/{len(market_code)}', end='\r')
         data = morning_client.get_past_day_data(code, query_date, query_date)
@@ -34,17 +34,19 @@ def get_yesterday_uni_day_data(query_date, market_code):
     yesterday_uni_list = []
     for progress, code in enumerate(market_code):
         print('collect uni data', f'{progress+1}/{len(market_code)}', end='\r')
-        data = morning_client.get_uni_day_period_data(code, query_date, query_date)
-        if len(data) == 1:
-            data = data[0]
+        data = morning_client.get_uni_day_period_data(code, query_date - timedelta(days=7), query_date)
+        if len(data) >= 3:
+            prev_data = data[:-1]
+            data = data[-1]
 
             if data['start_price'] == 0:
                 continue
-
+            prev_max_amount = max([d['volume'] * d['close_price'] for d in prev_data])
             data['code'] = code
             data['amount'] = data['volume'] * data['close_price']
             data['market_close'] = data['close_price'] - data['market_close_diff']
-            yesterday_uni_list.append(data)
+            if data['amount'] >= 1000000000 and data['amount'] > prev_max_amount:
+                yesterday_uni_list.append(data)
     print('')
     return yesterday_uni_list
 
@@ -60,10 +62,12 @@ def start_trading(tdate, codes):
     yesterday = holidays.get_yesterday(tdate)
     start_time = datetime.now()
     yesterday_uni_data = get_yesterday_uni_day_data(yesterday, codes)
+    print('Uni data count', len(yesterday_uni_data))
     yesterday_uni_data = sorted(yesterday_uni_data, key=lambda x: x['market_close_profit'], reverse=True)
+    codes = [d['code'] for d in yesterday_uni_data]
     yesterday_dict = get_yesterday_day_data(yesterday, codes)
     result = []
-    for ud in yesterday_uni_data[300:]:
+    for ud in yesterday_uni_data:
         tdata = morning_client.get_minute_data(ud['code'], tdate, tdate)
         highest = 0
         amount = 0
@@ -85,13 +89,14 @@ def start_trading(tdate, codes):
                 print('close 0', ud)
                 continue
 
+            ud['date'] = d['0']
             ud['today_open_price'] = open_price
             ud['today_open_profit'] = get_profit(open_price, ud['market_close'])
             ud['today_highest_time'] = highest_time
             ud['today_highest_price'] = highest
             ud['today_max_profit'] = get_profit(highest, ud['market_close'])
             ud['today_amount'] = amount
-            ud['yesterday_amount'] = yesterday_dict[code]['amount']
+            ud['yesterday_amount'] = yesterday_dict[ud['code']]['amount']
             result.append(ud)
 
     return result

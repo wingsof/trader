@@ -379,10 +379,7 @@ void DayView::tickDataArrived(CybosTickData *data) {
         mTickMap[code] = TickStat();
 
     if (code == "U001" || code == "U201") {
-        data->set_highest_price(int(data->highest_price() / 100));
         data->set_current_price(int(data->current_price() / 100));
-        data->set_lowest_price(int(data->lowest_price() / 100));
-        data->set_start_price(int(data->start_price() / 100));
     }
 
     mTickMap[code].setStat(
@@ -398,7 +395,7 @@ void DayView::tickDataArrived(CybosTickData *data) {
                        "lowest : " << data->lowest_price() << "\t" <<
                        "cum volume : " << data->cum_volume() << "\t" <<
                        "market type : " << data->market_type();
-        dayData->setTodayData(data->start_price(),
+        dayData->setTodayData(code, data->start_price(),
                                 data->highest_price(),
                                 data->lowest_price(),
                                 data->current_price(),
@@ -456,7 +453,7 @@ void DayData::resetData() {
 }
 
 
-void DayData::setTodayData(int o, int h, int l, int c, unsigned long v, bool is_synchronized_bidding) {
+void DayData::setTodayData(const QString &code, int o, int h, int l, int c, unsigned long v, bool is_synchronized_bidding) {
     todayData->set_start_price(o);
     todayData->set_highest_price(h);
     todayData->set_lowest_price(l);
@@ -465,7 +462,7 @@ void DayData::setTodayData(int o, int h, int l, int c, unsigned long v, bool is_
     todayData->set_is_synchronized_bidding(is_synchronized_bidding);
 
     int stepCount = priceSteps.count();
-    if (stepCount > 0) {
+    if (stepCount > 0 && code != "U201" && code != "U001") {
         int highest = todayData->close_price() > todayData->highest_price() ? todayData->close_price() : todayData->highest_price();
         int lowest = todayData->close_price() < todayData->lowest_price() ? todayData->close_price() : todayData->lowest_price();
 
@@ -511,7 +508,7 @@ void DayData::setData(QString _code, CybosDayDatas *dayData, const QMap<QString,
             lowestVolume = data->day_data(i).volume();
         //qWarning() << data->day_data(i).date() << "\tvolume:" << data->day_data(i).volume() << "\tfhold:" << data->day_data(i).foreigner_hold_volume() << "\tibuy:" << data->day_data(i).institution_buy_volume() << "\ticum_buy:" << data->day_data(i).institution_cum_buy_volume() << "\tfhold_rate:" << data->day_data(i).foreigner_hold_rate() << "\tcum_buy:" << data->day_data(i).cum_buy_volume() << "\tcum_sell" << data->day_data(i).cum_sell_volume();
     }
-    if (tickStatMap.contains(code)) {
+    if (tickStatMap.contains(code) && code != "U201" && code != "U001") {
         if (tickStatMap[code].getHighestPrice() > highestPrice)
             highestPrice = tickStatMap[code].getHighestPrice();
 

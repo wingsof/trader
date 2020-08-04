@@ -44,7 +44,7 @@ public:
     bool hasData();
     void resetData();
 
-    void setTodayData(int o, int h, int l, int c, unsigned long v, bool is_synchronized_bidding);
+    void setTodayData(const QString &code, int o, int h, int l, int c, unsigned long v, bool is_synchronized_bidding);
 
     const CybosDayData &getDayData(int i);
     const QList<int> &getPriceSteps();
