@@ -297,9 +297,9 @@ def db_setup():
     _mongo_collection = MongoClient(db.HOME_MONGO_ADDRESS).trade_alarm
 
 if __name__ == '__main__':
-    print(get_uni_current_data('A005930'))
+    #print(get_uni_current_data('A005930'))
     #print(get_uni_day_data('A005930'))
-    #print(get_uni_current_period_data('A005930', date(2020, 7, 31), date(2020, 8, 1)))
+    print(get_uni_current_period_data('A005930', date(2020, 7, 31), date(2020, 8, 1)))
     #codes = get_all_market_code()
     #print(len(codes))
     #print(get_balance())

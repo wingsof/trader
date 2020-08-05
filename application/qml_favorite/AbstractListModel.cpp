@@ -21,6 +21,7 @@ AbstractListModel::AbstractListModel(QObject *parent)
 
 
 void AbstractListModel::clearList() {
+    qWarning() << "clear list start";
     if (itemList.count() == 0)
         return;
 

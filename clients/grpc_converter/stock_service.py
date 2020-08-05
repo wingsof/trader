@@ -23,9 +23,10 @@ from morning_server import stock_api
 from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.empty_pb2 import Empty
 from gevent.queue import Queue
-import favorite
-import vi
-import todaytick
+from candidate import favorite
+import todaydata
+import preload
+import config
 
 
 simulation_progressing = [False, False, False]
@@ -37,7 +38,6 @@ is_subscribe_trade = False
 is_subscribe_tick = {}
 is_subscribe_bidask = {}
 is_subscribe_subject = {}
-
 
 
 def get_yesterday_data(today, market_code):
@@ -152,8 +152,9 @@ def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_han
 
 
 class StockServicer(stock_provider_pb2_grpc.StockServicer):
-    def __init__(self):
+    def __init__(self, is_skip_ydata):
         print('StockService init start')
+        self.skip_ydata = is_skip_ydata
         self.stock_subscribe_clients = []
         self.bidask_subscribe_cilents = []
         self.subject_subscribe_clients = []
@@ -167,9 +168,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.trader_clients = []
         self.current_stock_code = ""
         self.current_datetime = None
-        codes = morning_client.get_all_market_code()
-        for code in codes:
-            todaytick.set_code_classification(code, morning_client.is_kospi_code(code))
+        preload.load(datetime.now(), self.skip_ydata)
         print('StockService init ready')
 
     def GetDayData(self, request, context):
@@ -278,13 +277,10 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
       
     def IsKospi(self, request, context):
-        return stock_provider_pb2.Bool(ret=todaytick.get_code_classification(request.code))
+        return stock_provider_pb2.Bool(ret=preload.is_kospi(request.code))
 
     def GetCompanyName(self, request, context):
-        #print('Before get company name', request.code)
-        company_name = morning_client.code_to_name(request.code)
-        #print('GetCompanyName', request.code, company_name)
-        return stock_provider_pb2.CompanyName(company_name=company_name)
+        return stock_provider_pb2.CompanyName(company_name=preload.get_corp_name(request.code))
 
     def GetSubscribeCodes(self, request, context):
         return stock_provider_pb2.CodeList(codelist=morning_client.get_subscribe_codes())
@@ -370,7 +366,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return Empty()
 
     def GetViPrice(self, request, context):
-        return stock_provider_pb2.Prices(price=todaytick.get_vi_prices(request.code))
+        return stock_provider_pb2.Prices(price=todaydata.get_vi_prices(request.code))
 
     def SetCurrentStock(self, request, context):
         global recent_search_codes
@@ -391,7 +387,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
     def SetCurrentDateTime(self, request ,context):
         print('SetCurrentDateTime : ', request.ToDatetime())
-        todaytick.clear_all()
+        todaydata.clear_all()
+
+        preload.load(request.ToDatetime() + timedelta(hours=9), self.skip_ydata)
         self.handle_time(request.ToDatetime())
         return Empty()
 
@@ -409,11 +407,11 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
     def GetViList(self, request, context):
         print('GetViList', request.type)
-        return stock_provider_pb2.CodeList(codelist=vi.get_vi(request.type, request.catch_plus))
+        return stock_provider_pb2.CodeList(codelist=todaydata.get_vi(request.type, request.catch_plus))
 
     def GetTodayTopAmountList(self, request, context):
         print('GetTodayTopAmountList')
-        return stock_provider_pb2.CodeList(codelist=todaytick.get_today_list(request.type, request.catch_plus, request.use_accumulated))
+        return stock_provider_pb2.CodeList(codelist=todaydata.get_today_list(request.type, request.catch_plus, request.use_accumulated))
 
     def SetSimulationStatus(self, request, context):
         global TIME_SPEED
@@ -474,8 +472,11 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         tick_date = Timestamp()
         tick_date.FromDatetime(data['date'] - timedelta(hours=9))
 
-        if todaytick.handle_today_tick(code, data):
+        ret = todaydata.handle_today_tick(code, data)
+        if ret & config.CAND_TODAY_BUL:
             self.send_list_changed('ttopamount')
+        if ret & config.CAND_NINETHIRTY:
+            self.send_list_changed('ninethirty')
 
         data = stock_provider_pb2.CybosTickData(tick_date=tick_date,
                                                 code=code,
@@ -535,7 +536,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         tick_date = Timestamp()
         tick_date.FromDatetime(data['date'] - timedelta(hours=9))
         code = data['code'] if 'code' in data else data['3']
-        if vi.handle_vi(code, data):
+        if todaydata.handle_vi(code, data):
             self.send_list_changed('vi')
 
         data = stock_provider_pb2.CybosStockAlarm(tick_date=tick_date,
@@ -609,8 +610,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                 pass
         client_list.remove(q)
         print('Done', title, len(client_list))
-
-
 
     def ListenCurrentStock(self, request, context):
         if len(self.current_stock_code) > 0:
@@ -700,13 +699,18 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
     def StartSimulation(self, request, context):
         global simulation_progressing, request_stop_simulation
+        if preload.loading:
+            print('Preloading data, cannot start simulation')
+            yield Empty()
+            return
+
         triggered = False
 
         if not any(simulation_progressing):
             simulation_progressing[0] = True
             triggered = True
 
-            todaytick.clear_all()
+            todaydata.clear_all()
             if self.current_datetime is not None:
                 gevent.spawn(start_tick_provider, self.current_datetime + timedelta(hours=9), self.handle_stock_tick, self.handle_bidask_tick, self.handle_subject_tick, self.handle_alarm_tick, self.handle_time, self.handle_simulation)
 
@@ -732,8 +736,12 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
 
 def serve():
+    skip_ydata_loading = False
+    if len(sys.argv) > 1 and sys.argv[1] == 'skip':
+        skip_ydata_loading = True
+
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=60))
-    stock_provider_pb2_grpc.add_StockServicer_to_server(StockServicer(), server)
+    stock_provider_pb2_grpc.add_StockServicer_to_server(StockServicer(skip_ydata_loading), server)
     server.add_insecure_port('[::]:50052')
     server.start()
     server.wait_for_termination()

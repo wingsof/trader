@@ -129,6 +129,7 @@ private slots:
     void convertTimeInfo(Timestamp *);
     void setSimulationStatus(SimulationStatus *status);
     void stockCodeReceived(QString code);
+    void simulationStopped();
 
 signals:
     void stockCodeChanged(QString code);

@@ -206,9 +206,23 @@ void DataProvider::startStockCodeListening() {
 void DataProvider::startSimulation() {
     if (m_simulationStatus == STOP) {
         RunSimulation * rs = new RunSimulation(stub_);
+        connect(rs, &RunSimulation::finished, this, &DataProvider::simulationStopped);
         connect(rs, &RunSimulation::finished, rs, &RunSimulation::deleteLater);
         rs->start();
         m_simulationStatus = STOP_TO_RUNNING;
+    }
+}
+
+
+void DataProvider::simulationStopped() {
+    qWarning() << "simulationStopped";
+    if (m_simulationStatus == STOP_TO_RUNNING) {
+        m_simulationStatus = STOP;
+    }
+    else if (m_simulationStatus == RUNNING) {
+        SimulationStatus status;
+        status.set_simulation_on(false);
+        setSimulationStatus(&status);
     }
 }
 

@@ -3,3 +3,8 @@
 MONGO_ADDRESS = 'mongodb://127.0.0.1:27017'
 DB_NAME = 'trade_alarm'
 COLLECTION_NAME = 'favorite'
+
+
+CAND_NONE = 0
+CAND_TODAY_BUL = 1
+CAND_NINETHIRTY = 2

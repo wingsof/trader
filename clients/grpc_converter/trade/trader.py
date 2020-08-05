@@ -6,6 +6,11 @@ import grpc
 import grpc.experimental.gevent as grpc_gevent
 grpc_gevent.init_gevent()
 
+
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 1))))
+
 from gevent.queue import Queue
 import stock_provider_pb2_grpc
 import stock_provider_pb2 as stock_provider

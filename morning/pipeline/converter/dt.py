@@ -19,7 +19,7 @@ class CybosStockTick:
     ASK_PRICE = '7'
     BID_PRICE = '8'
     CUM_VOLUME = '9'
-    CUM_AMOUNT = '10'
+    CUM_AMOUNT = '10'  # 거래소 * 10000, 코스닥 * 1000, 지수 * 백만원
     CURRENT_PRICE = '13'
     BUY_OR_SELL = '14'
     CUM_SELL_VOLUME_BY_PRICE = '15' # 체결가 방식
@@ -85,16 +85,16 @@ class CybosStockUniCurrentTick:
     COMPANY_NAME = '1'
     TIME = '2'
     MARKET_CLOSE_DIFF = '3' # Yesterday Close - Today Close, not uni
-    WARNING_TYPE = '4'
-    TRADE_TYPE = '5'
-    HIGHEST_IN_YEAR = '6'
-    HIGHEST_DAY = '7'
-    LOWEST_IN_YEAR = '8'
-    LOWEST_DAY = '9'
-    YESTERDAY_CLOSE = '10'
+    WARNING_TYPE = '4' # '00': 정상종목, '01': 거래정지, '02': 투자유의지정, '03': 관리 지정, '04': 종가미확정
+    TRADE_TYPE = '5' # '0': 정상, '1': 거래불가
+    HIGHEST_IN_THIS_YEAR = '6'
+    HIGHEST_IN_THIS_YEAR_DATE = '7'
+    LOWEST_IN_THIS_YEAR = '8'
+    LOWEST_IN_THIS_YEAR_DATE = '9'
+    TODAY_CLOSE = '10'
     BASE_PRICE = '11'
-    PROFIT_TYPE_MARKET = '12'
-    PROFIT_TYPE = '13'
+    PROFIT_TYPE_MARKET = '12' # '1': 상한, '2': 상승..
+    PROFIT_TYPE = '13' # '1' 상한, '2': 상승 ..
     TODAY_CLOSE_DIFF = '14'
     CURRENT_PRICE = '15'
     UNI_START_PRICE = '16'
@@ -109,6 +109,13 @@ class CybosStockUniCurrentTick:
     VOLUME = '25'
     AMOUNT = '26'   # KOSPI: * 10000, KOSDAQ: * 1000
     DATE = '27'
+    TODAY_OPEN = '94'
+    TODAY_HIGH = '95'
+    TODAY_LOW = '96'
+    YEAR_HIGHEST = '107'
+    YEAR_HIGHEST_DATE = '108'
+    YEAR_LOWEST = '109'
+    YEAR_LOWEST_DATE = '110'
 
 
 class CybosStockUniDayTick:
