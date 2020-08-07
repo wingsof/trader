@@ -50,7 +50,7 @@ struct TableStruct_stock_5fprovider_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[23]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[24]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -82,6 +82,9 @@ extern CybosDayDatasDefaultTypeInternal _CybosDayDatas_default_instance_;
 class CybosOrderResult;
 class CybosOrderResultDefaultTypeInternal;
 extern CybosOrderResultDefaultTypeInternal _CybosOrderResult_default_instance_;
+class CybosOrderReturn;
+class CybosOrderReturnDefaultTypeInternal;
+extern CybosOrderReturnDefaultTypeInternal _CybosOrderReturn_default_instance_;
 class CybosStockAlarm;
 class CybosStockAlarmDefaultTypeInternal;
 extern CybosStockAlarmDefaultTypeInternal _CybosStockAlarm_default_instance_;
@@ -137,6 +140,7 @@ template<> ::stock_api::CybosBidAskTickData* Arena::CreateMaybeMessage<::stock_a
 template<> ::stock_api::CybosDayData* Arena::CreateMaybeMessage<::stock_api::CybosDayData>(Arena*);
 template<> ::stock_api::CybosDayDatas* Arena::CreateMaybeMessage<::stock_api::CybosDayDatas>(Arena*);
 template<> ::stock_api::CybosOrderResult* Arena::CreateMaybeMessage<::stock_api::CybosOrderResult>(Arena*);
+template<> ::stock_api::CybosOrderReturn* Arena::CreateMaybeMessage<::stock_api::CybosOrderReturn>(Arena*);
 template<> ::stock_api::CybosStockAlarm* Arena::CreateMaybeMessage<::stock_api::CybosStockAlarm>(Arena*);
 template<> ::stock_api::CybosSubjectTickData* Arena::CreateMaybeMessage<::stock_api::CybosSubjectTickData>(Arena*);
 template<> ::stock_api::CybosTickData* Arena::CreateMaybeMessage<::stock_api::CybosTickData>(Arena*);
@@ -1930,6 +1934,163 @@ class TradeMsg :
 };
 // -------------------------------------------------------------------
 
+class CybosOrderReturn :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.CybosOrderReturn) */ {
+ public:
+  CybosOrderReturn();
+  virtual ~CybosOrderReturn();
+
+  CybosOrderReturn(const CybosOrderReturn& from);
+  CybosOrderReturn(CybosOrderReturn&& from) noexcept
+    : CybosOrderReturn() {
+    *this = ::std::move(from);
+  }
+
+  inline CybosOrderReturn& operator=(const CybosOrderReturn& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CybosOrderReturn& operator=(CybosOrderReturn&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const CybosOrderReturn& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const CybosOrderReturn* internal_default_instance() {
+    return reinterpret_cast<const CybosOrderReturn*>(
+               &_CybosOrderReturn_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    11;
+
+  friend void swap(CybosOrderReturn& a, CybosOrderReturn& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CybosOrderReturn* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline CybosOrderReturn* New() const final {
+    return CreateMaybeMessage<CybosOrderReturn>(nullptr);
+  }
+
+  CybosOrderReturn* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<CybosOrderReturn>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const CybosOrderReturn& from);
+  void MergeFrom(const CybosOrderReturn& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CybosOrderReturn* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "stock_api.CybosOrderReturn";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
+    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kMsgFieldNumber = 2,
+    kResultFieldNumber = 1,
+    kOrderNumFieldNumber = 3,
+  };
+  // string msg = 2;
+  void clear_msg();
+  const std::string& msg() const;
+  void set_msg(const std::string& value);
+  void set_msg(std::string&& value);
+  void set_msg(const char* value);
+  void set_msg(const char* value, size_t size);
+  std::string* mutable_msg();
+  std::string* release_msg();
+  void set_allocated_msg(std::string* msg);
+  private:
+  const std::string& _internal_msg() const;
+  void _internal_set_msg(const std::string& value);
+  std::string* _internal_mutable_msg();
+  public:
+
+  // int32 result = 1;
+  void clear_result();
+  ::PROTOBUF_NAMESPACE_ID::int32 result() const;
+  void set_result(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_result() const;
+  void _internal_set_result(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 order_num = 3;
+  void clear_order_num();
+  ::PROTOBUF_NAMESPACE_ID::int32 order_num() const;
+  void set_order_num(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_order_num() const;
+  void _internal_set_order_num(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.CybosOrderReturn)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msg_;
+  ::PROTOBUF_NAMESPACE_ID::int32 result_;
+  ::PROTOBUF_NAMESPACE_ID::int32 order_num_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_stock_5fprovider_2eproto;
+};
+// -------------------------------------------------------------------
+
 class Report :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.Report) */ {
  public:
@@ -1972,7 +2133,7 @@ class Report :
                &_Report_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(Report& a, Report& b) {
     a.Swap(&b);
@@ -2266,7 +2427,7 @@ class OrderResult :
                &_OrderResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(OrderResult& a, OrderResult& b) {
     a.Swap(&b);
@@ -2414,7 +2575,7 @@ class CybosOrderResult :
                &_CybosOrderResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(CybosOrderResult& a, CybosOrderResult& b) {
     a.Swap(&b);
@@ -2622,7 +2783,7 @@ class ListType :
                &_ListType_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(ListType& a, ListType& b) {
     a.Swap(&b);
@@ -2757,7 +2918,7 @@ class CompanyName :
                &_CompanyName_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    16;
 
   friend void swap(CompanyName& a, CompanyName& b) {
     a.Swap(&b);
@@ -2892,7 +3053,7 @@ class PastMinuteQuery :
                &_PastMinuteQuery_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    17;
 
   friend void swap(PastMinuteQuery& a, PastMinuteQuery& b) {
     a.Swap(&b);
@@ -3055,7 +3216,7 @@ class CybosDayData :
                &_CybosDayData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    18;
 
   friend void swap(CybosDayData& a, CybosDayData& b) {
     a.Swap(&b);
@@ -3337,7 +3498,7 @@ class CybosDayDatas :
                &_CybosDayDatas_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    19;
 
   friend void swap(CybosDayDatas& a, CybosDayDatas& b) {
     a.Swap(&b);
@@ -3474,7 +3635,7 @@ class CybosSubjectTickData :
                &_CybosSubjectTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    20;
 
   friend void swap(CybosSubjectTickData& a, CybosSubjectTickData& b) {
     a.Swap(&b);
@@ -3717,7 +3878,7 @@ class CybosTickData :
                &_CybosTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    21;
 
   friend void swap(CybosTickData& a, CybosTickData& b) {
     a.Swap(&b);
@@ -4118,7 +4279,7 @@ class CybosBidAskTickData :
                &_CybosBidAskTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    22;
 
   friend void swap(CybosBidAskTickData& a, CybosBidAskTickData& b) {
     a.Swap(&b);
@@ -4436,7 +4597,7 @@ class CybosStockAlarm :
                &_CybosStockAlarm_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    23;
 
   friend void swap(CybosStockAlarm& a, CybosStockAlarm& b) {
     a.Swap(&b);
@@ -5598,6 +5759,110 @@ inline void TradeMsg::set_allocated_order_msg(::stock_api::OrderMsg* order_msg) 
   }
   order_msg_ = order_msg;
   // @@protoc_insertion_point(field_set_allocated:stock_api.TradeMsg.order_msg)
+}
+
+// -------------------------------------------------------------------
+
+// CybosOrderReturn
+
+// int32 result = 1;
+inline void CybosOrderReturn::clear_result() {
+  result_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderReturn::_internal_result() const {
+  return result_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderReturn::result() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosOrderReturn.result)
+  return _internal_result();
+}
+inline void CybosOrderReturn::_internal_set_result(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  result_ = value;
+}
+inline void CybosOrderReturn::set_result(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_result(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosOrderReturn.result)
+}
+
+// string msg = 2;
+inline void CybosOrderReturn::clear_msg() {
+  msg_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& CybosOrderReturn::msg() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosOrderReturn.msg)
+  return _internal_msg();
+}
+inline void CybosOrderReturn::set_msg(const std::string& value) {
+  _internal_set_msg(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosOrderReturn.msg)
+}
+inline std::string* CybosOrderReturn::mutable_msg() {
+  // @@protoc_insertion_point(field_mutable:stock_api.CybosOrderReturn.msg)
+  return _internal_mutable_msg();
+}
+inline const std::string& CybosOrderReturn::_internal_msg() const {
+  return msg_.GetNoArena();
+}
+inline void CybosOrderReturn::_internal_set_msg(const std::string& value) {
+  
+  msg_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void CybosOrderReturn::set_msg(std::string&& value) {
+  
+  msg_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:stock_api.CybosOrderReturn.msg)
+}
+inline void CybosOrderReturn::set_msg(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  msg_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:stock_api.CybosOrderReturn.msg)
+}
+inline void CybosOrderReturn::set_msg(const char* value, size_t size) {
+  
+  msg_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:stock_api.CybosOrderReturn.msg)
+}
+inline std::string* CybosOrderReturn::_internal_mutable_msg() {
+  
+  return msg_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* CybosOrderReturn::release_msg() {
+  // @@protoc_insertion_point(field_release:stock_api.CybosOrderReturn.msg)
+  
+  return msg_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void CybosOrderReturn::set_allocated_msg(std::string* msg) {
+  if (msg != nullptr) {
+    
+  } else {
+    
+  }
+  msg_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), msg);
+  // @@protoc_insertion_point(field_set_allocated:stock_api.CybosOrderReturn.msg)
+}
+
+// int32 order_num = 3;
+inline void CybosOrderReturn::clear_order_num() {
+  order_num_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderReturn::_internal_order_num() const {
+  return order_num_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CybosOrderReturn::order_num() const {
+  // @@protoc_insertion_point(field_get:stock_api.CybosOrderReturn.order_num)
+  return _internal_order_num();
+}
+inline void CybosOrderReturn::_internal_set_order_num(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  order_num_ = value;
+}
+inline void CybosOrderReturn::set_order_num(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_order_num(value);
+  // @@protoc_insertion_point(field_set:stock_api.CybosOrderReturn.order_num)
 }
 
 // -------------------------------------------------------------------
@@ -8647,6 +8912,8 @@ inline void CybosStockAlarm::set_allocated_content(std::string* content) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

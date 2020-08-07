@@ -32,6 +32,7 @@ public:
     const QString &getCode() const { return mCode; }
     int getQuantity() const { return mQuantity; }
     int getFlag() const { return int(mFlag); }
+    int getMethod() const { return int(mMethod); }
     bool getIsBuy() const { return mIsBuy; }
     int getTradedQuantity() const { return mTradedQuantity; }
     const QString &getOrderNum() const {

@@ -51,7 +51,8 @@ public:
                  {Qt::UserRole + 2, "status"},
                  {Qt::UserRole + 3, "is_buy" },
                  {Qt::UserRole + 4, "order_num"},
-                 {Qt::UserRole + 5, "traded_qty"}};
+                 {Qt::UserRole + 5, "traded_qty"},
+                 {Qt::UserRole + 6, "trade_method"}};
     }
 
     Q_INVOKABLE void changeToImmediate(int row, const QString &orderNum);

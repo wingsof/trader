@@ -6,6 +6,7 @@
 #define BUY_ROLE            (Qt::UserRole + 3)
 #define ORDER_NUM_ROLE      (Qt::UserRole + 4)
 #define TRADED_QTY_ROLE     (Qt::UserRole + 5)
+#define TRADE_METHOD_ROLE   (Qt::UserRole + 6)
 
 
 TradingModel::TradingModel(QObject *parent)
@@ -26,6 +27,7 @@ TradingModel::TradingModel(QObject *parent)
 
 
 void TradingModel::simulationStatusChanged(bool isOn) {
+    Q_UNUSED(isOn);
     beginResetModel();
     mTradeData.clear();
     endResetModel();
@@ -61,6 +63,7 @@ void TradingModel::cancelOrder(int row, const QString &orderNum) {
 
 
 QVariant TradingModel::headerData(int section, Qt::Orientation orientation, int role) const {
+    Q_UNUSED(role);
     if (orientation == Qt::Horizontal) {
         switch(section) {
         case 0: return "회사명";
@@ -100,6 +103,8 @@ QVariant TradingModel::data(const QModelIndex &index, int role) const {
             return QVariant(mTradeData.at(index.row()).getIsBuy());
         else if (role == ORDER_NUM_ROLE)
             return QVariant(mTradeData.at(index.row()).getOrderNum());
+        else if (role == TRADE_METHOD_ROLE)
+            return QVariant(mTradeData.at(index.row()).getMethod());
     }
 
     return QVariant();

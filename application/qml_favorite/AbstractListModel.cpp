@@ -109,6 +109,7 @@ void AbstractListModel::refreshList() {
 
 int AbstractListModel::rowCount(const QModelIndex &parent) const {
     //qWarning() << parent << "rowCount : " << itemList.count();
+    Q_UNUSED(parent);
     return itemList.count();
 }
 
