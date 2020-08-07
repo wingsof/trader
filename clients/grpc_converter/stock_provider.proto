@@ -14,13 +14,16 @@ service Stock {
   rpc GetSubscribeCodes(google.protobuf.Empty) returns (CodeList) {}
 
   rpc GetBalance(google.protobuf.Empty) returns (Balance) {}
+  rpc OrderStock(OrderMsg) returns (CybosOrderReturn) {}
+  rpc ChangeOrder(OrderMsg) returns (CybosOrderReturn) {}
+  rpc CancelOrder(OrderMsg) returns (CybosOrderReturn) {}
 
   rpc RequestCybosTickData(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosBidAsk(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosSubject(StockCodeQuery) returns (google.protobuf.Empty) {}
 
   rpc RequestToTrader(TradeMsg) returns (google.protobuf.Empty) {}
-  rpc RequestCybosOrderResult(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc RequestCybosTradeResult(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   rpc ReportOrderResult(OrderResult) returns (google.protobuf.Empty) {}
 
   rpc IsKospi(StockCodeQuery) returns (Bool) {}
@@ -44,6 +47,7 @@ service Stock {
 
   rpc GetYesterdayTopAmountList(google.protobuf.Timestamp) returns (TopList) {}
   rpc GetTodayTopAmountList(Option) returns (CodeList) {}
+  rpc GetTodayNineThirtyList(google.protobuf.Empty) returns (CodeList) {}
   rpc GetRecentSearch(google.protobuf.Empty) returns (CodeList) {}
   rpc GetViList(Option) returns (CodeList) {}
 
@@ -118,7 +122,7 @@ message SimulationStatus {
 enum OrderStatusFlag {
     STATUS_UNKNOWN = 0;
     STATUS_REGISTERED = 1;
-    STATUS_AUTO_CUT = 2;
+    STATUS_TRADING = 2;
     STATUS_TRADED = 49;
     STATUS_CONFIRM = 50;
     STATUS_DENIED = 51;
@@ -166,6 +170,13 @@ message TradeMsg {
 }
 
 
+message CybosOrderReturn {
+    int32 result = 1;
+    string msg = 2;
+    int32 order_num = 3;
+}
+
+
 message Report {
     string code = 1;
     string company_name = 2;
@@ -173,11 +184,13 @@ message Report {
     google.protobuf.Timestamp last_update_datetime = 4;
     OrderStatusFlag flag = 5;
     OrderMethod method = 6;
-    int32 hold_price = 7;
+    float hold_price = 7;
     int32 price = 8;
     int32 quantity = 9;
     string internal_order_num = 10;
     string order_num = 11;
+    int32 traded_quantity = 12;
+    float traded_price = 13;
 }
 
 

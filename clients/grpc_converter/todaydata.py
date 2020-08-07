@@ -2,6 +2,7 @@ from candidate import today_bull
 from candidate import vi
 from candidate import ninethirty
 from morning.pipeline.converter import dt
+import preload
 
 
 def clear_all():

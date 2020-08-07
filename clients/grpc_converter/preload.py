@@ -3,10 +3,6 @@ import gevent
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 
-import os
-import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 2))))
-
 from clients.common import morning_client
 from morning.back_data import holidays
 from preloadtype import uni_current
@@ -31,6 +27,7 @@ def is_skip_ydata():
 
 
 def _get_yesterday_min_data(query_date, market_code):
+    global _yesterday_minute_data
     fail_count = 0 
     for progress, code in enumerate(market_code):
         if _request_stop:
@@ -46,6 +43,7 @@ def _get_yesterday_min_data(query_date, market_code):
 
 
 def _get_yesterday_day_data(query_date, market_code):
+    global _yesterday_day_data
     fail_count = 0
     for progress, code in enumerate(market_code):
         if _request_stop:
@@ -71,12 +69,15 @@ def start_preload(dt, skip_ydata):
         code_info.load_code_info(_market_codes)
         uni_current.load_uni_data(_market_codes)
 
+    _yesterday_minute_data.clear()
+    _yesterday_day_data.clear()
     yesterday = holidays.get_yesterday(dt)
     _yesterday = time_converter.datetime_to_intdate(yesterday)
+
     print('Yesterday: ', yesterday)
     if not skip_ydata:
         _get_yesterday_day_data(yesterday, _market_codes)
-        _get_yesterday_min_data(yesterday, _market_codes)
+        #_get_yesterday_min_data(yesterday, _market_codes)
     loading = False
 
 

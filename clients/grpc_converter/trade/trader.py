@@ -28,14 +28,19 @@ from datetime import datetime
 stub = None
 spread_dict = dict()
 order_queue = Queue()
+company_name_dict = {}
 
+
+def get_company_name(code):
+    cname = stub.GetCompanyName(stock_provider.StockCodeQuery(code=code))
+    return cname.company_name
 
 # for simulation
 def tick_subscriber():
     response = stub.ListenCybosTickData(Empty())
     for msg in response:
         if msg.code not in spread_dict:
-            spread_dict[msg.code] = sp.Spread(msg.code, order_callback)
+            spread_dict[msg.code] = sp.Spread(msg.code, get_company_name(msg.code), order_callback)
 
         spread_dict[msg.code].set_price_info(msg.buy_or_sell, msg.current_price, msg.bid_price, msg.ask_price, msg.market_type)
         trademachine.tick_arrived(msg.code, msg)
@@ -45,14 +50,14 @@ def bidask_subscriber():
     response = stub.ListenCybosBidAsk(Empty())
     for msg in response:
         if msg.code not in spread_dict:
-            spread_dict[msg.code] = sp.Spread(msg.code, order_callback)
+            spread_dict[msg.code] = sp.Spread(msg.code, get_company_name(msg.code), order_callback)
 
         spread_dict[msg.code].set_spread_info(msg.bid_prices, msg.ask_prices, msg.bid_remains, msg.ask_remains)
         trademachine.bidask_arrived(msg.code, msg)
 
 
 def order_callback(result):
-    stub.ReportOrderResult(stock_provider.OrderResult(report=result, current_balance=account.get_balance()))
+    stub.ReportOrderResult(stock_provider.OrderResult(report=[result], current_balance=account.get_balance()))
     print('report order result')
 
 
@@ -65,13 +70,9 @@ def handle_order():
                 print(data.code, 'has no spread')
                 continue
 
-            spread_dict[data.code] = sp.Spread(data.code, order_callback)
+            spread_dict[data.code] = sp.Spread(data.code, get_company_name(data.code), order_callback)
 
-        if not spread_dict[data.code].has_company_name():
-            cname = stub.GetCompanyName(stock_provider.StockCodeQuery(code=data.code))
-            spread_dict[data.code].set_company_name(cname.company_name)
-
-        spread_dict[data.code].add_order(account.get_balance(), data)
+        spread_dict[data.code].add_order(account.get_oneshot(), data)
 
 
 def trade_subscriber():
@@ -90,6 +91,7 @@ def run():
         subscribe_handlers = []
         stub = stock_provider_pb2_grpc.StockStub(channel)
         account._stub = stub
+        trademachine._stub = stub
         subscribe_handlers.append(gevent.spawn(tick_subscriber))
         subscribe_handlers.append(gevent.spawn(bidask_subscriber))
         subscribe_handlers.append(gevent.spawn(trade_subscriber))
@@ -100,7 +102,8 @@ def run():
         subscribe_handlers.append(gevent.spawn(trademachine.handle_cybos_order, stub))
         subscribe_handlers.append(gevent.spawn(trademachine.handle_simulation_order))
         simulstatus.init_status(stub)
-
+        account.get_balance()
+        stub.RequestCybosTradeResult(Empty())
         gevent.joinall(subscribe_handlers)
 
 

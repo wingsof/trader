@@ -587,5 +587,41 @@
         ],
         "inputFile": "RecentListModel.h",
         "outputRevision": 67
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "auto"
+                    }
+                ],
+                "className": "TnineThirtyListModel",
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "menuClicked",
+                        "returnType": "void"
+                    }
+                ],
+                "object": true,
+                "qualifiedClassName": "TnineThirtyListModel",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "AbstractListModel"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "TnineThirtyListModel.h",
+        "outputRevision": 67
     }
 ]

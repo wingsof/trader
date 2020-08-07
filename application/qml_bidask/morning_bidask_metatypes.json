@@ -31,17 +31,6 @@
                         ],
                         "name": "buy_immediately",
                         "returnType": "void"
-                    },
-                    {
-                        "access": "public",
-                        "arguments": [
-                            {
-                                "name": "price",
-                                "type": "int"
-                            }
-                        ],
-                        "name": "isViPrice",
-                        "returnType": "bool"
                     }
                 ],
                 "object": true,

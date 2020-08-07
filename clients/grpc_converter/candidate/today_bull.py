@@ -51,15 +51,24 @@ def clear_all():
 
 def handle_today_bull(code, d):
     global _last_push_time
-    d = dt.cybos_stock_tick_convert(d)
-
 
     if d['cum_amount'] == 0:
         amount = d['cum_volume'] * d['current_price']
     else:
-        amount = d['cum_amount']
+        if preload.is_kospi(code):
+            amount = d['cum_amount'] * 10000
+        else:
+            amount = d['cum_amount'] * 1000
 
-    _today_list[code] = [amount, d['current_price'], d['current_price'] - d['yesterday_diff']]
+    if not preload.is_skip_ydata() and not preload.loading:
+        yesterday_amount = preload.get_yesterday_amount(code)
+        if yesterday_amount < 3000000000:
+            _today_list[code] = [0, d['current_price'], d['current_price'] - d['yesterday_diff']]
+        else:
+            _today_list[code] = [amount / yesterday_amount, d['current_price'], d['current_price'] - d['yesterday_diff']]
+    else:
+        _today_list[code] = [amount, d['current_price'], d['current_price'] - d['yesterday_diff']]
+
     _today_period_list[code] = [d['current_price'] * d['volume'], d['current_price'], d['current_price'] - d['yesterday_diff']]
 
     if _last_push_time is None:
@@ -67,6 +76,6 @@ def handle_today_bull(code, d):
     else:
         if d['date'] - _last_push_time > timedelta(seconds=REFRESH_SEC):
             _last_push_time = d['date']
-            return CAND_TODAY_BUL
+            return config.CAND_TODAY_BUL
 
     return config.CAND_NONE

@@ -1,5 +1,5 @@
 from gevent import monkey; monkey.patch_all()
-from clients.grpc_converter import preload
+import preload # important not use from clients.grpc_converter
 import config
 
 
@@ -31,9 +31,10 @@ def handle_tick(code, d):
         if d['time'] > 930:
             return config.CAND_NONE
         else:
-            if preload.get_yesterday_amount[code] >= 2000000000:
+            #print('TICK', code, d['time'], preload.get_yesterday_amount(code), preload.get_yesterday_year_high(code), preload.get_yesterday_close(code))
+            if preload.get_yesterday_amount(code) >= 2000000000:
                 year_high = preload.get_yesterday_year_high(code)
-                if year_high != 0 and preload.get_yesterday_close() >= year_high * 0.8:
-                    _today_data[code] = preload.get_yesterday_amount[code]
+                if year_high != 0 and preload.get_yesterday_close(code) >= year_high * 0.8:
+                    _today_data[code] = preload.get_yesterday_amount(code)
 
     return config.CAND_NONE

@@ -14,6 +14,7 @@ stock_long_dict = {}
 trade_queue = Queue()
 simulation_queue = Queue()
 order_number = 111110
+_stub = None
 
 
 
@@ -36,10 +37,11 @@ def cancel_order_list(cybos_order, msg):
 
 
 def request_order(order_obj):
-    # return value (result, msg)
     request_list.append(order_obj)
     if not simulstatus.is_simulation():
-        pass # send cybos command return result, remove from request_list if get failed, 
+        msg = stock_provider.OrderMsg(code=order_obj.code, is_buy=order_obj.is_buy, price=order_obj.price, quantity=order_obj.quantity)
+        order_ret = _stub.OrderStock(msg)
+        return order_ret.result, order_ret.msg
     else:
         if order_obj.is_buy:
             if order_obj.price * order_obj.quantity > account.get_balance():
@@ -67,7 +69,9 @@ def request_cancel(order_obj):
     if simulstatus.is_simulation(): 
         trade_queue.put_nowait(order_obj)
     else:
-        pass # send cancel and remove it when get confirm
+        msg = stock_provider.OrderMsg(code=order_obj.code, order_num=order_obj.order_num , quantity=(order_obj.quantity - order_obj.traded_quantity))
+        order_ret = _stub.CancelOrder(msg)
+        print(order_ret.result)
 
     return True
 
@@ -104,10 +108,10 @@ def tick_arrived(code, msg):
             elif order.order_type == stock_provider.OrderType.MODIFY:
                 pass
             else:
-                if order.quantity == 0:
+                if order.quantity - order.traded_quantity == 0:
                     continue
                         
-                print('ORDER PRICE', order.is_buy, 'SET PRICE', order.price, 'BID', msg.bid_price, 'ASK', msg.ask_price)
+                #print('ORDER PRICE', order.is_buy, 'SET PRICE', order.price, 'BID', msg.bid_price, 'ASK', msg.ask_price)
                 if order.is_buy:
                     if order.price >= msg.ask_price:
                         order_obj = order.get_cybos_order_result()

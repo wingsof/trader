@@ -386,6 +386,18 @@ QStringList DataProvider::getTtopAmountList(int option, bool catchPlus, bool use
 }
 
 
+QStringList DataProvider::getTnineThirtyList() {
+    ClientContext context;
+    CodeList * codeList = new CodeList;
+    Empty empty;
+    stub_->GetTodayNineThirtyList(&context, empty, codeList);
+    QStringList list;
+    for (int i = 0; i < codeList->codelist_size(); i++)
+        list.append(QString::fromStdString(codeList->codelist(i)));
+    return list;
+}
+
+
 TopList * DataProvider::getYtopAmountList() {
     ClientContext context;
     Timestamp ts = Timestamp(TimeUtil::TimeTToTimestamp(m_currentDateTime.toTime_t()));

@@ -1,0 +1,15 @@
+db: trade_alarm
+
+Axxxxxx: 'date'
+Axxxxx_BA: 'date'
+Axxxxx_S: 'date'
+alarm: 'date'
+yamount: 'date'
+
+db: stock
+Axxxxx_D: '0' (20170124)
+Axxxxx_M: '0' (20191202)
+Axxxxx_UC: '27' (20200702)
+Axxxxx_UD: '0' (20200702)
+Axxxxx_V: '0'
+Axxxxx_INVESTOR: '0' (20200131)

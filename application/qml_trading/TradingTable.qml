@@ -12,9 +12,9 @@ TableView {
     topMargin: columnsHeader.implicitHeight
     flickableDirection: Flickable.VerticalFlick
     boundsBehavior: Flickable.StopAtBounds
-    property var columnWidths: [90, 50, 100, 100, 60, 60, 90, 110, 80, 100, 70, 80, 70]
+    selectionMode: SelectionMode.SingleSelection
+    property var columnWidths: [90, 50, 100, 100, 60, 60, 90, 110, 80, 110, 80, 100, 70, 80, 70]
     columnWidthProvider: function (column) { return columnWidths[column]; }
-
 
 
     Row {
@@ -71,7 +71,7 @@ TableView {
             }
         }
         DelegateChoice {
-            column: 9
+            column: 11 
             Rectangle {
                 implicitHeight: 35
                 border.width: 1
@@ -83,7 +83,7 @@ TableView {
                     anchors.horizontalCenter: parent.horizontalCenter
                     Button {
                         visible: {
-                            if (qty > 0 && status != 0 && status != 51)
+                            if (qty > 0 && status !=0 && traded_qty != qty)
                                 return true
                             return false
                         }
@@ -95,7 +95,7 @@ TableView {
                     }
                     Button {
                         visible: {
-                            if (qty > 0 && status != 0 && status != 51 && status != 1)
+                            if (qty > 0 && status != 0 && traded_qty != qty && status != 1)
                                 return true
                             return false
                         }
@@ -115,8 +115,8 @@ TableView {
                 border.width: 1
                 border.color: "#d7d7d7"
                 color: {
-                    if (model.column == 1 && qty > 0) {
-                        return "yellow"
+                    if (traded_qty != qty) {
+                        return "#70ffff99"
                     }
                     return "white"
                 }
@@ -126,6 +126,12 @@ TableView {
                     anchors.fill: parent
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        tradingTable.model.selectionChanged(model.row)
+                    }
                 }
             }
         }

@@ -105,7 +105,7 @@ void BidAskModel::setYesterdayClose(int yc) {
 
 void BidAskModel::sell_immediately(int percentage) {
     if (mData.getCurrentPrice() > 0) {
-        //DataProvider::getInstance()->sell(currentStockCode, mData.getCurrentPrice(), 0, percentage, OrderMsg::TRADE_IMMEDIATELY);
+        DataProvider::getInstance()->sell(currentStockCode, mData.getCurrentPrice(), 0, percentage, OrderMethod::TRADE_IMMEDIATELY);
         qWarning() << "SELL IMMEDIATE ";
     }
 }
@@ -222,8 +222,4 @@ void BidAskModel::setHighlight(int row) {
         highlight = row;
         emit highlightChanged();
     }
-}
-
-
-bool BidAskModel::isViPrice(int price) {
 }

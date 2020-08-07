@@ -33,6 +33,7 @@ public:
     int getQuantity() const { return mQuantity; }
     int getFlag() const { return int(mFlag); }
     bool getIsBuy() const { return mIsBuy; }
+    int getTradedQuantity() const { return mTradedQuantity; }
     const QString &getOrderNum() const {
         if (mOrderNum.length() > 0)
             return mOrderNum;
@@ -52,9 +53,11 @@ private:
     int mPrice;
     int mQuantity;
     int mCurrentPrice;
+    int mTradedPrice;
+    int mTradedQuantity;
 
 private:
-    QString flagToString(OrderStatusFlag flag) const;
+    QString flagToString(OrderStatusFlag flag, int quantity) const;
     QString methodToString(OrderMethod method) const;
     QVariant getCurrentProfit() const;
 };

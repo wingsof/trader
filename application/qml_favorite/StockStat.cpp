@@ -35,6 +35,11 @@ QStringList StockStat::getViList(int option, bool catchPlus) {
 }
 
 
+QStringList StockStat::getTnineThirtyList() {
+    return DataProvider::getInstance()->getTnineThirtyList();
+}
+
+
 QStringList StockStat::getTtopAmountList(int option, bool catchPlus, bool useAccumulated) {
     return DataProvider::getInstance()->getTtopAmountList(option, catchPlus, useAccumulated);
 }
@@ -121,6 +126,7 @@ StockInfo::StockInfo(const QString &code, const QDateTime &dt)
     m_code = code;
     m_todayOpen = m_currentPrice = 0;
     m_todayAmount = 0;
+    m_isKospi = DataProvider::getInstance()->isKospi(code);
     m_name = DataProvider::getInstance()->getCompanyName(code);
     connect(DataProvider::getInstance(), &DataProvider::dayDataReady, this, &StockInfo::dayDataReceived);
     DataProvider::getInstance()->requestDayData(m_code, 5, dt.addDays(-1));
@@ -153,7 +159,10 @@ void StockInfo::dayDataReceived(QString code, CybosDayDatas *data) {
 void StockInfo::setTodayData(int openPrice, int currentPrice, uint64_t amount) {
     m_todayOpen = openPrice;
     m_currentPrice = currentPrice;
-    m_todayAmount = amount * 10000;
+    if (m_isKospi)
+        m_todayAmount = amount * 10000;
+    else
+        m_todayAmount = amount * 1000;
 }
 
 

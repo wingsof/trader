@@ -11,6 +11,10 @@ ApplicationWindow {
     RowLayout { 
         anchors.fill: parent
         spacing: 0.0
+        TnineThirtyList {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
         TtopAmountList {
             Layout.fillWidth: true
             Layout.fillHeight: true

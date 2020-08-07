@@ -310,5 +310,9 @@ Module {
             Parameter { name: "row"; type: "int" }
             Parameter { name: "orderNum"; type: "string" }
         }
+        Method {
+            name: "selectionChanged"
+            Parameter { name: "row"; type: "int" }
+        }
     }
 }

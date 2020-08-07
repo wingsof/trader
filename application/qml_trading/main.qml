@@ -7,7 +7,7 @@ import Qt.labs.qmlmodels 1.0
 
 ApplicationWindow {
     id: root
-    width: 1060; height: 400
+    width: 1240; height: 400
     visible: true
 
     RowLayout {

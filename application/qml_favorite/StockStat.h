@@ -28,6 +28,7 @@ private:
     QString m_name;
     int m_todayOpen;
     int m_currentPrice;
+    bool m_isKospi;
     uint64_t m_todayAmount;
     CybosDayData yesterdayData;
     CybosDayData beforeYesterdayData;
@@ -56,6 +57,7 @@ public:
     QStringList getViList(int option, bool catchPlus);
     TopList * getYtopAmountList();
     QStringList getTtopAmountList(int option, bool catchPlus, bool useAccumulated);
+    QStringList getTnineThirtyList();
     void addToFavorite(const QString &code);
     void removeFromFavorite(const QString &code);
 

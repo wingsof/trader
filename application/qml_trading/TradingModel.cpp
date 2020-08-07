@@ -5,6 +5,7 @@
 #define STATUS_ROLE         (Qt::UserRole + 2)
 #define BUY_ROLE            (Qt::UserRole + 3)
 #define ORDER_NUM_ROLE      (Qt::UserRole + 4)
+#define TRADED_QTY_ROLE     (Qt::UserRole + 5)
 
 
 TradingModel::TradingModel(QObject *parent)
@@ -35,7 +36,7 @@ void TradingModel::simulationStatusChanged(bool isOn) {
 void TradingModel::tickArrived(CybosTickData *data) {
     QString code = QString::fromStdString(data->code());
     for (int i = 0; i < mTradeData.count(); i++) {
-        if (mTradeData[i].getQuantity() > 0 && mTradeData[i].getCode() == code) {
+        if (mTradeData[i].getQuantity() - mTradeData[i].getTradedQuantity() > 0 && mTradeData[i].getCode() == code) {
             if (mTradeData[i].setCurrentPrice(data->current_price()))
                 dataChanged(createIndex(i, 2), createIndex(i, 4));
         }
@@ -71,10 +72,12 @@ QVariant TradingModel::headerData(int section, Qt::Orientation orientation, int 
         case 6: return "매매방식";
         case 7: return "가격";
         case 8: return "수량";
-        case 9: return "Action";
-        case 10: return "CODE";
-        case 11: return "주문번호";
-        case 12: return "시간";
+        case 9: return "체결가격";
+        case 10: return "체결수량";
+        case 11: return "Action";
+        case 12: return "CODE";
+        case 13: return "주문번호";
+        case 14: return "시간";
         default: break;
         }
     }
@@ -91,6 +94,8 @@ QVariant TradingModel::data(const QModelIndex &index, int role) const {
             return QVariant(mTradeData.at(index.row()).getQuantity());
         else if (role == STATUS_ROLE) 
             return QVariant(mTradeData.at(index.row()).getFlag());
+        else if (role == TRADED_QTY_ROLE)
+            return QVariant(mTradeData.at(index.row()).getTradedQuantity());
         else if (role == BUY_ROLE) 
             return QVariant(mTradeData.at(index.row()).getIsBuy());
         else if (role == ORDER_NUM_ROLE)
@@ -128,4 +133,11 @@ void TradingModel::orderResultArrived(OrderResult *r) {
     }
     //qWarning() << "count : " << mTradeData.count();
     dataChanged(createIndex(0, 0), createIndex(mTradeData.count() - 1, COLUMN_COUNT));
+}
+
+
+void TradingModel::selectionChanged(int row) {
+    if (row < mTradeData.count()) {
+        DataProvider::getInstance()->setCurrentStock(mTradeData.at(row).getCode());
+    }
 }

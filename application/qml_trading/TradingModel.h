@@ -15,7 +15,7 @@ class TradingModel : public QAbstractTableModel {
 
 public:
     enum {
-        COLUMN_COUNT = 13
+        COLUMN_COUNT = 15
     };
 
     TradingModel(QObject *parent=nullptr);
@@ -50,11 +50,13 @@ public:
                  {Qt::UserRole + 1, "qty" },
                  {Qt::UserRole + 2, "status"},
                  {Qt::UserRole + 3, "is_buy" },
-                 {Qt::UserRole + 4, "order_num"}};
+                 {Qt::UserRole + 4, "order_num"},
+                 {Qt::UserRole + 5, "traded_qty"}};
     }
 
     Q_INVOKABLE void changeToImmediate(int row, const QString &orderNum);
     Q_INVOKABLE void cancelOrder(int row, const QString &orderNum);
+    Q_INVOKABLE void selectionChanged(int row);
 
 private:
     QList<TradeData> mTradeData;

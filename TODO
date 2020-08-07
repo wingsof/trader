@@ -1,3 +1,18 @@
+* TODO
+HighP
+    * NineThirty 테스트
+    * Cybos 주문 연동 - API 확인, 실제 BA 화면에서 테스트 필요
+    * 주문창에서 클릭시 종목 선택
+
+LowP
+    * 주문 기록 저장 및 qml_trading 에서 로딩
+    * BA ON MEET 구현
+    * BA 화면에 주문 정보 표시
+    * RUN AND GUN
+    * trader 를 stock_service 에서 launch 하도록 고려
+
+* 데이터 Validation 프로그램 Subject 주기보다 길게 하여 데이터 검사
+
 * 고점 돌파 주의 점
     - 이전 일봉상 윗꼬리 긴 연중 최고점이 있으면 조심
 
@@ -8,7 +23,6 @@
         - 현재가가 15% 넘지 않고, 다음 VI 이전 4% 이상 수익 가능 종목
 
 * 구현 목록
-    * 현재 Listen 종목 List 받기 및 QML Search 에 Subscribe 버튼 추가    ######## *
     * Today 에서 오른쪽 마우스 클릭시 가까운 가격 찾아 거리 표시(금액,%) ######## *
     * server 에서 매번 db connect 할지 아니면 한 군데에서 instance 생성
     * 1/2 imm sell, ALL SELL
@@ -17,8 +31,9 @@
     * 실제 Trading 거래
     * RUN AND GUN
     * Favorite
-        - 전날 시간외 종목
+        - 전날 시간외 종목                                              Holding
         - 9:30 거래량 2배 종목
+        - 금일 Bull 의 경우 전일 거래량 대비 and 전일 30억으로 변경
         - Recent Clear 버튼 추가                                                ### *
         - Recent 최신 항목이 위로 올라가게 수정 (기존 있는 항목 삭제 및 위로)  Recent 에서 선택시 어떻게 할지 애매
         - Favorite 갱신시 이동되는 버그 수정                                    ### *

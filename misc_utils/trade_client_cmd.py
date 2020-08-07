@@ -83,6 +83,11 @@ def consumer():
             print(stock_api.request_long_list(message_reader))
         elif command.startswith('stats'):
             print(stock_api.request_subscribe_stat(message_reader))
+        elif command.startswith('subscribe_code'):
+            codes = stock_api.request_subscribe_codes(message_reader)
+            for code in codes:
+                if len(code) > 10 or not code.startswith('A'):
+                    print(code)
         elif command.startswith('statc'):
             cinfo = stock_api.request_collector_stat(message_reader)
             print('total collector', len(cinfo))

@@ -1,5 +1,6 @@
 import gevent
 import math
+import copy
 import simulstatus
 import markettime
 import trademachine
@@ -32,9 +33,28 @@ class Order:
         self.internal_order_num = Order.INTERNAL_ID_PREFIX + code + Order.get_id_number()
         self.order_num = self.internal_order_num
         self.hold_price = hold_price
+        self.traded_price = 0
+        self.traded_quantity = 0
         
     def request(self):
-        return trademachine.request_order(self)
+        ret = trademachine.request_order(self)
+        if ret[0] != 0:
+            self.status = sp.OrderStatusFlag.STATUS_DENIED
+            self.quantity = 0
+            self.callback(self, None)
+        return ret
+
+    def decrease_quantity(self, qty):
+        self.quantity -= qty
+        self.callback(self, None)
+
+    def change_sell_info(self, price, quantity):
+        if self.is_buy:
+            print('WARNING: added to buy order, sell quantity')
+            return
+        self.hold_price = (self.hold_price * self.quantity + price * quantity) / (self.quantity + quantity)
+        self.quantity += quantity
+        self.callback(self, None)
 
     def change_order(self, order_msg):
         if order_msg.method != sp.OrderMethod.TRADE_UNKNOWN and order_msg.method != self.method:
@@ -43,13 +63,30 @@ class Order:
         if order_msg.price != 0 and order_msg.price != self.price:
             self.price = order_msg.price
 
+        if order_msg.quantity == 0 and order_msg.percentage > 0:
+            # TODO: is there any case percentage is not 100
+            order_msg.quantity = self.quantity
+
+        if self.status == sp.OrderStatusFlag.STATUS_REGISTERED:
+            if not self.is_buy:
+                if self.quantity == order_msg.quantity:
+                    pass
+                elif self.quantity > order_msg.quantity:
+                    new_registsered = copy.deepcopy(self) 
+                    new_registsered.quantity = self.quantity - order_msg.quantity
+                    new_registsered.internal_order_num = Order.INTERNAL_ID_PREFIX + self.code + Order.get_id_number()
+                    return new_registsered
+
+                self.request()
+
+        return None
+        """
         if order_msg.quantity != 0 and order_msg.quantity != self.quantity:
             self.quantity = order_msg.quantity
 
-        if self.status == sp.OrderStatusFlag.STATUS_REGISTERED:
-            self.request()
+        # request is not correct when registered, do by method is correct
 
-        """
+        #request is not correct when registered, do by method is correct
         if order_msg.method == sp.OrderMethod.TRADE_CANCEL:
             self.method = order_msg.method
             print('send request cancel')
@@ -57,39 +94,48 @@ class Order:
         elif order_msg.method == sp.OrderMethod.TRADE_MODIFY:
             return trademachine.reqeust_modify(self) 
         """
-        return True
-
 
     def cancel_order(self, order_msg):
         if self.status == sp.OrderStatusFlag.STATUS_SUBMITTED:
             self.order_type = sp.OrderType.CANCEL
             trademachine.request_cancel(self) 
-        elif self.status == sp.OrderStatusFlag.STATUS_TRADED:
+        elif self.status == sp.OrderStatusFlag.STATUS_TRADING:
             pass # TODO: handle when partial traded then add new sell as registered?
             
     def set_submitted(self, msg):
+        print('set submitted', msg)
         self.order_num = msg.order_number
         self.status = sp.OrderStatusFlag.STATUS_SUBMITTED
-        self.callback(self.status, msg.is_buy, msg.price, msg.quantity, 0)
+        self.callback(self, None)
 
     def set_traded(self, msg):
-        self.quantity -= msg.quantity
-        self.price = msg.price
-        self.status = sp.OrderStatusFlag.STATUS_TRADED
-        self.callback(self.status, msg.is_buy, msg.price, msg.quantity, msg.total_quantity)
+        print('set traded', msg)
+        if self.traded_quantity > 0:
+            amount = self.traded_price * self.traded_quantity
+            self.traded_price = (amount + msg.price * msg.quantity) / (msg.quantity + self.traded_quantity)
+            self.traded_quantity += msg.quantity
+        else:
+            self.traded_price = msg.price
+            self.traded_quantity = msg.quantity
+
+        if self.quantity == self.traded_quantity:
+            self.status = sp.OrderStatusFlag.STATUS_TRADED
+        else:
+            self.status = sp.OrderStatusFlag.STATUS_TRADING
+
+        self.callback(self, msg)
 
     def set_confirmed(self, msg):
         print('set confirm', msg.order_number)
         if self.order_type == sp.OrderType.CANCEL:
-            self.quantity = 0
             self.status = sp.OrderStatusFlag.STATUS_CONFIRM
-            self.callback(self.status, msg.is_buy, msg.price, msg.quantity, msg.total_quantity)
+            self.callback(self, msg)
 
     def get_cybos_order_result(self):
         return sp.CybosOrderResult(flag=self.status,
                                                code=self.code,
                                                order_number=self.order_num,
-                                               quantity=self.quantity,
+                                               quantity=self.quantity - self.traded_quantity,
                                                price=self.price,
                                                is_buy=self.is_buy,
                                                total_quantity=0)
@@ -97,7 +143,6 @@ class Order:
     def convert_to_report(self):
         lud = Timestamp()
         lud.FromDatetime(self.last_update_time)
-
         return sp.Report(code=self.code,
                          company_name=self.company_name,
                          is_buy=self.is_buy,
@@ -108,11 +153,17 @@ class Order:
                          quantity=self.quantity,
                          hold_price=int(self.hold_price),
                          internal_order_num=self.internal_order_num,
-                         order_num=self.order_num)
+                         order_num=self.order_num,
+                         traded_price=self.traded_price,
+                         traded_quantity=self.traded_quantity)
 
     def status_to_str(self):
-        if self.status == 1:
+        if self.status == 0:
+            return 'Unknown'
+        elif self.status == 1:
             return 'Registerd'
+        elif self.status == 3:
+            return 'Trading'
         elif self.status == ord('1'):
             return 'Traded'
         elif self.status == ord('2'):

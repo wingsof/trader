@@ -137,6 +137,13 @@ def subject_subscriber(stub):
         print('subject', i, msg.tick_date.ToDatetime())
 
 
+def order_subscriber(stub):
+    response = stub.ListenCybosOrderResult(Empty())
+    for msg in response:
+        print('*' * 30)
+        print(msg)
+
+
 def subscribe_stock(code, stub):
     query = sp.StockCodeQuery(code=code)
     response = stub.RequestCybosTickData(query)
@@ -233,6 +240,35 @@ def key_input(stub):
                                         method=sp.OrderMethod.TRADE_IMMEDIATELY,
                                         order_type=sp.OrderType.NEW)
                 stub.RequestToTrader(sp.TradeMsg(msg_type=sp.TradeMsgType.ORDER_MSG, order_msg=order_msg))
+        elif result.startswith('cybos_modify'):
+            token = result.split(',')
+            if len(token) != 4:
+                print('cybos_modify,order_num,code,price')
+                continue
+            ret = stub.ChangeOrder(sp.OrderMsg(code=token[2],
+                                            order_num=token[1],
+                                            price=int(token[3])))                                 
+            print('RET', ret)
+        elif result.startswith('cybos_cancel'):
+            token = result.split(',')
+            if len(token) != 4:
+                print('cybos_cancel,order_num,code,quantity')
+                continue
+
+            ret = stub.CancelOrder(sp.OrderMsg(code=token[2],
+                                            order_num=token[1],
+                                            quantity=int(token[3])))                                 
+            print('RET', ret)
+        elif result.startswith('cybos_order'):
+            token = result.split(',')
+            if len(token) != 5:
+                print('cybos_order,(buy|sell),code,price,quantity')
+                continue
+            ret = stub.OrderStock(sp.OrderMsg(code=token[2],
+                                            is_buy=(token[1] == 'buy'),
+                                            price=int(token[3]),
+                                            quantity=int(token[4])))
+            print('RET', ret)
         elif result == 'exit':
             break
         else:
@@ -247,6 +283,9 @@ def run():
         handlers.append(gevent.spawn(key_input, _STUB))
         handlers.append(gevent.spawn(tick_subscriber, _STUB))
         handlers.append(gevent.spawn(bidask_subscriber, _STUB))
+        handlers.append(gevent.spawn(order_subscriber, _STUB))
+
+        _STUB.RequestCybosTradeResult(Empty())
         gevent.joinall(handlers)
         #result = _STUB.GetYesterdayTopAmountCodes(Empty())
         #print('codes', result.codelist)

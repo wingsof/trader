@@ -158,7 +158,7 @@ namespace stock_api {
 enum OrderStatusFlag : int {
   STATUS_UNKNOWN = 0,
   STATUS_REGISTERED = 1,
-  STATUS_AUTO_CUT = 2,
+  STATUS_TRADING = 2,
   STATUS_TRADED = 49,
   STATUS_CONFIRM = 50,
   STATUS_DENIED = 51,
@@ -2047,6 +2047,8 @@ class Report :
     kHoldPriceFieldNumber = 7,
     kPriceFieldNumber = 8,
     kQuantityFieldNumber = 9,
+    kTradedQuantityFieldNumber = 12,
+    kTradedPriceFieldNumber = 13,
   };
   // string code = 1;
   void clear_code();
@@ -2154,13 +2156,13 @@ class Report :
   void _internal_set_method(::stock_api::OrderMethod value);
   public:
 
-  // int32 hold_price = 7;
+  // float hold_price = 7;
   void clear_hold_price();
-  ::PROTOBUF_NAMESPACE_ID::int32 hold_price() const;
-  void set_hold_price(::PROTOBUF_NAMESPACE_ID::int32 value);
+  float hold_price() const;
+  void set_hold_price(float value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_hold_price() const;
-  void _internal_set_hold_price(::PROTOBUF_NAMESPACE_ID::int32 value);
+  float _internal_hold_price() const;
+  void _internal_set_hold_price(float value);
   public:
 
   // int32 price = 8;
@@ -2181,6 +2183,24 @@ class Report :
   void _internal_set_quantity(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
+  // int32 traded_quantity = 12;
+  void clear_traded_quantity();
+  ::PROTOBUF_NAMESPACE_ID::int32 traded_quantity() const;
+  void set_traded_quantity(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_traded_quantity() const;
+  void _internal_set_traded_quantity(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // float traded_price = 13;
+  void clear_traded_price();
+  float traded_price() const;
+  void set_traded_price(float value);
+  private:
+  float _internal_traded_price() const;
+  void _internal_set_traded_price(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:stock_api.Report)
  private:
   class _Internal;
@@ -2194,9 +2214,11 @@ class Report :
   bool is_buy_;
   int flag_;
   int method_;
-  ::PROTOBUF_NAMESPACE_ID::int32 hold_price_;
+  float hold_price_;
   ::PROTOBUF_NAMESPACE_ID::int32 price_;
   ::PROTOBUF_NAMESPACE_ID::int32 quantity_;
+  ::PROTOBUF_NAMESPACE_ID::int32 traded_quantity_;
+  float traded_price_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_stock_5fprovider_2eproto;
 };
@@ -5817,22 +5839,22 @@ inline void Report::set_method(::stock_api::OrderMethod value) {
   // @@protoc_insertion_point(field_set:stock_api.Report.method)
 }
 
-// int32 hold_price = 7;
+// float hold_price = 7;
 inline void Report::clear_hold_price() {
   hold_price_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 Report::_internal_hold_price() const {
+inline float Report::_internal_hold_price() const {
   return hold_price_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 Report::hold_price() const {
+inline float Report::hold_price() const {
   // @@protoc_insertion_point(field_get:stock_api.Report.hold_price)
   return _internal_hold_price();
 }
-inline void Report::_internal_set_hold_price(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void Report::_internal_set_hold_price(float value) {
   
   hold_price_ = value;
 }
-inline void Report::set_hold_price(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void Report::set_hold_price(float value) {
   _internal_set_hold_price(value);
   // @@protoc_insertion_point(field_set:stock_api.Report.hold_price)
 }
@@ -5995,6 +6017,46 @@ inline void Report::set_allocated_order_num(std::string* order_num) {
   }
   order_num_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), order_num);
   // @@protoc_insertion_point(field_set_allocated:stock_api.Report.order_num)
+}
+
+// int32 traded_quantity = 12;
+inline void Report::clear_traded_quantity() {
+  traded_quantity_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Report::_internal_traded_quantity() const {
+  return traded_quantity_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Report::traded_quantity() const {
+  // @@protoc_insertion_point(field_get:stock_api.Report.traded_quantity)
+  return _internal_traded_quantity();
+}
+inline void Report::_internal_set_traded_quantity(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  traded_quantity_ = value;
+}
+inline void Report::set_traded_quantity(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_traded_quantity(value);
+  // @@protoc_insertion_point(field_set:stock_api.Report.traded_quantity)
+}
+
+// float traded_price = 13;
+inline void Report::clear_traded_price() {
+  traded_price_ = 0;
+}
+inline float Report::_internal_traded_price() const {
+  return traded_price_;
+}
+inline float Report::traded_price() const {
+  // @@protoc_insertion_point(field_get:stock_api.Report.traded_price)
+  return _internal_traded_price();
+}
+inline void Report::_internal_set_traded_price(float value) {
+  
+  traded_price_ = value;
+}
+inline void Report::set_traded_price(float value) {
+  _internal_set_traded_price(value);
+  // @@protoc_insertion_point(field_set:stock_api.Report.traded_price)
 }
 
 // -------------------------------------------------------------------

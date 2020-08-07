@@ -265,6 +265,10 @@ ApplicationWindow {
                                 return "SELL"
                             else if (model.row == 21 && model.column == 6)
                                 return "BUY"
+                            else if (model.row == 21 && model.column == 1)
+                                return "1/2 SELL"
+                            else if (model.row == 21 && model.column == 5)
+                                return "1/2 BUY"
                             else if (model.column == 0 || model.column == 6) {
                                 if (typeof(display) == "number" && display > 0) 
                                     return display
@@ -276,10 +280,10 @@ ApplicationWindow {
                         verticalAlignment: Text.AlignVCenter
                         font.pointSize: 10
                         color: {
-                            if (model.row == 21 && model.column == 0)
-                                return "red"
-                            else if (model.row == 21 && model.column ==6)
+                            if (model.row == 21 && (model.column == 0 || model.column == 1))
                                 return "blue"
+                            else if (model.row == 21 && (model.column == 6 || model.column == 5))
+                                return "red"
                             return "black"
                         }
                     }
@@ -290,6 +294,10 @@ ApplicationWindow {
                                 bidaskModel.sell_immediately(100)
                             else if (model.row == 21 && model.column ==6)
                                 bidaskModel.buy_immediately(100)
+                            else if (model.row == 21 && model.column == 1)
+                                bidaskModel.sell_immediately(50)
+                            else if (model.row == 21 && model.column == 5)
+                                bidaskModel.buy_immediately(50)
                         }
                     }
                 }

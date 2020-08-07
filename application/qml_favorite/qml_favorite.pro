@@ -34,7 +34,8 @@ SOURCES += main.cpp \
            ViListModel.cpp \
            YtopAmountListModel.cpp \
            TtopAmountListModel.cpp \
-           RecentListModel.cpp
+           RecentListModel.cpp \
+           TnineThirtyListModel.cpp
 
 HEADERS += StockStat.h \ 
            AbstractListModel.h \
@@ -42,5 +43,6 @@ HEADERS += StockStat.h \
            ViListModel.h \
            YtopAmountListModel.h \
            TtopAmountListModel.h \
-           RecentListModel.h
+           RecentListModel.h \
+           TnineThirtyListModel.h
 

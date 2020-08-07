@@ -333,6 +333,16 @@ Module {
         }
     }
     Component {
+        name: "TnineThirtyListModel"
+        prototype: "AbstractListModel"
+        exports: ["favorite.backend/TnineThirtyListModel 1.0"]
+        exportMetaObjectRevisions: [0]
+        Method {
+            name: "menuClicked"
+            Parameter { name: "index"; type: "int" }
+        }
+    }
+    Component {
         name: "TtopAmountListModel"
         prototype: "AbstractListModel"
         exports: ["favorite.backend/TtopAmountListModel 1.0"]

@@ -41,11 +41,6 @@ Module {
             name: "buy_immediately"
             Parameter { name: "percentage"; type: "int" }
         }
-        Method {
-            name: "isViPrice"
-            type: "bool"
-            Parameter { name: "price"; type: "int" }
-        }
     }
     Component {
         name: "QAbstractItemModel"

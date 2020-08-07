@@ -46,6 +46,21 @@ class StockStub(object):
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=stock__provider__pb2.Balance.FromString,
         )
+    self.OrderStock = channel.unary_unary(
+        '/stock_api.Stock/OrderStock',
+        request_serializer=stock__provider__pb2.OrderMsg.SerializeToString,
+        response_deserializer=stock__provider__pb2.CybosOrderReturn.FromString,
+        )
+    self.ChangeOrder = channel.unary_unary(
+        '/stock_api.Stock/ChangeOrder',
+        request_serializer=stock__provider__pb2.OrderMsg.SerializeToString,
+        response_deserializer=stock__provider__pb2.CybosOrderReturn.FromString,
+        )
+    self.CancelOrder = channel.unary_unary(
+        '/stock_api.Stock/CancelOrder',
+        request_serializer=stock__provider__pb2.OrderMsg.SerializeToString,
+        response_deserializer=stock__provider__pb2.CybosOrderReturn.FromString,
+        )
     self.RequestCybosTickData = channel.unary_unary(
         '/stock_api.Stock/RequestCybosTickData',
         request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
@@ -66,8 +81,8 @@ class StockStub(object):
         request_serializer=stock__provider__pb2.TradeMsg.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
-    self.RequestCybosOrderResult = channel.unary_unary(
-        '/stock_api.Stock/RequestCybosOrderResult',
+    self.RequestCybosTradeResult = channel.unary_unary(
+        '/stock_api.Stock/RequestCybosTradeResult',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
@@ -154,6 +169,11 @@ class StockStub(object):
     self.GetTodayTopAmountList = channel.unary_unary(
         '/stock_api.Stock/GetTodayTopAmountList',
         request_serializer=stock__provider__pb2.Option.SerializeToString,
+        response_deserializer=stock__provider__pb2.CodeList.FromString,
+        )
+    self.GetTodayNineThirtyList = channel.unary_unary(
+        '/stock_api.Stock/GetTodayNineThirtyList',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=stock__provider__pb2.CodeList.FromString,
         )
     self.GetRecentSearch = channel.unary_unary(
@@ -264,6 +284,27 @@ class StockServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def OrderStock(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def ChangeOrder(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def CancelOrder(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def RequestCybosTickData(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -292,7 +333,7 @@ class StockServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def RequestCybosOrderResult(self, request, context):
+  def RequestCybosTradeResult(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -418,6 +459,13 @@ class StockServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetTodayNineThirtyList(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def GetRecentSearch(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -535,6 +583,21 @@ def add_StockServicer_to_server(servicer, server):
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=stock__provider__pb2.Balance.SerializeToString,
       ),
+      'OrderStock': grpc.unary_unary_rpc_method_handler(
+          servicer.OrderStock,
+          request_deserializer=stock__provider__pb2.OrderMsg.FromString,
+          response_serializer=stock__provider__pb2.CybosOrderReturn.SerializeToString,
+      ),
+      'ChangeOrder': grpc.unary_unary_rpc_method_handler(
+          servicer.ChangeOrder,
+          request_deserializer=stock__provider__pb2.OrderMsg.FromString,
+          response_serializer=stock__provider__pb2.CybosOrderReturn.SerializeToString,
+      ),
+      'CancelOrder': grpc.unary_unary_rpc_method_handler(
+          servicer.CancelOrder,
+          request_deserializer=stock__provider__pb2.OrderMsg.FromString,
+          response_serializer=stock__provider__pb2.CybosOrderReturn.SerializeToString,
+      ),
       'RequestCybosTickData': grpc.unary_unary_rpc_method_handler(
           servicer.RequestCybosTickData,
           request_deserializer=stock__provider__pb2.StockCodeQuery.FromString,
@@ -555,8 +618,8 @@ def add_StockServicer_to_server(servicer, server):
           request_deserializer=stock__provider__pb2.TradeMsg.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
-      'RequestCybosOrderResult': grpc.unary_unary_rpc_method_handler(
-          servicer.RequestCybosOrderResult,
+      'RequestCybosTradeResult': grpc.unary_unary_rpc_method_handler(
+          servicer.RequestCybosTradeResult,
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
@@ -643,6 +706,11 @@ def add_StockServicer_to_server(servicer, server):
       'GetTodayTopAmountList': grpc.unary_unary_rpc_method_handler(
           servicer.GetTodayTopAmountList,
           request_deserializer=stock__provider__pb2.Option.FromString,
+          response_serializer=stock__provider__pb2.CodeList.SerializeToString,
+      ),
+      'GetTodayNineThirtyList': grpc.unary_unary_rpc_method_handler(
+          servicer.GetTodayNineThirtyList,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=stock__provider__pb2.CodeList.SerializeToString,
       ),
       'GetRecentSearch': grpc.unary_unary_rpc_method_handler(

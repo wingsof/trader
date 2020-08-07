@@ -74,7 +74,6 @@ public:
 
     Q_INVOKABLE void sell_immediately(int percentage);
     Q_INVOKABLE void buy_immediately(int percentage);
-    Q_INVOKABLE bool isViPrice(int price);
 
 private:
     int highlight;

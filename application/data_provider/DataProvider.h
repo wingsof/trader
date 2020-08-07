@@ -75,6 +75,8 @@ public:
     QStringList getFavoriteList();
     QStringList getViList(int option, bool catchPlus);
     QStringList getTtopAmountList(int option, bool catchPlus, bool useAccumulated);
+    QStringList getTnineThirtyList();
+
     TopList* getYtopAmountList();
     void clearRecentList();
     void addToFavorite(const QString &code);

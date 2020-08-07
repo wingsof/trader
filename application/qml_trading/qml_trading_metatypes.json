@@ -39,6 +39,17 @@
                         ],
                         "name": "cancelOrder",
                         "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "row",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "selectionChanged",
+                        "returnType": "void"
                     }
                 ],
                 "object": true,
