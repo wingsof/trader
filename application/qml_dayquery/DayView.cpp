@@ -470,7 +470,7 @@ void DayData::setTodayData(const QString &code, int o, int h, int l, int c, unsi
             setPriceSteps(priceSteps.at(0), highest);
             setPPS();
         }
-        else if ( lowest * 0.95 < priceSteps.at(0)) {
+        else if ( lowest != 0 && lowest * 0.95 < priceSteps.at(0)) {
             setPriceSteps(lowest, priceSteps.at(stepCount - 1));
             setPPS();
         }
@@ -512,7 +512,7 @@ void DayData::setData(QString _code, CybosDayDatas *dayData, const QMap<QString,
         if (tickStatMap[code].getHighestPrice() > highestPrice)
             highestPrice = tickStatMap[code].getHighestPrice();
 
-        if (tickStatMap[code].getLowestPrice() < lowestPrice)
+        if (tickStatMap[code].getLowestPrice() != 0 && tickStatMap[code].getLowestPrice() < lowestPrice)
             lowestPrice = tickStatMap[code].getLowestPrice();
 
         if (tickStatMap[code].getMaxVolume() > highestVolume)

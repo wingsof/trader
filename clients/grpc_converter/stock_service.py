@@ -10,6 +10,7 @@ import gevent
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 2))))
+import gc
 
 import preload
 from concurrent import futures
@@ -85,6 +86,7 @@ def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_ti
                 last_datatime = datatime
             
             # TIME_SPEED greater, then tick deliver speed will be more slow
+
             while (d['date'] - datatime) * TIME_SPEED > datetime.now() - now:
                 gevent.sleep()
 
@@ -107,6 +109,9 @@ def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_ti
 
             datatime = d['date'] - timeadjust
             now = datetime.now()
+        
+        del data
+        gc.collect()
 
     simulation_progressing[2] = False
     if not any(simulation_progressing):
@@ -614,6 +619,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             try:
                 data = q.get(True, 1)
                 yield data
+                del data
             except gevent.queue.Empty as ge:
                 pass
         client_list.remove(q)
@@ -627,6 +633,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             try:
                 data = q.get(True, 1)
                 yield data
+                del data
             except gevent.queue.Empty as ge:
                 pass
         client_list.remove(q)
@@ -640,7 +647,8 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 self.current_stock_selection_subscribe_clients,
                                                 context)
         for d in data:
-            yield d 
+            yield d
+            del d
 
     def ListenListChanged(self, request, context):
         data = self.handle_queue_based_listener('ListenListChanged',
@@ -648,6 +656,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
+            del d
 
     def ListenCybosTickData(self, request, context):
         data = self.handle_queue_based_listener('ListenCybosTickData',
@@ -655,6 +664,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
+            del d
 
     def ListenCybosBidAsk(self, request, context):
         data = self.handle_queue_based_listener('ListenCybosBidAsk',
@@ -662,6 +672,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
+            del d
 
 
     def ListenCybosSubject(self, request, context):
@@ -670,6 +681,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
+            del d
 
     def ListenCybosAlarm(self, request, context):
         data = self.handle_queue_based_listener('ListenCybosAlarm',
@@ -677,6 +689,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
+            del d
 
     def ListenOrderResult(self, request, context):
         data = self.handle_queue_based_listener('ListenOrderResult',
@@ -684,6 +697,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
+            del d
 
     def ListenCybosOrderResult(self, request, context):
         data = self.handle_queue_based_listener('ListenCybosOrderResult',
@@ -691,6 +705,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
+            del d
 
     def ListenSimulationStatusChanged(self, request, context):
         data = self.handle_queue_based_listener('ListenSimulationStatusChanged',
@@ -698,6 +713,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
+            del d
 
     def ListenTraderMsg(self, request, context):
         data = self.handle_queue_based_listener('ListenTraderMsg',
@@ -705,6 +721,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
+            del d
 
     def GetRecentSearch(self, request, context):
         return stock_provider_pb2.CodeList(codelist=recent_search_codes)

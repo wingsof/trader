@@ -12,7 +12,6 @@ TableView {
     topMargin: columnsHeader.implicitHeight
     flickableDirection: Flickable.VerticalFlick
     boundsBehavior: Flickable.StopAtBounds
-    selectionMode: SelectionMode.SingleSelection
     property var columnWidths: [90, 50, 100, 100, 60, 60, 90, 110, 80, 110, 80, 100, 70, 80, 70]
     columnWidthProvider: function (column) { return columnWidths[column]; }
 
@@ -136,6 +135,6 @@ TableView {
             }
         }
     }
-    ScrollIndicator.horizontal: ScrollIndicator { }
+    //ScrollIndicator.horizontal: ScrollIndicator { }
 }
 

@@ -46,7 +46,7 @@ def pay_for_stock(amount, use_tax=True):
 
 
 def set_simulation(is_simulation):
-    global _balance
+    global _balance, _one_shot
 
     if simulstatus.is_simulation():
         _balance = DEFAULT_BALANCE

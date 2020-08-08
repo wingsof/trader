@@ -37,12 +37,8 @@ class Spread:
             else:
                 return self.ask_spread[-1]
         elif not is_buy and len(self.bid_spread) > 0:
-            """
             if len(self.bid_spread) > IMMEDIATE_PRICE_POS:
                 return self.bid_spread[IMMEDIATE_PRICE_POS]
-            """
-            if len(self.ask_spread) > IMMEDIATE_PRICE_POS:
-                return self.ask_spread[IMMEDIATE_PRICE_POS]
             else:
                 return self.bid_spread[-1]
         print('Cannot find immmediate price', is_buy, self.bid_spread, self.ask_spread)
@@ -74,6 +70,7 @@ class Spread:
                     return
 
                 if order.is_buy and order.percentage > 0:
+                    print('percentage', order.percentage, 'order price', order.price, 'cash', cash)
                     order.quantity = int(cash * order.percentage / 100.0 / order.price)
                 elif not order.is_buy and order.percentage > 0:
                     order.quantity = int(math.ceil(self.get_sell_available() * order.percentage / 100))
