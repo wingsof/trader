@@ -525,18 +525,18 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         for q in self.stock_subscribe_clients:
             q.put_nowait(tick_data)
 
-    def handle_subject_tick(self, code, data):
-        if len(data) != 1:
+    def handle_subject_tick(self, code, data_arr):
+        if len(data_arr) != 1:
             return
 
         if '_' in code:
             code = code[:code.index('_')]
 
-        data = data[0]
+        data = data_arr[0]
 
         tick_date = Timestamp()
         tick_date.FromDatetime(data['date'] - timedelta(hours=9))
-        data = stock_provider_pb2.CybosSubjectTickData(tick_date=tick_date,
+        tick_data = stock_provider_pb2.CybosSubjectTickData(tick_date=tick_date,
                                                         time=data['0'],
                                                         name=data['1'],
                                                         code=code,
@@ -545,21 +545,24 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                         volume=data['5'],
                                                         total_volume=data['6'],
                                                         foreigner_total_volume=data['8'])
-        for q in self.subject_subscribe_clients:
-            q.put_nowait(data)
 
-    def handle_alarm_tick(self, _, data):
-        if len(data) != 1:
+        data = None
+        data_arr.clear()
+        for q in self.subject_subscribe_clients:
+            q.put_nowait(tick_data)
+
+    def handle_alarm_tick(self, _, data_arr):
+        if len(data_arr) != 1:
             return
 
-        data = data[0]
+        data = data_arr[0]
         tick_date = Timestamp()
         tick_date.FromDatetime(data['date'] - timedelta(hours=9))
         code = data['code'] if 'code' in data else data['3']
         if todaydata.handle_vi(code, data):
             self.send_list_changed('vi')
 
-        data = stock_provider_pb2.CybosStockAlarm(tick_date=tick_date,
+        tick_data = stock_provider_pb2.CybosStockAlarm(tick_date=tick_date,
                                                 time=data['0'],
                                                 type_category=data['1'],
                                                 market_category=data['2'],
@@ -567,8 +570,10 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 alarm_category=data['4'],
                                                 title=data['5'],
                                                 content=data['6'])
+        data = None
+        data_arr.clear()
         for q in self.alarm_subscribe_clients:
-            q.put_nowait(data)
+            q.put_nowait(tick_data)
 
     def handle_trade_result(self, data):
         """
