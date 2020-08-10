@@ -116,6 +116,8 @@ def consumer():
                     print('HEAD', result[0])
                     print(result[1])
                     print('TAIL', result[-1])
+
+                print(result)
         elif command.startswith('todayt'):
             todaym_detail = command.split(',')
             if len(todaym_detail) != 2:

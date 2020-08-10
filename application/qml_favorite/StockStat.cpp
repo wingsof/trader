@@ -107,6 +107,7 @@ void StockStat::tickArrived(CybosTickData *data) {
                             data->cum_amount());
         emit infoUpdated(code);
     }
+    delete data;
 }
 
 

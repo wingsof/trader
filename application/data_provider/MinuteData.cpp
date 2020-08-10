@@ -38,11 +38,11 @@ void MinuteTick::minuteDataReady(QString _code, CybosDayDatas * data) {
         QDateTime ct = createDateTime.addSecs(60);
         uint t = ct.time().hour() * 100 + ct.time().minute();
         int inTimeCount = 0;
-
+        //qWarning() << "Ready Time : " << createDateTime;
         for (int i = 0; i < data->day_data_size(); i++) {
             const CybosDayData &d = data->day_data(i);
             uint time = d.time();
-
+            //qWarning() << "data time : " << time;
             if (time > t) 
                 break;
             else 
@@ -329,4 +329,6 @@ void MinuteData::stockTickArrived(CybosTickData *data) {
         codeMap[code] = new MinuteTick(code, dt, intervalMinute);
         requestPreviousData(codeMap[code]);
     }
+
+    delete data;
 }

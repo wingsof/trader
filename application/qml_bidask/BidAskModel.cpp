@@ -175,8 +175,10 @@ QVariant BidAskModel::data(const QModelIndex &index, int role) const
 
 
 void BidAskModel::tickArrived(CybosTickData *data) {
-    if (currentStockCode != QString::fromStdString(data->code()))
+    if (currentStockCode != QString::fromStdString(data->code())) {
+        delete data;
         return;
+    }
 
     if (mViType == 48 || (data->market_type() == 50 && mViType == 49)) {
         mViPrices = DataProvider::getInstance()->getViPrices(currentStockCode);
@@ -193,6 +195,7 @@ void BidAskModel::tickArrived(CybosTickData *data) {
         mViType = 49;
 
     dataChanged(createIndex(0, 0), createIndex(20, 8));
+    delete data;
 }
 
 
@@ -203,8 +206,10 @@ void BidAskModel::setHighlightPosition(int price) {
 
 
 void BidAskModel::bidAskTickArrived(CybosBidAskTickData *data) {
-    if (currentStockCode != QString::fromStdString(data->code()))
+    if (currentStockCode != QString::fromStdString(data->code())) {
+        delete data;
         return;
+    }
 
     mData.setBidAskTick(data);
     setTotalAskRemain(data->total_ask_remain());
@@ -213,6 +218,7 @@ void BidAskModel::bidAskTickArrived(CybosBidAskTickData *data) {
     dataChanged(createIndex(1, 2), createIndex(20, 4));
     //long msec = TimeUtil::TimestampToMilliseconds(data->tick_date());
     //qWarning() << QDateTime::fromMSecsSinceEpoch(msec) << "\tASK: " << data->ask_prices(0) << "(" << data->ask_remains(0) << ")\t" << "BID: " << data->bid_prices(0) << "(" << data->bid_remains(0) << ")";
+    delete data;
 }
 
 

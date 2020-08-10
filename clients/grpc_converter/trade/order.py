@@ -178,6 +178,7 @@ class Order:
         debug_str = '*' * 30 + '\n'
         debug_str += 'STATUS:' + self.status_to_str() + '\n'
         debug_str += 'IS_BUY: ' + str(self.is_buy) + '\n'
+        debug_str += 'CODE: ' + self.code + '\n'
         debug_str += 'ORDER NUM: ' + str(self.order_num) + '\n'
         debug_str += 'ORDER TYPE: ' + str(self.order_type) + '\n'
         debug_str += 'PRICE: ' + str(self.price) + '\n'

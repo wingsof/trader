@@ -38,6 +38,7 @@ def cancel_order_list(cybos_order, msg):
 
 def request_order(order_obj):
     request_list.append(order_obj)
+    print('request_order')
     if not simulstatus.is_simulation():
         msg = stock_provider.OrderMsg(code=order_obj.code, is_buy=order_obj.is_buy, price=order_obj.price, quantity=order_obj.quantity)
         order_ret = _stub.OrderStock(msg)
@@ -69,6 +70,7 @@ def request_cancel(order_obj):
     if simulstatus.is_simulation(): 
         trade_queue.put_nowait(order_obj)
     else:
+        request_list.append(order_obj)
         msg = stock_provider.OrderMsg(code=order_obj.code, order_num=order_obj.order_num , quantity=(order_obj.quantity - order_obj.traded_quantity))
         order_ret = _stub.CancelOrder(msg)
         print(order_ret.result)
@@ -148,20 +150,25 @@ def bidask_arrived(code, msg):
 
 
 def handle_server_order(msg):
+    print('handle_server_order', len(request_list))
     if msg.flag == stock_provider.OrderStatusFlag.STATUS_SUBMITTED:
+        print('OK SUBMITTED', msg)
         for cybos_order in request_list:
+            print('in request list', cybos_order)
             if (cybos_order.code == msg.code and
                                 cybos_order.price == msg.price and
                                 cybos_order.quantity == msg.quantity and
                                 cybos_order.is_buy == msg.is_buy):
-                move_to_order_list(r)
+                move_to_order_list(cybos_order, msg)
                 break
     elif msg.flag == stock_provider.OrderStatusFlag.STATUS_TRADED:
         for cybos_order in order_list:
             if cybos_order.order_num == msg.order_number and cybos_order.quantity > 0:
                 if not cybos_order.is_buy:
                     account.pay_for_stock(-(msg.quantity * msg.price))    
-
+                else:
+                    price_diff = msg.price * msg.quantity - cybos_order.price * msg.quantity
+                    account.pay_for_stock(price_diff)
                 cybos_order.set_traded(msg)
                 break
     elif msg.flag == stock_provider.OrderStatusFlag.STATUS_CONFIRM:
@@ -190,5 +197,6 @@ def handle_simulation_order():
 def handle_cybos_order(stub):
     response = stub.ListenCybosOrderResult(Empty())
     for msg in response:
+        print(msg)
         handle_server_order(msg)
 

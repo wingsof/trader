@@ -127,6 +127,7 @@ void DataProvider::convertTimeInfo(Timestamp *t) {
     long msec = TimeUtil::TimestampToMilliseconds(*t);
     //qWarning() << "time arrived : " << QDateTime::fromMSecsSinceEpoch(msec);
     m_currentDateTime = QDateTime::fromMSecsSinceEpoch(msec);
+    delete t;
     emit timeInfoArrived(m_currentDateTime);
 }
 
@@ -269,13 +270,19 @@ QString DataProvider::getCompanyName(const QString &code) {
     StockCodeQuery scq;
     scq.set_code(code.toStdString());
     stub_->GetCompanyName(&context, scq, cn);
-    return QString::fromStdString(cn->company_name());
+    QString name = QString::fromStdString(cn->company_name());
+    delete cn;
+    return name;
 }
 
 
 MinuteTick * DataProvider::getMinuteTick(const QString &code) {
-    if (minuteData && !code.isEmpty())
-        return minuteData->getMinuteTick(code, currentDateTime());
+    if (minuteData && !code.isEmpty()) {
+        if (isSimulation())
+            return minuteData->getMinuteTick(code, currentDateTime());
+        else
+            return minuteData->getMinuteTick(code, QDateTime::currentDateTime());
+    }
     return nullptr;
 }
 
@@ -290,6 +297,7 @@ QStringList DataProvider::getSubscribeCodes() {
     QStringList list;
     for (int i = 0; i < codeList->codelist_size(); i++)
         list.append(QString::fromStdString(codeList->codelist(i)));
+    delete codeList;
     return list;
 }
 
@@ -302,6 +310,7 @@ QStringList DataProvider::getRecentSearch() {
     QStringList list;
     for (int i = 0; i < codeList->codelist_size(); i++)
         list.append(QString::fromStdString(codeList->codelist(i)));
+    delete codeList;
     return list;
 }
 
@@ -314,6 +323,7 @@ QStringList DataProvider::getFavoriteList() {
     QStringList list;
     for (int i = 0; i < codeList->codelist_size(); i++)
         list.append(QString::fromStdString(codeList->codelist(i)));
+    delete codeList;
     return list;
 }
 
@@ -328,6 +338,7 @@ QStringList DataProvider::getViList(int option, bool catchPlus) {
     QStringList list;
     for (int i = 0; i < codeList->codelist_size(); i++)
         list.append(QString::fromStdString(codeList->codelist(i)));
+    delete codeList;
     return list;
 }
 
@@ -382,6 +393,7 @@ QStringList DataProvider::getTtopAmountList(int option, bool catchPlus, bool use
     QStringList list;
     for (int i = 0; i < codeList->codelist_size(); i++)
         list.append(QString::fromStdString(codeList->codelist(i)));
+    delete codeList;
     return list;
 }
 
@@ -394,6 +406,7 @@ QStringList DataProvider::getTnineThirtyList() {
     QStringList list;
     for (int i = 0; i < codeList->codelist_size(); i++)
         list.append(QString::fromStdString(codeList->codelist(i)));
+    delete codeList;
     return list;
 }
 
@@ -442,7 +455,7 @@ void DataProvider::_stopSimulation() {
     Empty * emptyReturn = new Empty;
     Empty empty;
     stub_->StopSimulation(&context, empty, emptyReturn);
-
+    delete emptyReturn;
     m_simulationStatus = RUNNING_TO_STOP;
 }
 
@@ -452,7 +465,9 @@ bool DataProvider::_isSimulation() {
     SimulationStatus * status = new SimulationStatus;
     Empty empty;
     stub_->GetSimulationStatus(&context, empty, status);
-    return status->simulation_on();
+    bool isOn = status->simulation_on();
+    delete status;
+    return isOn;
 }
 
 
@@ -510,6 +525,15 @@ void DataProvider::requestSubjectSubscribe(const QString &code) {
     Empty empty;
     data.set_code(code.toStdString());
     stub_->RequestCybosSubject(&context, data, &empty);
+}
+
+
+void DataProvider::requestAlarmSubscribe() {
+    ClientContext context;
+    Empty * emptyReturn = new Empty;
+    Empty empty;
+    stub_->RequestCybosAlarm(&context, empty, emptyReturn);
+    delete emptyReturn;
 }
 
 

@@ -94,7 +94,7 @@ public:
     void requestTickSubscribe(const QString &code);
     void requestBidAskSubscribe(const QString &code);
     void requestSubjectSubscribe(const QString &code);
-
+    void requestAlarmSubscribe();
 
     QList<int> getViPrices(const QString &code);
     bool isKospi(const QString &code);

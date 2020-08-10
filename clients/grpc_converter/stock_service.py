@@ -91,6 +91,7 @@ def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_ti
                 gevent.sleep()
 
             timeadjust = (datetime.now() - now) - (d['date'] - datatime) * TIME_SPEED
+            d_date = d['date']
 
             if d['type'] == 'subject':
                 subject_tick_handler(d['code'], [d])
@@ -103,14 +104,14 @@ def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_ti
             else:
                 continue
 
-            if d['date'] - last_datatime > timedelta(seconds=1):
-                time_handler(d['date'] - timedelta(hours=9))    # DB time is UTC but time is set as if localtime
-                last_datatime = d['date']
+            if d_date - last_datatime > timedelta(seconds=1):
+                time_handler(d_date - timedelta(hours=9))    # DB time is UTC but time is set as if localtime
+                last_datatime = d_date
 
-            datatime = d['date'] - timeadjust
+            datatime = d_date - timeadjust
             now = datetime.now()
         
-        del data
+        data.clear()
         gc.collect()
 
     simulation_progressing[2] = False
@@ -439,14 +440,14 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return stock_provider_pb2.SimulationStatus(simulation_on=is_simulation,
                                                     simulation_speed=TIME_SPEED)
 
-    def handle_bidask_tick(self, code, data):
-        if len(data) != 1:
+    def handle_bidask_tick(self, code, data_arr):
+        if len(data_arr) != 1:
             return
 
         if '_BA' in code:
             code = code[:code.index('_')]
 
-        data = data[0]
+        data = data_arr[0]
         tick_date = Timestamp()
         tick_date.FromDatetime(data['date'])
         bidask = stock_provider_pb2.CybosBidAskTickData(tick_date=tick_date,
@@ -475,15 +476,18 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                 bidask.ask_prices.append(data[str(i)])
                 bidask.ask_remains.append(data[str(i+2)])
 
+        data = None
+        data_arr.clear()
+
         for q in self.bidask_subscribe_cilents:
             q.put_nowait(bidask)
 
-    def handle_stock_tick(self, code, data):
+    def handle_stock_tick(self, code, data_arr):
         #print('handle_stock_stick', data)
-        if len(data) != 1:
+        if len(data_arr) != 1:
             return
 
-        data = data[0]
+        data = data_arr[0]
         tick_date = Timestamp()
         tick_date.FromDatetime(data['date'] - timedelta(hours=9))
 
@@ -492,8 +496,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             self.send_list_changed('ttopamount')
         if ret & config.CAND_NINETHIRTY:
             self.send_list_changed('ninethirty')
-
-        data = stock_provider_pb2.CybosTickData(tick_date=tick_date,
+        tick_data = stock_provider_pb2.CybosTickData(tick_date=tick_date,
                                                 code=code,
                                                 company_name=data['1'],
                                                 yesterday_diff=data['2'],
@@ -517,8 +520,10 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 cum_sell_volume=data['27'],
                                                 cum_buy_volume=data['28'],
                                                 is_kospi=morning_client.is_kospi_code(code))
+        data = None
+        data_arr.clear()
         for q in self.stock_subscribe_clients:
-            q.put_nowait(data)
+            q.put_nowait(tick_data)
 
     def handle_subject_tick(self, code, data):
         if len(data) != 1:
@@ -583,8 +588,11 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             data = stock_provider_pb2.CybosOrderResult(flag=ord(data['flag']),
                                                         code=data['code'],
                                                         order_number=str(data['order_number']),
+                                                        price=data['price'],
+                                                        is_buy=(data['order_type'] == '2'),
                                                         quantity=data['quantity'],
                                                         total_quantity=data['total_quantity'])
+            print(data)
             for q in self.cybos_order_result_subscribe_clients:
                 q.put_nowait(data)
 
@@ -648,7 +656,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
-            del d
 
     def ListenListChanged(self, request, context):
         data = self.handle_queue_based_listener('ListenListChanged',
@@ -656,7 +663,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
-            del d
 
     def ListenCybosTickData(self, request, context):
         data = self.handle_queue_based_listener('ListenCybosTickData',
@@ -664,7 +670,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
-            del d
 
     def ListenCybosBidAsk(self, request, context):
         data = self.handle_queue_based_listener('ListenCybosBidAsk',
@@ -672,7 +677,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
-            del d
 
 
     def ListenCybosSubject(self, request, context):
@@ -681,7 +685,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
-            del d
 
     def ListenCybosAlarm(self, request, context):
         data = self.handle_queue_based_listener('ListenCybosAlarm',
@@ -689,7 +692,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
-            del d
 
     def ListenOrderResult(self, request, context):
         data = self.handle_queue_based_listener('ListenOrderResult',
@@ -697,7 +699,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
-            del d
 
     def ListenCybosOrderResult(self, request, context):
         data = self.handle_queue_based_listener('ListenCybosOrderResult',
@@ -705,7 +706,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
-            del d
 
     def ListenSimulationStatusChanged(self, request, context):
         data = self.handle_queue_based_listener('ListenSimulationStatusChanged',
@@ -713,7 +713,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
-            del d
 
     def ListenTraderMsg(self, request, context):
         data = self.handle_queue_based_listener('ListenTraderMsg',
@@ -721,7 +720,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 context)
         for d in data:
             yield d
-            del d
 
     def GetRecentSearch(self, request, context):
         return stock_provider_pb2.CodeList(codelist=recent_search_codes)

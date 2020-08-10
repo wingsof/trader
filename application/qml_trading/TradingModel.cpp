@@ -43,6 +43,7 @@ void TradingModel::tickArrived(CybosTickData *data) {
                 dataChanged(createIndex(i, 2), createIndex(i, 4));
         }
     }
+    delete data;
 }
 
 

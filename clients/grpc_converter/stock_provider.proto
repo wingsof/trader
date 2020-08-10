@@ -21,6 +21,7 @@ service Stock {
   rpc RequestCybosTickData(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosBidAsk(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosSubject(StockCodeQuery) returns (google.protobuf.Empty) {}
+  rpc RequestCybosAlarm(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 
   rpc RequestToTrader(TradeMsg) returns (google.protobuf.Empty) {}
   rpc RequestCybosTradeResult(google.protobuf.Empty) returns (google.protobuf.Empty) {}

@@ -43,6 +43,7 @@ public:
     void setData(QString, CybosDayDatas *, const QMap<QString, TickStat> &tickStatMap);
     bool hasData();
     void resetData();
+    int getHighestPrice() const { return mHighestPrice;}
 
     void setTodayData(const QString &code, int o, int h, int l, int c, unsigned long v, bool is_synchronized_bidding);
 
@@ -69,8 +70,8 @@ private:
     CybosDayDatas *data;
     CybosDayData *todayData;
     QString code;
-    int lowestPrice;
-    int highestPrice;
+    int mLowestPrice;
+    int mHighestPrice;
     unsigned long lowestVolume;
     unsigned long highestVolume;
 

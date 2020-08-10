@@ -166,9 +166,10 @@ void SearchBackend::startSubscribeCodes() {
     qWarning() << "Subscrbie Code count : " << subscribeCodes.size();
     for (int i = 0; i < subscribeCodes.size(); i++) {
         DataProvider::getInstance()->requestTickSubscribe(subscribeCodes.at(i));
-        if (subscribeCodes.startsWith("A")) {
+        if (subscribeCodes.at(i).startsWith("A")) {
             DataProvider::getInstance()->requestBidAskSubscribe(subscribeCodes.at(i));
             DataProvider::getInstance()->requestSubjectSubscribe(subscribeCodes.at(i));
         }
     }
+    DataProvider::getInstance()->requestAlarmSubscribe();
 }

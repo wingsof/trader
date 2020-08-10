@@ -334,6 +334,17 @@ void DayView::paint(QPainter *painter) {
         painter->drawText((int)itemSize.width() - priceLabelWidth + 50, 
                                 (int)current_y,
                                  QString::number(dayData->getTodayData()->close_price()));
+
+        if (dayData->getHighestPrice() != 0) {
+            pen.setColor(Qt::black);
+            painter->setPen(pen);
+            qreal profit = (int(dayData->getTodayData()->close_price()) - dayData->getHighestPrice()) / qreal(dayData->getHighestPrice()) * 100.0;
+            //qWarning() << dayData->getTodayData()->close_price() << "\t" << dayData->getHighestPrice();
+            //qWarning() << "profit : " << profit << "\t" << (dayData->getTodayData()->close_price() - dayData->getHighestPrice());
+            painter->drawText(int((itemSize.width() - priceLabelWidth) / 2),
+                                (int) current_y - 10,
+                                QString::number(dayData->getHighestPrice()) + "\t(" + QString::number(profit, 'f', 2) + ")");
+        }
     }
 
     if ( (drawHorizontalY > 0.0 && drawHorizontalY < priceEndY) &&
@@ -390,11 +401,11 @@ void DayView::tickDataArrived(CybosTickData *data) {
         return;
 
     if (code == stockCode) {
-        qWarning() << "start : " << data->start_price() << "\t" <<
-                        "highest : " << data->highest_price() << "\t" <<
-                       "lowest : " << data->lowest_price() << "\t" <<
-                       "cum volume : " << data->cum_volume() << "\t" <<
-                       "market type : " << data->market_type();
+        //qWarning() << "start : " << data->start_price() << "\t" <<
+        //               "highest : " << data->highest_price() << "\t" <<
+        //               "lowest : " << data->lowest_price() << "\t" <<
+        //               "cum volume : " << data->cum_volume() << "\t" <<
+        //               "market type : " << data->market_type();
         dayData->setTodayData(code, data->start_price(),
                                 data->highest_price(),
                                 data->lowest_price(),
@@ -403,6 +414,7 @@ void DayView::tickDataArrived(CybosTickData *data) {
                                 data->market_type() == 49);
         update();
     }
+    delete data;
 }
 
 
@@ -485,13 +497,15 @@ void DayData::setTodayData(const QString &code, int o, int h, int l, int c, unsi
 void DayData::setData(QString _code, CybosDayDatas *dayData, const QMap<QString, TickStat> &tickStatMap) {
     code = _code;
 
+    mHighestPrice = 0;
+    mLowestPrice = 0;
     data = dayData;
     qWarning() << "setData count : " << data->day_data_size();
     if (data->day_data_size() == 0) 
         return;
 
-    lowestPrice = data->day_data(0).lowest_price();
-    highestPrice = data->day_data(0).highest_price();
+    int lowestPrice = data->day_data(0).lowest_price();
+    int highestPrice = data->day_data(0).highest_price();
     lowestVolume = data->day_data(0).volume();
     highestVolume = lowestVolume;
     for (int i = 1; i < data->day_data_size(); i++) {
@@ -508,6 +522,9 @@ void DayData::setData(QString _code, CybosDayDatas *dayData, const QMap<QString,
             lowestVolume = data->day_data(i).volume();
         //qWarning() << data->day_data(i).date() << "\tvolume:" << data->day_data(i).volume() << "\tfhold:" << data->day_data(i).foreigner_hold_volume() << "\tibuy:" << data->day_data(i).institution_buy_volume() << "\ticum_buy:" << data->day_data(i).institution_cum_buy_volume() << "\tfhold_rate:" << data->day_data(i).foreigner_hold_rate() << "\tcum_buy:" << data->day_data(i).cum_buy_volume() << "\tcum_sell" << data->day_data(i).cum_sell_volume();
     }
+    mHighestPrice = highestPrice;
+    mLowestPrice = lowestPrice;
+
     if (tickStatMap.contains(code) && code != "U201" && code != "U001") {
         if (tickStatMap[code].getHighestPrice() > highestPrice)
             highestPrice = tickStatMap[code].getHighestPrice();
