@@ -218,7 +218,7 @@ void MorningTickChartView::setVolumeMinMax(uint h, uint l) {
 
 void MorningTickChartView::updateVolumeMax(uint h) {
     if (h > currentVolumeMax) {
-        qWarning() << "CurrentVolumeMax : " << h;
+        //qWarning() << "CurrentVolumeMax : " << h;
         currentVolumeMax = h;
     }
 }

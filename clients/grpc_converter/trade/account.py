@@ -4,7 +4,7 @@ import simulstatus
 
 
 DEFAULT_BALANCE = 10000000
-ONE_SHOT_DIV = 5
+ONE_SHOT_DIV = 3
 _balance = DEFAULT_BALANCE
 TAX_RATE = 0.0028 # tax 0.25%, trade fee: 0.015% * 2
 _stub = None

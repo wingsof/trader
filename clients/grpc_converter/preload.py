@@ -59,7 +59,7 @@ def _get_yesterday_day_data(query_date, market_code):
     print('')
 
 
-def start_preload(dt, skip_ydata):
+def start_preload(dt, skip_ydata, skip_uni):
     global _market_codes, loading, _yesterday
     print('Start Loading', dt)
     
@@ -67,7 +67,8 @@ def start_preload(dt, skip_ydata):
         # load infomration here, not depend on date
         _market_codes = morning_client.get_all_market_code()
         code_info.load_code_info(_market_codes)
-        uni_current.load_uni_data(_market_codes)
+        if not skip_uni:
+            uni_current.load_uni_data(_market_codes)
 
     _yesterday_minute_data.clear()
     _yesterday_day_data.clear()
@@ -81,7 +82,7 @@ def start_preload(dt, skip_ydata):
     loading = False
 
 
-def load(dt, skip_ydata):
+def load(dt, skip_ydata, skip_uni=False):
     global loading, _market_codes, _last_date, _request_stop, _current_spawn, _skip_ydata
     print('Load Data')
     _skip_ydata = skip_ydata
@@ -107,7 +108,7 @@ def load(dt, skip_ydata):
 
     loading = True
     _last_date = dt
-    _current_spawn = gevent.spawn(start_preload, dt, skip_ydata)
+    _current_spawn = gevent.spawn(start_preload, dt, skip_ydata, skip_uni)
     
 
 def is_kospi(code):

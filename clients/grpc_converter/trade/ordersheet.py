@@ -59,6 +59,7 @@ class OrderSheet:
         return None
 
     def change_order(self, order):
+        print('CHANGE ORDER####')
         matched_order = self.find_match_order(order)
         if matched_order is not None:
             return matched_order.change_order(order)
@@ -77,7 +78,7 @@ class OrderSheet:
             self.order_callback(order.convert_to_report())
         elif order.status == stock_provider.OrderStatusFlag.STATUS_SUBMITTED:
             self.order_callback(order.convert_to_report())
-        elif order.status == stock_provider.OrderStatusFlag.STATUS_TRADED:
+        elif order.status == stock_provider.OrderStatusFlag.STATUS_TRADED or order.status == stock_provider.OrderStatusFlag.STATUS_TRADING:
             if order.is_buy:
                 self.add_to_sell_order(msg.price, msg.quantity)
             self.order_callback(order.convert_to_report())

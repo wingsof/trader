@@ -111,9 +111,6 @@ def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_ti
             datatime = d_date - timeadjust
             now = datetime.now()
         
-        data.clear()
-        gc.collect()
-
     simulation_progressing[2] = False
     if not any(simulation_progressing):
         simulation_handler([False])
@@ -476,11 +473,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                 bidask.ask_prices.append(data[str(i)])
                 bidask.ask_remains.append(data[str(i+2)])
 
-        data = None
-        data_arr.clear()
-
         for q in self.bidask_subscribe_cilents:
             q.put_nowait(bidask)
+            gevent.sleep(0.0001)
 
     def handle_stock_tick(self, code, data_arr):
         #print('handle_stock_stick', data)
@@ -520,10 +515,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 cum_sell_volume=data['27'],
                                                 cum_buy_volume=data['28'],
                                                 is_kospi=morning_client.is_kospi_code(code))
-        data = None
-        data_arr.clear()
         for q in self.stock_subscribe_clients:
             q.put_nowait(tick_data)
+            gevent.sleep(0.0001)
 
     def handle_subject_tick(self, code, data_arr):
         if len(data_arr) != 1:
@@ -546,10 +540,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                         total_volume=data['6'],
                                                         foreigner_total_volume=data['8'])
 
-        data = None
-        data_arr.clear()
         for q in self.subject_subscribe_clients:
             q.put_nowait(tick_data)
+            gevent.sleep(0.0001)
 
     def handle_alarm_tick(self, _, data_arr):
         if len(data_arr) != 1:
@@ -570,10 +563,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 alarm_category=data['4'],
                                                 title=data['5'],
                                                 content=data['6'])
-        data = None
-        data_arr.clear()
         for q in self.alarm_subscribe_clients:
             q.put_nowait(tick_data)
+            gevent.sleep(0.0001)
 
     def handle_trade_result(self, data):
         """
@@ -632,7 +624,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             try:
                 data = q.get(True, 1)
                 yield data
-                del data
             except gevent.queue.Empty as ge:
                 pass
         client_list.remove(q)
@@ -646,7 +637,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             try:
                 data = q.get(True, 1)
                 yield data
-                del data
             except gevent.queue.Empty as ge:
                 pass
         client_list.remove(q)
@@ -750,7 +740,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             print('ChangeOrder', request, ret)
         except ValueError as ve:
             print('ValueError', ve)
-            return stock_provider_pb2.CybosOrderReturn(order_num=0, msg='Value Error ' + request.order_num)
+            return stock_provider_pb2.CybosOrderReturn(order_num=0, msg='Value Error ' + str(request.order_num))
 
         return stock_provider_pb2.CybosOrderReturn(order_num=ret['order_number'])
 

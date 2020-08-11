@@ -78,6 +78,11 @@ class Order:
                     return new_registsered
 
                 self.request()
+        elif self.status == sp.OrderStatusFlag.STATUS_SUBMITTED:
+            if self.is_buy:
+                order_num = trademachine.request_modify(self)
+                if order_num != 0:
+                    self.order_num = str(order_num)
 
         return None
         """
@@ -103,13 +108,13 @@ class Order:
             pass # TODO: handle when partial traded then add new sell as registered?
             
     def set_submitted(self, msg):
-        print('set submitted', msg)
+        print('SET SUBMITTED')
         self.order_num = msg.order_number
         self.status = sp.OrderStatusFlag.STATUS_SUBMITTED
         self.callback(self, None)
 
     def set_traded(self, msg):
-        print('set traded', msg)
+        print('SET TRADED')
         if self.traded_quantity > 0:
             amount = self.traded_price * self.traded_quantity
             self.traded_price = (amount + msg.price * msg.quantity) / (msg.quantity + self.traded_quantity)
@@ -121,12 +126,17 @@ class Order:
         if self.quantity == self.traded_quantity:
             self.status = sp.OrderStatusFlag.STATUS_TRADED
         else:
+            print('SET TRADING')
             self.status = sp.OrderStatusFlag.STATUS_TRADING
 
         self.callback(self, msg)
+        if self.status == sp.OrderStatusFlag.STATUS_TRADED:
+            return True
+        else:
+            return False
 
     def set_confirmed(self, msg):
-        print('set confirm', msg.order_number)
+        print('SET CONFIRM')
         if self.order_type == sp.OrderType.CANCEL:
             self.status = sp.OrderStatusFlag.STATUS_CONFIRM
             self.callback(self, msg)
@@ -175,7 +185,7 @@ class Order:
         return 'Unknown'
 
     def __str__(self):
-        debug_str = '*' * 30 + '\n'
+        debug_str = 'Order OBJ' + '\n'
         debug_str += 'STATUS:' + self.status_to_str() + '\n'
         debug_str += 'IS_BUY: ' + str(self.is_buy) + '\n'
         debug_str += 'CODE: ' + self.code + '\n'
@@ -184,5 +194,6 @@ class Order:
         debug_str += 'PRICE: ' + str(self.price) + '\n'
         debug_str += 'QTY: ' + str(self.quantity) + '\n'
         debug_str += 'METHOD: ' + str(self.method) + '\n'
-        debug_str += '*' * 30
+        debug_str += 'TRADED PRICE: ' + str(self.traded_price) + '\n'
+        debug_str += 'TRADED QTY: ' + str(self.traded_quantity) + '\n'
         return debug_str

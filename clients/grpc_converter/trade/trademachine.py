@@ -38,10 +38,12 @@ def cancel_order_list(cybos_order, msg):
 
 def request_order(order_obj):
     request_list.append(order_obj)
-    print('request_order')
+
     if not simulstatus.is_simulation():
+        print('-'*5, 'REQUEST ORDER', '-'*5)
         msg = stock_provider.OrderMsg(code=order_obj.code, is_buy=order_obj.is_buy, price=order_obj.price, quantity=order_obj.quantity)
         order_ret = _stub.OrderStock(msg)
+        print(msg, 'RET', order_ret, '-'*5, 'REQUEST ORDER DONE', '-'*5, '\n')
         return order_ret.result, order_ret.msg
     else:
         if order_obj.is_buy:
@@ -70,16 +72,36 @@ def request_cancel(order_obj):
     if simulstatus.is_simulation(): 
         trade_queue.put_nowait(order_obj)
     else:
+        print('-'*5, 'REQUEST CANCEL', '-'*5)
         request_list.append(order_obj)
         msg = stock_provider.OrderMsg(code=order_obj.code, order_num=order_obj.order_num , quantity=(order_obj.quantity - order_obj.traded_quantity))
         order_ret = _stub.CancelOrder(msg)
-        print(order_ret.result)
-
+        print(msg, 'RET', order_ret, '-'*5, 'REQUEST CANCEL DONE', '-'*5, '\n')
     return True
 
 
 def request_modify(order_obj):
-    pass
+    found = False
+    for order in order_list:
+        if order == order_obj:
+            found = True
+            break
+    
+    if not found:
+        return 0
+
+    order_list.remove(order_obj)
+    if simulstatus.is_simulation(): 
+        trade_queue.put_nowait(order_obj)
+    else:
+        print('-'*5, 'REQUEST CHANGE', '-'*5)
+        request_list.append(order_obj)
+        msg = stock_provider.OrderMsg(code=order_obj.code, price=order_obj.price, order_num=order_obj.order_num)
+        order_ret = _stub.ChangeOrder(msg)
+        print(msg, 'RET', order_ret, '-'*5, 'REQUEST CHANGE DONE', '-'*5, '\n')
+        return order_ret.order_num
+
+    return 0
 
 
 def run_trade(stub):
@@ -150,15 +172,19 @@ def bidask_arrived(code, msg):
 
 
 def handle_server_order(msg):
-    print('handle_server_order', len(request_list))
+    print('+' * 20)
+    print('REQUEST LIST', len(request_list))
+    for cybos_order in request_list:
+        print(cybos_order)
+
+    print('ORDER LIST', len(order_list))
+    for cybos_order in order_list:
+        print(cybos_order)
+    print('+' * 20, '\n')
+
     if msg.flag == stock_provider.OrderStatusFlag.STATUS_SUBMITTED:
-        print('OK SUBMITTED', msg)
         for cybos_order in request_list:
-            print('in request list', cybos_order)
-            if (cybos_order.code == msg.code and
-                                cybos_order.price == msg.price and
-                                cybos_order.quantity == msg.quantity and
-                                cybos_order.is_buy == msg.is_buy):
+            if cybos_order.code == msg.code: # assume that submit should be handled sequentially, not check price, qty..
                 move_to_order_list(cybos_order, msg)
                 break
     elif msg.flag == stock_provider.OrderStatusFlag.STATUS_TRADED:
@@ -169,7 +195,10 @@ def handle_server_order(msg):
                 else:
                     price_diff = msg.price * msg.quantity - cybos_order.price * msg.quantity
                     account.pay_for_stock(price_diff)
-                cybos_order.set_traded(msg)
+
+                if cybos_order.set_traded(msg):
+                    order_list.remove(cybos_order) 
+
                 break
     elif msg.flag == stock_provider.OrderStatusFlag.STATUS_CONFIRM:
         for cybos_order in order_list:
@@ -180,7 +209,7 @@ def handle_server_order(msg):
                         account.pay_for_stock(-(msg.quantity * msg.price), False)
                     cybos_order.set_confirmed(msg)
                 elif cybos_order.method == stock_provider.OrderType.MODIFY:
-                    pass
+                    cybos_order.set_confirmed(msg)
     elif msg.flag == stock_provider.OrderStatusFlag.STATUS_DENIED:
         for cybos_order in order_list:
             if cybos_order.order_num == msg.order_number:
@@ -197,6 +226,7 @@ def handle_simulation_order():
 def handle_cybos_order(stub):
     response = stub.ListenCybosOrderResult(Empty())
     for msg in response:
+        print('-'*5, 'CYBOS MSG', '-'*5)
         print(msg)
         handle_server_order(msg)
 

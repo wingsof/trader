@@ -12,6 +12,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 1))))
 
 from gevent.queue import Queue
+from gevent.lock import Semaphore
 import stock_provider_pb2_grpc
 import stock_provider_pb2 as stock_provider
 
@@ -29,6 +30,7 @@ stub = None
 spread_dict = dict()
 order_queue = Queue()
 company_name_dict = {}
+sem_dict = dict()
 
 
 def get_company_name(code):
@@ -40,7 +42,14 @@ def tick_subscriber():
     response = stub.ListenCybosTickData(Empty())
     for msg in response:
         if msg.code not in spread_dict:
-            spread_dict[msg.code] = sp.Spread(msg.code, get_company_name(msg.code), order_callback)
+            if msg.code not in sem_dict:
+                sem_dict[msg.code] = Semaphore()
+            
+            sem_dict[msg.code].acquire()
+            if msg.code not in spread_dict:
+                spread_dict[msg.code] = sp.Spread(msg.code, get_company_name(msg.code), order_callback)
+
+            sem_dict[msg.code].release()
 
         spread_dict[msg.code].set_price_info(msg.buy_or_sell, msg.current_price, msg.bid_price, msg.ask_price, msg.market_type)
         trademachine.tick_arrived(msg.code, msg)
@@ -50,16 +59,24 @@ def bidask_subscriber():
     response = stub.ListenCybosBidAsk(Empty())
     for msg in response:
         if msg.code not in spread_dict:
-            spread_dict[msg.code] = sp.Spread(msg.code, get_company_name(msg.code), order_callback)
+            if msg.code not in sem_dict:
+                sem_dict[msg.code] = Semaphore()
+            
+            sem_dict[msg.code].acquire()
+            if msg.code not in spread_dict:
+                spread_dict[msg.code] = sp.Spread(msg.code, get_company_name(msg.code), order_callback)
 
-        spread_dict[msg.code].set_spread_info(msg.bid_prices, msg.ask_prices, msg.bid_remains, msg.ask_remains)
+            sem_dict[msg.code].release()
+
+        spread_dict[msg.code].set_spread_info(msg.bid_prices[:], msg.ask_prices[:], msg.bid_remains[:], msg.ask_remains[:])
         trademachine.bidask_arrived(msg.code, msg)
 
 
 def order_callback(result):
-    stub.ReportOrderResult(stock_provider.OrderResult(report=[result], current_balance=account.get_balance()))
-    print('report order result')
-
+    print('-'*5, 'Reporting','-'*5)
+    report = stock_provider.OrderResult(report=[result], current_balance=account.get_balance())
+    stub.ReportOrderResult(report)
+    print(report, '-'*5, 'Reporting Done', '-'*5, '\n')
 
 def handle_order():
     while True:
@@ -78,11 +95,12 @@ def handle_order():
 def trade_subscriber():
     response = stub.ListenTraderMsg(Empty())
     for msg in response:
-        print(msg.msg_type, msg.order_msg)
+        print('-'*5, 'Trade Msg', '-'*5)
         if msg.msg_type == stock_provider.TradeMsgType.ORDER_MSG:
             order_queue.put_nowait(msg.order_msg)
         elif msg.msg_type == stock_provider.TradeMsgType.GET_BALANCE:
             stub.ReportOrderResult(stock_provider.OrderResult(current_balance=account.get_balance()))
+        print(msg, '-'*5, 'Trade Msg Done', '-'*5, '\n')
 
 
 def run():

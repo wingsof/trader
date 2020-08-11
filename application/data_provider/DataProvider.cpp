@@ -280,8 +280,13 @@ MinuteTick * DataProvider::getMinuteTick(const QString &code) {
     if (minuteData && !code.isEmpty()) {
         if (isSimulation())
             return minuteData->getMinuteTick(code, currentDateTime());
-        else
-            return minuteData->getMinuteTick(code, QDateTime::currentDateTime());
+        else {
+            QDateTime dt = QDateTime::currentDateTime();
+            if (currentDateTime().date() == dt.date())
+                return minuteData->getMinuteTick(code, QDateTime::currentDateTime());
+            else
+                return minuteData->getMinuteTick(code, currentDateTime());
+        }
     }
     return nullptr;
 }

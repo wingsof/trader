@@ -31,6 +31,7 @@ class Spread:
         self.ordersheet = ordersheet.OrderSheet(code, cname, self.order_callback)
 
     def get_immediate_price(self, is_buy):
+        print('get_immediate_price', 'ASK', self.ask_spread, 'BID', self.bid_spread, 'IS BUY', is_buy)
         if is_buy and len(self.ask_spread) > 0:
             if len(self.ask_spread) > IMMEDIATE_PRICE_POS:
                 return self.ask_spread[IMMEDIATE_PRICE_POS]
@@ -56,10 +57,10 @@ class Spread:
         self.ordersheet.price_updated(bs, p, b, a, status)
 
     def set_spread_info(self, bp, ap, br, ar):
-        self.ask_spread = ap
-        self.bid_spread = bp
-        self.bid_remains = br
-        self.ask_remains = ar
+        self.ask_spread = ap.copy()
+        self.bid_spread = bp.copy()
+        self.bid_remains = br.copy()
+        self.ask_remains = ar.copy()
 
     def add_order(self, cash, order):
         if order.order_type == stock_provider.OrderType.NEW:
@@ -70,7 +71,7 @@ class Spread:
                     return
 
                 if order.is_buy and order.percentage > 0:
-                    print('percentage', order.percentage, 'order price', order.price, 'cash', cash)
+                    #print('percentage', order.percentage, 'order price', order.price, 'cash', cash)
                     order.quantity = int(cash * order.percentage / 100.0 / order.price)
                 elif not order.is_buy and order.percentage > 0:
                     order.quantity = int(math.ceil(self.get_sell_available() * order.percentage / 100))
