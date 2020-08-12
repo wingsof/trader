@@ -14,7 +14,7 @@ from configs import client_info
 from morning_server.collectors import shutdown
 
 
-_client_name = ''
+_client_name = 'UNKNOWN'
 order_subscriber = None
 subscribe_alarm = None
 account = None
@@ -278,7 +278,6 @@ def run(client_name, client_type, client_index, client_count_info):
             time.sleep(1)
 
     _sock = sock
-    _client_name = client_name
     socket_notifier = QtCore.QSocketNotifier(sock.fileno(), QtCore.QSocketNotifier.Read)
     socket_notifier.activated.connect(dispatch_message)
 
@@ -297,6 +296,9 @@ def run(client_name, client_type, client_index, client_count_info):
     elif client_type == message.CAPABILITY_TRADE_SUBSCRIBE:
         body['capability'] = message.CAPABILITY_TRADE_SUBSCRIBE
         body['name'] = client_name + '_TRCOL' + str(client_index)
+
+    if 'name' in body:
+        _client_name = body['name']
 
     stream_readwriter.write(sock, header, body)
 
