@@ -14,6 +14,7 @@ from configs import client_info
 from morning_server.collectors import shutdown
 
 
+_client_name = ''
 order_subscriber = None
 subscribe_alarm = None
 account = None
@@ -119,7 +120,7 @@ def get_alarm_subscriber():
 
 
 def handle_trade_request(sock, header, body):
-    print('TRADE REQUEST ' + str(header))
+    print(_client_name, 'TRADE REQUEST ' + str(header))
     header['type'] = message.RESPONSE_TRADE
     if header['method'] == message.GET_LONG_LIST:
         lm = long_manifest_6033.LongManifest(account.get_account_number(), account.get_account_type())
@@ -167,7 +168,7 @@ def get_code(code):
 
 
 def handle_trade_subscribe(sock, header, body):
-    print('HANDLE TRADE SUBSCRIBE ' + str(header))
+    print(_client_name, 'HANDLE TRADE SUBSCRIBE ' + str(header))
     if header['method'] == message.TRADE_DATA:
         order_s = get_order_subscriber()
         order_s.start_subscribe()
@@ -247,7 +248,7 @@ def dispatch_message():
 
 
 def run(client_name, client_type, client_index, client_count_info):
-    global account, _sock
+    global account, _sock, _client_name
 
     app = QCoreApplication([])
     conn = connection.Connection()
@@ -277,6 +278,7 @@ def run(client_name, client_type, client_index, client_count_info):
             time.sleep(1)
 
     _sock = sock
+    _client_name = client_name
     socket_notifier = QtCore.QSocketNotifier(sock.fileno(), QtCore.QSocketNotifier.Read)
     socket_notifier.activated.connect(dispatch_message)
 

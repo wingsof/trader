@@ -116,7 +116,7 @@ class ClientManager:
                 self.trade_subscribe_sockets[vendor].remove(sock)
                 logger.info('trade subscribe found and remove, left %d', len(self.trade_subscribe_sockets[vendor]))
                 if len(self.trade_subscribe_sockets[vendor]) == 0:
-                    header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.STOP_TRADE_DATA)
+                    header = stream_readwriter.create_header(message.TRADE_SUBSCRIBE, message.MARKET_STOCK, message.STOP_TRADE_DATA)
                     stream_write(collector.sock, header, [], self)
 
     def _handle_collector_disconnection(self, sock):
@@ -206,7 +206,7 @@ class ClientManager:
         return self._get_collector(message.CAPABILITY_TRADE, vendor)
 
     def get_trade_subscribe_collector(self, vendor=message.CYBOS):
-        return self._get_colelctor(message.CAPABILITY_TRADE_SUBSCRIBE, vendor)
+        return self._get_collector(message.CAPABILITY_TRADE_SUBSCRIBE, vendor)
 
     def get_available_request_collector(self, vendor=message.CYBOS):
         return self._get_available_collector(message.CAPABILITY_REQUEST_RESPONSE, vendor)
@@ -248,7 +248,7 @@ class ClientManager:
                 logger.info('ADD NEW SUBSCRIBE %s', code)
                 stream_write(collector.sock, header, body, self)
 
-    def connect_to_trade_subscribe(self, sock, vendor=message.CYBOS):
+    def connect_to_trade_subscribe(self, sock, header, body, vendor=message.CYBOS):
         collector = self.get_trade_subscribe_collector(vendor)
         if collector is None:
             logger.error('NO TRADE Subscribe collector %s', vendor)
@@ -256,7 +256,7 @@ class ClientManager:
 
         if sock not in self.trade_subscribe_sockets[vendor]:
             self.trade_subscribe_sockets[vendor].append(sock)
-            logger.info('ADD NEW TRADE SUBSCRIBE %s', code)
+            logger.info('ADD NEW TRADE SUBSCRIBE')
             stream_write(collector.sock, header, body, self)
         else:
             logger.warning('Sock is already connected to trade subscriber %s', vendor)
