@@ -475,7 +475,8 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
         for q in self.bidask_subscribe_cilents:
             q.put_nowait(bidask)
-            gevent.sleep(0.0001)
+
+        #gevent.sleep(0.0001)
 
     def handle_stock_tick(self, code, data_arr):
         #print('handle_stock_stick', data)
@@ -517,7 +518,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 is_kospi=morning_client.is_kospi_code(code))
         for q in self.stock_subscribe_clients:
             q.put_nowait(tick_data)
-            gevent.sleep(0.0001)
+        #gevent.sleep(0.0001)
 
     def handle_subject_tick(self, code, data_arr):
         if len(data_arr) != 1:
@@ -542,7 +543,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
         for q in self.subject_subscribe_clients:
             q.put_nowait(tick_data)
-            gevent.sleep(0.0001)
+        gevent.sleep(0.000001)
 
     def handle_alarm_tick(self, _, data_arr):
         if len(data_arr) != 1:
@@ -565,7 +566,8 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 content=data['6'])
         for q in self.alarm_subscribe_clients:
             q.put_nowait(tick_data)
-            gevent.sleep(0.0001)
+
+        gevent.sleep(0.000001)
 
     def handle_trade_result(self, data):
         """

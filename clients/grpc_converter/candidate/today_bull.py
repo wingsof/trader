@@ -62,7 +62,9 @@ def handle_today_bull(code, d):
 
     if not preload.is_skip_ydata() and not preload.loading:
         yesterday_amount = preload.get_yesterday_amount(code)
-        if yesterday_amount < 3000000000:
+        yesterday_close = preload.get_yesterday_close(code)
+
+        if yesterday_amount < 3000000000 or yesterday_close * 1.15 < d['current_price']:
             _today_list[code] = [0, d['current_price'], d['current_price'] - d['yesterday_diff']]
         else:
             _today_list[code] = [amount / yesterday_amount, d['current_price'], d['current_price'] - d['yesterday_diff']]

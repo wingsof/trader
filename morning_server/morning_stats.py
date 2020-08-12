@@ -57,6 +57,8 @@ class MorningStats:
                 capability += ' SUBSCRIBE'
             if c.capability & message.CAPABILITY_TRADE:
                 capability += ' TRADE'
+            if c.capability & message.CAPABILITY_TRADE_SUBSCRIBE:
+                capability += ' TRADE_SUBSCRIBE'
             info['capability'] = capability
             msg.append(info)
         return msg

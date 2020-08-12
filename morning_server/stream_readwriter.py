@@ -186,10 +186,12 @@ def dispatch_message_for_collector(sock, read_buf,
                     subscribe_response_handler=None,
                     request_trade_handler=None,
                     response_trade_handler=None,
+                    subscribe_trade_handler=None,
                     subscribe_trade_response_handler=None):
     try:
         msgs = read(sock, read_buf)
-    except:
+    except Exception as e:
+        print('ERROR OCCURED', e)
         raise
 
     for packet in msgs:
@@ -208,6 +210,8 @@ def dispatch_message_for_collector(sock, read_buf,
             request_trade_handler(sock, packet['header'], packet['body'])
         elif header_type == message.RESPONSE_TRADE and response_trade_handler is not None:
             response_trade_handler(sock, packet['header'], packet['body'])
+        elif header_type == message.TRADE_SUBSCRIBE and subscribe_trade_handler is not None:
+            subscribe_trade_handler(sock, packet['header'], packet['body']) 
         elif header_type == message.TRADE_SUBSCRIBE_RESPONSE and subscribe_trade_response_handler is not None:
             subscribe_trade_response_handler(sock, packet['header'], packet['body'])
         else:
@@ -222,6 +226,7 @@ def dispatch_message(sock,
                     subscribe_response_handler=None,
                     request_trade_handler=None,
                     response_trade_handler=None,
+                    subscribe_trade_handler=None,
                     subscribe_trade_response_handler=None):
 
     read_buf = ReadBuffer()
@@ -248,6 +253,8 @@ def dispatch_message(sock,
                 request_trade_handler(sock, packet['header'], packet['body'])
             elif header_type == message.RESPONSE_TRADE and response_trade_handler is not None:
                 response_trade_handler(sock, packet['header'], packet['body'])
+            elif header_type == message.TRADE_SUBSCRIBE and subscribe_trade_handler is not None:
+                subscribe_trade_handler(sock, packet['header'], packet['body'])
             elif header_type == message.TRADE_SUBSCRIBE_RESPONSE and subscribe_trade_response_handler is not None:
                 subscribe_trade_response_handler(sock, packet['header'], packet['body'])
             else:

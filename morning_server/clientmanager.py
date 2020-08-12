@@ -73,7 +73,6 @@ class ClientManager:
         self.code_subscribe_info = dict()
         self.vendors = [message.CYBOS, message.KIWOOM]
         self.trade_subscribe_sockets = dict()
-        self.client_connection_status = dict()
         for v in self.vendors:
             self.trade_subscribe_sockets[v] = []
 
@@ -109,7 +108,7 @@ class ClientManager:
 
     def _handle_trade_subscribe_disconnection(self, sock):
         for vendor in self.vendors:
-            collector = self.get_trade_collector(vendor)
+            collector = self.get_trade_subscribe_collector(vendor)
             if collector is None:
                 continue
             
@@ -165,32 +164,6 @@ class ClientManager:
     def add_client(self, sock, header, body):
         cap = body['capability']
         self.collectors.append(_Collector(sock, body['name'], cap, header['vendor']))
-        client_name = body['name'].split('_')[0]
-        if body['client_count_info'] is not None:
-            self.client_connection_status[client_name] = body['client_count_info']
-
-        if client_name in self.client_connection_status:
-            key = ''
-            if cap == message.CAPABILITY_COLLECT_SUBSCRIBE:
-                key = 'collector_count'
-            elif cap == message.CAPABILITY_TRADE:
-                key = 'trade_count'
-            elif cap == message.CAPABILITY_REQUEST_RESPONSE:
-                key = 'request_count'
-
-            if len(key) > 0:
-                self.client_connection_status[client_name][key] -= 1
-
-    def is_client_connection_succeeded(self, client_name):
-        if client_name in self.client_connection_status:
-            keys = self.client_connection_status[client_name].keys()
-            for k in keys:
-                if self.client_connection_status[client_name][k] > 0:
-                    return False
-            return True
-
-        return False
-
 
     def get_vendor_collector(self, vendor):
         collectors = []
@@ -225,9 +198,15 @@ class ClientManager:
     def get_available_trade_collector(self, vendor=message.CYBOS):
         return self._get_available_collector(message.CAPABILITY_TRADE, vendor)
 
+    def get_available_trade_subscribe_collector(self, vendor=message.CYBOS):
+        return self._get_available_collector(message.CAPABILITY_TRADE_SUBSCRIBE, vendor)
+
     def get_trade_collector(self, vendor=message.CYBOS):
         # trader should be only one
         return self._get_collector(message.CAPABILITY_TRADE, vendor)
+
+    def get_trade_subscribe_collector(self, vendor=message.CYBOS):
+        return self._get_colelctor(message.CAPABILITY_TRADE_SUBSCRIBE, vendor)
 
     def get_available_request_collector(self, vendor=message.CYBOS):
         return self._get_available_collector(message.CAPABILITY_REQUEST_RESPONSE, vendor)
@@ -235,7 +214,7 @@ class ClientManager:
     def get_available_subscribe_collector(self, vendor=message.CYBOS):
         collector = None
         for c in self.get_vendor_collector(vendor):
-            max_count = 380 if c.capability & message.CAPABILITY_TRADE else 400
+            max_count = 400
             if c.capability & message.CAPABILITY_COLLECT_SUBSCRIBE and c.subscribe_count() < max_count:
                 if collector is None:
                     collector = c
@@ -269,6 +248,19 @@ class ClientManager:
                 logger.info('ADD NEW SUBSCRIBE %s', code)
                 stream_write(collector.sock, header, body, self)
 
+    def connect_to_trade_subscribe(self, sock, vendor=message.CYBOS):
+        collector = self.get_trade_subscribe_collector(vendor)
+        if collector is None:
+            logger.error('NO TRADE Subscribe collector %s', vendor)
+            return
+
+        if sock not in self.trade_subscribe_sockets[vendor]:
+            self.trade_subscribe_sockets[vendor].append(sock)
+            logger.info('ADD NEW TRADE SUBSCRIBE %s', code)
+            stream_write(collector.sock, header, body, self)
+        else:
+            logger.warning('Sock is already connected to trade subscriber %s', vendor)
+
     def disconnect_to_subscribe(self, code, sock, header, body):
         if code in self.code_subscribe_info:
             self.code_subscribe_info[code][1].remove(sock) 
@@ -280,19 +272,8 @@ class ClientManager:
         else:
             logger.warning('No subscribe but try to disconnect %s', code)
 
-    def connect_to_trade_subscribe(self, sock, vendor=message.CYBOS):
-        collector = self.get_trade_collector(vendor)
-        if collector is None:
-            logger.error('NO TRADE collector %s', vendor)
-            return
-        if sock not in self.trade_subscribe_sockets[vendor]:
-            self.trade_subscribe_sockets[vendor].append(sock)
-        else:
-            logger.warning('Sock is already connected to trade subscriber %s', vendor)
-             
-
     def disconnect_to_trade_subscribe(self, sock, vendor=message.CYBOS):
-        collector = self.get_trade_collector(vendor)
+        collector = self.get_trade_subscribe_collector(vendor)
         if collector is None:
             logger.error('NO TRADE collector %s', vendor)
             return
@@ -300,7 +281,7 @@ class ClientManager:
             self.trade_subscribe_sockets[vendor].remove(sock)
 
             if len(self.trade_subscribe_sockets[vendor]) == 0:
-                header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.STOP_TRADE_DATA)
+                header = stream_readwriter.create_header(message.TRADE_SUBSCRIBE, message.MARKET_STOCK, message.STOP_TRADE_DATA)
                 stream_write(collector.sock, header, [], self)
 
     def broadcast_subscribe_data(self, code, header, body):

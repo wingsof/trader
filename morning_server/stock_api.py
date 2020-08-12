@@ -219,13 +219,13 @@ def order_stock(reader, code, price, quantity, is_buy):
 
 
 def subscribe_trade(reader, handler):
-    header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.TRADE_DATA)
+    header = stream_readwriter.create_header(message.TRADE_SUBSCRIBE, message.MARKET_STOCK, message.TRADE_DATA)
     body = []
     reader.subscribe_trade_write(header, body, handler)
 
 
 def stop_subscribe_trade(reader):
-    header = stream_readwriter.create_header(message.REQUEST_TRADE, message.MARKET_STOCK, message.STOP_TRADE_DATA)
+    header = stream_readwriter.create_header(message.TRADE_SUBSCRIBE, message.MARKET_STOCK, message.STOP_TRADE_DATA)
     body = []
     return reader.block_write(header, body)
 

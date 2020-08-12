@@ -43,12 +43,19 @@ def handle_collector(sock, header, body):
     logger.info('HANDLE COLLECTOR %s\n%s', header, body)
     client_manager.add_client(sock, header, body)
     if body['capability'] == message.CAPABILITY_TRADE or body['capability'] == message.CAPABILITY_REQUEST_RESPONSE:
-        gevent.sleep(3)
+        gevent.sleep(1)
         logger.info('SEND TEST PACKET to %s', body['name'])
         test_header = stream_readwriter.create_header(message.REQUEST, message.MARKET_STOCK, message.DAY_DATA)
         test_header['code'] = 'A005930'
         test_header['from'] = date(2020, 6, 1)
         test_header['until'] = date(2020, 6, 4)
+        test_body = []
+        stream_write(sock, test_header, body)
+    elif body['capability'] == message.CAPABILITY_COLLECT_SUBSCRIBE or body['capability'] == message.CAPABILITY_TRADE_SUBSCRIBE:
+        gevent.sleep(1)
+        logger.info('SEND TEST PACKET to %s', body['name'])
+        test_header = stream_readwriter.create_header(message.SUBSCRIBE, message.MARKET_STOCK, message.STOCK_DATA)
+        test_header['code'] = 'ZZ12345'
         test_body = []
         stream_write(sock, test_header, body)
 
@@ -154,18 +161,16 @@ def handle_trade_response(sock, header, body):
 
 def handle_trade_request(sock, header, body):
     logger.info('HANDLE TRADE REQUEST %s', header)
+    client_manager.handle_trade_block_request(sock, header, body)
+
+
+def handle_trade_subscribe(sock, header, body):
+    logger.info('HANDLE TRADE SUBSCRIBE %s', header)
+    
     if header['method'] == message.TRADE_DATA:
-        client_manager.connect_to_trade_subscribe(sock)
-        client_manager.handle_trade_block_request(sock, header, body)
+        client_manager.connect_to_trade_subscribe(sock, header, body)
     elif header['method'] == message.STOP_TRADE_DATA:
         client_manager.disconnect_to_trade_subscribe(sock)
-
-        # send to client
-        header['type'] = message.RESPONSE_TRADE
-        body = {'result': True}
-        stream_write(sock, header, body, client_manager)
-    else:
-        client_manager.handle_trade_block_request(sock, header, body)
 
 
 def handle_trade_subscribe_response(sock, header, body):
@@ -183,6 +188,7 @@ def handle(sock, address):
                                             subscribe_response_handler=handle_subscribe_response, 
                                             request_trade_handler=handle_trade_request,
                                             response_trade_handler=handle_trade_response,
+                                            subscribe_trade_handler=handle_trade_subscribe,
                                             subscribe_trade_response_handler=handle_trade_subscribe_response)
     except Exception as e:
         logger.warning('ERROR) handle error ' + str(sys.exc_info()))
@@ -220,18 +226,7 @@ def vbox_control():
             logger.info('START TURN ON VBOX')
             vbox_on = True
             vbox_controller.start_machine()
-        """
-        elif not is_turn_off_time and vbox_on:
-            client_names = vbox_controller.get_client_names_not_connected()
-            if len(client_names) > 0:
-                print('not connected clients', client_names)
 
-            for c in client_names:
-                if client_manager.is_client_connection_succeeded(c):
-                    vbox_controller.set_ready(c)
-                elif vbox_controller.is_over_time(c):
-                    vbox_controller.reboot_vm(c)
-        """
         gevent.sleep(VBOX_CHECK_INTERVAL)
 
 

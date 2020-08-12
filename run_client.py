@@ -62,13 +62,15 @@ if __name__ == '__main__':
 
     threads = []
 
-    client_count_info = {'trade_count': 0, 'request_count': 0, 'collector_count': 0}
+    client_count_info = {'trade_count': 0, 'request_count': 0, 'collector_count': 0, 'trade_collector_count': 0}
     if client_info.get_client_capability() & message.CAPABILITY_COLLECT_SUBSCRIBE:
         client_count_info['collector_count'] = client_info.get_collector_count()
 
     if client_info.get_client_capability() & message.CAPABILITY_TRADE:
         client_count_info['trade_count'] = 1
         threads.append(ClientRunner(message.CAPABILITY_TRADE, 0, client_count_info))
+        client_count_info['trade_collector_count'] = 1
+        threads.append(ClientRunner(message.CAPABILITY_TRADE_SUBSCRIBE, 0, client_count_info))
     elif client_info.get_client_capability() & message.CAPABILITY_REQUEST_RESPONSE:
         client_count_info['request_count'] = 1
         threads.append(ClientRunner(message.CAPABILITY_REQUEST_RESPONSE, 0, client_count_info))

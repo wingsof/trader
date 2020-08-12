@@ -9,7 +9,7 @@ from datetime import timedelta
 import stock_provider_pb2 as stock_provider
 
 
-IMMEDIATE_PRICE_POS = 3
+IMMEDIATE_PRICE_POS = 2
 
 
 class Spread:

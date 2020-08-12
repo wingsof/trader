@@ -143,14 +143,6 @@ def handle_trade_request(sock, header, body):
         new_order_num = modify_order_obj.modify_order(order_num, code, 0, price)
         result = {'order_number': new_order_num}
         stream_readwriter.write(sock, header, result)
-    elif header['method'] == message.TRADE_DATA:
-        order_s = get_order_subscriber()
-        order_s.start_subscribe()
-        result = {'result': True}
-        stream_readwriter.write(sock, header, result)
-    elif header['method'] == message.STOP_TRADE_DATA:
-        if order_subscriber is not None:
-            order_subscriber.stop_subscribe()
     elif header['method'] == message.CANCEL_ORDER:
         cancel_order_obj = cancel_order.CancelOrder(account.get_account_number(), account.get_account_type())
         order_num = header['order_number']
@@ -174,6 +166,18 @@ def get_code(code):
     return code
 
 
+def handle_trade_subscribe(sock, header, body):
+    print('HANDLE TRADE SUBSCRIBE ' + str(header))
+    if header['method'] == message.TRADE_DATA:
+        order_s = get_order_subscriber()
+        order_s.start_subscribe()
+        #result = {'result': True}
+        #stream_readwriter.write(sock, header, result)
+    elif header['method'] == message.STOP_TRADE_DATA:
+        if order_subscriber is not None:
+            order_subscriber.stop_subscribe()
+
+
 def handle_subscribe(sock, header, body):
     print('HANDLE SUBSCRIBE ' + str(header))
     code = get_code(header['code'])
@@ -182,6 +186,10 @@ def handle_subscribe(sock, header, body):
         return
 
     if header['method'] == message.STOCK_DATA:
+        if code.startswith('ZZ'):
+            print('SUBSCRIBE TEST OK')
+            return
+
         if code not in subscribe_stock:
             subscribe_stock[code] = stock_subscribe.StockSubscribe(code, callback_stock_subscribe)
         subscribe_stock[code].start_subscribe()
@@ -233,7 +241,8 @@ def dispatch_message():
     global read_buf, _sock
     stream_readwriter.dispatch_message_for_collector(_sock, read_buf,
                                                     request_handler=handle_request, 
-                                                    subscribe_handler=handle_subscribe, 
+                                                    subscribe_handler=handle_subscribe,
+                                                    subscribe_trade_handler=handle_trade_subscribe,
                                                     request_trade_handler=handle_trade_request)
 
 
@@ -283,10 +292,13 @@ def run(client_name, client_type, client_index, client_count_info):
     elif client_type == message.CAPABILITY_COLLECT_SUBSCRIBE:
         body['capability'] = message.CAPABILITY_COLLECT_SUBSCRIBE
         body['name'] = client_name + '_COL' + str(client_index)
+    elif client_type == message.CAPABILITY_TRADE_SUBSCRIBE:
+        body['capability'] = message.CAPABILITY_TRADE_SUBSCRIBE
+        body['name'] = client_name + '_TRCOL' + str(client_index)
 
     stream_readwriter.write(sock, header, body)
 
-    if body['capability'] & message.CAPABILITY_TRADE:
+    if body['capability'] & message.CAPABILITY_TRADE or body['capability'] & message.CAPABILITY_TRADE_SUBSCRIBE:
         account = trade_util.TradeUtil()
         print('HAS TRADE CAPABILITY')
     
