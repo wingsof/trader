@@ -57,8 +57,18 @@ class MessageReader(gevent.Greenlet):
 
     def subscribe_trade_write(self, header, body, handler):
         # multiple listener?
-        self.trade_subscriber = handler
-        write(self.sock, header, body)
+        if self.trade_subscriber is None:
+            self.trade_subscriber = handler
+            write(self.sock, header, body)
+        else:
+            print('Already subscribe trade')
+
+    def stop_subscribe_trade_write(self, header, body):
+        if self.trade_subscriber is not None:
+            self.trade_subscriber = None
+            write(self.sock, header, body)
+        else:
+            print('Not subscribe trade')
 
     def _run(self):
         read_buf = ReadBuffer()

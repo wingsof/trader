@@ -227,7 +227,7 @@ def subscribe_trade(reader, handler):
 def stop_subscribe_trade(reader):
     header = stream_readwriter.create_header(message.TRADE_SUBSCRIBE, message.MARKET_STOCK, message.STOP_TRADE_DATA)
     body = []
-    return reader.block_write(header, body)
+    reader.stop_subscribe_trade_write(header, body)
 
 
 def modify_order(reader, order_num: int, code, price):
