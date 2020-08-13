@@ -41,6 +41,12 @@ morning_stat = morning_stats.MorningStats(client_manager.collectors)
 
 def handle_collector(sock, header, body):
     logger.info('HANDLE COLLECTOR %s\n%s', header, body)
+
+    if 'name' in body:
+        slack.send_slack_message('Collector connected ' + body['name'])
+    else:
+        slack.send_slack_message('Unknown Collector connected ')
+
     client_manager.add_client(sock, header, body)
     if body['capability'] == message.CAPABILITY_TRADE or body['capability'] == message.CAPABILITY_REQUEST_RESPONSE:
         gevent.sleep(1)

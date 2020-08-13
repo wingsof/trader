@@ -26,4 +26,4 @@
 * 2020/08/06 - 함정 투성이, 테스트 용도로 좋아 보임, 시작 상승, 후반 하락
 * 2020/08/12 - This socket is already used by another greenlet 으로 9시부터 에러, 10시 40분 복귀 준비중, 10:43~ OK
     - disconnect SUBSCRIBE 하나 된 건데, 원인 찾을 수 있을까?
-* 2020/08/13 - HEAD READ ERROR 발생, 원인 확인필요
+* 2020/08/13 - HEAD READ ERROR 발생, 원인 확인필요, 11시 재부팅 시작, 10시부터 문제
