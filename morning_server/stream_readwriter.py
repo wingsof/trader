@@ -14,6 +14,7 @@ from morning_server import message
 READ_PACKET_SIZE=8192
 HEADER_SIZE=8
 HEADER_ID=b'\x02\x03'
+CLIENT_NAME=''
 
 # use ReadBuf class for keeping current buf since bytes class is immutable
 class ReadBuffer:
@@ -118,16 +119,16 @@ def write(sock, header, body):
         except socket.error as e:
             err = e.args[0]
             if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
-                print(e, 'ERROR) EAGAIN or EWOULDBLOCK(write) sent message len')
+                print(CLIENT_NAME, 'ERROR) EAGAIN or EWOULDBLOCK(write) sent message len', e)
                 select.select([], [sock], [])
                 continue
             else:
-                print('ERROR) write socket error, reraise')
+                print(CLIENT_NAME, 'ERROR) write socket error, reraise')
                 print(sys.exc_info())
                 print(traceback.format_exc())
                 raise Exception('ERROR) socket write error', sock)
         except:
-            print('ERROR) write error, reraise')
+            print(CLIENT_NAME, 'ERROR) write error, reraise')
             print(sys.exc_info())
             print(traceback.format_exc())
             raise
@@ -142,23 +143,23 @@ def read(sock, read_buf):
             err = e.args[0]
             if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
                 # TODO: check whether need to handle msg if some of packet is read
-                print(e, 'ERROR) EAGAIN or EWOULDBLOCK(read) receive message len')
+                print(CLIENT_NAME + ' ERROR) EAGAIN or EWOULDBLOCK(read) receive message len', e)
                 select.select([sock], [], [])
                 continue
             else:
-                print('ERROR) read socket error, reraise')
+                print(CLIENT_NAME, 'ERROR) read socket error, reraise')
                 print(sys.exc_info())
                 print(traceback.format_exc())
                 raise Exception('ERROR) socket read error', sock)
         except:
-            print('ERROR) read error, reraise')
+            print(CLIENT_NAME, 'ERROR) read error, reraise')
             print(sys.exc_info())
             print(traceback.format_exc())
             raise
         break
 
     if len(msg) == 0:
-        raise Exception('Length 0 Socket error', sock)
+        raise Exception(CLIENT_NAME + ' Length 0 Socket error', sock)
 
     #print('read', len(msg))
     read_buf.buf += msg
@@ -169,8 +170,12 @@ def read(sock, read_buf):
             break
        
         if read_buf.buf[:len(HEADER_ID)] != HEADER_ID:
-            read_buf.buf = read_buf.buf[len(HEADER_ID):]
-            print('ERROR) Cannot read HEADER_ID, msg len', len(read_buf.buf))
+            for h in read_buf.buf:
+                print(hex(h), end=' ')
+            print('')
+            read_buf.buf = b''
+            #read_buf.buf = read_buf.buf[len(HEADER_ID):]
+            print(CLIENT_NAME, ' ERROR) Cannot read HEADER_ID, msg len', len(read_buf.buf))
             continue
         
         header_len = int.from_bytes(read_buf.buf[len(HEADER_ID):len(HEADER_ID) + HEADER_SIZE], byteorder='big')

@@ -26,7 +26,7 @@ subscribe_index = dict()
 
 
 def handle_request(sock, header, body):
-    print('REQUEST ' + str(header))
+    print(_client_name, 'REQUEST ' + str(header))
     header['type'] = message.RESPONSE
     if header['method'] == message.SHUTDOWN:
         shutdown.go_shutdown()
@@ -180,7 +180,7 @@ def handle_trade_subscribe(sock, header, body):
 
 
 def handle_subscribe(sock, header, body):
-    print('HANDLE SUBSCRIBE ' + str(header))
+    print(_client_name, 'HANDLE SUBSCRIBE ' + str(header))
     code = get_code(header['code'])
     if len(code) == 0:
         print('EMPTY CODE ', header)
@@ -188,7 +188,7 @@ def handle_subscribe(sock, header, body):
 
     if header['method'] == message.STOCK_DATA:
         if code.startswith('ZZ'):
-            print('SUBSCRIBE TEST OK')
+            print(_client_name, 'SUBSCRIBE TEST OK')
             return
 
         if code not in subscribe_stock:
@@ -299,6 +299,7 @@ def run(client_name, client_type, client_index, client_count_info):
 
     if 'name' in body:
         _client_name = body['name']
+        stream_readwriter.CLIENT_NAME = _client_name
 
     stream_readwriter.write(sock, header, body)
 
