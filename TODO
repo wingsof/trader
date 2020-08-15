@@ -1,15 +1,8 @@
 * TODO
-HighP
-    * NineThirty 테스트 
-    * Cybos 주문 연동 - API 확인, 실제 BA 화면에서 테스트 필요
-    * 주문창에서 클릭시 종목 선택
+    * Day 에서 Year High 표시
+    * ON_MEET 및 특정 가격 주문
+    * stock_service 에서 연산하는 부분 별도 Process 로 분리
 
-LowP
-    * 주문 기록 저장 및 qml_trading 에서 로딩
-    * BA ON MEET 구현
-    * BA 화면에 주문 정보 표시
-    * RUN AND GUN
-    * trader 를 stock_service 에서 launch 하도록 고려
 
 * 데이터 Validation 프로그램 Subject 주기보다 길게 하여 데이터 검사
 

@@ -74,7 +74,7 @@ void SearchBackend::setSimulationStatus(bool status) {
 
 void SearchBackend::startSimulation() {
     qWarning() << "startSimulation";
-    DataProvider::getInstance()->startSimulation();
+    DataProvider::getInstance()->startSimulation(m_serverDateTime, m_simulationSpeed);
 }
 
 
@@ -93,7 +93,7 @@ void SearchBackend::setServerDateTime(const QDateTime &dt) {
 
 
 void SearchBackend::setSimulationSpeed(qreal s) {
-    if (m_simulationRunning &&  m_simulationSpeed != s) {
+    if (m_simulationSpeed != s) {
         m_simulationSpeed = s;
         emit simulationSpeedChanged();
     }
@@ -111,6 +111,7 @@ void SearchBackend::setCurrentCode(const QString &code) {
 
 void SearchBackend::setCurrentDateTime(const QDateTime &dt) {
     if (m_currentDateTime.toMSecsSinceEpoch() != dt.toMSecsSinceEpoch()) {
+        qWarning() << "setCurrentDateTime : " << dt;
         m_currentDateTime = dt;
         emit currentDateTimeChanged();
     }

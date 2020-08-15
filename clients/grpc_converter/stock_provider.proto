@@ -38,15 +38,16 @@ service Stock {
   rpc SetCurrentDateTime(google.protobuf.Timestamp) returns (google.protobuf.Empty) {}
   rpc GetCompanyName(StockCodeQuery) returns (CompanyName) {}
 
-  rpc SetSimulationStatus(SimulationStatus) returns (google.protobuf.Empty) {}
-  rpc GetSimulationStatus(google.protobuf.Empty) returns (SimulationStatus) {}
-
   rpc GetFavoriteList(google.protobuf.Empty) returns (CodeList) {}
   rpc AddFavorite(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RemoveFavorite(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc ClearRecentList(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 
   rpc GetYesterdayTopAmountList(google.protobuf.Timestamp) returns (TopList) {}
+
+  rpc SetTodayAmountRatioList(CodeList) returns (google.protobuf.Empty) {}
+  rpc SetTodayAmountMomentumList(CodeList) returns (google.protobuf.Empty) {}
+
   rpc GetTodayTopAmountList(Option) returns (CodeList) {}
   rpc GetTodayNineThirtyList(google.protobuf.Empty) returns (CodeList) {}
   rpc GetRecentSearch(google.protobuf.Empty) returns (CodeList) {}
@@ -61,10 +62,21 @@ service Stock {
   rpc ListenCybosSubject(google.protobuf.Empty) returns (stream CybosSubjectTickData) {}
   rpc ListenCybosAlarm(google.protobuf.Empty) returns (stream CybosStockAlarm) {}
 
+  // Simulation RPCs
   rpc ListenSimulationStatusChanged(google.protobuf.Empty) returns (stream SimulationStatus) {}
 
-  rpc StartSimulation(google.protobuf.Empty) returns (stream google.protobuf.Empty) {}
+  rpc SetSimulationStockTick(CybosTickData) returns (google.protobuf.Empty) {}
+  rpc SetSimulationBidAskTick(CybosBidAskTickData) returns (google.protobuf.Empty) {}
+  rpc SetSimulationSubjectTick(CybosSubjectTickData) returns (google.protobuf.Empty) {}
+  rpc SetSimulationAlarmTick(CybosStockAlarm) returns (google.protobuf.Empty) {}
+
+  rpc ListenSimulationOperation(google.protobuf.Empty) returns (stream SimulationOperation) {}
+
+  rpc StartSimulation(SimulationOperation) returns (Bool) {}
   rpc StopSimulation(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+
+  rpc SetSimulationStatus(SimulationStatus) returns (google.protobuf.Empty) {}
+  rpc GetSimulationStatus(google.protobuf.Empty) returns (SimulationStatus) {}
 }
 
 
@@ -111,6 +123,13 @@ message TopList {
     repeated string codelist = 1;
     bool is_today_data = 2;
     uint32 date = 3;
+}
+
+
+message SimulationOperation {
+    bool is_on = 1;
+    google.protobuf.Timestamp start_datetime = 2;
+    float speed = 3;
 }
 
 

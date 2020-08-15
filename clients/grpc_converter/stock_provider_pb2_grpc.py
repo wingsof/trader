@@ -136,16 +136,6 @@ class StockStub(object):
         request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
         response_deserializer=stock__provider__pb2.CompanyName.FromString,
         )
-    self.SetSimulationStatus = channel.unary_unary(
-        '/stock_api.Stock/SetSimulationStatus',
-        request_serializer=stock__provider__pb2.SimulationStatus.SerializeToString,
-        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-        )
-    self.GetSimulationStatus = channel.unary_unary(
-        '/stock_api.Stock/GetSimulationStatus',
-        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-        response_deserializer=stock__provider__pb2.SimulationStatus.FromString,
-        )
     self.GetFavoriteList = channel.unary_unary(
         '/stock_api.Stock/GetFavoriteList',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -170,6 +160,16 @@ class StockStub(object):
         '/stock_api.Stock/GetYesterdayTopAmountList',
         request_serializer=google_dot_protobuf_dot_timestamp__pb2.Timestamp.SerializeToString,
         response_deserializer=stock__provider__pb2.TopList.FromString,
+        )
+    self.SetTodayAmountRatioList = channel.unary_unary(
+        '/stock_api.Stock/SetTodayAmountRatioList',
+        request_serializer=stock__provider__pb2.CodeList.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.SetTodayAmountMomentumList = channel.unary_unary(
+        '/stock_api.Stock/SetTodayAmountMomentumList',
+        request_serializer=stock__provider__pb2.CodeList.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
     self.GetTodayTopAmountList = channel.unary_unary(
         '/stock_api.Stock/GetTodayTopAmountList',
@@ -231,15 +231,50 @@ class StockStub(object):
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=stock__provider__pb2.SimulationStatus.FromString,
         )
-    self.StartSimulation = channel.unary_stream(
-        '/stock_api.Stock/StartSimulation',
-        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+    self.SetSimulationStockTick = channel.unary_unary(
+        '/stock_api.Stock/SetSimulationStockTick',
+        request_serializer=stock__provider__pb2.CybosTickData.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.SetSimulationBidAskTick = channel.unary_unary(
+        '/stock_api.Stock/SetSimulationBidAskTick',
+        request_serializer=stock__provider__pb2.CybosBidAskTickData.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.SetSimulationSubjectTick = channel.unary_unary(
+        '/stock_api.Stock/SetSimulationSubjectTick',
+        request_serializer=stock__provider__pb2.CybosSubjectTickData.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.SetSimulationAlarmTick = channel.unary_unary(
+        '/stock_api.Stock/SetSimulationAlarmTick',
+        request_serializer=stock__provider__pb2.CybosStockAlarm.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.ListenSimulationOperation = channel.unary_stream(
+        '/stock_api.Stock/ListenSimulationOperation',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=stock__provider__pb2.SimulationOperation.FromString,
+        )
+    self.StartSimulation = channel.unary_unary(
+        '/stock_api.Stock/StartSimulation',
+        request_serializer=stock__provider__pb2.SimulationOperation.SerializeToString,
+        response_deserializer=stock__provider__pb2.Bool.FromString,
         )
     self.StopSimulation = channel.unary_unary(
         '/stock_api.Stock/StopSimulation',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.SetSimulationStatus = channel.unary_unary(
+        '/stock_api.Stock/SetSimulationStatus',
+        request_serializer=stock__provider__pb2.SimulationStatus.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.GetSimulationStatus = channel.unary_unary(
+        '/stock_api.Stock/GetSimulationStatus',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=stock__provider__pb2.SimulationStatus.FromString,
         )
 
 
@@ -415,20 +450,6 @@ class StockServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def SetSimulationStatus(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def GetSimulationStatus(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
   def GetFavoriteList(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -458,6 +479,20 @@ class StockServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def GetYesterdayTopAmountList(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetTodayAmountRatioList(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetTodayAmountMomentumList(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -542,6 +577,41 @@ class StockServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def ListenSimulationStatusChanged(self, request, context):
+    """Simulation RPCs
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetSimulationStockTick(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetSimulationBidAskTick(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetSimulationSubjectTick(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetSimulationAlarmTick(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def ListenSimulationOperation(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -556,6 +626,20 @@ class StockServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def StopSimulation(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetSimulationStatus(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def GetSimulationStatus(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -685,16 +769,6 @@ def add_StockServicer_to_server(servicer, server):
           request_deserializer=stock__provider__pb2.StockCodeQuery.FromString,
           response_serializer=stock__provider__pb2.CompanyName.SerializeToString,
       ),
-      'SetSimulationStatus': grpc.unary_unary_rpc_method_handler(
-          servicer.SetSimulationStatus,
-          request_deserializer=stock__provider__pb2.SimulationStatus.FromString,
-          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-      ),
-      'GetSimulationStatus': grpc.unary_unary_rpc_method_handler(
-          servicer.GetSimulationStatus,
-          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-          response_serializer=stock__provider__pb2.SimulationStatus.SerializeToString,
-      ),
       'GetFavoriteList': grpc.unary_unary_rpc_method_handler(
           servicer.GetFavoriteList,
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
@@ -719,6 +793,16 @@ def add_StockServicer_to_server(servicer, server):
           servicer.GetYesterdayTopAmountList,
           request_deserializer=google_dot_protobuf_dot_timestamp__pb2.Timestamp.FromString,
           response_serializer=stock__provider__pb2.TopList.SerializeToString,
+      ),
+      'SetTodayAmountRatioList': grpc.unary_unary_rpc_method_handler(
+          servicer.SetTodayAmountRatioList,
+          request_deserializer=stock__provider__pb2.CodeList.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'SetTodayAmountMomentumList': grpc.unary_unary_rpc_method_handler(
+          servicer.SetTodayAmountMomentumList,
+          request_deserializer=stock__provider__pb2.CodeList.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
       'GetTodayTopAmountList': grpc.unary_unary_rpc_method_handler(
           servicer.GetTodayTopAmountList,
@@ -780,15 +864,50 @@ def add_StockServicer_to_server(servicer, server):
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=stock__provider__pb2.SimulationStatus.SerializeToString,
       ),
-      'StartSimulation': grpc.unary_stream_rpc_method_handler(
-          servicer.StartSimulation,
-          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+      'SetSimulationStockTick': grpc.unary_unary_rpc_method_handler(
+          servicer.SetSimulationStockTick,
+          request_deserializer=stock__provider__pb2.CybosTickData.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'SetSimulationBidAskTick': grpc.unary_unary_rpc_method_handler(
+          servicer.SetSimulationBidAskTick,
+          request_deserializer=stock__provider__pb2.CybosBidAskTickData.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'SetSimulationSubjectTick': grpc.unary_unary_rpc_method_handler(
+          servicer.SetSimulationSubjectTick,
+          request_deserializer=stock__provider__pb2.CybosSubjectTickData.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'SetSimulationAlarmTick': grpc.unary_unary_rpc_method_handler(
+          servicer.SetSimulationAlarmTick,
+          request_deserializer=stock__provider__pb2.CybosStockAlarm.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'ListenSimulationOperation': grpc.unary_stream_rpc_method_handler(
+          servicer.ListenSimulationOperation,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=stock__provider__pb2.SimulationOperation.SerializeToString,
+      ),
+      'StartSimulation': grpc.unary_unary_rpc_method_handler(
+          servicer.StartSimulation,
+          request_deserializer=stock__provider__pb2.SimulationOperation.FromString,
+          response_serializer=stock__provider__pb2.Bool.SerializeToString,
       ),
       'StopSimulation': grpc.unary_unary_rpc_method_handler(
           servicer.StopSimulation,
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'SetSimulationStatus': grpc.unary_unary_rpc_method_handler(
+          servicer.SetSimulationStatus,
+          request_deserializer=stock__provider__pb2.SimulationStatus.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'GetSimulationStatus': grpc.unary_unary_rpc_method_handler(
+          servicer.GetSimulationStatus,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=stock__provider__pb2.SimulationStatus.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

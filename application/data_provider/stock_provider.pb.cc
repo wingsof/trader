@@ -51,6 +51,10 @@ class TopListDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<TopList> _instance;
 } _TopList_default_instance_;
+class SimulationOperationDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<SimulationOperation> _instance;
+} _SimulationOperation_default_instance_;
 class SimulationStatusDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<SimulationStatus> _instance;
@@ -390,6 +394,21 @@ static void InitDefaultsscc_info_Report_stock_5fprovider_2eproto() {
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_Report_stock_5fprovider_2eproto}, {
       &scc_info_Timestamp_google_2fprotobuf_2ftimestamp_2eproto.base,}};
 
+static void InitDefaultsscc_info_SimulationOperation_stock_5fprovider_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::stock_api::_SimulationOperation_default_instance_;
+    new (ptr) ::stock_api::SimulationOperation();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::stock_api::SimulationOperation::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_SimulationOperation_stock_5fprovider_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_SimulationOperation_stock_5fprovider_2eproto}, {
+      &scc_info_Timestamp_google_2fprotobuf_2ftimestamp_2eproto.base,}};
+
 static void InitDefaultsscc_info_SimulationStatus_stock_5fprovider_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -462,7 +481,7 @@ static void InitDefaultsscc_info_TradeMsg_stock_5fprovider_2eproto() {
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_TradeMsg_stock_5fprovider_2eproto}, {
       &scc_info_OrderMsg_stock_5fprovider_2eproto.base,}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_stock_5fprovider_2eproto[24];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_stock_5fprovider_2eproto[25];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_stock_5fprovider_2eproto[4];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_stock_5fprovider_2eproto = nullptr;
 
@@ -521,6 +540,14 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_stock_5fprovider_2eproto::offs
   PROTOBUF_FIELD_OFFSET(::stock_api::TopList, codelist_),
   PROTOBUF_FIELD_OFFSET(::stock_api::TopList, is_today_data_),
   PROTOBUF_FIELD_OFFSET(::stock_api::TopList, date_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::stock_api::SimulationOperation, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::stock_api::SimulationOperation, is_on_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::SimulationOperation, start_datetime_),
+  PROTOBUF_FIELD_OFFSET(::stock_api::SimulationOperation, speed_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::stock_api::SimulationStatus, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -722,22 +749,23 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 32, -1, sizeof(::stock_api::Balance)},
   { 38, -1, sizeof(::stock_api::StockQuery)},
   { 46, -1, sizeof(::stock_api::TopList)},
-  { 54, -1, sizeof(::stock_api::SimulationStatus)},
-  { 61, -1, sizeof(::stock_api::OrderMsg)},
-  { 74, -1, sizeof(::stock_api::TradeMsg)},
-  { 81, -1, sizeof(::stock_api::CybosOrderReturn)},
-  { 89, -1, sizeof(::stock_api::Report)},
-  { 107, -1, sizeof(::stock_api::OrderResult)},
-  { 114, -1, sizeof(::stock_api::CybosOrderResult)},
-  { 126, -1, sizeof(::stock_api::ListType)},
-  { 132, -1, sizeof(::stock_api::CompanyName)},
-  { 138, -1, sizeof(::stock_api::PastMinuteQuery)},
-  { 146, -1, sizeof(::stock_api::CybosDayData)},
-  { 166, -1, sizeof(::stock_api::CybosDayDatas)},
-  { 172, -1, sizeof(::stock_api::CybosSubjectTickData)},
-  { 186, -1, sizeof(::stock_api::CybosTickData)},
-  { 215, -1, sizeof(::stock_api::CybosBidAskTickData)},
-  { 232, -1, sizeof(::stock_api::CybosStockAlarm)},
+  { 54, -1, sizeof(::stock_api::SimulationOperation)},
+  { 62, -1, sizeof(::stock_api::SimulationStatus)},
+  { 69, -1, sizeof(::stock_api::OrderMsg)},
+  { 82, -1, sizeof(::stock_api::TradeMsg)},
+  { 89, -1, sizeof(::stock_api::CybosOrderReturn)},
+  { 97, -1, sizeof(::stock_api::Report)},
+  { 115, -1, sizeof(::stock_api::OrderResult)},
+  { 122, -1, sizeof(::stock_api::CybosOrderResult)},
+  { 134, -1, sizeof(::stock_api::ListType)},
+  { 140, -1, sizeof(::stock_api::CompanyName)},
+  { 146, -1, sizeof(::stock_api::PastMinuteQuery)},
+  { 154, -1, sizeof(::stock_api::CybosDayData)},
+  { 174, -1, sizeof(::stock_api::CybosDayDatas)},
+  { 180, -1, sizeof(::stock_api::CybosSubjectTickData)},
+  { 194, -1, sizeof(::stock_api::CybosTickData)},
+  { 223, -1, sizeof(::stock_api::CybosBidAskTickData)},
+  { 240, -1, sizeof(::stock_api::CybosStockAlarm)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -749,6 +777,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_Balance_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_StockQuery_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_TopList_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_SimulationOperation_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_SimulationStatus_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_OrderMsg_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::stock_api::_TradeMsg_default_instance_),
@@ -780,177 +809,194 @@ const char descriptor_table_protodef_stock_5fprovider_2eproto[] PROTOBUF_SECTION
   "e.protobuf.Timestamp\0222\n\016until_datetime\030\003"
   " \001(\0132\032.google.protobuf.Timestamp\"@\n\007TopL"
   "ist\022\020\n\010codelist\030\001 \003(\t\022\025\n\ris_today_data\030\002"
-  " \001(\010\022\014\n\004date\030\003 \001(\r\"C\n\020SimulationStatus\022\025"
-  "\n\rsimulation_on\030\001 \001(\010\022\030\n\020simulation_spee"
-  "d\030\002 \001(\002\"\302\001\n\010OrderMsg\022\014\n\004code\030\001 \001(\t\022\016\n\006is"
-  "_buy\030\002 \001(\010\022\r\n\005price\030\003 \001(\005\022\020\n\010quantity\030\004 "
-  "\001(\005\022\022\n\npercentage\030\005 \001(\005\022&\n\006method\030\006 \001(\0162"
-  "\026.stock_api.OrderMethod\022\021\n\torder_num\030\007 \001"
-  "(\t\022(\n\norder_type\030\010 \001(\0162\024.stock_api.Order"
-  "Type\"D\n\010TradeMsg\022\020\n\010msg_type\030\001 \001(\005\022&\n\tor"
-  "der_msg\030\002 \001(\0132\023.stock_api.OrderMsg\"B\n\020Cy"
-  "bosOrderReturn\022\016\n\006result\030\001 \001(\005\022\013\n\003msg\030\002 "
-  "\001(\t\022\021\n\torder_num\030\003 \001(\005\"\333\002\n\006Report\022\014\n\004cod"
-  "e\030\001 \001(\t\022\024\n\014company_name\030\002 \001(\t\022\016\n\006is_buy\030"
-  "\003 \001(\010\0228\n\024last_update_datetime\030\004 \001(\0132\032.go"
-  "ogle.protobuf.Timestamp\022(\n\004flag\030\005 \001(\0162\032."
-  "stock_api.OrderStatusFlag\022&\n\006method\030\006 \001("
-  "\0162\026.stock_api.OrderMethod\022\022\n\nhold_price\030"
-  "\007 \001(\002\022\r\n\005price\030\010 \001(\005\022\020\n\010quantity\030\t \001(\005\022\032"
-  "\n\022internal_order_num\030\n \001(\t\022\021\n\torder_num\030"
-  "\013 \001(\t\022\027\n\017traded_quantity\030\014 \001(\005\022\024\n\014traded"
-  "_price\030\r \001(\002\"I\n\013OrderResult\022!\n\006report\030\001 "
-  "\003(\0132\021.stock_api.Report\022\027\n\017current_balanc"
-  "e\030\002 \001(\005\"\251\001\n\020CybosOrderResult\022(\n\004flag\030\001 \001"
-  "(\0162\032.stock_api.OrderStatusFlag\022\014\n\004code\030\002"
-  " \001(\t\022\024\n\014order_number\030\003 \001(\t\022\020\n\010quantity\030\004"
-  " \001(\005\022\r\n\005price\030\005 \001(\005\022\016\n\006is_buy\030\006 \001(\010\022\026\n\016t"
-  "otal_quantity\030\007 \001(\005\"\035\n\010ListType\022\021\n\ttype_"
-  "name\030\001 \001(\t\"#\n\013CompanyName\022\024\n\014company_nam"
-  "e\030\001 \001(\t\"a\n\017PastMinuteQuery\022\014\n\004code\030\001 \001(\t"
-  "\022\025\n\rcount_of_days\030\002 \001(\r\022)\n\005today\030\003 \001(\0132\032"
-  ".google.protobuf.Timestamp\"\363\002\n\014CybosDayD"
-  "ata\022\014\n\004date\030\001 \001(\r\022\014\n\004time\030\002 \001(\r\022\023\n\013start"
-  "_price\030\003 \001(\r\022\025\n\rhighest_price\030\004 \001(\r\022\024\n\014l"
-  "owest_price\030\005 \001(\r\022\023\n\013close_price\030\006 \001(\r\022\016"
-  "\n\006volume\030\007 \001(\003\022\016\n\006amount\030\010 \001(\004\022\027\n\017cum_se"
-  "ll_volume\030\t \001(\004\022\026\n\016cum_buy_volume\030\n \001(\004\022"
-  "\035\n\025foreigner_hold_volume\030\013 \001(\003\022\033\n\023foreig"
-  "ner_hold_rate\030\014 \001(\002\022\036\n\026institution_buy_v"
-  "olume\030\r \001(\003\022\"\n\032institution_cum_buy_volum"
-  "e\030\016 \001(\003\022\037\n\027is_synchronized_bidding\030\017 \001(\010"
-  "\":\n\rCybosDayDatas\022)\n\010day_data\030\001 \003(\0132\027.st"
-  "ock_api.CybosDayData\"\340\001\n\024CybosSubjectTic"
-  "kData\022-\n\ttick_date\030\001 \001(\0132\032.google.protob"
-  "uf.Timestamp\022\014\n\004time\030\002 \001(\r\022\014\n\004name\030\003 \001(\t"
-  "\022\014\n\004code\030\004 \001(\t\022\024\n\014company_name\030\005 \001(\t\022\023\n\013"
-  "buy_or_sell\030\006 \001(\010\022\016\n\006volume\030\007 \001(\004\022\024\n\014tot"
-  "al_volume\030\010 \001(\003\022\036\n\026foreigner_total_volum"
-  "e\030\t \001(\003\"\270\004\n\rCybosTickData\022-\n\ttick_date\030\001"
-  " \001(\0132\032.google.protobuf.Timestamp\022\014\n\004code"
-  "\030\002 \001(\t\022\024\n\014company_name\030\003 \001(\t\022\026\n\016yesterda"
-  "y_diff\030\004 \001(\005\022\014\n\004time\030\005 \001(\r\022\023\n\013start_pric"
-  "e\030\006 \001(\r\022\025\n\rhighest_price\030\007 \001(\r\022\024\n\014lowest"
-  "_price\030\010 \001(\r\022\021\n\task_price\030\t \001(\r\022\021\n\tbid_p"
-  "rice\030\n \001(\r\022\022\n\ncum_volume\030\013 \001(\004\022\022\n\ncum_am"
-  "ount\030\014 \001(\004\022\025\n\rcurrent_price\030\r \001(\r\022\023\n\013buy"
-  "_or_sell\030\016 \001(\010\022 \n\030cum_sell_volume_by_pri"
-  "ce\030\017 \001(\004\022\037\n\027cum_buy_volume_by_price\030\020 \001("
-  "\004\022\016\n\006volume\030\021 \001(\003\022\025\n\rtime_with_sec\030\022 \001(\r"
-  "\022\027\n\017market_type_exp\030\023 \001(\r\022\023\n\013market_type"
-  "\030\024 \001(\r\022\027\n\017out_time_volume\030\025 \001(\004\022\027\n\017cum_s"
-  "ell_volume\030\026 \001(\004\022\026\n\016cum_buy_volume\030\027 \001(\004"
-  "\022\020\n\010is_kospi\030\030 \001(\010\"\274\002\n\023CybosBidAskTickDa"
-  "ta\022-\n\ttick_date\030\001 \001(\0132\032.google.protobuf."
-  "Timestamp\022\014\n\004code\030\002 \001(\t\022\014\n\004time\030\003 \001(\r\022\016\n"
-  "\006volume\030\004 \001(\004\022\022\n\nask_prices\030\005 \003(\005\022\022\n\nbid"
-  "_prices\030\006 \003(\005\022\023\n\013ask_remains\030\007 \003(\r\022\023\n\013bi"
-  "d_remains\030\010 \003(\r\022\030\n\020total_ask_remain\030\t \001("
-  "\004\022\030\n\020total_bid_remain\030\n \001(\004\022!\n\031out_time_"
-  "total_ask_remain\030\013 \001(\003\022!\n\031out_time_total"
-  "_bid_remain\030\014 \001(\003\"\304\001\n\017CybosStockAlarm\022-\n"
-  "\ttick_date\030\001 \001(\0132\032.google.protobuf.Times"
-  "tamp\022\014\n\004time\030\002 \001(\r\022\025\n\rtype_category\030\003 \001("
-  "\005\022\027\n\017market_category\030\004 \001(\005\022\014\n\004code\030\005 \001(\t"
-  "\022\026\n\016alarm_category\030\006 \001(\005\022\r\n\005title\030\007 \001(\t\022"
-  "\017\n\007content\030\010 \001(\t*\240\001\n\017OrderStatusFlag\022\022\n\016"
-  "STATUS_UNKNOWN\020\000\022\025\n\021STATUS_REGISTERED\020\001\022"
-  "\022\n\016STATUS_TRADING\020\002\022\021\n\rSTATUS_TRADED\0201\022\022"
-  "\n\016STATUS_CONFIRM\0202\022\021\n\rSTATUS_DENIED\0203\022\024\n"
-  "\020STATUS_SUBMITTED\0204*f\n\013OrderMethod\022\021\n\rTR"
-  "ADE_UNKNOWN\020\000\022\025\n\021TRADE_IMMEDIATELY\020\001\022\031\n\025"
-  "TRADE_ON_BID_ASK_MEET\020\002\022\022\n\016TRADE_ON_PRIC"
-  "E\020\003*,\n\tOrderType\022\007\n\003NEW\020\000\022\n\n\006MODIFY\020\001\022\n\n"
-  "\006CANCEL\020\002*N\n\014TradeMsgType\022\013\n\007UNKNOWN\020\000\022\r"
-  "\n\tORDER_MSG\020\001\022\021\n\rREQ_ALL_ORDER\020\002\022\017\n\013GET_"
-  "BALANCE\020\0032\245\031\n\005Stock\022\?\n\nGetDayData\022\025.stoc"
-  "k_api.StockQuery\032\030.stock_api.CybosDayDat"
-  "as\"\000\022B\n\rGetMinuteData\022\025.stock_api.StockQ"
-  "uery\032\030.stock_api.CybosDayDatas\"\000\022K\n\022GetT"
-  "odayMinuteData\022\031.stock_api.StockCodeQuer"
-  "y\032\030.stock_api.CybosDayDatas\"\000\022K\n\021GetPast"
-  "MinuteData\022\032.stock_api.PastMinuteQuery\032\030"
-  ".stock_api.CybosDayDatas\"\000\022B\n\021GetSubscri"
-  "beCodes\022\026.google.protobuf.Empty\032\023.stock_"
-  "api.CodeList\"\000\022:\n\nGetBalance\022\026.google.pr"
-  "otobuf.Empty\032\022.stock_api.Balance\"\000\022@\n\nOr"
-  "derStock\022\023.stock_api.OrderMsg\032\033.stock_ap"
-  "i.CybosOrderReturn\"\000\022A\n\013ChangeOrder\022\023.st"
-  "ock_api.OrderMsg\032\033.stock_api.CybosOrderR"
-  "eturn\"\000\022A\n\013CancelOrder\022\023.stock_api.Order"
-  "Msg\032\033.stock_api.CybosOrderReturn\"\000\022K\n\024Re"
-  "questCybosTickData\022\031.stock_api.StockCode"
-  "Query\032\026.google.protobuf.Empty\"\000\022I\n\022Reque"
-  "stCybosBidAsk\022\031.stock_api.StockCodeQuery"
-  "\032\026.google.protobuf.Empty\"\000\022J\n\023RequestCyb"
-  "osSubject\022\031.stock_api.StockCodeQuery\032\026.g"
-  "oogle.protobuf.Empty\"\000\022E\n\021RequestCybosAl"
-  "arm\022\026.google.protobuf.Empty\032\026.google.pro"
-  "tobuf.Empty\"\000\022@\n\017RequestToTrader\022\023.stock"
-  "_api.TradeMsg\032\026.google.protobuf.Empty\"\000\022"
-  "K\n\027RequestCybosTradeResult\022\026.google.prot"
-  "obuf.Empty\032\026.google.protobuf.Empty\"\000\022E\n\021"
-  "ReportOrderResult\022\026.stock_api.OrderResul"
-  "t\032\026.google.protobuf.Empty\"\000\0227\n\007IsKospi\022\031"
-  ".stock_api.StockCodeQuery\032\017.stock_api.Bo"
-  "ol\"\000\022<\n\nGetViPrice\022\031.stock_api.StockCode"
-  "Query\032\021.stock_api.Prices\"\000\022B\n\017ListenTrad"
-  "erMsg\022\026.google.protobuf.Empty\032\023.stock_ap"
-  "i.TradeMsg\"\0000\001\022Q\n\026ListenCybosOrderResult"
-  "\022\026.google.protobuf.Empty\032\033.stock_api.Cyb"
-  "osOrderResult\"\0000\001\022G\n\021ListenOrderResult\022\026"
-  ".google.protobuf.Empty\032\026.stock_api.Order"
-  "Result\"\0000\001\022F\n\017SetCurrentStock\022\031.stock_ap"
-  "i.StockCodeQuery\032\026.google.protobuf.Empty"
-  "\"\000\022J\n\022SetCurrentDateTime\022\032.google.protob"
-  "uf.Timestamp\032\026.google.protobuf.Empty\"\000\022E"
-  "\n\016GetCompanyName\022\031.stock_api.StockCodeQu"
-  "ery\032\026.stock_api.CompanyName\"\000\022L\n\023SetSimu"
-  "lationStatus\022\033.stock_api.SimulationStatu"
-  "s\032\026.google.protobuf.Empty\"\000\022L\n\023GetSimula"
-  "tionStatus\022\026.google.protobuf.Empty\032\033.sto"
-  "ck_api.SimulationStatus\"\000\022@\n\017GetFavorite"
-  "List\022\026.google.protobuf.Empty\032\023.stock_api"
-  ".CodeList\"\000\022B\n\013AddFavorite\022\031.stock_api.S"
-  "tockCodeQuery\032\026.google.protobuf.Empty\"\000\022"
-  "E\n\016RemoveFavorite\022\031.stock_api.StockCodeQ"
-  "uery\032\026.google.protobuf.Empty\"\000\022C\n\017ClearR"
-  "ecentList\022\026.google.protobuf.Empty\032\026.goog"
-  "le.protobuf.Empty\"\000\022M\n\031GetYesterdayTopAm"
-  "ountList\022\032.google.protobuf.Timestamp\032\022.s"
-  "tock_api.TopList\"\000\022A\n\025GetTodayTopAmountL"
-  "ist\022\021.stock_api.Option\032\023.stock_api.CodeL"
-  "ist\"\000\022G\n\026GetTodayNineThirtyList\022\026.google"
-  ".protobuf.Empty\032\023.stock_api.CodeList\"\000\022@"
-  "\n\017GetRecentSearch\022\026.google.protobuf.Empt"
-  "y\032\023.stock_api.CodeList\"\000\0225\n\tGetViList\022\021."
-  "stock_api.Option\032\023.stock_api.CodeList\"\000\022"
-  "K\n\022ListenCurrentStock\022\026.google.protobuf."
-  "Empty\032\031.stock_api.StockCodeQuery\"\0000\001\022D\n\021"
-  "ListenListChanged\022\026.google.protobuf.Empt"
-  "y\032\023.stock_api.ListType\"\0000\001\022K\n\023ListenCybo"
-  "sTickData\022\026.google.protobuf.Empty\032\030.stoc"
-  "k_api.CybosTickData\"\0000\001\022O\n\021ListenCybosBi"
-  "dAsk\022\026.google.protobuf.Empty\032\036.stock_api"
-  ".CybosBidAskTickData\"\0000\001\022K\n\021ListenCurren"
-  "tTime\022\026.google.protobuf.Empty\032\032.google.p"
-  "rotobuf.Timestamp\"\0000\001\022Q\n\022ListenCybosSubj"
-  "ect\022\026.google.protobuf.Empty\032\037.stock_api."
-  "CybosSubjectTickData\"\0000\001\022J\n\020ListenCybosA"
-  "larm\022\026.google.protobuf.Empty\032\032.stock_api"
-  ".CybosStockAlarm\"\0000\001\022X\n\035ListenSimulation"
-  "StatusChanged\022\026.google.protobuf.Empty\032\033."
-  "stock_api.SimulationStatus\"\0000\001\022E\n\017StartS"
-  "imulation\022\026.google.protobuf.Empty\032\026.goog"
-  "le.protobuf.Empty\"\0000\001\022B\n\016StopSimulation\022"
-  "\026.google.protobuf.Empty\032\026.google.protobu"
-  "f.Empty\"\000b\006proto3"
+  " \001(\010\022\014\n\004date\030\003 \001(\r\"g\n\023SimulationOperatio"
+  "n\022\r\n\005is_on\030\001 \001(\010\0222\n\016start_datetime\030\002 \001(\013"
+  "2\032.google.protobuf.Timestamp\022\r\n\005speed\030\003 "
+  "\001(\002\"C\n\020SimulationStatus\022\025\n\rsimulation_on"
+  "\030\001 \001(\010\022\030\n\020simulation_speed\030\002 \001(\002\"\302\001\n\010Ord"
+  "erMsg\022\014\n\004code\030\001 \001(\t\022\016\n\006is_buy\030\002 \001(\010\022\r\n\005p"
+  "rice\030\003 \001(\005\022\020\n\010quantity\030\004 \001(\005\022\022\n\npercenta"
+  "ge\030\005 \001(\005\022&\n\006method\030\006 \001(\0162\026.stock_api.Ord"
+  "erMethod\022\021\n\torder_num\030\007 \001(\t\022(\n\norder_typ"
+  "e\030\010 \001(\0162\024.stock_api.OrderType\"D\n\010TradeMs"
+  "g\022\020\n\010msg_type\030\001 \001(\005\022&\n\torder_msg\030\002 \001(\0132\023"
+  ".stock_api.OrderMsg\"B\n\020CybosOrderReturn\022"
+  "\016\n\006result\030\001 \001(\005\022\013\n\003msg\030\002 \001(\t\022\021\n\torder_nu"
+  "m\030\003 \001(\005\"\333\002\n\006Report\022\014\n\004code\030\001 \001(\t\022\024\n\014comp"
+  "any_name\030\002 \001(\t\022\016\n\006is_buy\030\003 \001(\010\0228\n\024last_u"
+  "pdate_datetime\030\004 \001(\0132\032.google.protobuf.T"
+  "imestamp\022(\n\004flag\030\005 \001(\0162\032.stock_api.Order"
+  "StatusFlag\022&\n\006method\030\006 \001(\0162\026.stock_api.O"
+  "rderMethod\022\022\n\nhold_price\030\007 \001(\002\022\r\n\005price\030"
+  "\010 \001(\005\022\020\n\010quantity\030\t \001(\005\022\032\n\022internal_orde"
+  "r_num\030\n \001(\t\022\021\n\torder_num\030\013 \001(\t\022\027\n\017traded"
+  "_quantity\030\014 \001(\005\022\024\n\014traded_price\030\r \001(\002\"I\n"
+  "\013OrderResult\022!\n\006report\030\001 \003(\0132\021.stock_api"
+  ".Report\022\027\n\017current_balance\030\002 \001(\005\"\251\001\n\020Cyb"
+  "osOrderResult\022(\n\004flag\030\001 \001(\0162\032.stock_api."
+  "OrderStatusFlag\022\014\n\004code\030\002 \001(\t\022\024\n\014order_n"
+  "umber\030\003 \001(\t\022\020\n\010quantity\030\004 \001(\005\022\r\n\005price\030\005"
+  " \001(\005\022\016\n\006is_buy\030\006 \001(\010\022\026\n\016total_quantity\030\007"
+  " \001(\005\"\035\n\010ListType\022\021\n\ttype_name\030\001 \001(\t\"#\n\013C"
+  "ompanyName\022\024\n\014company_name\030\001 \001(\t\"a\n\017Past"
+  "MinuteQuery\022\014\n\004code\030\001 \001(\t\022\025\n\rcount_of_da"
+  "ys\030\002 \001(\r\022)\n\005today\030\003 \001(\0132\032.google.protobu"
+  "f.Timestamp\"\363\002\n\014CybosDayData\022\014\n\004date\030\001 \001"
+  "(\r\022\014\n\004time\030\002 \001(\r\022\023\n\013start_price\030\003 \001(\r\022\025\n"
+  "\rhighest_price\030\004 \001(\r\022\024\n\014lowest_price\030\005 \001"
+  "(\r\022\023\n\013close_price\030\006 \001(\r\022\016\n\006volume\030\007 \001(\003\022"
+  "\016\n\006amount\030\010 \001(\004\022\027\n\017cum_sell_volume\030\t \001(\004"
+  "\022\026\n\016cum_buy_volume\030\n \001(\004\022\035\n\025foreigner_ho"
+  "ld_volume\030\013 \001(\003\022\033\n\023foreigner_hold_rate\030\014"
+  " \001(\002\022\036\n\026institution_buy_volume\030\r \001(\003\022\"\n\032"
+  "institution_cum_buy_volume\030\016 \001(\003\022\037\n\027is_s"
+  "ynchronized_bidding\030\017 \001(\010\":\n\rCybosDayDat"
+  "as\022)\n\010day_data\030\001 \003(\0132\027.stock_api.CybosDa"
+  "yData\"\340\001\n\024CybosSubjectTickData\022-\n\ttick_d"
+  "ate\030\001 \001(\0132\032.google.protobuf.Timestamp\022\014\n"
+  "\004time\030\002 \001(\r\022\014\n\004name\030\003 \001(\t\022\014\n\004code\030\004 \001(\t\022"
+  "\024\n\014company_name\030\005 \001(\t\022\023\n\013buy_or_sell\030\006 \001"
+  "(\010\022\016\n\006volume\030\007 \001(\004\022\024\n\014total_volume\030\010 \001(\003"
+  "\022\036\n\026foreigner_total_volume\030\t \001(\003\"\270\004\n\rCyb"
+  "osTickData\022-\n\ttick_date\030\001 \001(\0132\032.google.p"
+  "rotobuf.Timestamp\022\014\n\004code\030\002 \001(\t\022\024\n\014compa"
+  "ny_name\030\003 \001(\t\022\026\n\016yesterday_diff\030\004 \001(\005\022\014\n"
+  "\004time\030\005 \001(\r\022\023\n\013start_price\030\006 \001(\r\022\025\n\rhigh"
+  "est_price\030\007 \001(\r\022\024\n\014lowest_price\030\010 \001(\r\022\021\n"
+  "\task_price\030\t \001(\r\022\021\n\tbid_price\030\n \001(\r\022\022\n\nc"
+  "um_volume\030\013 \001(\004\022\022\n\ncum_amount\030\014 \001(\004\022\025\n\rc"
+  "urrent_price\030\r \001(\r\022\023\n\013buy_or_sell\030\016 \001(\010\022"
+  " \n\030cum_sell_volume_by_price\030\017 \001(\004\022\037\n\027cum"
+  "_buy_volume_by_price\030\020 \001(\004\022\016\n\006volume\030\021 \001"
+  "(\003\022\025\n\rtime_with_sec\030\022 \001(\r\022\027\n\017market_type"
+  "_exp\030\023 \001(\r\022\023\n\013market_type\030\024 \001(\r\022\027\n\017out_t"
+  "ime_volume\030\025 \001(\004\022\027\n\017cum_sell_volume\030\026 \001("
+  "\004\022\026\n\016cum_buy_volume\030\027 \001(\004\022\020\n\010is_kospi\030\030 "
+  "\001(\010\"\274\002\n\023CybosBidAskTickData\022-\n\ttick_date"
+  "\030\001 \001(\0132\032.google.protobuf.Timestamp\022\014\n\004co"
+  "de\030\002 \001(\t\022\014\n\004time\030\003 \001(\r\022\016\n\006volume\030\004 \001(\004\022\022"
+  "\n\nask_prices\030\005 \003(\005\022\022\n\nbid_prices\030\006 \003(\005\022\023"
+  "\n\013ask_remains\030\007 \003(\r\022\023\n\013bid_remains\030\010 \003(\r"
+  "\022\030\n\020total_ask_remain\030\t \001(\004\022\030\n\020total_bid_"
+  "remain\030\n \001(\004\022!\n\031out_time_total_ask_remai"
+  "n\030\013 \001(\003\022!\n\031out_time_total_bid_remain\030\014 \001"
+  "(\003\"\304\001\n\017CybosStockAlarm\022-\n\ttick_date\030\001 \001("
+  "\0132\032.google.protobuf.Timestamp\022\014\n\004time\030\002 "
+  "\001(\r\022\025\n\rtype_category\030\003 \001(\005\022\027\n\017market_cat"
+  "egory\030\004 \001(\005\022\014\n\004code\030\005 \001(\t\022\026\n\016alarm_categ"
+  "ory\030\006 \001(\005\022\r\n\005title\030\007 \001(\t\022\017\n\007content\030\010 \001("
+  "\t*\240\001\n\017OrderStatusFlag\022\022\n\016STATUS_UNKNOWN\020"
+  "\000\022\025\n\021STATUS_REGISTERED\020\001\022\022\n\016STATUS_TRADI"
+  "NG\020\002\022\021\n\rSTATUS_TRADED\0201\022\022\n\016STATUS_CONFIR"
+  "M\0202\022\021\n\rSTATUS_DENIED\0203\022\024\n\020STATUS_SUBMITT"
+  "ED\0204*f\n\013OrderMethod\022\021\n\rTRADE_UNKNOWN\020\000\022\025"
+  "\n\021TRADE_IMMEDIATELY\020\001\022\031\n\025TRADE_ON_BID_AS"
+  "K_MEET\020\002\022\022\n\016TRADE_ON_PRICE\020\003*,\n\tOrderTyp"
+  "e\022\007\n\003NEW\020\000\022\n\n\006MODIFY\020\001\022\n\n\006CANCEL\020\002*N\n\014Tr"
+  "adeMsgType\022\013\n\007UNKNOWN\020\000\022\r\n\tORDER_MSG\020\001\022\021"
+  "\n\rREQ_ALL_ORDER\020\002\022\017\n\013GET_BALANCE\020\0032\336\035\n\005S"
+  "tock\022\?\n\nGetDayData\022\025.stock_api.StockQuer"
+  "y\032\030.stock_api.CybosDayDatas\"\000\022B\n\rGetMinu"
+  "teData\022\025.stock_api.StockQuery\032\030.stock_ap"
+  "i.CybosDayDatas\"\000\022K\n\022GetTodayMinuteData\022"
+  "\031.stock_api.StockCodeQuery\032\030.stock_api.C"
+  "ybosDayDatas\"\000\022K\n\021GetPastMinuteData\022\032.st"
+  "ock_api.PastMinuteQuery\032\030.stock_api.Cybo"
+  "sDayDatas\"\000\022B\n\021GetSubscribeCodes\022\026.googl"
+  "e.protobuf.Empty\032\023.stock_api.CodeList\"\000\022"
+  ":\n\nGetBalance\022\026.google.protobuf.Empty\032\022."
+  "stock_api.Balance\"\000\022@\n\nOrderStock\022\023.stoc"
+  "k_api.OrderMsg\032\033.stock_api.CybosOrderRet"
+  "urn\"\000\022A\n\013ChangeOrder\022\023.stock_api.OrderMs"
+  "g\032\033.stock_api.CybosOrderReturn\"\000\022A\n\013Canc"
+  "elOrder\022\023.stock_api.OrderMsg\032\033.stock_api"
+  ".CybosOrderReturn\"\000\022K\n\024RequestCybosTickD"
+  "ata\022\031.stock_api.StockCodeQuery\032\026.google."
+  "protobuf.Empty\"\000\022I\n\022RequestCybosBidAsk\022\031"
+  ".stock_api.StockCodeQuery\032\026.google.proto"
+  "buf.Empty\"\000\022J\n\023RequestCybosSubject\022\031.sto"
+  "ck_api.StockCodeQuery\032\026.google.protobuf."
+  "Empty\"\000\022E\n\021RequestCybosAlarm\022\026.google.pr"
+  "otobuf.Empty\032\026.google.protobuf.Empty\"\000\022@"
+  "\n\017RequestToTrader\022\023.stock_api.TradeMsg\032\026"
+  ".google.protobuf.Empty\"\000\022K\n\027RequestCybos"
+  "TradeResult\022\026.google.protobuf.Empty\032\026.go"
+  "ogle.protobuf.Empty\"\000\022E\n\021ReportOrderResu"
+  "lt\022\026.stock_api.OrderResult\032\026.google.prot"
+  "obuf.Empty\"\000\0227\n\007IsKospi\022\031.stock_api.Stoc"
+  "kCodeQuery\032\017.stock_api.Bool\"\000\022<\n\nGetViPr"
+  "ice\022\031.stock_api.StockCodeQuery\032\021.stock_a"
+  "pi.Prices\"\000\022B\n\017ListenTraderMsg\022\026.google."
+  "protobuf.Empty\032\023.stock_api.TradeMsg\"\0000\001\022"
+  "Q\n\026ListenCybosOrderResult\022\026.google.proto"
+  "buf.Empty\032\033.stock_api.CybosOrderResult\"\000"
+  "0\001\022G\n\021ListenOrderResult\022\026.google.protobu"
+  "f.Empty\032\026.stock_api.OrderResult\"\0000\001\022F\n\017S"
+  "etCurrentStock\022\031.stock_api.StockCodeQuer"
+  "y\032\026.google.protobuf.Empty\"\000\022J\n\022SetCurren"
+  "tDateTime\022\032.google.protobuf.Timestamp\032\026."
+  "google.protobuf.Empty\"\000\022E\n\016GetCompanyNam"
+  "e\022\031.stock_api.StockCodeQuery\032\026.stock_api"
+  ".CompanyName\"\000\022@\n\017GetFavoriteList\022\026.goog"
+  "le.protobuf.Empty\032\023.stock_api.CodeList\"\000"
+  "\022B\n\013AddFavorite\022\031.stock_api.StockCodeQue"
+  "ry\032\026.google.protobuf.Empty\"\000\022E\n\016RemoveFa"
+  "vorite\022\031.stock_api.StockCodeQuery\032\026.goog"
+  "le.protobuf.Empty\"\000\022C\n\017ClearRecentList\022\026"
+  ".google.protobuf.Empty\032\026.google.protobuf"
+  ".Empty\"\000\022M\n\031GetYesterdayTopAmountList\022\032."
+  "google.protobuf.Timestamp\032\022.stock_api.To"
+  "pList\"\000\022H\n\027SetTodayAmountRatioList\022\023.sto"
+  "ck_api.CodeList\032\026.google.protobuf.Empty\""
+  "\000\022K\n\032SetTodayAmountMomentumList\022\023.stock_"
+  "api.CodeList\032\026.google.protobuf.Empty\"\000\022A"
+  "\n\025GetTodayTopAmountList\022\021.stock_api.Opti"
+  "on\032\023.stock_api.CodeList\"\000\022G\n\026GetTodayNin"
+  "eThirtyList\022\026.google.protobuf.Empty\032\023.st"
+  "ock_api.CodeList\"\000\022@\n\017GetRecentSearch\022\026."
+  "google.protobuf.Empty\032\023.stock_api.CodeLi"
+  "st\"\000\0225\n\tGetViList\022\021.stock_api.Option\032\023.s"
+  "tock_api.CodeList\"\000\022K\n\022ListenCurrentStoc"
+  "k\022\026.google.protobuf.Empty\032\031.stock_api.St"
+  "ockCodeQuery\"\0000\001\022D\n\021ListenListChanged\022\026."
+  "google.protobuf.Empty\032\023.stock_api.ListTy"
+  "pe\"\0000\001\022K\n\023ListenCybosTickData\022\026.google.p"
+  "rotobuf.Empty\032\030.stock_api.CybosTickData\""
+  "\0000\001\022O\n\021ListenCybosBidAsk\022\026.google.protob"
+  "uf.Empty\032\036.stock_api.CybosBidAskTickData"
+  "\"\0000\001\022K\n\021ListenCurrentTime\022\026.google.proto"
+  "buf.Empty\032\032.google.protobuf.Timestamp\"\0000"
+  "\001\022Q\n\022ListenCybosSubject\022\026.google.protobu"
+  "f.Empty\032\037.stock_api.CybosSubjectTickData"
+  "\"\0000\001\022J\n\020ListenCybosAlarm\022\026.google.protob"
+  "uf.Empty\032\032.stock_api.CybosStockAlarm\"\0000\001"
+  "\022X\n\035ListenSimulationStatusChanged\022\026.goog"
+  "le.protobuf.Empty\032\033.stock_api.Simulation"
+  "Status\"\0000\001\022L\n\026SetSimulationStockTick\022\030.s"
+  "tock_api.CybosTickData\032\026.google.protobuf"
+  ".Empty\"\000\022S\n\027SetSimulationBidAskTick\022\036.st"
+  "ock_api.CybosBidAskTickData\032\026.google.pro"
+  "tobuf.Empty\"\000\022U\n\030SetSimulationSubjectTic"
+  "k\022\037.stock_api.CybosSubjectTickData\032\026.goo"
+  "gle.protobuf.Empty\"\000\022N\n\026SetSimulationAla"
+  "rmTick\022\032.stock_api.CybosStockAlarm\032\026.goo"
+  "gle.protobuf.Empty\"\000\022W\n\031ListenSimulation"
+  "Operation\022\026.google.protobuf.Empty\032\036.stoc"
+  "k_api.SimulationOperation\"\0000\001\022D\n\017StartSi"
+  "mulation\022\036.stock_api.SimulationOperation"
+  "\032\017.stock_api.Bool\"\000\022B\n\016StopSimulation\022\026."
+  "google.protobuf.Empty\032\026.google.protobuf."
+  "Empty\"\000\022L\n\023SetSimulationStatus\022\033.stock_a"
+  "pi.SimulationStatus\032\026.google.protobuf.Em"
+  "pty\"\000\022L\n\023GetSimulationStatus\022\026.google.pr"
+  "otobuf.Empty\032\033.stock_api.SimulationStatu"
+  "s\"\000b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_stock_5fprovider_2eproto_deps[2] = {
   &::descriptor_table_google_2fprotobuf_2fempty_2eproto,
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_stock_5fprovider_2eproto_sccs[24] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_stock_5fprovider_2eproto_sccs[25] = {
   &scc_info_Balance_stock_5fprovider_2eproto.base,
   &scc_info_Bool_stock_5fprovider_2eproto.base,
   &scc_info_CodeList_stock_5fprovider_2eproto.base,
@@ -970,6 +1016,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_sto
   &scc_info_PastMinuteQuery_stock_5fprovider_2eproto.base,
   &scc_info_Prices_stock_5fprovider_2eproto.base,
   &scc_info_Report_stock_5fprovider_2eproto.base,
+  &scc_info_SimulationOperation_stock_5fprovider_2eproto.base,
   &scc_info_SimulationStatus_stock_5fprovider_2eproto.base,
   &scc_info_StockCodeQuery_stock_5fprovider_2eproto.base,
   &scc_info_StockQuery_stock_5fprovider_2eproto.base,
@@ -979,10 +1026,10 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_sto
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_stock_5fprovider_2eproto_once;
 static bool descriptor_table_stock_5fprovider_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_stock_5fprovider_2eproto = {
-  &descriptor_table_stock_5fprovider_2eproto_initialized, descriptor_table_protodef_stock_5fprovider_2eproto, "stock_provider.proto", 7057,
-  &descriptor_table_stock_5fprovider_2eproto_once, descriptor_table_stock_5fprovider_2eproto_sccs, descriptor_table_stock_5fprovider_2eproto_deps, 24, 2,
+  &descriptor_table_stock_5fprovider_2eproto_initialized, descriptor_table_protodef_stock_5fprovider_2eproto, "stock_provider.proto", 7731,
+  &descriptor_table_stock_5fprovider_2eproto_once, descriptor_table_stock_5fprovider_2eproto_sccs, descriptor_table_stock_5fprovider_2eproto_deps, 25, 2,
   schemas, file_default_instances, TableStruct_stock_5fprovider_2eproto::offsets,
-  file_level_metadata_stock_5fprovider_2eproto, 24, file_level_enum_descriptors_stock_5fprovider_2eproto, file_level_service_descriptors_stock_5fprovider_2eproto,
+  file_level_metadata_stock_5fprovider_2eproto, 25, file_level_enum_descriptors_stock_5fprovider_2eproto, file_level_service_descriptors_stock_5fprovider_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -2800,6 +2847,268 @@ void TopList::InternalSwap(TopList* other) {
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata TopList::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void SimulationOperation::InitAsDefaultInstance() {
+  ::stock_api::_SimulationOperation_default_instance_._instance.get_mutable()->start_datetime_ = const_cast< PROTOBUF_NAMESPACE_ID::Timestamp*>(
+      PROTOBUF_NAMESPACE_ID::Timestamp::internal_default_instance());
+}
+class SimulationOperation::_Internal {
+ public:
+  static const PROTOBUF_NAMESPACE_ID::Timestamp& start_datetime(const SimulationOperation* msg);
+};
+
+const PROTOBUF_NAMESPACE_ID::Timestamp&
+SimulationOperation::_Internal::start_datetime(const SimulationOperation* msg) {
+  return *msg->start_datetime_;
+}
+void SimulationOperation::clear_start_datetime() {
+  if (GetArenaNoVirtual() == nullptr && start_datetime_ != nullptr) {
+    delete start_datetime_;
+  }
+  start_datetime_ = nullptr;
+}
+SimulationOperation::SimulationOperation()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:stock_api.SimulationOperation)
+}
+SimulationOperation::SimulationOperation(const SimulationOperation& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from._internal_has_start_datetime()) {
+    start_datetime_ = new PROTOBUF_NAMESPACE_ID::Timestamp(*from.start_datetime_);
+  } else {
+    start_datetime_ = nullptr;
+  }
+  ::memcpy(&is_on_, &from.is_on_,
+    static_cast<size_t>(reinterpret_cast<char*>(&speed_) -
+    reinterpret_cast<char*>(&is_on_)) + sizeof(speed_));
+  // @@protoc_insertion_point(copy_constructor:stock_api.SimulationOperation)
+}
+
+void SimulationOperation::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_SimulationOperation_stock_5fprovider_2eproto.base);
+  ::memset(&start_datetime_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&speed_) -
+      reinterpret_cast<char*>(&start_datetime_)) + sizeof(speed_));
+}
+
+SimulationOperation::~SimulationOperation() {
+  // @@protoc_insertion_point(destructor:stock_api.SimulationOperation)
+  SharedDtor();
+}
+
+void SimulationOperation::SharedDtor() {
+  if (this != internal_default_instance()) delete start_datetime_;
+}
+
+void SimulationOperation::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const SimulationOperation& SimulationOperation::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_SimulationOperation_stock_5fprovider_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void SimulationOperation::Clear() {
+// @@protoc_insertion_point(message_clear_start:stock_api.SimulationOperation)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  if (GetArenaNoVirtual() == nullptr && start_datetime_ != nullptr) {
+    delete start_datetime_;
+  }
+  start_datetime_ = nullptr;
+  ::memset(&is_on_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&speed_) -
+      reinterpret_cast<char*>(&is_on_)) + sizeof(speed_));
+  _internal_metadata_.Clear();
+}
+
+const char* SimulationOperation::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // bool is_on = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          is_on_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // .google.protobuf.Timestamp start_datetime = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_start_datetime(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // float speed = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 29)) {
+          speed_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* SimulationOperation::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:stock_api.SimulationOperation)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // bool is_on = 1;
+  if (this->is_on() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(1, this->_internal_is_on(), target);
+  }
+
+  // .google.protobuf.Timestamp start_datetime = 2;
+  if (this->has_start_datetime()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        2, _Internal::start_datetime(this), target, stream);
+  }
+
+  // float speed = 3;
+  if (!(this->speed() <= 0 && this->speed() >= 0)) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(3, this->_internal_speed(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:stock_api.SimulationOperation)
+  return target;
+}
+
+size_t SimulationOperation::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:stock_api.SimulationOperation)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // .google.protobuf.Timestamp start_datetime = 2;
+  if (this->has_start_datetime()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *start_datetime_);
+  }
+
+  // bool is_on = 1;
+  if (this->is_on() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // float speed = 3;
+  if (!(this->speed() <= 0 && this->speed() >= 0)) {
+    total_size += 1 + 4;
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void SimulationOperation::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:stock_api.SimulationOperation)
+  GOOGLE_DCHECK_NE(&from, this);
+  const SimulationOperation* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<SimulationOperation>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:stock_api.SimulationOperation)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:stock_api.SimulationOperation)
+    MergeFrom(*source);
+  }
+}
+
+void SimulationOperation::MergeFrom(const SimulationOperation& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:stock_api.SimulationOperation)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.has_start_datetime()) {
+    _internal_mutable_start_datetime()->PROTOBUF_NAMESPACE_ID::Timestamp::MergeFrom(from._internal_start_datetime());
+  }
+  if (from.is_on() != 0) {
+    _internal_set_is_on(from._internal_is_on());
+  }
+  if (!(from.speed() <= 0 && from.speed() >= 0)) {
+    _internal_set_speed(from._internal_speed());
+  }
+}
+
+void SimulationOperation::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:stock_api.SimulationOperation)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void SimulationOperation::CopyFrom(const SimulationOperation& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:stock_api.SimulationOperation)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool SimulationOperation::IsInitialized() const {
+  return true;
+}
+
+void SimulationOperation::InternalSwap(SimulationOperation* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(start_datetime_, other->start_datetime_);
+  swap(is_on_, other->is_on_);
+  swap(speed_, other->speed_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata SimulationOperation::GetMetadata() const {
   return GetMetadataStatic();
 }
 
@@ -8690,6 +8999,9 @@ template<> PROTOBUF_NOINLINE ::stock_api::StockQuery* Arena::CreateMaybeMessage<
 }
 template<> PROTOBUF_NOINLINE ::stock_api::TopList* Arena::CreateMaybeMessage< ::stock_api::TopList >(Arena* arena) {
   return Arena::CreateInternal< ::stock_api::TopList >(arena);
+}
+template<> PROTOBUF_NOINLINE ::stock_api::SimulationOperation* Arena::CreateMaybeMessage< ::stock_api::SimulationOperation >(Arena* arena) {
+  return Arena::CreateInternal< ::stock_api::SimulationOperation >(arena);
 }
 template<> PROTOBUF_NOINLINE ::stock_api::SimulationStatus* Arena::CreateMaybeMessage< ::stock_api::SimulationStatus >(Arena* arena) {
   return Arena::CreateInternal< ::stock_api::SimulationStatus >(arena);

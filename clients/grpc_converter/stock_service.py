@@ -30,127 +30,13 @@ import todaydata
 import config
 
 
-simulation_progressing = [False, False, False]
-request_stop_simulation = False
 recent_search_codes = []
-TIME_SPEED = 1.0
 is_subscribe_alarm = False
 is_subscribe_trade = False
 is_subscribe_tick = {}
 is_subscribe_bidask = {}
 is_subscribe_subject = {}
 
-
-def get_yesterday_data(today, market_code):
-    yesterday = holidays.get_yesterday(today)
-    yesterday_list = []
-    for progress, code in enumerate(market_code):
-        print('collect yesterday data', f'{progress+1}/{len(market_code)}', end='\r')
-        data = morning_client.get_past_day_data(code, yesterday, yesterday)
-        if len(data) == 1:
-            data = data[0]
-            data['code'] = code
-            yesterday_list.append(data)
-    print('')
-    return yesterday_list
-
-
-def collect_db(db, from_time, until_time):
-    collection_name = 'T' + from_time.strftime('%Y%m%d')
-    return list(db[collection_name].find({'date': {'$gt': from_time, '$lte': until_time}}))
-
-
-def deliver_tick(tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, alarm_tick_handler,
-                        time_handler, simulation_handler):
-    global simulation_progressing
-
-    simulation_progressing[2] = True
-    while simulation_progressing[0]:
-        try:
-            data = tick_queue.get(True, 1)
-        except gevent.queue.Empty as ge:
-            print('deliver tick queue empty', simulation_progressing)
-            continue
-
-        print('put ticks', len(data))
-        now = datetime.now()
-        datatime = None
-        last_datatime = None
-        timeadjust = timedelta(seconds=0)
-        for d in data:
-            if not simulation_progressing[0]:
-                break
-            
-            if datatime is None:
-                datatime = d['date'] - timedelta(seconds=1)
-                last_datatime = datatime
-            
-            # TIME_SPEED greater, then tick deliver speed will be more slow
-
-            while (d['date'] - datatime) * TIME_SPEED > datetime.now() - now:
-                gevent.sleep()
-
-            timeadjust = (datetime.now() - now) - (d['date'] - datatime) * TIME_SPEED
-            d_date = d['date']
-
-            if d['type'] == 'subject':
-                subject_tick_handler(d['code'], [d])
-            elif d['type'] == 'bidask':
-                bidask_tick_handler(d['code'], [d])
-            elif d['type'] == 'tick':
-                stock_tick_handler(d['code'], [d])
-            elif d['type'] == 'alarm':
-                alarm_tick_handler(d['code'], [d])
-            else:
-                continue
-
-            if d_date - last_datatime > timedelta(seconds=1):
-                time_handler(d_date - timedelta(hours=9))    # DB time is UTC but time is set as if localtime
-                last_datatime = d_date
-
-            datatime = d_date - timeadjust
-            now = datetime.now()
-        
-    simulation_progressing[2] = False
-    if not any(simulation_progressing):
-        simulation_handler([False])
-
-    print('exit deliver tick')
-
-
-def start_tick_provider(simulation_datetime, stock_tick_handler, bidask_tick_handler, subject_tick_handler, alarm_tick_handler, 
-                            time_handler, simulation_handler):
-    global simulation_progressing
-    AT_ONCE_SECONDS = 60
-    tick_queue = Queue(3)
-    db = MongoClient('mongodb://127.0.0.1:27017').trade_alarm
-    finish_time = simulation_datetime.replace(hour=15, minute=30)
-    simulation_progressing[1] = True
-
-    gevent.spawn(deliver_tick, tick_queue, stock_tick_handler, bidask_tick_handler, subject_tick_handler, alarm_tick_handler,
-                        time_handler, simulation_handler)
-    while simulation_datetime <= finish_time and simulation_progressing[0]:
-        print('load data', simulation_datetime, 'data period seconds', AT_ONCE_SECONDS, 'real time', datetime.now())
-        data = collect_db(db, simulation_datetime, simulation_datetime + timedelta(seconds=AT_ONCE_SECONDS))
-
-        while True:
-            try:
-                #print('Before put the data in the queue')
-                tick_queue.put(data, True, 1)
-                #print('After put the data in the queue')
-                break
-            except gevent.queue.Full as ge:
-                #print('Queue Full', simulation_progressing)
-                if not simulation_progressing[0]:
-                    print('Queue Full and exit simulation')
-                    break
-
-        simulation_datetime += timedelta(seconds=AT_ONCE_SECONDS)
-        gevent.sleep()
-        print('load done', simulation_datetime, 'tick len', len(data), 'real time', datetime.now())
-    simulation_progressing[1] = False
-    if not any(simulation_progressing):
-        simulation_handler([False])
 
 
 class StockServicer(stock_provider_pb2_grpc.StockServicer):
@@ -170,6 +56,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.trader_clients = []
         self.current_stock_code = ""
         self.current_datetime = None
+        self.simulation_on = False
+        self.simulation_operators = []
+
         preload.load(datetime.now(), self.skip_ydata)
         print('StockService init ready')
 
@@ -394,9 +283,10 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
     def SetCurrentDateTime(self, request ,context):
         print('SetCurrentDateTime : ', request.ToDatetime())
-        todaydata.clear_all()
+        #todaydata.clear_all()
 
-        preload.load(request.ToDatetime() + timedelta(hours=9), self.skip_ydata)
+        if not self.simulation_on:
+            preload.load(request.ToDatetime() + timedelta(hours=9), self.skip_ydata)
         self.handle_time(request.ToDatetime())
         return Empty()
 
@@ -427,15 +317,17 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
 
     def SetSimulationStatus(self, request, context):
-        global TIME_SPEED
-        TIME_SPEED = request.simulation_speed
+        if self.simulation_on ^ request.simulation_on:
+            print('Simulation status changed', request.simulation_on)
+            self.simulation_on = request.simulation_on
+            for q in self.simulation_changed_subscribe_clients:
+                q.put_nowait(stock_provider_pb2.SimulationStatus(simulation_on=self.simulation_on))
+
         return Empty()
 
 
     def GetSimulationStatus(self, request, context):
-        is_simulation = any(simulation_progressing)
-        return stock_provider_pb2.SimulationStatus(simulation_on=is_simulation,
-                                                    simulation_speed=TIME_SPEED)
+        return stock_provider_pb2.SimulationStatus(simulation_on=self.simulation_on)
 
     def handle_bidask_tick(self, code, data_arr):
         if len(data_arr) != 1:
@@ -476,22 +368,20 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         for q in self.bidask_subscribe_cilents:
             q.put_nowait(bidask)
 
-        #gevent.sleep(0.0001)
-
     def handle_stock_tick(self, code, data_arr):
-        #print('handle_stock_stick', data)
         if len(data_arr) != 1:
             return
 
         data = data_arr[0]
         tick_date = Timestamp()
         tick_date.FromDatetime(data['date'] - timedelta(hours=9))
-
+        """
         ret = todaydata.handle_today_tick(code, data)
         if ret & config.CAND_TODAY_BUL:
             self.send_list_changed('ttopamount')
         if ret & config.CAND_NINETHIRTY:
             self.send_list_changed('ninethirty')
+        """
         tick_data = stock_provider_pb2.CybosTickData(tick_date=tick_date,
                                                 code=code,
                                                 company_name=data['1'],
@@ -515,10 +405,9 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                 out_time_volume=data['21'],
                                                 cum_sell_volume=data['27'],
                                                 cum_buy_volume=data['28'],
-                                                is_kospi=morning_client.is_kospi_code(code))
+                                                is_kospi=preload.is_kospi(code))
         for q in self.stock_subscribe_clients:
             q.put_nowait(tick_data)
-        #gevent.sleep(0.0001)
 
     def handle_subject_tick(self, code, data_arr):
         if len(data_arr) != 1:
@@ -600,12 +489,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         data_date = Timestamp()
         data_date.FromDatetime(d)
         for q in self.current_time_subscribe_clients:
-            q.put(data_date)
-
-    def handle_simulation(self, d):
-        for q in self.simulation_changed_subscribe_clients:
-            print('handle_simulation', d[0])
-            q.put(stock_provider_pb2.SimulationStatus(simulation_on=d[0], simulation_speed=TIME_SPEED))
+            q.put_nowait(data_date)
 
     def ListenCurrentTime(self, request, context):
         title = 'ListenCurrentTime' 
@@ -711,6 +595,14 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         for d in data:
             yield d
 
+    def ListenSimulationOperation(self, request, context):
+        data = self.handle_queue_based_listener('ListenSimulationOperation',
+                                                self.simulation_operators,
+                                                context)
+        for d in data:
+            yield d
+
+
     def ListenTraderMsg(self, request, context):
         data = self.handle_queue_based_listener('ListenTraderMsg',
                                                 self.trader_clients,
@@ -723,6 +615,14 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
     def GetFavoriteList(self, request, context):
         return stock_provider_pb2.CodeList(codelist=favorite.get_favorite())
+
+    def SetTodayAmountRatioList(self, request, context):
+        print('RATIO', request.codelist)
+        return Empty()
+
+    def SetTodayAmountMomentumList(self, request, context):
+        print('MOMENTUM', request.codelist)
+        return Empty()
 
     def GetYesterdayTopAmountList(self, request, context):
         dt = request.ToDatetime() + timedelta(hours=9)
@@ -758,42 +658,51 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return stock_provider_pb2.CybosOrderReturn(result=ret['result'])
 
     def StartSimulation(self, request, context):
-        global simulation_progressing, request_stop_simulation
         if preload.loading:
             print('Preloading data, cannot start simulation')
-            yield Empty()
-            return
+            return stock_provider_pb2.Bool(ret=False)
+        elif len(self.simulation_operators) == 0:
+            print('No Simulation Exist')
+            return stock_provider_pb2.Bool(ret=False)
 
-        triggered = False
-
-        if not any(simulation_progressing):
-            simulation_progressing[0] = True
-            triggered = True
-
-            todaydata.clear_all()
-            if self.current_datetime is not None:
-                gevent.spawn(start_tick_provider, self.current_datetime + timedelta(hours=9), self.handle_stock_tick, self.handle_bidask_tick, self.handle_subject_tick, self.handle_alarm_tick, self.handle_time, self.handle_simulation)
-
-            self.handle_simulation([True])
-            print('Start Simulation Mode', self.current_datetime + timedelta(hours=9))
-            while context.is_active() and not request_stop_simulation:
-                gevent.sleep(1)
-
-        if triggered:
-            request_stop_simulation = False
-            simulation_progressing[0] = False
-            print('Stop Simulation Mode')
-        
-        yield Empty()
+        print('Start Simulation', request)
+        for q in self.simulation_operators:
+            q.put_nowait(request)    
+        return stock_provider_pb2.Bool(ret=True)
 
     def StopSimulation(self, request, context):
-        print('StopSimulation')
-        global request_stop_simulation
-        if all(simulation_progressing):
-            request_stop_simulation = True
+        if len(self.simulation_operators) == 0:
+            print('No Simulator running')
+        else:
+            print('StopSimulation')
 
+        msg = stock_provider_pb2.SimulationOperation(is_on=False)
+        for q in self.simulation_operators:
+            q.put_nowait(msg)
         return Empty()
 
+    def SetSimulationStockTick(self, request, context):
+        request.is_kospi = preload.is_kospi(request.code)
+        for q in self.stock_subscribe_clients:
+            q.put_nowait(request)
+        return Empty()
+
+    def SetSimulationBidAskTick(self, request, context):
+        for q in self.bidask_subscribe_cilents:
+            q.put_nowait(request)
+        return Empty()
+
+    def SetSimulationSubjectTick(self, request, context):
+        for q in self.subject_subscribe_clients:
+            q.put_nowait(request)
+        gevent.sleep(0.000001)
+        return Empty()
+
+    def SetSimulationAlarmTick(self, request, context):
+        for q in self.alarm_subscribe_clients:
+            q.put_nowait(request)
+        gevent.sleep(0.000001)
+        return Empty()
 
 def serve():
     skip_ydata_loading = False

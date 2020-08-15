@@ -40,7 +40,6 @@ SOURCES += \
            MinuteData.cpp \
            DayDataProvider.cpp \
            MinInfo.cpp \
-           RunSimulation.cpp \
            DataProvider.cpp 
 
 HEADERS += stock_provider.grpc.pb.h \
@@ -55,7 +54,6 @@ HEADERS += stock_provider.grpc.pb.h \
            StockSelectionThread.h \
            MinuteData.h \
            DayDataProvider.h \
-           RunSimulation.h \
            Util.h \
            MinInfo.h \
            DataProvider.h 

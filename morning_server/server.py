@@ -97,7 +97,7 @@ def handle_request_cybos(sock, header, body):
             header['until'] = v[1]
             stream_write(collector.sock, header, body, client_manager)
     else:
-        logger.info('HEADER(cached) %s', header)
+        #logger.info('HEADER(cached) %s', header)
         header['type'] = message.RESPONSE
         stream_write(sock, header, data)
 
@@ -107,7 +107,7 @@ def handle_request_kiwoom(sock, header, body):
 
 
 def handle_request(sock, header, body):
-    logger.info('HANDLE REQUEST %s', header)
+    #logger.info('HANDLE REQUEST %s', header)
     if header['method'] == message.SUBSCRIBE_STATS:
         header['type'] = message.RESPONSE
         stream_write(sock, header, morning_stat.get_subscribe_response_info())
@@ -131,7 +131,7 @@ def handle_request(sock, header, body):
     elif header['vendor'] == message.KIWOOM:
         handle_request_kiwoom(sock, header, body)
 
-    logger.info('HANDLE REQUEST DONE')
+    #logger.info('HANDLE REQUEST DONE')
 
 
 def handle_subscribe(sock, header, body):
@@ -154,7 +154,7 @@ def handle_subscribe_response(sock, header, body):
     if 'code' in header:
         code = header['code']
         client_manager.broadcast_subscribe_data(code, header, body)
-        morning_stat.increment_subscribe_count(code)
+        #morning_stat.increment_subscribe_count(code)
     else:
         logger.warning('ERROR) NO code in subscribe response header')
     #logger.info('HANDLE SUBSCRIBE RESPONSE DONE')

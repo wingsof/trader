@@ -67,7 +67,7 @@ public:
     void requestMinuteData(const QString &code, const QDateTime &fromTime, const QDateTime &untilTime);
     void setCurrentStock(const QString &code);
     void setCurrentDateTime(const QDateTime &dt);
-    void startSimulation();
+    void startSimulation(const QDateTime &dt, qreal speed);
     void stopSimulation();
 
     QStringList getSubscribeCodes();

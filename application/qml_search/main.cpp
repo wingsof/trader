@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
     QFont f = app.font();
-    f.setPointSize(11);
+    f.setPointSize(10);
     app.setFont(f);
 
     QQmlApplicationEngine engine("main.qml");

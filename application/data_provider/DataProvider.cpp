@@ -14,7 +14,7 @@
 #include "MinuteData.h"
 #include "DayDataProvider.h"
 #include "SimulationEvent.h"
-#include "RunSimulation.h"
+//#include "RunSimulation.h"
 #include "TraderThread.h"
 
 
@@ -52,6 +52,7 @@ using stock_api::TradeMsgType;
 using stock_api::OrderType;
 using stock_api::Bool;
 using stock_api::Prices;
+using stock_api::SimulationOperation;
 
 
 DataProvider::DataProvider()
@@ -204,19 +205,34 @@ void DataProvider::startStockCodeListening() {
 }
 
 
-void DataProvider::startSimulation() {
+void DataProvider::startSimulation(const QDateTime &dt, qreal speed) {
+    /*
     if (m_simulationStatus == STOP) {
         RunSimulation * rs = new RunSimulation(stub_);
         connect(rs, &RunSimulation::finished, this, &DataProvider::simulationStopped);
         connect(rs, &RunSimulation::finished, rs, &RunSimulation::deleteLater);
         rs->start();
         m_simulationStatus = STOP_TO_RUNNING;
-    }
+    }*/
+    ClientContext context;
+    SimulationOperation op;
+    Timestamp *t = new Timestamp(TimeUtil::TimeTToTimestamp(dt.toTime_t()));
+    op.set_is_on(true);
+    op.set_allocated_start_datetime(t);
+    op.set_speed(speed);
+    Bool ret;
+    stub_->StartSimulation(&context, op, &ret);
 }
 
 
 void DataProvider::simulationStopped() {
     qWarning() << "simulationStopped";
+    ClientContext context;
+    Empty empty;
+    Empty retEmpty;
+    stub_->StopSimulation(&context, empty, &retEmpty);
+
+    /*
     if (m_simulationStatus == STOP_TO_RUNNING) {
         m_simulationStatus = STOP;
     }
@@ -224,7 +240,7 @@ void DataProvider::simulationStopped() {
         SimulationStatus status;
         status.set_simulation_on(false);
         setSimulationStatus(&status);
-    }
+    }*/
 }
 
 
