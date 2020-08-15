@@ -9,6 +9,7 @@ import select
 import traceback
 import sys
 
+from gevent.queue import Queue
 from morning_server import message
 
 READ_PACKET_SIZE=8192

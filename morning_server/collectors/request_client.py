@@ -73,13 +73,14 @@ def callback_stock_subscribe(code, datas):
 
 def send_test_subscribe_response(code):
     from pymongo import MongoClient
-    code = 'A' + code[1:]    
+    rcode = 'A' + code[1:]    
     db = MongoClient('mongodb://' + client_info.get_mongo_id() + ':' + client_info.get_mongo_password() + '@' + client_info.get_server_ip() + ':27017')['trade_alarm']
     target_date = datetime(2020, 8, 24, 9, 0, 0)
     until_date = target_date + timedelta(seconds=60)
-    data = list(db[code].find({'date': {'$gte': target_date, '$lte': until_date}}))
+    data = list(db[rcode].find({'date': {'$gte': target_date, '$lte': until_date}}))
     for d in data:
         d.pop('_id')
+        print(d['date'])
         callback_stock_subscribe(code, [d])
 
 
