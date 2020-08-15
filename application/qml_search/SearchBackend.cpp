@@ -94,6 +94,7 @@ void SearchBackend::setServerDateTime(const QDateTime &dt) {
 
 void SearchBackend::setSimulationSpeed(qreal s) {
     if (m_simulationSpeed != s) {
+        qWarning() << "Spped SET : "<< s;
         m_simulationSpeed = s;
         emit simulationSpeedChanged();
     }

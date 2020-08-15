@@ -12,6 +12,7 @@ from morning_server.collectors.cybos_api import trade_util, long_manifest_6033, 
 from configs import client_info
 
 from morning_server.collectors import shutdown
+from datetime import datetime, timedelta
 
 
 _client_name = 'UNKNOWN'
@@ -68,6 +69,18 @@ def callback_stock_subscribe(code, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.STOCK_DATA)
     header['code'] = code
     stream_readwriter.write(_sock, header, datas)
+
+
+def send_test_subscribe_response(code):
+    from pymongo import MongoClient
+    code = 'A' + code[1:]    
+    db = MongoClient('mongodb://' + client_info.get_mongo_id() + ':' + client_info.get_mongo_password() + '@' + client_info.get_server_ip() + ':27017')['trade_alarm']
+    target_date = datetime(2020, 8, 24, 9, 0, 0)
+    until_date = target_date + timedelta(seconds=60)
+    data = list(db[code].find({'date': {'$gte': target_date, '$lte': until_date}}))
+    for d in data:
+        d.pop('_id')
+        callback_stock_subscribe(code, [d])
 
 
 def callback_bidask_subscribe(code, datas):
@@ -189,6 +202,9 @@ def handle_subscribe(sock, header, body):
     if header['method'] == message.STOCK_DATA:
         if code.startswith('ZZ'):
             print(_client_name, 'SUBSCRIBE TEST OK')
+            return
+        elif code.startswith('T'):
+            send_test_subscribe_response(code)
             return
 
         if code not in subscribe_stock:

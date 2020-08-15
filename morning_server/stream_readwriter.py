@@ -29,7 +29,9 @@ class MessageReader(gevent.Greenlet):
         self.clients = dict()
         self.subscribers = dict()
         self.trade_subscriber = None
+        self.subscriber_queue = Queue()
         self._stop_event = Event()
+        gevent.spawn(self.subscribe_broadcast)
 
     def block_write(self, header, body):
         msg_id = header['_id']
@@ -39,6 +41,11 @@ class MessageReader(gevent.Greenlet):
         obj = self.clients[msg_id][1]
         self.clients.pop(msg_id, None)
         return obj
+
+    def subscribe_broadcast(self):
+        while True:
+            data = self.subscriber_queue.get(True)
+            data[0](data[1], data[2])
 
     def subscribe_write(self, header, body, code, handler):
         if code in self.subscribers:
@@ -87,7 +94,8 @@ class MessageReader(gevent.Greenlet):
                     self.clients[msg_id][0].set()
                 elif header_type == message.SUBSCRIBE_RESPONSE:
                     code = packet['header']['code']
-                    gevent.spawn(self.subscribers[code], code, packet['body'])
+                    #gevent.spawn(self.subscribers[code], code, packet['body'])
+                    self.subscriber_queue.put_nowait((self.subscribers[code], code, packet['body']))
                     #self.subscribers[code](code, packet['body'])
                 elif header_type == message.TRADE_SUBSCRIBE_RESPONSE:
                     if self.trade_subscriber is not None:

@@ -28,6 +28,7 @@ from gevent.queue import Queue
 from candidate import favorite
 import todaydata
 import config
+from plugins import starter
 
 
 recent_search_codes = []
@@ -58,8 +59,8 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.current_datetime = None
         self.simulation_on = False
         self.simulation_operators = []
-
         preload.load(datetime.now(), self.skip_ydata)
+
         print('StockService init ready')
 
     def GetDayData(self, request, context):
@@ -709,10 +710,13 @@ def serve():
     if len(sys.argv) > 1 and sys.argv[1] == 'skip':
         skip_ydata_loading = True
 
+    gevent.spawn(starter.start_plugins)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=60))
     stock_provider_pb2_grpc.add_StockServicer_to_server(StockServicer(skip_ydata_loading), server)
     server.add_insecure_port('[::]:50052')
     server.start()
+
+    print('wait for termination')
     server.wait_for_termination()
 
 
