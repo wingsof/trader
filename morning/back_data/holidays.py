@@ -83,3 +83,8 @@ def get_working_days(from_date, until_date):
         from_date += timedelta(days=1)
     
     return working_days
+
+
+if __name__ == '__main__':
+    from datetime import datetime
+    print('08-17', is_holidays(datetime(2020, 8, 17)))
