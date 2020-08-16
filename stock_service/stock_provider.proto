@@ -7,6 +7,8 @@ package stock_api;
 
 
 service Stock {
+  rpc SayHello(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+
   rpc GetDayData(StockQuery) returns (CybosDayDatas) {}
   rpc GetMinuteData(StockQuery) returns (CybosDayDatas) {}
   rpc GetTodayMinuteData(StockCodeQuery) returns (CybosDayDatas) {}
@@ -47,11 +49,12 @@ service Stock {
 
   rpc SetTodayAmountRatioList(CodeList) returns (google.protobuf.Empty) {}
   rpc SetTodayAmountMomentumList(CodeList) returns (google.protobuf.Empty) {}
+  rpc SetTodayAmountTopList(CodeList) returns (google.protobuf.Empty) {}
 
-  rpc GetTodayTopAmountList(Option) returns (CodeList) {}
+  rpc GetTodayTopAmountList(TodayTopOption) returns (CodeList) {}
   rpc GetTodayNineThirtyList(google.protobuf.Empty) returns (CodeList) {}
   rpc GetRecentSearch(google.protobuf.Empty) returns (CodeList) {}
-  rpc GetViList(Option) returns (CodeList) {}
+  rpc GetViList(google.protobuf.Empty) returns (CodeList) {}
 
   rpc ListenCurrentStock(google.protobuf.Empty) returns (stream StockCodeQuery) {}
   rpc ListenListChanged(google.protobuf.Empty) returns (stream ListType) {}
@@ -100,10 +103,16 @@ message Bool {
 }
 
 
-message Option {
-    int32 type = 1;
-    bool catch_plus = 2;
-    bool use_accumulated = 3;
+
+enum TodayTopSelection{
+    TOP_BY_RATIO = 0;
+    TOP_BY_MOMENTUM = 1;
+    TOP_BY_AMOUNT = 2;
+}
+
+
+message TodayTopOption {
+    TodayTopSelection selection = 1;
 }
 
 

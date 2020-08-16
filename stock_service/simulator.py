@@ -10,17 +10,17 @@ from gevent.queue import Queue
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 2))))
-
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 1))))
 
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 
-import stock_provider_pb2_grpc
-import stock_provider_pb2
-
 from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.empty_pb2 import Empty
+
+from stock_service import stock_provider_pb2_grpc
+from stock_service import stock_provider_pb2
+
 
 
 AT_ONCE_SECONDS = 60

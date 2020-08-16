@@ -44,7 +44,6 @@ using stock_api::CybosBidAskTickData;
 using stock_api::CybosSubjectTickData;
 using google::protobuf::Timestamp;
 using stock_api::SimulationStatus;
-using stock_api::Option;
 using stock_api::OrderResult;
 using stock_api::OrderMsg;
 using stock_api::TradeMsg;
@@ -53,6 +52,7 @@ using stock_api::OrderType;
 using stock_api::Bool;
 using stock_api::Prices;
 using stock_api::SimulationOperation;
+using stock_api::TodayTopOption;
 
 
 DataProvider::DataProvider()
@@ -349,13 +349,11 @@ QStringList DataProvider::getFavoriteList() {
 }
 
 
-QStringList DataProvider::getViList(int option, bool catchPlus) {
+QStringList DataProvider::getViList() {
     ClientContext context;
     CodeList * codeList = new CodeList;
-    Option opt;
-    opt.set_type(option);
-    opt.set_catch_plus(catchPlus);
-    stub_->GetViList(&context, opt, codeList);
+    Empty empty;
+    stub_->GetViList(&context, empty, codeList);
     QStringList list;
     for (int i = 0; i < codeList->codelist_size(); i++)
         list.append(QString::fromStdString(codeList->codelist(i)));
@@ -403,13 +401,11 @@ void DataProvider::sendBalanceRequest() {
 }
 
 
-QStringList DataProvider::getTtopAmountList(int option, bool catchPlus, bool useAccumulated) {
+QStringList DataProvider::getTtopAmountList(TodayTopSelection s) {
     ClientContext context;
     CodeList * codeList = new CodeList;
-    Option opt;
-    opt.set_type(option);
-    opt.set_catch_plus(catchPlus);
-    opt.set_use_accumulated(useAccumulated);
+    TodayTopOption opt;
+    opt.set_selection(s);
     stub_->GetTodayTopAmountList(&context, opt, codeList);
     QStringList list;
     for (int i = 0; i < codeList->codelist_size(); i++)

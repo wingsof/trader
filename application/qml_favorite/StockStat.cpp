@@ -30,8 +30,8 @@ bool StockStat::isInFavoriteList(const QString &code) const {
 }
 
 
-QStringList StockStat::getViList(int option, bool catchPlus) {
-    return DataProvider::getInstance()->getViList(option, catchPlus);
+QStringList StockStat::getViList() {
+    return DataProvider::getInstance()->getViList();
 }
 
 
@@ -40,8 +40,8 @@ QStringList StockStat::getTnineThirtyList() {
 }
 
 
-QStringList StockStat::getTtopAmountList(int option, bool catchPlus, bool useAccumulated) {
-    return DataProvider::getInstance()->getTtopAmountList(option, catchPlus, useAccumulated);
+QStringList StockStat::getTtopAmountList(TodayTopSelection s) {
+    return DataProvider::getInstance()->getTtopAmountList(s);
 }
 
 

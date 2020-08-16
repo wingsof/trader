@@ -9,26 +9,25 @@ import gevent
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 2))))
-import gc
-
-import preload
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 1))))
 from concurrent import futures
-import stock_provider_pb2_grpc
-import stock_provider_pb2
-
 from datetime import datetime, timedelta
-from clients.common import morning_client
-from morning.back_data import holidays
 from pymongo import MongoClient
-from morning_server import stock_api
+from gevent.queue import Queue
+
 from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.empty_pb2 import Empty
-from gevent.queue import Queue
-from candidate import favorite
-import todaydata
-import config
-from plugins import starter
+
+from stock_service import stock_provider_pb2_grpc
+from stock_service import stock_provider_pb2
+from stock_service import preload
+from stock_service import todaydata
+from clients.common import morning_client
+from morning.back_data import holidays
+from morning_server import stock_api
+from stock_service.candidate import favorite
+
+from utils import trade_logger
 
 
 recent_search_codes = []
@@ -38,12 +37,15 @@ is_subscribe_tick = {}
 is_subscribe_bidask = {}
 is_subscribe_subject = {}
 
+_LOGGER = trade_logger.get_logger('GRPC_SERVICE')
+
 
 
 class StockServicer(stock_provider_pb2_grpc.StockServicer):
     def __init__(self, is_skip_ydata):
-        print('StockService init start')
+        _LOGGER.info('StockService init start')
         self.skip_ydata = is_skip_ydata
+
         self.stock_subscribe_clients = []
         self.bidask_subscribe_cilents = []
         self.subject_subscribe_clients = []
@@ -56,15 +58,21 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.cybos_order_result_subscribe_clients = []
         self.trader_clients = []
         self.current_stock_code = ""
+        self.simulation_operators = []
+
         self.current_datetime = None
         self.simulation_on = False
-        self.simulation_operators = []
+        self.today_top_list = {'momentum': [], 'ratio': [], 'amount': []}
         preload.load(datetime.now(), self.skip_ydata)
 
-        print('StockService init ready')
+        _LOGGER.info('StockService init ready')
+
+    def SayHello(self, request, context):
+        _LOGGER.info('Say Hello')
+        return Empty()
 
     def GetDayData(self, request, context):
-        print('GetDayData', request.code,
+        _LOGGER.info('GetDayData %s, %s, %s', request.code,
                             request.from_datetime.ToDatetime() + timedelta(hours=9),
                             request.until_datetime.ToDatetime() + timedelta(hours=9))
         day_datas = morning_client.get_past_day_data(
@@ -91,7 +99,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
 
     def GetMinuteData(self, request, context):
-        print('GetMinuteData', request.code,
+        _LOGGER.info('GetMinuteData %s %s %s', request.code,
                                request.from_datetime.ToDatetime() + timedelta(hours=9),
                                request.until_datetime.ToDatetime() + timedelta(hours=9))
         minute_datas = morning_client.get_minute_data(
@@ -119,7 +127,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
 
     def GetTodayMinuteData(self, request, context):
-        print("GetTodayMinuteData", request)
+        _LOGGER.info("GetTodayMinuteData %s", request)
         minute_datas = morning_client.get_today_minute_data(request.code)
         protoc_converted = []
         for m in minute_datas:
@@ -143,7 +151,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
 
     def GetPastMinuteData(self, request, context):
-        print('GetPastMinuteData', request)
+        _LOGGER.info('GetPastMinuteData %s', request)
         today = request.today.ToDatetime()
         yesterday = holidays.get_yesterday(today)
         from_date = holidays.get_date_by_previous_working_day_count(yesterday, request.count_of_days - 1)
@@ -192,10 +200,10 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         if request.code not in is_subscribe_tick:
             stock_api.subscribe_stock(morning_client.get_reader(),
                                     request.code, self.handle_stock_tick)
-            print('Start SubscribeStock', request.code)
+            _LOGGER.info('Start SubscribeStock %s', request.code)
             is_subscribe_tick[request.code] = True
         else:
-            print('Already SubscribeStock', request.code)
+            _LOGGER.info('Already SubscribeStock %s', request.code)
         return Empty()
 
     def RequestCybosBidAsk(self, request, context):
@@ -203,10 +211,10 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         if request.code not in is_subscribe_bidask:
             stock_api.subscribe_stock_bidask(morning_client.get_reader(),
                                             request.code, self.handle_bidask_tick)
-            print('Start Subscribe BidAsk', request.code)
+            _LOGGER.info('Start Subscribe BidAsk %s', request.code)
             is_subscribe_bidask[request.code] = True
         else:
-            print('Already Subscribe BidAsk', request.code)
+            _LOGGER.info('Already Subscribe BidAsk %s', request.code)
         return Empty()
 
     def RequestCybosSubject(self, request, context):
@@ -214,10 +222,10 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         if request.code not in is_subscribe_subject:
             stock_api.subscribe_stock_subject(morning_client.get_reader(),
                                             request.code, self.handle_subject_tick) 
-            print('Start Subscribe Subject', request.code)
+            _LOGGER.info('Start Subscribe Subject %s', request.code)
             is_subscribe_subject[request.code] = True
         else:
-            print('Already Subscribe Subject', request.code)
+            _LOGGER.info('Already Subscribe Subject %s', request.code)
         return Empty()
 
     def RequestCybosAlarm(self, request, context):
@@ -226,22 +234,22 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         if not is_subscribe_alarm:
             stock_api.subscribe_alarm(morning_client.get_reader(),
                                         self.handle_alarm_tick)
-            print('Start Subscribe alarm')
+            _LOGGER.info('Start Subscribe alarm')
             is_subscribe_alarm = True
         else:
-            print('Already subscribe alarm')
+            _LOGGER.info('Already subscribe alarm')
         return Empty()
 
     def RequestCybosTradeResult(self, request, context):
         global is_subscribe_trade
 
         if not is_subscribe_trade:
-            print('Start Trade Result')
+            _LOGGER.info('Start Trade Result')
             stock_api.subscribe_trade(morning_client.get_reader(),
                                         self.handle_trade_result)
             is_subscribe_trade = True
         else:
-            print('Already subscribe trade')
+            _LOGGER.info('Already subscribe trade')
         return Empty()
 
     def GetBalance(self, request, context):
@@ -279,12 +287,11 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             recent_search_codes.insert(0, request.code)
             self.send_list_changed('recent')
 
-        print('SetCurrentStock', request.code())
+        _LOGGER.debug('SetCurrentStock %s', request.code())
         return Empty()
 
     def SetCurrentDateTime(self, request ,context):
-        print('SetCurrentDateTime : ', request.ToDatetime())
-        #todaydata.clear_all()
+        #_LOGGER.debug('SetCurrentDateTime %s', request.ToDatetime())
 
         if not self.simulation_on:
             preload.load(request.ToDatetime() + timedelta(hours=9), self.skip_ydata)
@@ -292,34 +299,44 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return Empty()
 
     def AddFavorite(self, request, context):
-        print('AddFavorite', request.code)
+        _LOGGER.debug('AddFavorite %s', request.code)
         if favorite.add_to_favorite(request.code):
             self.send_list_changed('favorite')
         return Empty()
 
     def RemoveFavorite(self, request, context):
-        print('RemoveFavorite', request.code)
+        _LOGGER.debug('RemoveFavorite %s', request.code)
         if favorite.remove_from_favorite(request.code):
             self.send_list_changed('favorite')
         return Empty()
 
     def GetViList(self, request, context):
-        print('GetViList', request.type)
-        return stock_provider_pb2.CodeList(codelist=todaydata.get_vi(request.type, request.catch_plus))
+        _LOGGER.info('GetViList')
+        return stock_provider_pb2.CodeList(codelist=[])
 
     def GetTodayTopAmountList(self, request, context):
-        print('GetTodayTopAmountList')
-        return stock_provider_pb2.CodeList(codelist=todaydata.get_today_list(request.type, request.catch_plus, request.use_accumulated))
+        _LOGGER.info('GetTodayTopAmountList')
+        codelist = None
+        if request.selection == stock_provider_pb2.TodayTopSelection.TOP_BY_RATIO:
+            codelist = self.today_top_list['ratio']
+        elif request.selection == stock_provider_pb2.TodayTopSelection.TOP_BY_MOMENTUM:
+            codelist = self.today_top_list['momentum']
+        elif request.selection == stock_provider_pb2.TodayTopSelection.TOP_BY_AMOUNT:
+            codelist = self.today_top_list['amount']
+
+        if codelist is None:
+            codelist = []
+        return stock_provider_pb2.CodeList(codelist=codelist)
 
 
     def GetTodayNineThirtyList(self, request, context):
-        print('GetTodayNineThirtyList')
+        _LOGGER.info('GetTodayNineThirtyList')
         return stock_provider_pb2.CodeList(codelist=todaydata.get_ninethirty_list())
 
 
     def SetSimulationStatus(self, request, context):
         if self.simulation_on ^ request.simulation_on:
-            print('Simulation status changed', request.simulation_on)
+            _LOGGER.info('Simulation status changed %s', request.simulation_on)
             self.simulation_on = request.simulation_on
             for q in self.simulation_changed_subscribe_clients:
                 q.put_nowait(stock_provider_pb2.SimulationStatus(simulation_on=self.simulation_on))
@@ -376,13 +393,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         data = data_arr[0]
         tick_date = Timestamp()
         tick_date.FromDatetime(data['date'] - timedelta(hours=9))
-        """
-        ret = todaydata.handle_today_tick(code, data)
-        if ret & config.CAND_TODAY_BUL:
-            self.send_list_changed('ttopamount')
-        if ret & config.CAND_NINETHIRTY:
-            self.send_list_changed('ninethirty')
-        """
+
         tick_data = stock_provider_pb2.CybosTickData(tick_date=tick_date,
                                                 code=code,
                                                 company_name=data['1'],
@@ -472,7 +483,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         }
         """
         if 'flag' not in data or 'quantity' not in data or 'code' not in data:
-            print('RESULT without flag or quantity %s', str(data))
+            _LOGGER.warning('RESULT without flag or quantity %s', str(data))
         else:
             data = stock_provider_pb2.CybosOrderResult(flag=ord(data['flag']),
                                                         code=data['code'],
@@ -481,7 +492,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                         is_buy=(data['order_type'] == '2'),
                                                         quantity=data['quantity'],
                                                         total_quantity=data['total_quantity'])
-            print(data)
+            _LOGGER.info('TRADE RESULT %s', data)
             for q in self.cybos_order_result_subscribe_clients:
                 q.put_nowait(data)
 
@@ -497,7 +508,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         client_list = self.current_time_subscribe_clients
         q = Queue()
         client_list.append(q)
-        print(title, len(client_list))
+        _LOGGER.info('%s %d', title, len(client_list))
 
         current = Timestamp()
         if self.current_datetime is None:
@@ -514,12 +525,12 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             except gevent.queue.Empty as ge:
                 pass
         client_list.remove(q)
-        print('Done', title, len(client_list))
+        _LOGGER.info('Done %s %d', title, len(client_list))
 
     def handle_queue_based_listener(self, title, client_list, context):
         q = Queue()
         client_list.append(q)
-        print(title, len(client_list))
+        _LOGGER.info('%s %d', title, len(client_list))
         while context.is_active():
             try:
                 data = q.get(True, 1)
@@ -527,7 +538,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             except gevent.queue.Empty as ge:
                 pass
         client_list.remove(q)
-        print('Done', title, len(client_list))
+        _LOGGER.info('Done %s %d', title, len(client_list))
 
     def ListenCurrentStock(self, request, context):
         if len(self.current_stock_code) > 0:
@@ -617,32 +628,41 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
     def GetFavoriteList(self, request, context):
         return stock_provider_pb2.CodeList(codelist=favorite.get_favorite())
 
+    def SetTodayAmountTopList(self, request, context):
+        _LOGGER.info('AMOUNT LIST %d', len(request.codelist))
+        self.today_top_list['amount'] = request.codelist
+        # this is last one in today_bull, only call list changed in here to avoid duplication
+        self.send_list_changed('ttopamount')
+        return Empty()
+
     def SetTodayAmountRatioList(self, request, context):
-        print('RATIO', request.codelist)
+        _LOGGER.info('RATIO LIST %d', len(request.codelist))
+        self.today_top_list['ratio'] = request.codelist
         return Empty()
 
     def SetTodayAmountMomentumList(self, request, context):
-        print('MOMENTUM', request.codelist)
+        _LOGGER.info('MOMENTUM LIST %d', len(request.codelist))
+        self.today_top_list['momentum'] = request.codelist
         return Empty()
 
     def GetYesterdayTopAmountList(self, request, context):
         dt = request.ToDatetime() + timedelta(hours=9)
         top_list = morning_client.get_yesterday_top_amount(dt) 
-        print('GetYesterdayTopAmountList', dt, 'count : ', len(top_list[0]), top_list[1], top_list[2])
+        _LOGGER.info('GetYesterdayTopAmountList %s count:%d %s %s', dt, len(top_list[0]), top_list[1], top_list[2])
         return stock_provider_pb2.TopList(codelist=top_list[0], is_today_data=top_list[1], date=top_list[2])
 
     def OrderStock(self, request, context):
         ret = stock_api.order_stock(morning_client.get_reader(), request.code, request.price, request.quantity, request.is_buy)
-        print('OrderStock', request, ret)
+        _LOGGER.info('OrderStock %s, RET: %s', request, ret)
         return stock_provider_pb2.CybosOrderReturn(result=ret['status'], msg=ret['msg'])
 
     def ChangeOrder(self, request, context):
         try:
             order_num = int(request.order_num)
             ret = stock_api.modify_order(morning_client.get_reader(), order_num, request.code, request.price)
-            print('ChangeOrder', request, ret)
+            _LOGGER.info('ChangeOrder %s, RET: %s', request, ret)
         except ValueError as ve:
-            print('ValueError', ve)
+            _LOGGER.warning('ValueError %s', ve)
             return stock_provider_pb2.CybosOrderReturn(order_num=0, msg='Value Error ' + str(request.order_num))
 
         return stock_provider_pb2.CybosOrderReturn(order_num=ret['order_number'])
@@ -651,31 +671,31 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         try:
             order_num = int(request.order_num)
             ret = stock_api.cancel_order(morning_client.get_reader(), order_num, request.code, request.quantity)
-            print('CancelOrder', request, ret)
+            _LOGGER.info('CancelOrder %s RET: %s', request, ret)
         except ValueError as ve:
-            print('ValueError', ve)
+            _LOGGER.warning('ValueError %s', ve)
             return stock_provider_pb2.CybosOrderReturn(result=['result'], msg='Value Error ' + request.order_num)
 
         return stock_provider_pb2.CybosOrderReturn(result=ret['result'])
 
     def StartSimulation(self, request, context):
         if preload.loading:
-            print('Preloading data, cannot start simulation')
+            _LOGGER.info('Preloading data, cannot start simulation')
             return stock_provider_pb2.Bool(ret=False)
         elif len(self.simulation_operators) == 0:
-            print('No Simulation Exist')
+            _LOGGER.info('No Simulation Exist')
             return stock_provider_pb2.Bool(ret=False)
 
-        print('Start Simulation', request)
+        _LOGGER.info('Start Simulation %s', request)
         for q in self.simulation_operators:
             q.put_nowait(request)    
         return stock_provider_pb2.Bool(ret=True)
 
     def StopSimulation(self, request, context):
         if len(self.simulation_operators) == 0:
-            print('No Simulator running')
+            _LOGGER.info('No simulator running')
         else:
-            print('StopSimulation')
+            _LOGGER.info('StopSimulation')
 
         msg = stock_provider_pb2.SimulationOperation(is_on=False)
         for q in self.simulation_operators:
@@ -705,20 +725,18 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         gevent.sleep(0.000001)
         return Empty()
 
-def serve():
-    skip_ydata_loading = False
-    if len(sys.argv) > 1 and sys.argv[1] == 'skip':
-        skip_ydata_loading = True
-
-    gevent.spawn(starter.start_plugins)
+def serve(is_skip_ydata):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=60))
-    stock_provider_pb2_grpc.add_StockServicer_to_server(StockServicer(skip_ydata_loading), server)
+    stock_provider_pb2_grpc.add_StockServicer_to_server(StockServicer(is_skip_ydata), server)
     server.add_insecure_port('[::]:50052')
     server.start()
 
-    print('wait for termination')
     server.wait_for_termination()
 
 
 if __name__ == '__main__':
-    serve()
+    skip_ydata_loading = False
+    if len(sys.argv) > 1 and sys.argv[1] == 'skip':
+        skip_ydata_loading = True
+
+    serve(skip_ydata_loading)

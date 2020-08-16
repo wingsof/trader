@@ -1,12 +1,14 @@
 import gevent
 import math
-import simulstatus
-import markettime
-import ordersheet
-from order import Order
+
+
+from stock_service.trade import simulstatus
+from stock_service.trade import markettime
+from stock_service.trade import ordersheet
+from stock_service.trade.order import Order
 from datetime import timedelta
 
-import stock_provider_pb2 as stock_provider
+from stock_service import stock_provider_pb2 as stock_provider
 
 
 IMMEDIATE_PRICE_POS = 2

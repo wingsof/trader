@@ -2,13 +2,11 @@ import logging
 import builtins
 import sys, os
 import logging.handlers
-from configs import client_info
-if client_info.TEST_MODE:
-    from clients.scalping_by_amount.mock import datetime
-else:
-    from datetime import datetime
+from datetime import datetime
 import os.path
 
+
+_logger = None
 
 def except_hook(exc_type, exc_value, traceback):
     if issubclass(exc_type, KeyboardInterrupt):
@@ -18,11 +16,11 @@ def except_hook(exc_type, exc_value, traceback):
     _logger.error('Logging an uncaught exception', exc_info=(exc_type, exc_value, traceback))
 
 
-def _setup_log():
+def _setup_log(pname):
     logg = logging.getLogger('TRADER')
     logg.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(levelname)s - %(message)s')
+    formatter = logging.Formatter(pname + '\t[%(process)d]%(levelname)s - %(message)s')
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
     logg.addHandler(stream_handler)
@@ -62,5 +60,9 @@ def log(msg, *args, **kwargs):
     _logger.log(str(datetime.now()) + '\t' + msg, *args, *kwargs)
 
 
-_logger = _setup_log()
-sys.excepthook = except_hook
+def get_logger(process_name):
+    global _logger
+    if _logger is None:
+        _logger = _setup_log(process_name)
+        sys.excepthook = except_hook
+    return _logger

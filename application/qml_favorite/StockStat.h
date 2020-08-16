@@ -54,9 +54,9 @@ public:
 
     QStringList getRecentSearch();
     QStringList getFavoriteList();
-    QStringList getViList(int option, bool catchPlus);
+    QStringList getViList();
     TopList * getYtopAmountList();
-    QStringList getTtopAmountList(int option, bool catchPlus, bool useAccumulated);
+    QStringList getTtopAmountList(TodayTopSelection s);
     QStringList getTnineThirtyList();
     void addToFavorite(const QString &code);
     void removeFromFavorite(const QString &code);

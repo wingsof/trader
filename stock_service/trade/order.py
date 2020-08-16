@@ -1,14 +1,14 @@
 import gevent
 import math
 import copy
-import simulstatus
-import markettime
-import trademachine
-import account
 from datetime import timedelta
 from google.protobuf.timestamp_pb2 import Timestamp
 
-import stock_provider_pb2 as sp
+from stock_service.trade import simulstatus
+from stock_service.trade import markettime
+from stock_service.trade import trademachine
+from stock_service.trade import account
+from stock_service import stock_provider_pb2 as sp
 
 
 class Order:

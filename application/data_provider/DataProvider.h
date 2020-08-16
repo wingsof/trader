@@ -29,6 +29,7 @@ using stock_api::SimulationStatus;
 using stock_api::TopList;
 using stock_api::OrderMethod;
 using stock_api::OrderResult;
+using stock_api::TodayTopSelection;
 using google::protobuf::Timestamp;
 
 
@@ -73,8 +74,8 @@ public:
     QStringList getSubscribeCodes();
     QStringList getRecentSearch();
     QStringList getFavoriteList();
-    QStringList getViList(int option, bool catchPlus);
-    QStringList getTtopAmountList(int option, bool catchPlus, bool useAccumulated);
+    QStringList getViList();
+    QStringList getTtopAmountList(TodayTopSelection s);
     QStringList getTnineThirtyList();
 
     TopList* getYtopAmountList();

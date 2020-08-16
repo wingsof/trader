@@ -9,19 +9,20 @@ grpc_gevent.init_gevent()
 
 import os
 import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 2))))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 1))))
 
 from gevent.queue import Queue
 from gevent.lock import Semaphore
-import stock_provider_pb2_grpc
-import stock_provider_pb2 as stock_provider
+from stock_service import stock_provider_pb2_grpc
+from stock_service import stock_provider_pb2 as stock_provider
 
 from google.protobuf.empty_pb2 import Empty
-import spread as sp
-import account
-import markettime
-import simulstatus
-import trademachine
+from stock_service.trade import spread as sp
+from stock_service.trade import account
+from stock_service.trade import markettime
+from stock_service.trade import simulstatus
+from stock_service.trade import trademachine
 
 from datetime import datetime
 
@@ -105,6 +106,7 @@ def trade_subscriber():
 
 def run():
     global stub
+    print('Start Trader')
     with grpc.insecure_channel('localhost:50052') as channel:  
         subscribe_handlers = []
         stub = stock_provider_pb2_grpc.StockStub(channel)

@@ -12,7 +12,7 @@ _uni_data = {}
 def load_uni_data(codes):
     now = datetime.now().date()
     for progress, code in enumerate(codes):
-        print('collect uni current data', f'{progress+1}/{len(codes)}', end='\r')
+        #print('collect uni current data', f'{progress+1}/{len(codes)}', end='\r')
         uni_c = morning_client.get_uni_current_period_data(code, now - timedelta(days=365), now)
         if len(uni_c) == 0:
             continue

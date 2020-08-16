@@ -16,6 +16,11 @@ class StockStub(object):
     Args:
       channel: A grpc.Channel.
     """
+    self.SayHello = channel.unary_unary(
+        '/stock_api.Stock/SayHello',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
     self.GetDayData = channel.unary_unary(
         '/stock_api.Stock/GetDayData',
         request_serializer=stock__provider__pb2.StockQuery.SerializeToString,
@@ -171,9 +176,14 @@ class StockStub(object):
         request_serializer=stock__provider__pb2.CodeList.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
+    self.SetTodayAmountTopList = channel.unary_unary(
+        '/stock_api.Stock/SetTodayAmountTopList',
+        request_serializer=stock__provider__pb2.CodeList.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
     self.GetTodayTopAmountList = channel.unary_unary(
         '/stock_api.Stock/GetTodayTopAmountList',
-        request_serializer=stock__provider__pb2.Option.SerializeToString,
+        request_serializer=stock__provider__pb2.TodayTopOption.SerializeToString,
         response_deserializer=stock__provider__pb2.CodeList.FromString,
         )
     self.GetTodayNineThirtyList = channel.unary_unary(
@@ -188,7 +198,7 @@ class StockStub(object):
         )
     self.GetViList = channel.unary_unary(
         '/stock_api.Stock/GetViList',
-        request_serializer=stock__provider__pb2.Option.SerializeToString,
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=stock__provider__pb2.CodeList.FromString,
         )
     self.ListenCurrentStock = channel.unary_stream(
@@ -281,6 +291,13 @@ class StockStub(object):
 class StockServicer(object):
   # missing associated documentation comment in .proto file
   pass
+
+  def SayHello(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
 
   def GetDayData(self, request, context):
     # missing associated documentation comment in .proto file
@@ -499,6 +516,13 @@ class StockServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def SetTodayAmountTopList(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def GetTodayTopAmountList(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -649,6 +673,11 @@ class StockServicer(object):
 
 def add_StockServicer_to_server(servicer, server):
   rpc_method_handlers = {
+      'SayHello': grpc.unary_unary_rpc_method_handler(
+          servicer.SayHello,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
       'GetDayData': grpc.unary_unary_rpc_method_handler(
           servicer.GetDayData,
           request_deserializer=stock__provider__pb2.StockQuery.FromString,
@@ -804,9 +833,14 @@ def add_StockServicer_to_server(servicer, server):
           request_deserializer=stock__provider__pb2.CodeList.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
+      'SetTodayAmountTopList': grpc.unary_unary_rpc_method_handler(
+          servicer.SetTodayAmountTopList,
+          request_deserializer=stock__provider__pb2.CodeList.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
       'GetTodayTopAmountList': grpc.unary_unary_rpc_method_handler(
           servicer.GetTodayTopAmountList,
-          request_deserializer=stock__provider__pb2.Option.FromString,
+          request_deserializer=stock__provider__pb2.TodayTopOption.FromString,
           response_serializer=stock__provider__pb2.CodeList.SerializeToString,
       ),
       'GetTodayNineThirtyList': grpc.unary_unary_rpc_method_handler(
@@ -821,7 +855,7 @@ def add_StockServicer_to_server(servicer, server):
       ),
       'GetViList': grpc.unary_unary_rpc_method_handler(
           servicer.GetViList,
-          request_deserializer=stock__provider__pb2.Option.FromString,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=stock__provider__pb2.CodeList.SerializeToString,
       ),
       'ListenCurrentStock': grpc.unary_stream_rpc_method_handler(

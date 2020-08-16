@@ -347,8 +347,6 @@ Module {
         prototype: "AbstractListModel"
         exports: ["favorite.backend/TtopAmountListModel 1.0"]
         exportMetaObjectRevisions: [0]
-        Property { name: "accumulatedPeriod"; type: "bool" }
-        Property { name: "catchPlus"; type: "bool" }
         Method {
             name: "menuClicked"
             Parameter { name: "index"; type: "int" }

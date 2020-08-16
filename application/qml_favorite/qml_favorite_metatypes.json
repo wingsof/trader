@@ -498,49 +498,7 @@
                     }
                 ],
                 "object": true,
-                "properties": [
-                    {
-                        "constant": false,
-                        "designable": true,
-                        "final": false,
-                        "name": "accumulatedPeriod",
-                        "notify": "accumulatedPeriodChanged",
-                        "read": "accumulatedPeriod",
-                        "required": false,
-                        "scriptable": true,
-                        "stored": true,
-                        "type": "bool",
-                        "user": false,
-                        "write": "setAccumulatedPeriod"
-                    },
-                    {
-                        "constant": false,
-                        "designable": true,
-                        "final": false,
-                        "name": "catchPlus",
-                        "notify": "catchPlusChanged",
-                        "read": "catchPlus",
-                        "required": false,
-                        "scriptable": true,
-                        "stored": true,
-                        "type": "bool",
-                        "user": false,
-                        "write": "setCatchPlus"
-                    }
-                ],
                 "qualifiedClassName": "TtopAmountListModel",
-                "signals": [
-                    {
-                        "access": "public",
-                        "name": "accumulatedPeriodChanged",
-                        "returnType": "void"
-                    },
-                    {
-                        "access": "public",
-                        "name": "catchPlusChanged",
-                        "returnType": "void"
-                    }
-                ],
                 "superClasses": [
                     {
                         "access": "public",

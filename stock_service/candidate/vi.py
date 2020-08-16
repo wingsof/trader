@@ -1,7 +1,7 @@
 from gevent import monkey; monkey.patch_all()
 from pymongo import MongoClient
 from datetime import datetime, timedelta
-from clients.grpc_converter import preload
+from stock_service import preload
 
 
 _code_info = {}  # key: code, value: [mark, price]

@@ -11,15 +11,15 @@ Item {
         MenuButton {
             buttonColor: 'yellow'
             firstText: 'ADD'
-            firstCheckText: '누적'
-            secondCheckText: '상승'
-            firstCheck: codeListView.model.accumulatedPeriod
-            secondCheck: codeListView.model.catchPlus
+            firstRadioText: '비율'
+            secondRadioText: '강도'
+            thirdRadioText: '합계'
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             Layout.preferredWidth: 200
             Layout.preferredHeight: 50
             onSelected: codeListView.model.menuClicked(index)
             onCheckStateChanged: codeListView.model.checkStateChanged(index, state)
+            onRadioButtonSelected: codeListView.model.checkStateChanged(index, true)
         }
 
         CodeListView {

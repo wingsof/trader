@@ -97,9 +97,6 @@ extern CybosTickDataDefaultTypeInternal _CybosTickData_default_instance_;
 class ListType;
 class ListTypeDefaultTypeInternal;
 extern ListTypeDefaultTypeInternal _ListType_default_instance_;
-class Option;
-class OptionDefaultTypeInternal;
-extern OptionDefaultTypeInternal _Option_default_instance_;
 class OrderMsg;
 class OrderMsgDefaultTypeInternal;
 extern OrderMsgDefaultTypeInternal _OrderMsg_default_instance_;
@@ -127,6 +124,9 @@ extern StockCodeQueryDefaultTypeInternal _StockCodeQuery_default_instance_;
 class StockQuery;
 class StockQueryDefaultTypeInternal;
 extern StockQueryDefaultTypeInternal _StockQuery_default_instance_;
+class TodayTopOption;
+class TodayTopOptionDefaultTypeInternal;
+extern TodayTopOptionDefaultTypeInternal _TodayTopOption_default_instance_;
 class TopList;
 class TopListDefaultTypeInternal;
 extern TopListDefaultTypeInternal _TopList_default_instance_;
@@ -148,7 +148,6 @@ template<> ::stock_api::CybosStockAlarm* Arena::CreateMaybeMessage<::stock_api::
 template<> ::stock_api::CybosSubjectTickData* Arena::CreateMaybeMessage<::stock_api::CybosSubjectTickData>(Arena*);
 template<> ::stock_api::CybosTickData* Arena::CreateMaybeMessage<::stock_api::CybosTickData>(Arena*);
 template<> ::stock_api::ListType* Arena::CreateMaybeMessage<::stock_api::ListType>(Arena*);
-template<> ::stock_api::Option* Arena::CreateMaybeMessage<::stock_api::Option>(Arena*);
 template<> ::stock_api::OrderMsg* Arena::CreateMaybeMessage<::stock_api::OrderMsg>(Arena*);
 template<> ::stock_api::OrderResult* Arena::CreateMaybeMessage<::stock_api::OrderResult>(Arena*);
 template<> ::stock_api::PastMinuteQuery* Arena::CreateMaybeMessage<::stock_api::PastMinuteQuery>(Arena*);
@@ -158,11 +157,38 @@ template<> ::stock_api::SimulationOperation* Arena::CreateMaybeMessage<::stock_a
 template<> ::stock_api::SimulationStatus* Arena::CreateMaybeMessage<::stock_api::SimulationStatus>(Arena*);
 template<> ::stock_api::StockCodeQuery* Arena::CreateMaybeMessage<::stock_api::StockCodeQuery>(Arena*);
 template<> ::stock_api::StockQuery* Arena::CreateMaybeMessage<::stock_api::StockQuery>(Arena*);
+template<> ::stock_api::TodayTopOption* Arena::CreateMaybeMessage<::stock_api::TodayTopOption>(Arena*);
 template<> ::stock_api::TopList* Arena::CreateMaybeMessage<::stock_api::TopList>(Arena*);
 template<> ::stock_api::TradeMsg* Arena::CreateMaybeMessage<::stock_api::TradeMsg>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace stock_api {
 
+enum TodayTopSelection : int {
+  TOP_BY_RATIO = 0,
+  TOP_BY_MOMENTUM = 1,
+  TOP_BY_AMOUNT = 2,
+  TodayTopSelection_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  TodayTopSelection_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+};
+bool TodayTopSelection_IsValid(int value);
+constexpr TodayTopSelection TodayTopSelection_MIN = TOP_BY_RATIO;
+constexpr TodayTopSelection TodayTopSelection_MAX = TOP_BY_AMOUNT;
+constexpr int TodayTopSelection_ARRAYSIZE = TodayTopSelection_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* TodayTopSelection_descriptor();
+template<typename T>
+inline const std::string& TodayTopSelection_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, TodayTopSelection>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function TodayTopSelection_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    TodayTopSelection_descriptor(), enum_t_value);
+}
+inline bool TodayTopSelection_Parse(
+    const std::string& name, TodayTopSelection* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<TodayTopSelection>(
+    TodayTopSelection_descriptor(), name, value);
+}
 enum OrderStatusFlag : int {
   STATUS_UNKNOWN = 0,
   STATUS_REGISTERED = 1,
@@ -823,23 +849,23 @@ class Bool :
 };
 // -------------------------------------------------------------------
 
-class Option :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.Option) */ {
+class TodayTopOption :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.TodayTopOption) */ {
  public:
-  Option();
-  virtual ~Option();
+  TodayTopOption();
+  virtual ~TodayTopOption();
 
-  Option(const Option& from);
-  Option(Option&& from) noexcept
-    : Option() {
+  TodayTopOption(const TodayTopOption& from);
+  TodayTopOption(TodayTopOption&& from) noexcept
+    : TodayTopOption() {
     *this = ::std::move(from);
   }
 
-  inline Option& operator=(const Option& from) {
+  inline TodayTopOption& operator=(const TodayTopOption& from) {
     CopyFrom(from);
     return *this;
   }
-  inline Option& operator=(Option&& from) noexcept {
+  inline TodayTopOption& operator=(TodayTopOption&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -857,37 +883,37 @@ class Option :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const Option& default_instance();
+  static const TodayTopOption& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const Option* internal_default_instance() {
-    return reinterpret_cast<const Option*>(
-               &_Option_default_instance_);
+  static inline const TodayTopOption* internal_default_instance() {
+    return reinterpret_cast<const TodayTopOption*>(
+               &_TodayTopOption_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     4;
 
-  friend void swap(Option& a, Option& b) {
+  friend void swap(TodayTopOption& a, TodayTopOption& b) {
     a.Swap(&b);
   }
-  inline void Swap(Option* other) {
+  inline void Swap(TodayTopOption* other) {
     if (other == this) return;
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline Option* New() const final {
-    return CreateMaybeMessage<Option>(nullptr);
+  inline TodayTopOption* New() const final {
+    return CreateMaybeMessage<TodayTopOption>(nullptr);
   }
 
-  Option* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<Option>(arena);
+  TodayTopOption* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TodayTopOption>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const Option& from);
-  void MergeFrom(const Option& from);
+  void CopyFrom(const TodayTopOption& from);
+  void MergeFrom(const TodayTopOption& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -901,10 +927,10 @@ class Option :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(Option* other);
+  void InternalSwap(TodayTopOption* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "stock_api.Option";
+    return "stock_api.TodayTopOption";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -929,45 +955,23 @@ class Option :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kTypeFieldNumber = 1,
-    kCatchPlusFieldNumber = 2,
-    kUseAccumulatedFieldNumber = 3,
+    kSelectionFieldNumber = 1,
   };
-  // int32 type = 1;
-  void clear_type();
-  ::PROTOBUF_NAMESPACE_ID::int32 type() const;
-  void set_type(::PROTOBUF_NAMESPACE_ID::int32 value);
+  // .stock_api.TodayTopSelection selection = 1;
+  void clear_selection();
+  ::stock_api::TodayTopSelection selection() const;
+  void set_selection(::stock_api::TodayTopSelection value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_type() const;
-  void _internal_set_type(::PROTOBUF_NAMESPACE_ID::int32 value);
+  ::stock_api::TodayTopSelection _internal_selection() const;
+  void _internal_set_selection(::stock_api::TodayTopSelection value);
   public:
 
-  // bool catch_plus = 2;
-  void clear_catch_plus();
-  bool catch_plus() const;
-  void set_catch_plus(bool value);
-  private:
-  bool _internal_catch_plus() const;
-  void _internal_set_catch_plus(bool value);
-  public:
-
-  // bool use_accumulated = 3;
-  void clear_use_accumulated();
-  bool use_accumulated() const;
-  void set_use_accumulated(bool value);
-  private:
-  bool _internal_use_accumulated() const;
-  void _internal_set_use_accumulated(bool value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:stock_api.Option)
+  // @@protoc_insertion_point(class_scope:stock_api.TodayTopOption)
  private:
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
-  ::PROTOBUF_NAMESPACE_ID::int32 type_;
-  bool catch_plus_;
-  bool use_accumulated_;
+  int selection_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_stock_5fprovider_2eproto;
 };
@@ -5171,66 +5175,26 @@ inline void Bool::set_ret(bool value) {
 
 // -------------------------------------------------------------------
 
-// Option
+// TodayTopOption
 
-// int32 type = 1;
-inline void Option::clear_type() {
-  type_ = 0;
+// .stock_api.TodayTopSelection selection = 1;
+inline void TodayTopOption::clear_selection() {
+  selection_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 Option::_internal_type() const {
-  return type_;
+inline ::stock_api::TodayTopSelection TodayTopOption::_internal_selection() const {
+  return static_cast< ::stock_api::TodayTopSelection >(selection_);
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 Option::type() const {
-  // @@protoc_insertion_point(field_get:stock_api.Option.type)
-  return _internal_type();
+inline ::stock_api::TodayTopSelection TodayTopOption::selection() const {
+  // @@protoc_insertion_point(field_get:stock_api.TodayTopOption.selection)
+  return _internal_selection();
 }
-inline void Option::_internal_set_type(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void TodayTopOption::_internal_set_selection(::stock_api::TodayTopSelection value) {
   
-  type_ = value;
+  selection_ = value;
 }
-inline void Option::set_type(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_type(value);
-  // @@protoc_insertion_point(field_set:stock_api.Option.type)
-}
-
-// bool catch_plus = 2;
-inline void Option::clear_catch_plus() {
-  catch_plus_ = false;
-}
-inline bool Option::_internal_catch_plus() const {
-  return catch_plus_;
-}
-inline bool Option::catch_plus() const {
-  // @@protoc_insertion_point(field_get:stock_api.Option.catch_plus)
-  return _internal_catch_plus();
-}
-inline void Option::_internal_set_catch_plus(bool value) {
-  
-  catch_plus_ = value;
-}
-inline void Option::set_catch_plus(bool value) {
-  _internal_set_catch_plus(value);
-  // @@protoc_insertion_point(field_set:stock_api.Option.catch_plus)
-}
-
-// bool use_accumulated = 3;
-inline void Option::clear_use_accumulated() {
-  use_accumulated_ = false;
-}
-inline bool Option::_internal_use_accumulated() const {
-  return use_accumulated_;
-}
-inline bool Option::use_accumulated() const {
-  // @@protoc_insertion_point(field_get:stock_api.Option.use_accumulated)
-  return _internal_use_accumulated();
-}
-inline void Option::_internal_set_use_accumulated(bool value) {
-  
-  use_accumulated_ = value;
-}
-inline void Option::set_use_accumulated(bool value) {
-  _internal_set_use_accumulated(value);
-  // @@protoc_insertion_point(field_set:stock_api.Option.use_accumulated)
+inline void TodayTopOption::set_selection(::stock_api::TodayTopSelection value) {
+  _internal_set_selection(value);
+  // @@protoc_insertion_point(field_set:stock_api.TodayTopOption.selection)
 }
 
 // -------------------------------------------------------------------
@@ -9226,6 +9190,11 @@ inline void CybosStockAlarm::set_allocated_content(std::string* content) {
 
 PROTOBUF_NAMESPACE_OPEN
 
+template <> struct is_proto_enum< ::stock_api::TodayTopSelection> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::stock_api::TodayTopSelection>() {
+  return ::stock_api::TodayTopSelection_descriptor();
+}
 template <> struct is_proto_enum< ::stock_api::OrderStatusFlag> : ::std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::stock_api::OrderStatusFlag>() {

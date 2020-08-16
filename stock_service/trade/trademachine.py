@@ -1,11 +1,12 @@
 import gevent
 from gevent.queue import Queue
 from google.protobuf.empty_pb2 import Empty
-import stock_provider_pb2 as stock_provider
-import simulstatus
-import markettime
-import account
 from datetime import timedelta
+
+from stock_service import stock_provider_pb2 as stock_provider
+from stock_service.trade import simulstatus
+from stock_service.trade import markettime
+from stock_service.trade import account
 
 
 request_list = []

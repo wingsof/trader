@@ -15,15 +15,7 @@ ViListModel::ViListModel(QObject *parent)
 
 
 QStringList ViListModel::getServerList() {
-    int opt = ALL;
-    if (mFilterDynamic && mFilterStatic)
-        ;
-    else if (mFilterDynamic && !mFilterStatic)
-        opt = DYNAMIC;
-    else
-        opt = STATIC;
-
-    return StockStat::instance()->getViList(opt, catchPlus());
+    return StockStat::instance()->getViList();
 }
 
 
