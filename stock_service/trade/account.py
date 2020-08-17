@@ -31,7 +31,10 @@ def get_balance():
 
 
 def get_oneshot():
-    return _one_shot
+    balance = get_balance()
+    if balance >= _one_shot:
+        return _one_shot
+    return balance
 
 
 def pay_for_stock(amount, use_tax=True):

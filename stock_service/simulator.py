@@ -33,6 +33,52 @@ REQUEST_FINISH = 3
 simulation_status = STOPPED
 deliver_greenlet = None
 collect_greenlet = None
+msg_queue = Queue()
+
+
+class RequestIterator(object):
+    def __init__(self):
+        self.queue = Queue()
+
+    def __iter__(self):
+        return self
+
+    def _next(self):
+        data = self.queue.get(True)
+        if data[0] == stock_provider_pb2.SimulationMsgType.MSG_TICK:
+            return stock_provider_pb2.SimulationMsg(msgtype=data[0], tick=data[1])
+        elif data[0] == stock_provider_pb2.SimulationMsgType.MSG_BIDASK:
+            return stock_provider_pb2.SimulationMsg(msgtype=data[0], bidask=data[1])
+        elif data[0] == stock_provider_pb2.SimulationMsgType.MSG_SUBJECT:
+            return stock_provider_pb2.SimulationMsg(msgtype=data[0], subject=data[1])
+        elif data[0] == stock_provider_pb2.SimulationMsgType.MSG_ALARM:
+            return stock_provider_pb2.SimulationMsg(msgtype=data[0], alarm=data[1])
+
+        print('Unknown Message')
+        return stock_provider_pb2.SimulationMsg()
+
+
+    def __next__(self):
+        return self._next()
+
+    def next(self):
+        return self._next()
+
+    def append_tick(self, tick):
+        self.queue.put_nowait((stock_provider_pb2.SimulationMsgType.MSG_TICK, tick))
+
+    def append_subject(self, subject):
+        self.queue.put_nowait((stock_provider_pb2.SimulationMsgType.MSG_SUBJECT, subject))
+
+    def append_bidask(self, bidask):
+        self.queue.put_nowait((stock_provider_pb2.SimulationMsgType.MSG_BIDASK, bidask))
+
+    def append_alarm(self, alarm):
+        self.queue.put_nowait((stock_provider_pb2.SimulationMsgType.MSG_ALARM, alarm))
+
+
+request_iterator = RequestIterator()
+
 
 
 def tick_to_grpc(tick):
@@ -166,13 +212,13 @@ def tick_sender(tick_queue, speed):
             d_date = d['date']
 
             if d['type'] == 'subject':
-                stub.SetSimulationSubjectTick(subject_to_grpc(d))
+                request_iterator.append_subject(subject_to_grpc(d))
             elif d['type'] == 'bidask':
-                stub.SetSimulationBidAskTick(bidask_to_grpc(d))
+                request_iterator.append_bidask(bidask_to_grpc(d))
             elif d['type'] == 'tick':
-                stub.SetSimulationStockTick(tick_to_grpc(d))
+                request_iterator.append_tick(tick_to_grpc(d))
             elif d['type'] == 'alarm':
-                stub.SetSimulationAlarmTick(alarm_to_grpc(d))
+                request_iterator.append_alarm(alarm_to_grpc(d))
             else:
                 continue
 
@@ -243,14 +289,20 @@ def operation_subscriber():
     
 
 
+def simulation_data_sender(stub):
+    responses = stub.SimulationData(request_iterator)
+    for response in responses:
+        pass
+    print('simulation data sender done')
+
 def run():
     global stub
     with grpc.insecure_channel('localhost:50052') as channel:  
         subscribe_handlers = []
         stub = stock_provider_pb2_grpc.StockStub(channel)
         subscribe_handlers.append(gevent.spawn(operation_subscriber))
+        simulation_data_sender(stub)
         gevent.joinall(subscribe_handlers)
-
 
 
 if __name__ == '__main__':

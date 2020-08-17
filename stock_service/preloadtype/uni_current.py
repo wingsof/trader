@@ -4,13 +4,16 @@ from datetime import datetime, timedelta
 from clients.common import morning_client
 from morning_server import message
 from utils import time_converter
-
+from utils import trade_logger
 
 _uni_data = {}
 
 
+_LOGGER = trade_logger.get_logger()
+
 def load_uni_data(codes):
     now = datetime.now().date()
+    _LOGGER.info('START LOAD UNI DATA')
     for progress, code in enumerate(codes):
         #print('collect uni current data', f'{progress+1}/{len(codes)}', end='\r')
         uni_c = morning_client.get_uni_current_period_data(code, now - timedelta(days=365), now)
@@ -20,8 +23,8 @@ def load_uni_data(codes):
         _uni_data[code] = {}
         for d in uni_c:
             _uni_data[code][d['date']] = d
-
-    print('')
+    _LOGGER.info('LOAD UNI DATA DONE')
+    #print('')
 
 
 def get_uni_current(code, intdate):
@@ -47,8 +50,12 @@ def get_year_high(code, intdate):
     return 0
 
 
+def get_year_high_date(code, intdate):
+    if code in _uni_data:
+        if intdate in _uni_data[code]:
+            return time_converter.intdate_to_datetime(_uni_data[code][intdate]['year_highest_date'])
+    return datetime.now()
+
 def get_year_high_by_datetime(code, dt):
     t = time_converter.datetime_to_intdate(dt)
     return get_year_high(code, t)
-
-

@@ -155,7 +155,7 @@ ApplicationWindow {
 
             Text {
                 id: timeText
-                text: SearchBackend.serverDateTime.toLocaleDateString(Qt.locale("ko_KR"), "yyyy-MM-dd") + "  " + "<b>" + SearchBackend.serverDateTime.toLocaleTimeString(Qt.locale("ko_KR"), "hh:mm:ss") + "</b>"
+                text: SearchBackend.currentDateTime.toLocaleDateString(Qt.locale("ko_KR"), "yyyy-MM-dd") + "  " + "<b>" + SearchBackend.currentDateTime.toLocaleTimeString(Qt.locale("ko_KR"), "hh:mm:ss") + "</b>"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
                 Layout.preferredWidth: 300 
@@ -164,8 +164,8 @@ ApplicationWindow {
                 font.pointSize: 16
                 Connections {
                     target: SearchBackend
-                    function onServerDateTimeChanged(dt) {
-                        timeText.text = SearchBackend.serverDateTime.toLocaleDateString(Qt.locale("ko_KR"), "yyyy-MM-dd") + "  " + "<b>" + SearchBackend.serverDateTime.toLocaleTimeString(Qt.locale("ko_KR"), "hh:mm:ss") + "</b>"
+                    function onCurrentDateTimeChanged() {
+                        timeText.text = SearchBackend.currentDateTime.toLocaleDateString(Qt.locale("ko_KR"), "yyyy-MM-dd") + "  " + "<b>" + SearchBackend.currentDateTime.toLocaleTimeString(Qt.locale("ko_KR"), "hh:mm:ss") + "</b>"
                     }
                 }
             }

@@ -211,6 +211,11 @@
                         ],
                         "name": "setSimulationStatus",
                         "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "name": "setCurrentTime",
+                        "returnType": "void"
                     }
                 ],
                 "superClasses": [

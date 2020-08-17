@@ -123,6 +123,7 @@ public:
     int getCurrentVolume() const { return mTradeUnit.volume(); }
     int getVolumeByPrice(bool isBuy, int price) const { return mTradeUnit.getVolumeByPrice(isBuy, price); }
     qreal getBuyRate() const { return mTradeUnit.getBuyRate(); }
+    bool speculateIsViPrice(int price, bool isKospi) const;
 
 private:
     QList<BidAskUnit> mBidSpread;
@@ -130,12 +131,16 @@ private:
     TradeUnit mTradeUnit;
 
     bool mBidAskTickReceived;
+    QList<qreal> mLowerViPrices;
+    QList<qreal> mUpperViPrices;
 
     const BidAskUnit *getUnitByRow(int row) const;
     void fillBidSpread(CybosBidAskTickData *);
     void fillAskSpread(CybosBidAskTickData *d);
     void updateAskSpread(CybosBidAskTickData *d);
     void updateBidSpread(CybosBidAskTickData *d);
+
+    void setViPrices(int openPrice);
 private:
     bool checkPriceOrder(bool bid, CybosBidAskTickData *);
 

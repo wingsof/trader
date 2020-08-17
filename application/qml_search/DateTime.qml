@@ -5,7 +5,7 @@ import search.backend 1.0
 
 
 Item {
-    property date currentDate: SearchBackend.currentDateTime
+    property date currentDate: new Date()
 
     property alias year: yearField.text
     property alias month: monthField.text

@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <qqml.h>
+#include <QTimer>
 #include "DataProvider.h"
 
 
@@ -51,6 +52,8 @@ private:
     QDateTime m_serverDateTime;
     bool m_simulationRunning;
     qreal m_simulationSpeed;
+    bool mIsManualTime = false;
+    QTimer * mTimer;
 
     bool launchApp(const QString &path, const QString &name);
 
@@ -58,6 +61,7 @@ private slots:
     void stockCodeChanged(QString code);
     void timeInfoArrived(QDateTime dt);
     void setSimulationStatus(bool status);
+    void setCurrentTime();
 
 signals:
     void currentCodeChanged();

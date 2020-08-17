@@ -3,6 +3,26 @@
 
 //#define BIDASK_DEBUG
 
+int getBidUnit(bool isKospi, int price) {
+    if (price < 1000)
+        return 1;
+    else if (price < 5000)
+        return 5;
+    else if (price < 10000)
+        return 10;
+    else if (price < 50000)
+        return 50;
+
+    if (isKospi) {
+        if (price < 100000)
+            return 100;
+        else if (price < 500000)
+            return 500;
+        return 1000;
+    }
+    return 100;
+}
+
 
 BidAskData::BidAskData() {
     mBidAskTickReceived = false;
@@ -11,9 +31,10 @@ BidAskData::BidAskData() {
 
 void BidAskData::resetData() {
     mBidAskTickReceived = false;
+    mLowerViPrices.clear();
+    mUpperViPrices.clear();
     mBidSpread.clear();
     mAskSpread.clear();
-
     mTradeUnit.clear();
 }
 
@@ -70,6 +91,35 @@ int BidAskData::getDiffByRow(int row) const {
 }
 
 
+void BidAskData::setViPrices(int openPrice) {
+    mLowerViPrices.clear();
+    mUpperViPrices.clear();
+    mLowerViPrices.append(qreal(openPrice) * 0.7); 
+    mLowerViPrices.append(qreal(openPrice) * 0.8); 
+    mLowerViPrices.append(qreal(openPrice) * 0.9); 
+    mUpperViPrices.append(qreal(openPrice) * 1.1);
+    mUpperViPrices.append(qreal(openPrice) * 1.2);
+    mUpperViPrices.append(qreal(openPrice) * 1.3);
+}
+
+
+bool BidAskData::speculateIsViPrice(int price, bool isKospi) const {
+    if (mLowerViPrices.count() > 0) {
+        int unit = getBidUnit(isKospi, price);
+        for (int i = 0; i < mUpperViPrices.count(); i++) {
+            if (mUpperViPrices.at(i) > price && mUpperViPrices.at(i) <= price + unit)
+                return true;
+        }
+
+        for (int i = 0; i < mLowerViPrices.count(); i++) {
+            if (mLowerViPrices.at(i) < price && mLowerViPrices.at(i) > price - unit)
+                return true;
+        }
+    }
+    return false;
+}
+
+
 void BidAskData::setTick(CybosTickData *d) {
 #ifdef BIDASK_DEBUG
     qWarning() << "Tick Arrived";
@@ -77,6 +127,9 @@ void BidAskData::setTick(CybosTickData *d) {
     debugCurrentBidAsk();
 #endif
     mTradeUnit.setData(d->current_price(), d->volume(), d->buy_or_sell());
+
+    if (d->start_price() > 0 && mLowerViPrices.count() == 0)
+        setViPrices(d->start_price());
 
     if (!mBidAskTickReceived) {
         if (mBidSpread.count() == 0) 
@@ -165,14 +218,14 @@ void BidAskData::setBidAskTick(CybosBidAskTickData *d) {
     if (checkPriceOrder(true, d)) //BID
         fillBidSpread(d);
     else {
-        qWarning() << "updateBidSpread";
+        //qWarning() << "updateBidSpread";
         updateBidSpread(d);
     }
 
     if (checkPriceOrder(false, d))
         fillAskSpread(d);
     else {
-        qWarning() << "updateAskSpread";
+        //qWarning() << "updateAskSpread";
         updateAskSpread(d);
     }
 #ifdef BIDASK_DEBUG

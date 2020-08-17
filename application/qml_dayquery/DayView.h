@@ -4,6 +4,7 @@
 #include <QQuickPaintedItem>
 #include <QDateTime>
 #include <QPainter>
+#include <QHoverEvent>
 #include "DataProvider.h"
 #include "stock_provider.grpc.pb.h"
 
@@ -66,6 +67,18 @@ public:
 
     CybosDayData *getTodayData();
 
+    long long getForeignerAmount(int i) {
+        if (i < foreignerAmount.size())
+            return foreignerAmount.at(i);
+        return 0;
+    }
+
+    long long getInstitutionAmount(int i) {
+        if (i < institutionAmount.size())
+            return institutionAmount.at(i);
+        return 0;
+    }
+
 private:
     CybosDayDatas *data;
     CybosDayData *todayData;
@@ -79,6 +92,8 @@ private:
     QList<unsigned long> volumePPS; // per price steps
     QList<long> foreignerPPS;
     QList<long> institutionPPS;
+    QList<long long> foreignerAmount;
+    QList<long long> institutionAmount;
 
     void setPriceSteps(int l, int h);
     void setPPS();
@@ -112,10 +127,12 @@ private:
     void drawInstitutionPriceDistribution(QPainter *painter, qreal startX, qreal dWidth, qreal priceChartEndY, qreal priceHeightSpace);
     void drawPriceLabels(QPainter *painter, qreal startX, qreal priceChartEndY, qreal priceHeightSpace);
     void drawCandle(QPainter *painter, const CybosDayData *data, qreal startX, qreal horizontalGridStep, qreal priceChartEndY);
-    qreal drawVolume(QPainter *painter, const CybosDayData *data, qreal startX, qreal horizontalGridStep, qreal volumeEndY, qreal priceChartEndY, bool divideBuySell);
+    qreal drawVolume(QPainter *painter, const CybosDayData *data, qreal startX, qreal horizontalGridStep, qreal volumeEndY, qreal priceChartEndY, bool divideBuySell, int index);
+    QString int64ToString(long long amount) const;
 
 protected:
     void mouseReleaseEvent(QMouseEvent *e);
+    void hoverMoveEvent(QHoverEvent *e);
     void mouseMoveEvent(QMouseEvent *e);
     void mousePressEvent(QMouseEvent *e);
 
@@ -126,10 +143,16 @@ private:
     DayData *dayData;
     qreal priceEndY;
     bool mPinnedCode;
+
     QString mPcode;
     QString mCorporateName;
 
+    int mHighPriceInYear;
+    int mDistanceFromYearHigh;
+
     qreal drawHorizontalY;
+    qreal mouseTrackX;
+    qreal mouseTrackY;
 
     qreal getCandleLineWidth(qreal gap);
 

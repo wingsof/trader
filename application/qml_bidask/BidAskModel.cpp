@@ -41,7 +41,7 @@ void BidAskModel::timeInfoArrived(QDateTime dt) {
 void BidAskModel::resetData() {
     beginResetModel();
     mData.resetData();
-    mViType = 48; // not received
+    //mViType = 48; // not received
     mViPrices.clear();
     setTotalBidRemain(0);
     setTotalAskRemain(0);
@@ -73,8 +73,10 @@ void BidAskModel::setCurrentStock(QString code) {
         resetData();
         mIsKospi = DataProvider::getInstance()->isKospi(code);
         currentStockCode = code;
-        if (currentDateTime.isValid())
+        if (currentDateTime.isValid()) {
             mViPrices = DataProvider::getInstance()->getViPrices(code);
+            qWarning() << "mViPrices : " << mViPrices;
+        }
         qWarning() << "currentStock: " << currentStockCode;
     }
 }
@@ -119,6 +121,25 @@ void BidAskModel::buy_immediately(int percentage) {
 }
 
 
+void BidAskModel::buy_on_price(int row, int percentage) {
+    int buyPrice = mData.getPriceByRow(row - 1);
+    qWarning() << "BUY ON PRICE : " << buyPrice;
+    if (buyPrice > 0) {
+        DataProvider::getInstance()->buy(currentStockCode, buyPrice, 0, percentage, OrderMethod::TRADE_ON_PRICE);
+    }
+}
+
+
+void BidAskModel::sell_on_price(int row, int percentage) {
+    int sellPrice = mData.getPriceByRow(row - 1);
+    qWarning() << "SELL ON PRICE : " << sellPrice;
+    if (sellPrice > 0) {
+        DataProvider::getInstance()->sell(currentStockCode, sellPrice, 0, percentage, OrderMethod::TRADE_ON_PRICE);
+    }
+}
+
+
+
 QVariant BidAskModel::data(const QModelIndex &index, int role) const
 {
     if (index.row() >= BidAskModel::START_ROW && index.row() <= BidAskModel::STEPS * 2) {
@@ -136,8 +157,12 @@ QVariant BidAskModel::data(const QModelIndex &index, int role) const
             }
             else if (role == VI_ROLE) {
                 if (price != 0) {
-                    if (mViPrices.contains(price))
-                        return QVariant(true);
+                    if (mViPrices.count() > 0) {
+                        if (mViPrices.contains(price))
+                            return QVariant(true);
+                        return QVariant(false);
+                    }
+                    return QVariant(mData.speculateIsViPrice(price, mIsKospi));
                 }
                 return QVariant(false);
             }
@@ -180,10 +205,11 @@ void BidAskModel::tickArrived(CybosTickData *data) {
         return;
     }
 
+    /* Maybe cannot get vi prices at right time since vi plugin is calculating when request prices in here
     if (mViType == 48 || (data->market_type() == 50 && mViType == 49)) {
         mViPrices = DataProvider::getInstance()->getViPrices(currentStockCode);
         mViType = 50;
-    }
+    }*/
     //long msec = TimeUtil::TimestampToMilliseconds(data->tick_date());
     //qWarning() << QDateTime::fromMSecsSinceEpoch(msec) << "\tcurrent: " << data->current_price() << ", volume: " << data->volume() << "\tBUY:" << data->buy_or_sell() << "\task: " << data->ask_price() << ", bid: " << data->bid_price();
     setYesterdayClose(data->current_price() - data->yesterday_diff());
@@ -191,8 +217,10 @@ void BidAskModel::tickArrived(CybosTickData *data) {
     setTodayHigh(data->highest_price());
     setHighlightPosition(data->current_price());
     mData.setTick(data);
+    /*
     if (data->market_type() == 49)
         mViType = 49;
+    */
 
     dataChanged(createIndex(0, 0), createIndex(20, 8));
     delete data;

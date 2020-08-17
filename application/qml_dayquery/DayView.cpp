@@ -1,9 +1,11 @@
 #include "DayView.h"
 #include <QDebug>
+#include <QLocale>
 
 DayView::DayView(QQuickItem *parent) : QQuickPaintedItem(parent) {
     qWarning() << "DayView constructor";
     setAcceptedMouseButtons(Qt::AllButtons);
+    setAcceptHoverEvents(true);
     dayData = new DayData;
     priceEndY = 0.0;
     mPinnedCode = false;
@@ -20,12 +22,41 @@ DayView::DayView(QQuickItem *parent) : QQuickPaintedItem(parent) {
 }
 
 
+QString DayView::int64ToString(long long amount) const {
+    QString signStr;
+    if (amount < 0)
+        signStr += "-";
+    amount = qAbs(amount);
+
+    if (amount >= 1000000000) {
+        qreal f = amount / 1000000000.0;
+        return signStr + QString::number(f, 'f', 1) + " B";
+    }
+    else if (amount >= 1000000) {
+        qreal f = amount / 1000000.0;
+        return signStr + QString::number(f, 'f', 1) + " M";
+    }
+    else if (amount >= 1000) {
+        qreal f = amount / 1000.0;
+        return signStr + QString::number(f, 'f', 1) + " K";
+    }
+
+    return QString::number((long long)amount);
+}
+
+
+
 void DayView::searchReceived(QString code) {
     //qWarning() << "searchReceived : " << code;
     if ( (!mPinnedCode && stockCode != code) ||
             (mPinnedCode && code == pcode() && code != stockCode)) {
         stockCode = code;
         mCorporateName = DataProvider::getInstance()->getCompanyName(stockCode);
+        YearHighInfo * info = DataProvider::getInstance()->getYearHighInfo(code);
+        mHighPriceInYear = info->price();
+        mDistanceFromYearHigh = info->days_distance();
+        qWarning() << "Year High : " << mHighPriceInYear << ", distance: " << mDistanceFromYearHigh;
+        delete info;
         emit corporateNameChanged();
         search();
     }
@@ -161,10 +192,11 @@ void DayView::drawPriceLabels(QPainter *painter, qreal startX, qreal priceChartE
     pen.setColor(QColor("#000000"));
     painter->setPen(pen);
     const QList<int> & priceLabels = dayData->getPriceSteps();
+    QLocale locale;
 
     for (int i = 0; i < priceLabels.count() - 1; i++) {
-        painter->drawText((int)startX, (int)(priceChartEndY - priceHeightSpace * i),
-                            QString::number(priceLabels.at(i)));
+        QString priceLabel = locale.toCurrencyString(priceLabels.at(i), QString(" "));
+        painter->drawText((int)startX, (int)(priceChartEndY - priceHeightSpace * i), priceLabel);
     }
     painter->restore();
 }
@@ -195,11 +227,26 @@ void DayView::drawCandle(QPainter *painter, const CybosDayData *data, qreal star
     painter->setPen(Qt::NoPen);
     painter->drawRect(QRectF(startX, candle_y_open, horizontalGridStep, candle_y_close - candle_y_open));
 
+    painter->setPen(pen);
+    if (mouseTrackX >= startX && mouseTrackX <= startX + horizontalGridStep &&
+        mouseTrackY >= candle_y_high && mouseTrackY <= candle_y_low) {
+        qreal profit = (int(data->close_price()) - int(data->start_price())) / qreal(data->start_price()) *100.0;
+        QBrush brush = painter->brush();
+        brush.setColor(QColor(255, 255, 153));
+        painter->fillRect(QRect(mouseTrackX + 15, mouseTrackY + 15, 80, 85), brush);
+        QString str = QString::number(data->date()) + "\n" +
+                      QString::number(profit, 'f', 1) + "\n" +
+                      QString("H: ") + QString::number(data->highest_price()) +"\n" +
+                      QString("L: ") + QString::number(data->lowest_price()) + "\n" +
+                      QString("C: ") + QString::number(data->close_price()) + "\n" +
+                      QString("O: ") + QString::number(data->start_price());
+        painter->drawText(QRect(mouseTrackX + 15, mouseTrackY + 15, 80, 85), str);
+    }
     painter->restore();
 }
 
 
-qreal DayView::drawVolume(QPainter *painter, const CybosDayData *data, qreal startX, qreal horizontalGridStep, qreal volumeEndY, qreal priceChartEndY, bool divideBuySell) {
+qreal DayView::drawVolume(QPainter *painter, const CybosDayData *data, qreal startX, qreal horizontalGridStep, qreal volumeEndY, qreal priceChartEndY, bool divideBuySell, int index) {
     painter->save();
     qreal volume_bar_y = dayData->mapVolumeToPos(data->volume(), volumeEndY, priceChartEndY);
     
@@ -218,6 +265,22 @@ qreal DayView::drawVolume(QPainter *painter, const CybosDayData *data, qreal sta
         painter->setBrush(QBrush(QColor("#ff0000")));
         painter->drawRect(QRectF(startX, volume_bar_y, horizontalGridStep, volumeEndY - volume_bar_y));
     }
+
+    if (index >= 0 && mouseTrackX >= startX && mouseTrackX <= startX + horizontalGridStep &&
+        mouseTrackY >= volume_bar_y && mouseTrackY <= volumeEndY) {
+        painter->setBrush(QBrush(QColor("#ffffff")));
+        painter->setPen(QPen(Qt::black));
+        QBrush brush = painter->brush();
+        brush.setColor(QColor(255, 255, 153));
+        painter->fillRect(QRect(mouseTrackX + 15, mouseTrackY + 15, 80, 85), brush);
+        QString str = QString::number(data->date()) + "\n" +
+                      int64ToString(data->amount()) + "\n" +
+                      QString("F: ") + int64ToString(dayData->getForeignerAmount(index)) +"\n" +
+                      QString("I: ") + int64ToString(dayData->getInstitutionAmount(index));
+        painter->drawText(QRect(mouseTrackX + 15, mouseTrackY + 15, 80, 85), str);
+    }
+
+
     painter->restore();
     return volume_bar_y;
 }
@@ -290,7 +353,7 @@ void DayView::paint(QPainter *painter) {
         currentDayOfWeek = d.dayOfWeek();
 
         drawCandle(painter, &data, startX, horizontalGridStep, priceEndY);
-        qreal volume_bar_y = drawVolume(painter, &data, startX, horizontalGridStep, volumeEndY, priceEndY, true);
+        qreal volume_bar_y = drawVolume(painter, &data, startX, horizontalGridStep, volumeEndY, priceEndY, true, i);
 
         if (i - 1 >= 0) {
             qreal foreigner_volume_height = dayData->getForeignerBuyHeight(data, dayData->getDayData(i-1), volumeEndY - volume_bar_y);
@@ -324,16 +387,18 @@ void DayView::paint(QPainter *painter) {
         qreal current_y = dayData->mapPriceToPos(dayData->getTodayData()->close_price(),
                                                 priceEndY, 0);
         painter->drawLine(QLineF(0, current_y, itemSize.width() - priceLabelWidth, current_y));
-        drawVolume(painter, dayData->getTodayData(), itemSize.width() - priceLabelWidth - horizontalGridStep, horizontalGridStep, volumeEndY, priceEndY, false);
+        drawVolume(painter, dayData->getTodayData(), itemSize.width() - priceLabelWidth - horizontalGridStep, horizontalGridStep, volumeEndY, priceEndY, false, -1);
 
         if (dayData->getTodayData()->is_synchronized_bidding())
             pen.setColor(QColor(255, 0, 255));
         else
             pen.setColor("#ff0000");
         painter->setPen(pen);
-        painter->drawText((int)itemSize.width() - priceLabelWidth + 50, 
-                                (int)current_y,
-                                 QString::number(dayData->getTodayData()->close_price()));
+        QLocale locale;
+        QRect rect(itemSize.width() - priceLabelWidth, (int)current_y - 15, priceLabelWidth, 15);
+        painter->fillRect(rect, QBrush(Qt::white));
+        painter->drawText(rect, Qt::AlignLeft | Qt::AlignVCenter,
+                                 locale.toCurrencyString(dayData->getTodayData()->close_price(), " "));
 
         if (dayData->getHighestPrice() != 0) {
             pen.setColor(Qt::black);
@@ -341,9 +406,11 @@ void DayView::paint(QPainter *painter) {
             qreal profit = (int(dayData->getTodayData()->close_price()) - dayData->getHighestPrice()) / qreal(dayData->getHighestPrice()) * 100.0;
             //qWarning() << dayData->getTodayData()->close_price() << "\t" << dayData->getHighestPrice();
             //qWarning() << "profit : " << profit << "\t" << (dayData->getTodayData()->close_price() - dayData->getHighestPrice());
+            QString highStr = QString::number(dayData->getHighestPrice()) + "  (" + QString::number(profit, 'f', 2) + ")";
+            if (mHighPriceInYear != 0)
+                highStr += QString("\t") + QString::number(mHighPriceInYear) + "  (" + QString::number(mDistanceFromYearHigh) + ")";
             painter->drawText(int((itemSize.width() - priceLabelWidth) / 2),
-                                (int) current_y - 10,
-                                QString::number(dayData->getHighestPrice()) + "\t(" + QString::number(profit, 'f', 2) + ")");
+                                (int) current_y - 10, highStr);
         }
     }
 
@@ -372,7 +439,9 @@ void DayView::paint(QPainter *painter) {
         font.setPointSize(15);
         painter->setFont(font);
         painter->setPen(pen);
-        painter->drawText(QRectF(0.0, hStartY, itemSize.width() - priceLabelWidth, drawHorizontalY - hStartY), Qt::AlignCenter, QString::number(hPrice) + "   " + QString::number(profit, 'f', 1));
+
+        painter->drawText(QRectF(0.0, hStartY, itemSize.width() - priceLabelWidth, drawHorizontalY - hStartY), Qt::AlignCenter,
+                            QString::number(hPrice) + "  (" + QString::number(profit, 'f', 1) + ")");
     }
 }
 
@@ -418,7 +487,9 @@ void DayView::tickDataArrived(CybosTickData *data) {
 }
 
 
-void DayView::mousePressEvent(QMouseEvent *e) {}
+void DayView::mousePressEvent(QMouseEvent *e) {
+    mouseTrackX = mouseTrackY = 0;
+}
 
 
 void DayView::mouseReleaseEvent(QMouseEvent *e) {
@@ -428,11 +499,20 @@ void DayView::mouseReleaseEvent(QMouseEvent *e) {
 }
 
 
+void DayView::hoverMoveEvent(QHoverEvent *e) {
+    //qWarning() << e->oldPos() << "\t" << e->pos();
+    mouseTrackX = e->pos().x();
+    mouseTrackY = e->pos().y();
+    //qWarning() << mouseTrackX << ", " << mouseTrackY;
+    update();
+}
+
+
 void DayView::mouseMoveEvent(QMouseEvent *e) {
     //qWarning() << "mouseMoveEvent : " << e->y();
     if (priceEndY == 0.0)
         drawHorizontalY = 0.0;
-    else 
+    else
         drawHorizontalY = e->y();
     update();
 }
@@ -545,18 +625,23 @@ void DayData::setPPS() {
         const CybosDayData &d = data->day_data(i);
         int averagePrice = (d.lowest_price() + d.highest_price() + d.start_price() + d.close_price()) / 4;
         int index = getIndexOfPriceSteps(averagePrice);
+
         if (index < 0) {
             qWarning() << "Cannot find PPS index, price: " << averagePrice << "\t steps: " << priceSteps;
             continue;
         }
         volumePPS[index] += d.volume();
         institutionPPS[index] += d.institution_buy_volume();
-
-        if (i == 0)
+        institutionAmount.append(d.institution_buy_volume() * (long long)averagePrice);
+        if (i == 0) {
+            foreignerAmount.append(0);
             continue;
+        }
 
         const CybosDayData &prev = data->day_data(i-1);
-        foreignerPPS[index] += d.foreigner_hold_volume() - prev.foreigner_hold_volume();
+        long fVol = d.foreigner_hold_volume() - prev.foreigner_hold_volume();
+        foreignerPPS[index] += fVol;
+        foreignerAmount.append(fVol * (long long)averagePrice);
     }
 }
 
@@ -575,6 +660,8 @@ void DayData::setPriceSteps(int l, int h) {
     volumePPS.clear();
     foreignerPPS.clear();
     institutionPPS.clear();
+    foreignerAmount.clear();
+    institutionAmount.clear();
 
     //const int PRICE_STEPS = 12;
     h = int(h * 1.1);

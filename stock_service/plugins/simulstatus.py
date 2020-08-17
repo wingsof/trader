@@ -1,4 +1,4 @@
-import stock_provider_pb2 as stock_provider
+from stock_service import stock_provider_pb2 as stock_provider
 from google.protobuf.empty_pb2 import Empty
 
 

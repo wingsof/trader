@@ -50,7 +50,7 @@ struct TableStruct_stock_5fprovider_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[25]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[27]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -112,6 +112,9 @@ extern PricesDefaultTypeInternal _Prices_default_instance_;
 class Report;
 class ReportDefaultTypeInternal;
 extern ReportDefaultTypeInternal _Report_default_instance_;
+class SimulationMsg;
+class SimulationMsgDefaultTypeInternal;
+extern SimulationMsgDefaultTypeInternal _SimulationMsg_default_instance_;
 class SimulationOperation;
 class SimulationOperationDefaultTypeInternal;
 extern SimulationOperationDefaultTypeInternal _SimulationOperation_default_instance_;
@@ -133,6 +136,9 @@ extern TopListDefaultTypeInternal _TopList_default_instance_;
 class TradeMsg;
 class TradeMsgDefaultTypeInternal;
 extern TradeMsgDefaultTypeInternal _TradeMsg_default_instance_;
+class YearHighInfo;
+class YearHighInfoDefaultTypeInternal;
+extern YearHighInfoDefaultTypeInternal _YearHighInfo_default_instance_;
 }  // namespace stock_api
 PROTOBUF_NAMESPACE_OPEN
 template<> ::stock_api::Balance* Arena::CreateMaybeMessage<::stock_api::Balance>(Arena*);
@@ -153,6 +159,7 @@ template<> ::stock_api::OrderResult* Arena::CreateMaybeMessage<::stock_api::Orde
 template<> ::stock_api::PastMinuteQuery* Arena::CreateMaybeMessage<::stock_api::PastMinuteQuery>(Arena*);
 template<> ::stock_api::Prices* Arena::CreateMaybeMessage<::stock_api::Prices>(Arena*);
 template<> ::stock_api::Report* Arena::CreateMaybeMessage<::stock_api::Report>(Arena*);
+template<> ::stock_api::SimulationMsg* Arena::CreateMaybeMessage<::stock_api::SimulationMsg>(Arena*);
 template<> ::stock_api::SimulationOperation* Arena::CreateMaybeMessage<::stock_api::SimulationOperation>(Arena*);
 template<> ::stock_api::SimulationStatus* Arena::CreateMaybeMessage<::stock_api::SimulationStatus>(Arena*);
 template<> ::stock_api::StockCodeQuery* Arena::CreateMaybeMessage<::stock_api::StockCodeQuery>(Arena*);
@@ -160,9 +167,37 @@ template<> ::stock_api::StockQuery* Arena::CreateMaybeMessage<::stock_api::Stock
 template<> ::stock_api::TodayTopOption* Arena::CreateMaybeMessage<::stock_api::TodayTopOption>(Arena*);
 template<> ::stock_api::TopList* Arena::CreateMaybeMessage<::stock_api::TopList>(Arena*);
 template<> ::stock_api::TradeMsg* Arena::CreateMaybeMessage<::stock_api::TradeMsg>(Arena*);
+template<> ::stock_api::YearHighInfo* Arena::CreateMaybeMessage<::stock_api::YearHighInfo>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace stock_api {
 
+enum SimulationMsgType : int {
+  MSG_TICK = 0,
+  MSG_BIDASK = 1,
+  MSG_SUBJECT = 2,
+  MSG_ALARM = 3,
+  SimulationMsgType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  SimulationMsgType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+};
+bool SimulationMsgType_IsValid(int value);
+constexpr SimulationMsgType SimulationMsgType_MIN = MSG_TICK;
+constexpr SimulationMsgType SimulationMsgType_MAX = MSG_ALARM;
+constexpr int SimulationMsgType_ARRAYSIZE = SimulationMsgType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SimulationMsgType_descriptor();
+template<typename T>
+inline const std::string& SimulationMsgType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, SimulationMsgType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function SimulationMsgType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    SimulationMsgType_descriptor(), enum_t_value);
+}
+inline bool SimulationMsgType_Parse(
+    const std::string& name, SimulationMsgType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<SimulationMsgType>(
+    SimulationMsgType_descriptor(), name, value);
+}
 enum TodayTopSelection : int {
   TOP_BY_RATIO = 0,
   TOP_BY_MOMENTUM = 1,
@@ -849,6 +884,358 @@ class Bool :
 };
 // -------------------------------------------------------------------
 
+class YearHighInfo :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.YearHighInfo) */ {
+ public:
+  YearHighInfo();
+  virtual ~YearHighInfo();
+
+  YearHighInfo(const YearHighInfo& from);
+  YearHighInfo(YearHighInfo&& from) noexcept
+    : YearHighInfo() {
+    *this = ::std::move(from);
+  }
+
+  inline YearHighInfo& operator=(const YearHighInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline YearHighInfo& operator=(YearHighInfo&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const YearHighInfo& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const YearHighInfo* internal_default_instance() {
+    return reinterpret_cast<const YearHighInfo*>(
+               &_YearHighInfo_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(YearHighInfo& a, YearHighInfo& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(YearHighInfo* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline YearHighInfo* New() const final {
+    return CreateMaybeMessage<YearHighInfo>(nullptr);
+  }
+
+  YearHighInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<YearHighInfo>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const YearHighInfo& from);
+  void MergeFrom(const YearHighInfo& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(YearHighInfo* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "stock_api.YearHighInfo";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
+    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kHighDateFieldNumber = 2,
+    kPriceFieldNumber = 1,
+    kDaysDistanceFieldNumber = 3,
+  };
+  // .google.protobuf.Timestamp high_date = 2;
+  bool has_high_date() const;
+  private:
+  bool _internal_has_high_date() const;
+  public:
+  void clear_high_date();
+  const PROTOBUF_NAMESPACE_ID::Timestamp& high_date() const;
+  PROTOBUF_NAMESPACE_ID::Timestamp* release_high_date();
+  PROTOBUF_NAMESPACE_ID::Timestamp* mutable_high_date();
+  void set_allocated_high_date(PROTOBUF_NAMESPACE_ID::Timestamp* high_date);
+  private:
+  const PROTOBUF_NAMESPACE_ID::Timestamp& _internal_high_date() const;
+  PROTOBUF_NAMESPACE_ID::Timestamp* _internal_mutable_high_date();
+  public:
+
+  // int32 price = 1;
+  void clear_price();
+  ::PROTOBUF_NAMESPACE_ID::int32 price() const;
+  void set_price(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_price() const;
+  void _internal_set_price(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 days_distance = 3;
+  void clear_days_distance();
+  ::PROTOBUF_NAMESPACE_ID::int32 days_distance() const;
+  void set_days_distance(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_days_distance() const;
+  void _internal_set_days_distance(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.YearHighInfo)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  PROTOBUF_NAMESPACE_ID::Timestamp* high_date_;
+  ::PROTOBUF_NAMESPACE_ID::int32 price_;
+  ::PROTOBUF_NAMESPACE_ID::int32 days_distance_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_stock_5fprovider_2eproto;
+};
+// -------------------------------------------------------------------
+
+class SimulationMsg :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.SimulationMsg) */ {
+ public:
+  SimulationMsg();
+  virtual ~SimulationMsg();
+
+  SimulationMsg(const SimulationMsg& from);
+  SimulationMsg(SimulationMsg&& from) noexcept
+    : SimulationMsg() {
+    *this = ::std::move(from);
+  }
+
+  inline SimulationMsg& operator=(const SimulationMsg& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SimulationMsg& operator=(SimulationMsg&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const SimulationMsg& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const SimulationMsg* internal_default_instance() {
+    return reinterpret_cast<const SimulationMsg*>(
+               &_SimulationMsg_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(SimulationMsg& a, SimulationMsg& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SimulationMsg* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline SimulationMsg* New() const final {
+    return CreateMaybeMessage<SimulationMsg>(nullptr);
+  }
+
+  SimulationMsg* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<SimulationMsg>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const SimulationMsg& from);
+  void MergeFrom(const SimulationMsg& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(SimulationMsg* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "stock_api.SimulationMsg";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_stock_5fprovider_2eproto);
+    return ::descriptor_table_stock_5fprovider_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTickFieldNumber = 2,
+    kBidaskFieldNumber = 3,
+    kSubjectFieldNumber = 4,
+    kAlarmFieldNumber = 5,
+    kMsgtypeFieldNumber = 1,
+  };
+  // .stock_api.CybosTickData tick = 2;
+  bool has_tick() const;
+  private:
+  bool _internal_has_tick() const;
+  public:
+  void clear_tick();
+  const ::stock_api::CybosTickData& tick() const;
+  ::stock_api::CybosTickData* release_tick();
+  ::stock_api::CybosTickData* mutable_tick();
+  void set_allocated_tick(::stock_api::CybosTickData* tick);
+  private:
+  const ::stock_api::CybosTickData& _internal_tick() const;
+  ::stock_api::CybosTickData* _internal_mutable_tick();
+  public:
+
+  // .stock_api.CybosBidAskTickData bidask = 3;
+  bool has_bidask() const;
+  private:
+  bool _internal_has_bidask() const;
+  public:
+  void clear_bidask();
+  const ::stock_api::CybosBidAskTickData& bidask() const;
+  ::stock_api::CybosBidAskTickData* release_bidask();
+  ::stock_api::CybosBidAskTickData* mutable_bidask();
+  void set_allocated_bidask(::stock_api::CybosBidAskTickData* bidask);
+  private:
+  const ::stock_api::CybosBidAskTickData& _internal_bidask() const;
+  ::stock_api::CybosBidAskTickData* _internal_mutable_bidask();
+  public:
+
+  // .stock_api.CybosSubjectTickData subject = 4;
+  bool has_subject() const;
+  private:
+  bool _internal_has_subject() const;
+  public:
+  void clear_subject();
+  const ::stock_api::CybosSubjectTickData& subject() const;
+  ::stock_api::CybosSubjectTickData* release_subject();
+  ::stock_api::CybosSubjectTickData* mutable_subject();
+  void set_allocated_subject(::stock_api::CybosSubjectTickData* subject);
+  private:
+  const ::stock_api::CybosSubjectTickData& _internal_subject() const;
+  ::stock_api::CybosSubjectTickData* _internal_mutable_subject();
+  public:
+
+  // .stock_api.CybosStockAlarm alarm = 5;
+  bool has_alarm() const;
+  private:
+  bool _internal_has_alarm() const;
+  public:
+  void clear_alarm();
+  const ::stock_api::CybosStockAlarm& alarm() const;
+  ::stock_api::CybosStockAlarm* release_alarm();
+  ::stock_api::CybosStockAlarm* mutable_alarm();
+  void set_allocated_alarm(::stock_api::CybosStockAlarm* alarm);
+  private:
+  const ::stock_api::CybosStockAlarm& _internal_alarm() const;
+  ::stock_api::CybosStockAlarm* _internal_mutable_alarm();
+  public:
+
+  // .stock_api.SimulationMsgType msgtype = 1;
+  void clear_msgtype();
+  ::stock_api::SimulationMsgType msgtype() const;
+  void set_msgtype(::stock_api::SimulationMsgType value);
+  private:
+  ::stock_api::SimulationMsgType _internal_msgtype() const;
+  void _internal_set_msgtype(::stock_api::SimulationMsgType value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:stock_api.SimulationMsg)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::stock_api::CybosTickData* tick_;
+  ::stock_api::CybosBidAskTickData* bidask_;
+  ::stock_api::CybosSubjectTickData* subject_;
+  ::stock_api::CybosStockAlarm* alarm_;
+  int msgtype_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_stock_5fprovider_2eproto;
+};
+// -------------------------------------------------------------------
+
 class TodayTopOption :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:stock_api.TodayTopOption) */ {
  public:
@@ -891,7 +1278,7 @@ class TodayTopOption :
                &_TodayTopOption_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    6;
 
   friend void swap(TodayTopOption& a, TodayTopOption& b) {
     a.Swap(&b);
@@ -1019,7 +1406,7 @@ class Balance :
                &_Balance_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    7;
 
   friend void swap(Balance& a, Balance& b) {
     a.Swap(&b);
@@ -1147,7 +1534,7 @@ class StockQuery :
                &_StockQuery_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    8;
 
   friend void swap(StockQuery& a, StockQuery& b) {
     a.Swap(&b);
@@ -1316,7 +1703,7 @@ class TopList :
                &_TopList_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    9;
 
   friend void swap(TopList& a, TopList& b) {
     a.Swap(&b);
@@ -1481,7 +1868,7 @@ class SimulationOperation :
                &_SimulationOperation_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    10;
 
   friend void swap(SimulationOperation& a, SimulationOperation& b) {
     a.Swap(&b);
@@ -1637,7 +2024,7 @@ class SimulationStatus :
                &_SimulationStatus_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    11;
 
   friend void swap(SimulationStatus& a, SimulationStatus& b) {
     a.Swap(&b);
@@ -1776,7 +2163,7 @@ class OrderMsg :
                &_OrderMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    12;
 
   friend void swap(OrderMsg& a, OrderMsg& b) {
     a.Swap(&b);
@@ -1995,7 +2382,7 @@ class TradeMsg :
                &_TradeMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    13;
 
   friend void swap(TradeMsg& a, TradeMsg& b) {
     a.Swap(&b);
@@ -2140,7 +2527,7 @@ class CybosOrderReturn :
                &_CybosOrderReturn_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    14;
 
   friend void swap(CybosOrderReturn& a, CybosOrderReturn& b) {
     a.Swap(&b);
@@ -2297,7 +2684,7 @@ class Report :
                &_Report_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    15;
 
   friend void swap(Report& a, Report& b) {
     a.Swap(&b);
@@ -2591,7 +2978,7 @@ class OrderResult :
                &_OrderResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    16;
 
   friend void swap(OrderResult& a, OrderResult& b) {
     a.Swap(&b);
@@ -2739,7 +3126,7 @@ class CybosOrderResult :
                &_CybosOrderResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    17;
 
   friend void swap(CybosOrderResult& a, CybosOrderResult& b) {
     a.Swap(&b);
@@ -2947,7 +3334,7 @@ class ListType :
                &_ListType_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    18;
 
   friend void swap(ListType& a, ListType& b) {
     a.Swap(&b);
@@ -3082,7 +3469,7 @@ class CompanyName :
                &_CompanyName_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    19;
 
   friend void swap(CompanyName& a, CompanyName& b) {
     a.Swap(&b);
@@ -3217,7 +3604,7 @@ class PastMinuteQuery :
                &_PastMinuteQuery_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    20;
 
   friend void swap(PastMinuteQuery& a, PastMinuteQuery& b) {
     a.Swap(&b);
@@ -3380,7 +3767,7 @@ class CybosDayData :
                &_CybosDayData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    21;
 
   friend void swap(CybosDayData& a, CybosDayData& b) {
     a.Swap(&b);
@@ -3662,7 +4049,7 @@ class CybosDayDatas :
                &_CybosDayDatas_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    22;
 
   friend void swap(CybosDayDatas& a, CybosDayDatas& b) {
     a.Swap(&b);
@@ -3799,7 +4186,7 @@ class CybosSubjectTickData :
                &_CybosSubjectTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    23;
 
   friend void swap(CybosSubjectTickData& a, CybosSubjectTickData& b) {
     a.Swap(&b);
@@ -4042,7 +4429,7 @@ class CybosTickData :
                &_CybosTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    24;
 
   friend void swap(CybosTickData& a, CybosTickData& b) {
     a.Swap(&b);
@@ -4443,7 +4830,7 @@ class CybosBidAskTickData :
                &_CybosBidAskTickData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    23;
+    25;
 
   friend void swap(CybosBidAskTickData& a, CybosBidAskTickData& b) {
     a.Swap(&b);
@@ -4761,7 +5148,7 @@ class CybosStockAlarm :
                &_CybosStockAlarm_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    24;
+    26;
 
   friend void swap(CybosStockAlarm& a, CybosStockAlarm& b) {
     a.Swap(&b);
@@ -5171,6 +5558,369 @@ inline void Bool::_internal_set_ret(bool value) {
 inline void Bool::set_ret(bool value) {
   _internal_set_ret(value);
   // @@protoc_insertion_point(field_set:stock_api.Bool.ret)
+}
+
+// -------------------------------------------------------------------
+
+// YearHighInfo
+
+// int32 price = 1;
+inline void YearHighInfo::clear_price() {
+  price_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 YearHighInfo::_internal_price() const {
+  return price_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 YearHighInfo::price() const {
+  // @@protoc_insertion_point(field_get:stock_api.YearHighInfo.price)
+  return _internal_price();
+}
+inline void YearHighInfo::_internal_set_price(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  price_ = value;
+}
+inline void YearHighInfo::set_price(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_price(value);
+  // @@protoc_insertion_point(field_set:stock_api.YearHighInfo.price)
+}
+
+// .google.protobuf.Timestamp high_date = 2;
+inline bool YearHighInfo::_internal_has_high_date() const {
+  return this != internal_default_instance() && high_date_ != nullptr;
+}
+inline bool YearHighInfo::has_high_date() const {
+  return _internal_has_high_date();
+}
+inline const PROTOBUF_NAMESPACE_ID::Timestamp& YearHighInfo::_internal_high_date() const {
+  const PROTOBUF_NAMESPACE_ID::Timestamp* p = high_date_;
+  return p != nullptr ? *p : *reinterpret_cast<const PROTOBUF_NAMESPACE_ID::Timestamp*>(
+      &PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
+}
+inline const PROTOBUF_NAMESPACE_ID::Timestamp& YearHighInfo::high_date() const {
+  // @@protoc_insertion_point(field_get:stock_api.YearHighInfo.high_date)
+  return _internal_high_date();
+}
+inline PROTOBUF_NAMESPACE_ID::Timestamp* YearHighInfo::release_high_date() {
+  // @@protoc_insertion_point(field_release:stock_api.YearHighInfo.high_date)
+  
+  PROTOBUF_NAMESPACE_ID::Timestamp* temp = high_date_;
+  high_date_ = nullptr;
+  return temp;
+}
+inline PROTOBUF_NAMESPACE_ID::Timestamp* YearHighInfo::_internal_mutable_high_date() {
+  
+  if (high_date_ == nullptr) {
+    auto* p = CreateMaybeMessage<PROTOBUF_NAMESPACE_ID::Timestamp>(GetArenaNoVirtual());
+    high_date_ = p;
+  }
+  return high_date_;
+}
+inline PROTOBUF_NAMESPACE_ID::Timestamp* YearHighInfo::mutable_high_date() {
+  // @@protoc_insertion_point(field_mutable:stock_api.YearHighInfo.high_date)
+  return _internal_mutable_high_date();
+}
+inline void YearHighInfo::set_allocated_high_date(PROTOBUF_NAMESPACE_ID::Timestamp* high_date) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(high_date_);
+  }
+  if (high_date) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(high_date)->GetArena();
+    if (message_arena != submessage_arena) {
+      high_date = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, high_date, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  high_date_ = high_date;
+  // @@protoc_insertion_point(field_set_allocated:stock_api.YearHighInfo.high_date)
+}
+
+// int32 days_distance = 3;
+inline void YearHighInfo::clear_days_distance() {
+  days_distance_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 YearHighInfo::_internal_days_distance() const {
+  return days_distance_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 YearHighInfo::days_distance() const {
+  // @@protoc_insertion_point(field_get:stock_api.YearHighInfo.days_distance)
+  return _internal_days_distance();
+}
+inline void YearHighInfo::_internal_set_days_distance(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  days_distance_ = value;
+}
+inline void YearHighInfo::set_days_distance(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_days_distance(value);
+  // @@protoc_insertion_point(field_set:stock_api.YearHighInfo.days_distance)
+}
+
+// -------------------------------------------------------------------
+
+// SimulationMsg
+
+// .stock_api.SimulationMsgType msgtype = 1;
+inline void SimulationMsg::clear_msgtype() {
+  msgtype_ = 0;
+}
+inline ::stock_api::SimulationMsgType SimulationMsg::_internal_msgtype() const {
+  return static_cast< ::stock_api::SimulationMsgType >(msgtype_);
+}
+inline ::stock_api::SimulationMsgType SimulationMsg::msgtype() const {
+  // @@protoc_insertion_point(field_get:stock_api.SimulationMsg.msgtype)
+  return _internal_msgtype();
+}
+inline void SimulationMsg::_internal_set_msgtype(::stock_api::SimulationMsgType value) {
+  
+  msgtype_ = value;
+}
+inline void SimulationMsg::set_msgtype(::stock_api::SimulationMsgType value) {
+  _internal_set_msgtype(value);
+  // @@protoc_insertion_point(field_set:stock_api.SimulationMsg.msgtype)
+}
+
+// .stock_api.CybosTickData tick = 2;
+inline bool SimulationMsg::_internal_has_tick() const {
+  return this != internal_default_instance() && tick_ != nullptr;
+}
+inline bool SimulationMsg::has_tick() const {
+  return _internal_has_tick();
+}
+inline void SimulationMsg::clear_tick() {
+  if (GetArenaNoVirtual() == nullptr && tick_ != nullptr) {
+    delete tick_;
+  }
+  tick_ = nullptr;
+}
+inline const ::stock_api::CybosTickData& SimulationMsg::_internal_tick() const {
+  const ::stock_api::CybosTickData* p = tick_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::stock_api::CybosTickData*>(
+      &::stock_api::_CybosTickData_default_instance_);
+}
+inline const ::stock_api::CybosTickData& SimulationMsg::tick() const {
+  // @@protoc_insertion_point(field_get:stock_api.SimulationMsg.tick)
+  return _internal_tick();
+}
+inline ::stock_api::CybosTickData* SimulationMsg::release_tick() {
+  // @@protoc_insertion_point(field_release:stock_api.SimulationMsg.tick)
+  
+  ::stock_api::CybosTickData* temp = tick_;
+  tick_ = nullptr;
+  return temp;
+}
+inline ::stock_api::CybosTickData* SimulationMsg::_internal_mutable_tick() {
+  
+  if (tick_ == nullptr) {
+    auto* p = CreateMaybeMessage<::stock_api::CybosTickData>(GetArenaNoVirtual());
+    tick_ = p;
+  }
+  return tick_;
+}
+inline ::stock_api::CybosTickData* SimulationMsg::mutable_tick() {
+  // @@protoc_insertion_point(field_mutable:stock_api.SimulationMsg.tick)
+  return _internal_mutable_tick();
+}
+inline void SimulationMsg::set_allocated_tick(::stock_api::CybosTickData* tick) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete tick_;
+  }
+  if (tick) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      tick = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, tick, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  tick_ = tick;
+  // @@protoc_insertion_point(field_set_allocated:stock_api.SimulationMsg.tick)
+}
+
+// .stock_api.CybosBidAskTickData bidask = 3;
+inline bool SimulationMsg::_internal_has_bidask() const {
+  return this != internal_default_instance() && bidask_ != nullptr;
+}
+inline bool SimulationMsg::has_bidask() const {
+  return _internal_has_bidask();
+}
+inline void SimulationMsg::clear_bidask() {
+  if (GetArenaNoVirtual() == nullptr && bidask_ != nullptr) {
+    delete bidask_;
+  }
+  bidask_ = nullptr;
+}
+inline const ::stock_api::CybosBidAskTickData& SimulationMsg::_internal_bidask() const {
+  const ::stock_api::CybosBidAskTickData* p = bidask_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::stock_api::CybosBidAskTickData*>(
+      &::stock_api::_CybosBidAskTickData_default_instance_);
+}
+inline const ::stock_api::CybosBidAskTickData& SimulationMsg::bidask() const {
+  // @@protoc_insertion_point(field_get:stock_api.SimulationMsg.bidask)
+  return _internal_bidask();
+}
+inline ::stock_api::CybosBidAskTickData* SimulationMsg::release_bidask() {
+  // @@protoc_insertion_point(field_release:stock_api.SimulationMsg.bidask)
+  
+  ::stock_api::CybosBidAskTickData* temp = bidask_;
+  bidask_ = nullptr;
+  return temp;
+}
+inline ::stock_api::CybosBidAskTickData* SimulationMsg::_internal_mutable_bidask() {
+  
+  if (bidask_ == nullptr) {
+    auto* p = CreateMaybeMessage<::stock_api::CybosBidAskTickData>(GetArenaNoVirtual());
+    bidask_ = p;
+  }
+  return bidask_;
+}
+inline ::stock_api::CybosBidAskTickData* SimulationMsg::mutable_bidask() {
+  // @@protoc_insertion_point(field_mutable:stock_api.SimulationMsg.bidask)
+  return _internal_mutable_bidask();
+}
+inline void SimulationMsg::set_allocated_bidask(::stock_api::CybosBidAskTickData* bidask) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete bidask_;
+  }
+  if (bidask) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      bidask = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, bidask, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  bidask_ = bidask;
+  // @@protoc_insertion_point(field_set_allocated:stock_api.SimulationMsg.bidask)
+}
+
+// .stock_api.CybosSubjectTickData subject = 4;
+inline bool SimulationMsg::_internal_has_subject() const {
+  return this != internal_default_instance() && subject_ != nullptr;
+}
+inline bool SimulationMsg::has_subject() const {
+  return _internal_has_subject();
+}
+inline void SimulationMsg::clear_subject() {
+  if (GetArenaNoVirtual() == nullptr && subject_ != nullptr) {
+    delete subject_;
+  }
+  subject_ = nullptr;
+}
+inline const ::stock_api::CybosSubjectTickData& SimulationMsg::_internal_subject() const {
+  const ::stock_api::CybosSubjectTickData* p = subject_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::stock_api::CybosSubjectTickData*>(
+      &::stock_api::_CybosSubjectTickData_default_instance_);
+}
+inline const ::stock_api::CybosSubjectTickData& SimulationMsg::subject() const {
+  // @@protoc_insertion_point(field_get:stock_api.SimulationMsg.subject)
+  return _internal_subject();
+}
+inline ::stock_api::CybosSubjectTickData* SimulationMsg::release_subject() {
+  // @@protoc_insertion_point(field_release:stock_api.SimulationMsg.subject)
+  
+  ::stock_api::CybosSubjectTickData* temp = subject_;
+  subject_ = nullptr;
+  return temp;
+}
+inline ::stock_api::CybosSubjectTickData* SimulationMsg::_internal_mutable_subject() {
+  
+  if (subject_ == nullptr) {
+    auto* p = CreateMaybeMessage<::stock_api::CybosSubjectTickData>(GetArenaNoVirtual());
+    subject_ = p;
+  }
+  return subject_;
+}
+inline ::stock_api::CybosSubjectTickData* SimulationMsg::mutable_subject() {
+  // @@protoc_insertion_point(field_mutable:stock_api.SimulationMsg.subject)
+  return _internal_mutable_subject();
+}
+inline void SimulationMsg::set_allocated_subject(::stock_api::CybosSubjectTickData* subject) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete subject_;
+  }
+  if (subject) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      subject = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, subject, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  subject_ = subject;
+  // @@protoc_insertion_point(field_set_allocated:stock_api.SimulationMsg.subject)
+}
+
+// .stock_api.CybosStockAlarm alarm = 5;
+inline bool SimulationMsg::_internal_has_alarm() const {
+  return this != internal_default_instance() && alarm_ != nullptr;
+}
+inline bool SimulationMsg::has_alarm() const {
+  return _internal_has_alarm();
+}
+inline void SimulationMsg::clear_alarm() {
+  if (GetArenaNoVirtual() == nullptr && alarm_ != nullptr) {
+    delete alarm_;
+  }
+  alarm_ = nullptr;
+}
+inline const ::stock_api::CybosStockAlarm& SimulationMsg::_internal_alarm() const {
+  const ::stock_api::CybosStockAlarm* p = alarm_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::stock_api::CybosStockAlarm*>(
+      &::stock_api::_CybosStockAlarm_default_instance_);
+}
+inline const ::stock_api::CybosStockAlarm& SimulationMsg::alarm() const {
+  // @@protoc_insertion_point(field_get:stock_api.SimulationMsg.alarm)
+  return _internal_alarm();
+}
+inline ::stock_api::CybosStockAlarm* SimulationMsg::release_alarm() {
+  // @@protoc_insertion_point(field_release:stock_api.SimulationMsg.alarm)
+  
+  ::stock_api::CybosStockAlarm* temp = alarm_;
+  alarm_ = nullptr;
+  return temp;
+}
+inline ::stock_api::CybosStockAlarm* SimulationMsg::_internal_mutable_alarm() {
+  
+  if (alarm_ == nullptr) {
+    auto* p = CreateMaybeMessage<::stock_api::CybosStockAlarm>(GetArenaNoVirtual());
+    alarm_ = p;
+  }
+  return alarm_;
+}
+inline ::stock_api::CybosStockAlarm* SimulationMsg::mutable_alarm() {
+  // @@protoc_insertion_point(field_mutable:stock_api.SimulationMsg.alarm)
+  return _internal_mutable_alarm();
+}
+inline void SimulationMsg::set_allocated_alarm(::stock_api::CybosStockAlarm* alarm) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete alarm_;
+  }
+  if (alarm) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      alarm = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, alarm, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  alarm_ = alarm;
+  // @@protoc_insertion_point(field_set_allocated:stock_api.SimulationMsg.alarm)
 }
 
 // -------------------------------------------------------------------
@@ -9183,6 +9933,10 @@ inline void CybosStockAlarm::set_allocated_content(std::string* content) {
 
 // -------------------------------------------------------------------
 
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -9190,6 +9944,11 @@ inline void CybosStockAlarm::set_allocated_content(std::string* content) {
 
 PROTOBUF_NAMESPACE_OPEN
 
+template <> struct is_proto_enum< ::stock_api::SimulationMsgType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::stock_api::SimulationMsgType>() {
+  return ::stock_api::SimulationMsgType_descriptor();
+}
 template <> struct is_proto_enum< ::stock_api::TodayTopSelection> : ::std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::stock_api::TodayTopSelection>() {

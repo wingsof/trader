@@ -106,6 +106,13 @@ class Stock final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CybosOrderReturn>> PrepareAsyncCancelOrder(::grpc::ClientContext* context, const ::stock_api::OrderMsg& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CybosOrderReturn>>(PrepareAsyncCancelOrderRaw(context, request, cq));
     }
+    virtual ::grpc::Status GetYearHigh(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::stock_api::YearHighInfo* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::YearHighInfo>> AsyncGetYearHigh(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::YearHighInfo>>(AsyncGetYearHighRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::YearHighInfo>> PrepareAsyncGetYearHigh(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::YearHighInfo>>(PrepareAsyncGetYearHighRaw(context, request, cq));
+    }
     virtual ::grpc::Status RequestCybosTickData(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::google::protobuf::Empty* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncRequestCybosTickData(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncRequestCybosTickDataRaw(context, request, cq));
@@ -374,33 +381,14 @@ class Stock final {
     std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::stock_api::SimulationStatus>> PrepareAsyncListenSimulationStatusChanged(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::stock_api::SimulationStatus>>(PrepareAsyncListenSimulationStatusChangedRaw(context, request, cq));
     }
-    virtual ::grpc::Status SetSimulationStockTick(::grpc::ClientContext* context, const ::stock_api::CybosTickData& request, ::google::protobuf::Empty* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncSetSimulationStockTick(::grpc::ClientContext* context, const ::stock_api::CybosTickData& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncSetSimulationStockTickRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::stock_api::SimulationMsg, ::google::protobuf::Empty>> SimulationData(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::stock_api::SimulationMsg, ::google::protobuf::Empty>>(SimulationDataRaw(context));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncSetSimulationStockTick(::grpc::ClientContext* context, const ::stock_api::CybosTickData& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncSetSimulationStockTickRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::stock_api::SimulationMsg, ::google::protobuf::Empty>> AsyncSimulationData(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::stock_api::SimulationMsg, ::google::protobuf::Empty>>(AsyncSimulationDataRaw(context, cq, tag));
     }
-    virtual ::grpc::Status SetSimulationBidAskTick(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData& request, ::google::protobuf::Empty* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncSetSimulationBidAskTick(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncSetSimulationBidAskTickRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncSetSimulationBidAskTick(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncSetSimulationBidAskTickRaw(context, request, cq));
-    }
-    virtual ::grpc::Status SetSimulationSubjectTick(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData& request, ::google::protobuf::Empty* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncSetSimulationSubjectTick(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncSetSimulationSubjectTickRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncSetSimulationSubjectTick(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncSetSimulationSubjectTickRaw(context, request, cq));
-    }
-    virtual ::grpc::Status SetSimulationAlarmTick(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm& request, ::google::protobuf::Empty* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncSetSimulationAlarmTick(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncSetSimulationAlarmTickRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncSetSimulationAlarmTick(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncSetSimulationAlarmTickRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::stock_api::SimulationMsg, ::google::protobuf::Empty>> PrepareAsyncSimulationData(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::stock_api::SimulationMsg, ::google::protobuf::Empty>>(PrepareAsyncSimulationDataRaw(context, cq));
     }
     std::unique_ptr< ::grpc::ClientReaderInterface< ::stock_api::SimulationOperation>> ListenSimulationOperation(::grpc::ClientContext* context, const ::google::protobuf::Empty& request) {
       return std::unique_ptr< ::grpc::ClientReaderInterface< ::stock_api::SimulationOperation>>(ListenSimulationOperationRaw(context, request));
@@ -561,6 +549,18 @@ class Stock final {
       virtual void CancelOrder(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CybosOrderReturn* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
       virtual void CancelOrder(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CybosOrderReturn* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+      virtual void GetYearHigh(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery* request, ::stock_api::YearHighInfo* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GetYearHigh(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::YearHighInfo* response, std::function<void(::grpc::Status)>) = 0;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void GetYearHigh(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery* request, ::stock_api::YearHighInfo* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void GetYearHigh(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery* request, ::stock_api::YearHighInfo* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void GetYearHigh(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::YearHighInfo* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void GetYearHigh(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::YearHighInfo* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
       virtual void RequestCybosTickData(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
       virtual void RequestCybosTickData(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
@@ -906,53 +906,10 @@ class Stock final {
       #else
       virtual void ListenSimulationStatusChanged(::grpc::ClientContext* context, ::google::protobuf::Empty* request, ::grpc::experimental::ClientReadReactor< ::stock_api::SimulationStatus>* reactor) = 0;
       #endif
-      virtual void SetSimulationStockTick(::grpc::ClientContext* context, const ::stock_api::CybosTickData* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void SetSimulationStockTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void SetSimulationStockTick(::grpc::ClientContext* context, const ::stock_api::CybosTickData* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void SimulationData(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::stock_api::SimulationMsg,::google::protobuf::Empty>* reactor) = 0;
       #else
-      virtual void SetSimulationStockTick(::grpc::ClientContext* context, const ::stock_api::CybosTickData* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
-      #endif
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void SetSimulationStockTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      #else
-      virtual void SetSimulationStockTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
-      #endif
-      virtual void SetSimulationBidAskTick(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void SetSimulationBidAskTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void SetSimulationBidAskTick(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      #else
-      virtual void SetSimulationBidAskTick(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
-      #endif
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void SetSimulationBidAskTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      #else
-      virtual void SetSimulationBidAskTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
-      #endif
-      virtual void SetSimulationSubjectTick(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void SetSimulationSubjectTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void SetSimulationSubjectTick(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      #else
-      virtual void SetSimulationSubjectTick(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
-      #endif
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void SetSimulationSubjectTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      #else
-      virtual void SetSimulationSubjectTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
-      #endif
-      virtual void SetSimulationAlarmTick(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void SetSimulationAlarmTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void SetSimulationAlarmTick(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      #else
-      virtual void SetSimulationAlarmTick(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
-      #endif
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void SetSimulationAlarmTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      #else
-      virtual void SetSimulationAlarmTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void SimulationData(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::stock_api::SimulationMsg,::google::protobuf::Empty>* reactor) = 0;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       virtual void ListenSimulationOperation(::grpc::ClientContext* context, ::google::protobuf::Empty* request, ::grpc::ClientReadReactor< ::stock_api::SimulationOperation>* reactor) = 0;
@@ -1036,6 +993,8 @@ class Stock final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CybosOrderReturn>* PrepareAsyncChangeOrderRaw(::grpc::ClientContext* context, const ::stock_api::OrderMsg& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CybosOrderReturn>* AsyncCancelOrderRaw(::grpc::ClientContext* context, const ::stock_api::OrderMsg& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::CybosOrderReturn>* PrepareAsyncCancelOrderRaw(::grpc::ClientContext* context, const ::stock_api::OrderMsg& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::YearHighInfo>* AsyncGetYearHighRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::stock_api::YearHighInfo>* PrepareAsyncGetYearHighRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncRequestCybosTickDataRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncRequestCybosTickDataRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncRequestCybosBidAskRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) = 0;
@@ -1117,14 +1076,9 @@ class Stock final {
     virtual ::grpc::ClientReaderInterface< ::stock_api::SimulationStatus>* ListenSimulationStatusChangedRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request) = 0;
     virtual ::grpc::ClientAsyncReaderInterface< ::stock_api::SimulationStatus>* AsyncListenSimulationStatusChangedRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
     virtual ::grpc::ClientAsyncReaderInterface< ::stock_api::SimulationStatus>* PrepareAsyncListenSimulationStatusChangedRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncSetSimulationStockTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosTickData& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncSetSimulationStockTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosTickData& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncSetSimulationBidAskTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncSetSimulationBidAskTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncSetSimulationSubjectTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncSetSimulationSubjectTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncSetSimulationAlarmTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncSetSimulationAlarmTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderWriterInterface< ::stock_api::SimulationMsg, ::google::protobuf::Empty>* SimulationDataRaw(::grpc::ClientContext* context) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::stock_api::SimulationMsg, ::google::protobuf::Empty>* AsyncSimulationDataRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::stock_api::SimulationMsg, ::google::protobuf::Empty>* PrepareAsyncSimulationDataRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientReaderInterface< ::stock_api::SimulationOperation>* ListenSimulationOperationRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request) = 0;
     virtual ::grpc::ClientAsyncReaderInterface< ::stock_api::SimulationOperation>* AsyncListenSimulationOperationRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
     virtual ::grpc::ClientAsyncReaderInterface< ::stock_api::SimulationOperation>* PrepareAsyncListenSimulationOperationRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) = 0;
@@ -1209,6 +1163,13 @@ class Stock final {
     }
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::stock_api::CybosOrderReturn>> PrepareAsyncCancelOrder(::grpc::ClientContext* context, const ::stock_api::OrderMsg& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::stock_api::CybosOrderReturn>>(PrepareAsyncCancelOrderRaw(context, request, cq));
+    }
+    ::grpc::Status GetYearHigh(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::stock_api::YearHighInfo* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::stock_api::YearHighInfo>> AsyncGetYearHigh(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::stock_api::YearHighInfo>>(AsyncGetYearHighRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::stock_api::YearHighInfo>> PrepareAsyncGetYearHigh(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::stock_api::YearHighInfo>>(PrepareAsyncGetYearHighRaw(context, request, cq));
     }
     ::grpc::Status RequestCybosTickData(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::google::protobuf::Empty* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncRequestCybosTickData(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) {
@@ -1477,33 +1438,14 @@ class Stock final {
     std::unique_ptr< ::grpc::ClientAsyncReader< ::stock_api::SimulationStatus>> PrepareAsyncListenSimulationStatusChanged(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncReader< ::stock_api::SimulationStatus>>(PrepareAsyncListenSimulationStatusChangedRaw(context, request, cq));
     }
-    ::grpc::Status SetSimulationStockTick(::grpc::ClientContext* context, const ::stock_api::CybosTickData& request, ::google::protobuf::Empty* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncSetSimulationStockTick(::grpc::ClientContext* context, const ::stock_api::CybosTickData& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncSetSimulationStockTickRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientReaderWriter< ::stock_api::SimulationMsg, ::google::protobuf::Empty>> SimulationData(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriter< ::stock_api::SimulationMsg, ::google::protobuf::Empty>>(SimulationDataRaw(context));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncSetSimulationStockTick(::grpc::ClientContext* context, const ::stock_api::CybosTickData& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncSetSimulationStockTickRaw(context, request, cq));
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::stock_api::SimulationMsg, ::google::protobuf::Empty>> AsyncSimulationData(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::stock_api::SimulationMsg, ::google::protobuf::Empty>>(AsyncSimulationDataRaw(context, cq, tag));
     }
-    ::grpc::Status SetSimulationBidAskTick(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData& request, ::google::protobuf::Empty* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncSetSimulationBidAskTick(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncSetSimulationBidAskTickRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncSetSimulationBidAskTick(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncSetSimulationBidAskTickRaw(context, request, cq));
-    }
-    ::grpc::Status SetSimulationSubjectTick(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData& request, ::google::protobuf::Empty* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncSetSimulationSubjectTick(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncSetSimulationSubjectTickRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncSetSimulationSubjectTick(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncSetSimulationSubjectTickRaw(context, request, cq));
-    }
-    ::grpc::Status SetSimulationAlarmTick(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm& request, ::google::protobuf::Empty* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncSetSimulationAlarmTick(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncSetSimulationAlarmTickRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncSetSimulationAlarmTick(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncSetSimulationAlarmTickRaw(context, request, cq));
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::stock_api::SimulationMsg, ::google::protobuf::Empty>> PrepareAsyncSimulationData(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::stock_api::SimulationMsg, ::google::protobuf::Empty>>(PrepareAsyncSimulationDataRaw(context, cq));
     }
     std::unique_ptr< ::grpc::ClientReader< ::stock_api::SimulationOperation>> ListenSimulationOperation(::grpc::ClientContext* context, const ::google::protobuf::Empty& request) {
       return std::unique_ptr< ::grpc::ClientReader< ::stock_api::SimulationOperation>>(ListenSimulationOperationRaw(context, request));
@@ -1664,6 +1606,18 @@ class Stock final {
       void CancelOrder(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CybosOrderReturn* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
       void CancelOrder(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::CybosOrderReturn* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+      void GetYearHigh(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery* request, ::stock_api::YearHighInfo* response, std::function<void(::grpc::Status)>) override;
+      void GetYearHigh(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::YearHighInfo* response, std::function<void(::grpc::Status)>) override;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void GetYearHigh(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery* request, ::stock_api::YearHighInfo* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void GetYearHigh(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery* request, ::stock_api::YearHighInfo* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void GetYearHigh(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::YearHighInfo* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void GetYearHigh(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::stock_api::YearHighInfo* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
       void RequestCybosTickData(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
       void RequestCybosTickData(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
@@ -2008,53 +1962,10 @@ class Stock final {
       #else
       void ListenSimulationStatusChanged(::grpc::ClientContext* context, ::google::protobuf::Empty* request, ::grpc::experimental::ClientReadReactor< ::stock_api::SimulationStatus>* reactor) override;
       #endif
-      void SetSimulationStockTick(::grpc::ClientContext* context, const ::stock_api::CybosTickData* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
-      void SetSimulationStockTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void SetSimulationStockTick(::grpc::ClientContext* context, const ::stock_api::CybosTickData* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void SimulationData(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::stock_api::SimulationMsg,::google::protobuf::Empty>* reactor) override;
       #else
-      void SetSimulationStockTick(::grpc::ClientContext* context, const ::stock_api::CybosTickData* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
-      #endif
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void SetSimulationStockTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
-      #else
-      void SetSimulationStockTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
-      #endif
-      void SetSimulationBidAskTick(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
-      void SetSimulationBidAskTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void SetSimulationBidAskTick(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
-      #else
-      void SetSimulationBidAskTick(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
-      #endif
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void SetSimulationBidAskTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
-      #else
-      void SetSimulationBidAskTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
-      #endif
-      void SetSimulationSubjectTick(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
-      void SetSimulationSubjectTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void SetSimulationSubjectTick(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
-      #else
-      void SetSimulationSubjectTick(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
-      #endif
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void SetSimulationSubjectTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
-      #else
-      void SetSimulationSubjectTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
-      #endif
-      void SetSimulationAlarmTick(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
-      void SetSimulationAlarmTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void SetSimulationAlarmTick(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
-      #else
-      void SetSimulationAlarmTick(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
-      #endif
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void SetSimulationAlarmTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
-      #else
-      void SetSimulationAlarmTick(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::google::protobuf::Empty* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void SimulationData(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::stock_api::SimulationMsg,::google::protobuf::Empty>* reactor) override;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       void ListenSimulationOperation(::grpc::ClientContext* context, ::google::protobuf::Empty* request, ::grpc::ClientReadReactor< ::stock_api::SimulationOperation>* reactor) override;
@@ -2140,6 +2051,8 @@ class Stock final {
     ::grpc::ClientAsyncResponseReader< ::stock_api::CybosOrderReturn>* PrepareAsyncChangeOrderRaw(::grpc::ClientContext* context, const ::stock_api::OrderMsg& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::stock_api::CybosOrderReturn>* AsyncCancelOrderRaw(::grpc::ClientContext* context, const ::stock_api::OrderMsg& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::stock_api::CybosOrderReturn>* PrepareAsyncCancelOrderRaw(::grpc::ClientContext* context, const ::stock_api::OrderMsg& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::stock_api::YearHighInfo>* AsyncGetYearHighRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::stock_api::YearHighInfo>* PrepareAsyncGetYearHighRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncRequestCybosTickDataRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncRequestCybosTickDataRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncRequestCybosBidAskRaw(::grpc::ClientContext* context, const ::stock_api::StockCodeQuery& request, ::grpc::CompletionQueue* cq) override;
@@ -2221,14 +2134,9 @@ class Stock final {
     ::grpc::ClientReader< ::stock_api::SimulationStatus>* ListenSimulationStatusChangedRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request) override;
     ::grpc::ClientAsyncReader< ::stock_api::SimulationStatus>* AsyncListenSimulationStatusChangedRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq, void* tag) override;
     ::grpc::ClientAsyncReader< ::stock_api::SimulationStatus>* PrepareAsyncListenSimulationStatusChangedRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncSetSimulationStockTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosTickData& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncSetSimulationStockTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosTickData& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncSetSimulationBidAskTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncSetSimulationBidAskTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosBidAskTickData& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncSetSimulationSubjectTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncSetSimulationSubjectTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosSubjectTickData& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncSetSimulationAlarmTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncSetSimulationAlarmTickRaw(::grpc::ClientContext* context, const ::stock_api::CybosStockAlarm& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReaderWriter< ::stock_api::SimulationMsg, ::google::protobuf::Empty>* SimulationDataRaw(::grpc::ClientContext* context) override;
+    ::grpc::ClientAsyncReaderWriter< ::stock_api::SimulationMsg, ::google::protobuf::Empty>* AsyncSimulationDataRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReaderWriter< ::stock_api::SimulationMsg, ::google::protobuf::Empty>* PrepareAsyncSimulationDataRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientReader< ::stock_api::SimulationOperation>* ListenSimulationOperationRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request) override;
     ::grpc::ClientAsyncReader< ::stock_api::SimulationOperation>* AsyncListenSimulationOperationRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq, void* tag) override;
     ::grpc::ClientAsyncReader< ::stock_api::SimulationOperation>* PrepareAsyncListenSimulationOperationRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) override;
@@ -2250,6 +2158,7 @@ class Stock final {
     const ::grpc::internal::RpcMethod rpcmethod_OrderStock_;
     const ::grpc::internal::RpcMethod rpcmethod_ChangeOrder_;
     const ::grpc::internal::RpcMethod rpcmethod_CancelOrder_;
+    const ::grpc::internal::RpcMethod rpcmethod_GetYearHigh_;
     const ::grpc::internal::RpcMethod rpcmethod_RequestCybosTickData_;
     const ::grpc::internal::RpcMethod rpcmethod_RequestCybosBidAsk_;
     const ::grpc::internal::RpcMethod rpcmethod_RequestCybosSubject_;
@@ -2285,10 +2194,7 @@ class Stock final {
     const ::grpc::internal::RpcMethod rpcmethod_ListenCybosSubject_;
     const ::grpc::internal::RpcMethod rpcmethod_ListenCybosAlarm_;
     const ::grpc::internal::RpcMethod rpcmethod_ListenSimulationStatusChanged_;
-    const ::grpc::internal::RpcMethod rpcmethod_SetSimulationStockTick_;
-    const ::grpc::internal::RpcMethod rpcmethod_SetSimulationBidAskTick_;
-    const ::grpc::internal::RpcMethod rpcmethod_SetSimulationSubjectTick_;
-    const ::grpc::internal::RpcMethod rpcmethod_SetSimulationAlarmTick_;
+    const ::grpc::internal::RpcMethod rpcmethod_SimulationData_;
     const ::grpc::internal::RpcMethod rpcmethod_ListenSimulationOperation_;
     const ::grpc::internal::RpcMethod rpcmethod_StartSimulation_;
     const ::grpc::internal::RpcMethod rpcmethod_StopSimulation_;
@@ -2311,6 +2217,7 @@ class Stock final {
     virtual ::grpc::Status OrderStock(::grpc::ServerContext* context, const ::stock_api::OrderMsg* request, ::stock_api::CybosOrderReturn* response);
     virtual ::grpc::Status ChangeOrder(::grpc::ServerContext* context, const ::stock_api::OrderMsg* request, ::stock_api::CybosOrderReturn* response);
     virtual ::grpc::Status CancelOrder(::grpc::ServerContext* context, const ::stock_api::OrderMsg* request, ::stock_api::CybosOrderReturn* response);
+    virtual ::grpc::Status GetYearHigh(::grpc::ServerContext* context, const ::stock_api::StockCodeQuery* request, ::stock_api::YearHighInfo* response);
     virtual ::grpc::Status RequestCybosTickData(::grpc::ServerContext* context, const ::stock_api::StockCodeQuery* request, ::google::protobuf::Empty* response);
     virtual ::grpc::Status RequestCybosBidAsk(::grpc::ServerContext* context, const ::stock_api::StockCodeQuery* request, ::google::protobuf::Empty* response);
     virtual ::grpc::Status RequestCybosSubject(::grpc::ServerContext* context, const ::stock_api::StockCodeQuery* request, ::google::protobuf::Empty* response);
@@ -2347,10 +2254,7 @@ class Stock final {
     virtual ::grpc::Status ListenCybosAlarm(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::grpc::ServerWriter< ::stock_api::CybosStockAlarm>* writer);
     // Simulation RPCs
     virtual ::grpc::Status ListenSimulationStatusChanged(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::grpc::ServerWriter< ::stock_api::SimulationStatus>* writer);
-    virtual ::grpc::Status SetSimulationStockTick(::grpc::ServerContext* context, const ::stock_api::CybosTickData* request, ::google::protobuf::Empty* response);
-    virtual ::grpc::Status SetSimulationBidAskTick(::grpc::ServerContext* context, const ::stock_api::CybosBidAskTickData* request, ::google::protobuf::Empty* response);
-    virtual ::grpc::Status SetSimulationSubjectTick(::grpc::ServerContext* context, const ::stock_api::CybosSubjectTickData* request, ::google::protobuf::Empty* response);
-    virtual ::grpc::Status SetSimulationAlarmTick(::grpc::ServerContext* context, const ::stock_api::CybosStockAlarm* request, ::google::protobuf::Empty* response);
+    virtual ::grpc::Status SimulationData(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::google::protobuf::Empty, ::stock_api::SimulationMsg>* stream);
     virtual ::grpc::Status ListenSimulationOperation(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::grpc::ServerWriter< ::stock_api::SimulationOperation>* writer);
     virtual ::grpc::Status StartSimulation(::grpc::ServerContext* context, const ::stock_api::SimulationOperation* request, ::stock_api::Bool* response);
     virtual ::grpc::Status StopSimulation(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::google::protobuf::Empty* response);
@@ -2558,12 +2462,32 @@ class Stock final {
     }
   };
   template <class BaseClass>
+  class WithAsyncMethod_GetYearHigh : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_GetYearHigh() {
+      ::grpc::Service::MarkMethodAsync(10);
+    }
+    ~WithAsyncMethod_GetYearHigh() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetYearHigh(::grpc::ServerContext* /*context*/, const ::stock_api::StockCodeQuery* /*request*/, ::stock_api::YearHighInfo* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetYearHigh(::grpc::ServerContext* context, ::stock_api::StockCodeQuery* request, ::grpc::ServerAsyncResponseWriter< ::stock_api::YearHighInfo>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithAsyncMethod_RequestCybosTickData : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_RequestCybosTickData() {
-      ::grpc::Service::MarkMethodAsync(10);
+      ::grpc::Service::MarkMethodAsync(11);
     }
     ~WithAsyncMethod_RequestCybosTickData() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2574,7 +2498,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRequestCybosTickData(::grpc::ServerContext* context, ::stock_api::StockCodeQuery* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2583,7 +2507,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_RequestCybosBidAsk() {
-      ::grpc::Service::MarkMethodAsync(11);
+      ::grpc::Service::MarkMethodAsync(12);
     }
     ~WithAsyncMethod_RequestCybosBidAsk() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2594,7 +2518,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRequestCybosBidAsk(::grpc::ServerContext* context, ::stock_api::StockCodeQuery* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2603,7 +2527,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_RequestCybosSubject() {
-      ::grpc::Service::MarkMethodAsync(12);
+      ::grpc::Service::MarkMethodAsync(13);
     }
     ~WithAsyncMethod_RequestCybosSubject() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2614,7 +2538,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRequestCybosSubject(::grpc::ServerContext* context, ::stock_api::StockCodeQuery* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2623,7 +2547,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_RequestCybosAlarm() {
-      ::grpc::Service::MarkMethodAsync(13);
+      ::grpc::Service::MarkMethodAsync(14);
     }
     ~WithAsyncMethod_RequestCybosAlarm() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2634,7 +2558,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRequestCybosAlarm(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2643,7 +2567,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_RequestToTrader() {
-      ::grpc::Service::MarkMethodAsync(14);
+      ::grpc::Service::MarkMethodAsync(15);
     }
     ~WithAsyncMethod_RequestToTrader() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2654,7 +2578,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRequestToTrader(::grpc::ServerContext* context, ::stock_api::TradeMsg* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2663,7 +2587,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_RequestCybosTradeResult() {
-      ::grpc::Service::MarkMethodAsync(15);
+      ::grpc::Service::MarkMethodAsync(16);
     }
     ~WithAsyncMethod_RequestCybosTradeResult() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2674,7 +2598,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRequestCybosTradeResult(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2683,7 +2607,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ReportOrderResult() {
-      ::grpc::Service::MarkMethodAsync(16);
+      ::grpc::Service::MarkMethodAsync(17);
     }
     ~WithAsyncMethod_ReportOrderResult() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2694,7 +2618,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestReportOrderResult(::grpc::ServerContext* context, ::stock_api::OrderResult* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2703,7 +2627,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_IsKospi() {
-      ::grpc::Service::MarkMethodAsync(17);
+      ::grpc::Service::MarkMethodAsync(18);
     }
     ~WithAsyncMethod_IsKospi() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2714,7 +2638,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestIsKospi(::grpc::ServerContext* context, ::stock_api::StockCodeQuery* request, ::grpc::ServerAsyncResponseWriter< ::stock_api::Bool>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(18, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2723,7 +2647,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetViPrice() {
-      ::grpc::Service::MarkMethodAsync(18);
+      ::grpc::Service::MarkMethodAsync(19);
     }
     ~WithAsyncMethod_GetViPrice() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2734,7 +2658,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetViPrice(::grpc::ServerContext* context, ::stock_api::StockCodeQuery* request, ::grpc::ServerAsyncResponseWriter< ::stock_api::Prices>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(18, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(19, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2743,7 +2667,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListenTraderMsg() {
-      ::grpc::Service::MarkMethodAsync(19);
+      ::grpc::Service::MarkMethodAsync(20);
     }
     ~WithAsyncMethod_ListenTraderMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2754,7 +2678,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenTraderMsg(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncWriter< ::stock_api::TradeMsg>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(19, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(20, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2763,7 +2687,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListenCybosOrderResult() {
-      ::grpc::Service::MarkMethodAsync(20);
+      ::grpc::Service::MarkMethodAsync(21);
     }
     ~WithAsyncMethod_ListenCybosOrderResult() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2774,7 +2698,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenCybosOrderResult(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncWriter< ::stock_api::CybosOrderResult>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(20, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(21, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2783,7 +2707,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListenOrderResult() {
-      ::grpc::Service::MarkMethodAsync(21);
+      ::grpc::Service::MarkMethodAsync(22);
     }
     ~WithAsyncMethod_ListenOrderResult() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2794,7 +2718,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenOrderResult(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncWriter< ::stock_api::OrderResult>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(21, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(22, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2803,7 +2727,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetCurrentStock() {
-      ::grpc::Service::MarkMethodAsync(22);
+      ::grpc::Service::MarkMethodAsync(23);
     }
     ~WithAsyncMethod_SetCurrentStock() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2814,7 +2738,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetCurrentStock(::grpc::ServerContext* context, ::stock_api::StockCodeQuery* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(22, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(23, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2823,7 +2747,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetCurrentDateTime() {
-      ::grpc::Service::MarkMethodAsync(23);
+      ::grpc::Service::MarkMethodAsync(24);
     }
     ~WithAsyncMethod_SetCurrentDateTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2834,7 +2758,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetCurrentDateTime(::grpc::ServerContext* context, ::google::protobuf::Timestamp* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(23, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(24, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2843,7 +2767,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetCompanyName() {
-      ::grpc::Service::MarkMethodAsync(24);
+      ::grpc::Service::MarkMethodAsync(25);
     }
     ~WithAsyncMethod_GetCompanyName() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2854,7 +2778,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetCompanyName(::grpc::ServerContext* context, ::stock_api::StockCodeQuery* request, ::grpc::ServerAsyncResponseWriter< ::stock_api::CompanyName>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(24, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(25, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2863,7 +2787,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetFavoriteList() {
-      ::grpc::Service::MarkMethodAsync(25);
+      ::grpc::Service::MarkMethodAsync(26);
     }
     ~WithAsyncMethod_GetFavoriteList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2874,7 +2798,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetFavoriteList(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncResponseWriter< ::stock_api::CodeList>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(25, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(26, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2883,7 +2807,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_AddFavorite() {
-      ::grpc::Service::MarkMethodAsync(26);
+      ::grpc::Service::MarkMethodAsync(27);
     }
     ~WithAsyncMethod_AddFavorite() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2894,7 +2818,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestAddFavorite(::grpc::ServerContext* context, ::stock_api::StockCodeQuery* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(26, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(27, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2903,7 +2827,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_RemoveFavorite() {
-      ::grpc::Service::MarkMethodAsync(27);
+      ::grpc::Service::MarkMethodAsync(28);
     }
     ~WithAsyncMethod_RemoveFavorite() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2914,7 +2838,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRemoveFavorite(::grpc::ServerContext* context, ::stock_api::StockCodeQuery* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(27, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2923,7 +2847,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ClearRecentList() {
-      ::grpc::Service::MarkMethodAsync(28);
+      ::grpc::Service::MarkMethodAsync(29);
     }
     ~WithAsyncMethod_ClearRecentList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2934,7 +2858,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestClearRecentList(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2943,7 +2867,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetYesterdayTopAmountList() {
-      ::grpc::Service::MarkMethodAsync(29);
+      ::grpc::Service::MarkMethodAsync(30);
     }
     ~WithAsyncMethod_GetYesterdayTopAmountList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2954,7 +2878,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetYesterdayTopAmountList(::grpc::ServerContext* context, ::google::protobuf::Timestamp* request, ::grpc::ServerAsyncResponseWriter< ::stock_api::TopList>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2963,7 +2887,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetTodayAmountRatioList() {
-      ::grpc::Service::MarkMethodAsync(30);
+      ::grpc::Service::MarkMethodAsync(31);
     }
     ~WithAsyncMethod_SetTodayAmountRatioList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2974,7 +2898,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetTodayAmountRatioList(::grpc::ServerContext* context, ::stock_api::CodeList* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2983,7 +2907,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetTodayAmountMomentumList() {
-      ::grpc::Service::MarkMethodAsync(31);
+      ::grpc::Service::MarkMethodAsync(32);
     }
     ~WithAsyncMethod_SetTodayAmountMomentumList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2994,7 +2918,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetTodayAmountMomentumList(::grpc::ServerContext* context, ::stock_api::CodeList* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3003,7 +2927,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetTodayAmountTopList() {
-      ::grpc::Service::MarkMethodAsync(32);
+      ::grpc::Service::MarkMethodAsync(33);
     }
     ~WithAsyncMethod_SetTodayAmountTopList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3014,7 +2938,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetTodayAmountTopList(::grpc::ServerContext* context, ::stock_api::CodeList* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(33, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3023,7 +2947,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetTodayTopAmountList() {
-      ::grpc::Service::MarkMethodAsync(33);
+      ::grpc::Service::MarkMethodAsync(34);
     }
     ~WithAsyncMethod_GetTodayTopAmountList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3034,7 +2958,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetTodayTopAmountList(::grpc::ServerContext* context, ::stock_api::TodayTopOption* request, ::grpc::ServerAsyncResponseWriter< ::stock_api::CodeList>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(33, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(34, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3043,7 +2967,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetTodayNineThirtyList() {
-      ::grpc::Service::MarkMethodAsync(34);
+      ::grpc::Service::MarkMethodAsync(35);
     }
     ~WithAsyncMethod_GetTodayNineThirtyList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3054,7 +2978,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetTodayNineThirtyList(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncResponseWriter< ::stock_api::CodeList>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(34, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(35, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3063,7 +2987,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetRecentSearch() {
-      ::grpc::Service::MarkMethodAsync(35);
+      ::grpc::Service::MarkMethodAsync(36);
     }
     ~WithAsyncMethod_GetRecentSearch() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3074,7 +2998,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetRecentSearch(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncResponseWriter< ::stock_api::CodeList>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(35, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(36, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3083,7 +3007,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetViList() {
-      ::grpc::Service::MarkMethodAsync(36);
+      ::grpc::Service::MarkMethodAsync(37);
     }
     ~WithAsyncMethod_GetViList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3094,7 +3018,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetViList(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncResponseWriter< ::stock_api::CodeList>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(36, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(37, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3103,7 +3027,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListenCurrentStock() {
-      ::grpc::Service::MarkMethodAsync(37);
+      ::grpc::Service::MarkMethodAsync(38);
     }
     ~WithAsyncMethod_ListenCurrentStock() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3114,7 +3038,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenCurrentStock(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncWriter< ::stock_api::StockCodeQuery>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(37, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(38, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3123,7 +3047,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListenListChanged() {
-      ::grpc::Service::MarkMethodAsync(38);
+      ::grpc::Service::MarkMethodAsync(39);
     }
     ~WithAsyncMethod_ListenListChanged() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3134,7 +3058,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenListChanged(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncWriter< ::stock_api::ListType>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(38, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(39, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3143,7 +3067,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListenCybosTickData() {
-      ::grpc::Service::MarkMethodAsync(39);
+      ::grpc::Service::MarkMethodAsync(40);
     }
     ~WithAsyncMethod_ListenCybosTickData() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3154,7 +3078,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenCybosTickData(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncWriter< ::stock_api::CybosTickData>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(39, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(40, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3163,7 +3087,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListenCybosBidAsk() {
-      ::grpc::Service::MarkMethodAsync(40);
+      ::grpc::Service::MarkMethodAsync(41);
     }
     ~WithAsyncMethod_ListenCybosBidAsk() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3174,7 +3098,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenCybosBidAsk(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncWriter< ::stock_api::CybosBidAskTickData>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(40, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(41, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3183,7 +3107,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListenCurrentTime() {
-      ::grpc::Service::MarkMethodAsync(41);
+      ::grpc::Service::MarkMethodAsync(42);
     }
     ~WithAsyncMethod_ListenCurrentTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3194,7 +3118,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenCurrentTime(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncWriter< ::google::protobuf::Timestamp>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(41, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(42, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3203,7 +3127,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListenCybosSubject() {
-      ::grpc::Service::MarkMethodAsync(42);
+      ::grpc::Service::MarkMethodAsync(43);
     }
     ~WithAsyncMethod_ListenCybosSubject() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3214,7 +3138,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenCybosSubject(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncWriter< ::stock_api::CybosSubjectTickData>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(42, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(43, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3223,7 +3147,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListenCybosAlarm() {
-      ::grpc::Service::MarkMethodAsync(43);
+      ::grpc::Service::MarkMethodAsync(44);
     }
     ~WithAsyncMethod_ListenCybosAlarm() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3234,7 +3158,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenCybosAlarm(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncWriter< ::stock_api::CybosStockAlarm>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(43, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(44, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3243,7 +3167,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListenSimulationStatusChanged() {
-      ::grpc::Service::MarkMethodAsync(44);
+      ::grpc::Service::MarkMethodAsync(45);
     }
     ~WithAsyncMethod_ListenSimulationStatusChanged() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3254,87 +3178,27 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenSimulationStatusChanged(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncWriter< ::stock_api::SimulationStatus>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(44, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(45, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
-  class WithAsyncMethod_SetSimulationStockTick : public BaseClass {
+  class WithAsyncMethod_SimulationData : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithAsyncMethod_SetSimulationStockTick() {
-      ::grpc::Service::MarkMethodAsync(45);
-    }
-    ~WithAsyncMethod_SetSimulationStockTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationStockTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestSetSimulationStockTick(::grpc::ServerContext* context, ::stock_api::CybosTickData* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(45, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithAsyncMethod_SetSimulationBidAskTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithAsyncMethod_SetSimulationBidAskTick() {
+    WithAsyncMethod_SimulationData() {
       ::grpc::Service::MarkMethodAsync(46);
     }
-    ~WithAsyncMethod_SetSimulationBidAskTick() override {
+    ~WithAsyncMethod_SimulationData() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status SetSimulationBidAskTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosBidAskTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+    ::grpc::Status SimulationData(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::google::protobuf::Empty, ::stock_api::SimulationMsg>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestSetSimulationBidAskTick(::grpc::ServerContext* context, ::stock_api::CybosBidAskTickData* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(46, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithAsyncMethod_SetSimulationSubjectTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithAsyncMethod_SetSimulationSubjectTick() {
-      ::grpc::Service::MarkMethodAsync(47);
-    }
-    ~WithAsyncMethod_SetSimulationSubjectTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationSubjectTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosSubjectTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestSetSimulationSubjectTick(::grpc::ServerContext* context, ::stock_api::CybosSubjectTickData* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(47, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithAsyncMethod_SetSimulationAlarmTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithAsyncMethod_SetSimulationAlarmTick() {
-      ::grpc::Service::MarkMethodAsync(48);
-    }
-    ~WithAsyncMethod_SetSimulationAlarmTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationAlarmTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosStockAlarm* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestSetSimulationAlarmTick(::grpc::ServerContext* context, ::stock_api::CybosStockAlarm* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(48, context, request, response, new_call_cq, notification_cq, tag);
+    void RequestSimulationData(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::google::protobuf::Empty, ::stock_api::SimulationMsg>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncBidiStreaming(46, context, stream, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3343,7 +3207,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListenSimulationOperation() {
-      ::grpc::Service::MarkMethodAsync(49);
+      ::grpc::Service::MarkMethodAsync(47);
     }
     ~WithAsyncMethod_ListenSimulationOperation() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3354,7 +3218,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenSimulationOperation(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncWriter< ::stock_api::SimulationOperation>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(49, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(47, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3363,7 +3227,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_StartSimulation() {
-      ::grpc::Service::MarkMethodAsync(50);
+      ::grpc::Service::MarkMethodAsync(48);
     }
     ~WithAsyncMethod_StartSimulation() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3374,7 +3238,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestStartSimulation(::grpc::ServerContext* context, ::stock_api::SimulationOperation* request, ::grpc::ServerAsyncResponseWriter< ::stock_api::Bool>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(50, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(48, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3383,7 +3247,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_StopSimulation() {
-      ::grpc::Service::MarkMethodAsync(51);
+      ::grpc::Service::MarkMethodAsync(49);
     }
     ~WithAsyncMethod_StopSimulation() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3394,7 +3258,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestStopSimulation(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(51, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(49, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3403,7 +3267,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetSimulationStatus() {
-      ::grpc::Service::MarkMethodAsync(52);
+      ::grpc::Service::MarkMethodAsync(50);
     }
     ~WithAsyncMethod_SetSimulationStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3414,7 +3278,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetSimulationStatus(::grpc::ServerContext* context, ::stock_api::SimulationStatus* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(52, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(50, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3423,7 +3287,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetSimulationStatus() {
-      ::grpc::Service::MarkMethodAsync(53);
+      ::grpc::Service::MarkMethodAsync(51);
     }
     ~WithAsyncMethod_GetSimulationStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3434,10 +3298,10 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetSimulationStatus(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncResponseWriter< ::stock_api::SimulationStatus>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(53, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(51, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_SayHello<WithAsyncMethod_GetDayData<WithAsyncMethod_GetMinuteData<WithAsyncMethod_GetTodayMinuteData<WithAsyncMethod_GetPastMinuteData<WithAsyncMethod_GetSubscribeCodes<WithAsyncMethod_GetBalance<WithAsyncMethod_OrderStock<WithAsyncMethod_ChangeOrder<WithAsyncMethod_CancelOrder<WithAsyncMethod_RequestCybosTickData<WithAsyncMethod_RequestCybosBidAsk<WithAsyncMethod_RequestCybosSubject<WithAsyncMethod_RequestCybosAlarm<WithAsyncMethod_RequestToTrader<WithAsyncMethod_RequestCybosTradeResult<WithAsyncMethod_ReportOrderResult<WithAsyncMethod_IsKospi<WithAsyncMethod_GetViPrice<WithAsyncMethod_ListenTraderMsg<WithAsyncMethod_ListenCybosOrderResult<WithAsyncMethod_ListenOrderResult<WithAsyncMethod_SetCurrentStock<WithAsyncMethod_SetCurrentDateTime<WithAsyncMethod_GetCompanyName<WithAsyncMethod_GetFavoriteList<WithAsyncMethod_AddFavorite<WithAsyncMethod_RemoveFavorite<WithAsyncMethod_ClearRecentList<WithAsyncMethod_GetYesterdayTopAmountList<WithAsyncMethod_SetTodayAmountRatioList<WithAsyncMethod_SetTodayAmountMomentumList<WithAsyncMethod_SetTodayAmountTopList<WithAsyncMethod_GetTodayTopAmountList<WithAsyncMethod_GetTodayNineThirtyList<WithAsyncMethod_GetRecentSearch<WithAsyncMethod_GetViList<WithAsyncMethod_ListenCurrentStock<WithAsyncMethod_ListenListChanged<WithAsyncMethod_ListenCybosTickData<WithAsyncMethod_ListenCybosBidAsk<WithAsyncMethod_ListenCurrentTime<WithAsyncMethod_ListenCybosSubject<WithAsyncMethod_ListenCybosAlarm<WithAsyncMethod_ListenSimulationStatusChanged<WithAsyncMethod_SetSimulationStockTick<WithAsyncMethod_SetSimulationBidAskTick<WithAsyncMethod_SetSimulationSubjectTick<WithAsyncMethod_SetSimulationAlarmTick<WithAsyncMethod_ListenSimulationOperation<WithAsyncMethod_StartSimulation<WithAsyncMethod_StopSimulation<WithAsyncMethod_SetSimulationStatus<WithAsyncMethod_GetSimulationStatus<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > AsyncService;
+  typedef WithAsyncMethod_SayHello<WithAsyncMethod_GetDayData<WithAsyncMethod_GetMinuteData<WithAsyncMethod_GetTodayMinuteData<WithAsyncMethod_GetPastMinuteData<WithAsyncMethod_GetSubscribeCodes<WithAsyncMethod_GetBalance<WithAsyncMethod_OrderStock<WithAsyncMethod_ChangeOrder<WithAsyncMethod_CancelOrder<WithAsyncMethod_GetYearHigh<WithAsyncMethod_RequestCybosTickData<WithAsyncMethod_RequestCybosBidAsk<WithAsyncMethod_RequestCybosSubject<WithAsyncMethod_RequestCybosAlarm<WithAsyncMethod_RequestToTrader<WithAsyncMethod_RequestCybosTradeResult<WithAsyncMethod_ReportOrderResult<WithAsyncMethod_IsKospi<WithAsyncMethod_GetViPrice<WithAsyncMethod_ListenTraderMsg<WithAsyncMethod_ListenCybosOrderResult<WithAsyncMethod_ListenOrderResult<WithAsyncMethod_SetCurrentStock<WithAsyncMethod_SetCurrentDateTime<WithAsyncMethod_GetCompanyName<WithAsyncMethod_GetFavoriteList<WithAsyncMethod_AddFavorite<WithAsyncMethod_RemoveFavorite<WithAsyncMethod_ClearRecentList<WithAsyncMethod_GetYesterdayTopAmountList<WithAsyncMethod_SetTodayAmountRatioList<WithAsyncMethod_SetTodayAmountMomentumList<WithAsyncMethod_SetTodayAmountTopList<WithAsyncMethod_GetTodayTopAmountList<WithAsyncMethod_GetTodayNineThirtyList<WithAsyncMethod_GetRecentSearch<WithAsyncMethod_GetViList<WithAsyncMethod_ListenCurrentStock<WithAsyncMethod_ListenListChanged<WithAsyncMethod_ListenCybosTickData<WithAsyncMethod_ListenCybosBidAsk<WithAsyncMethod_ListenCurrentTime<WithAsyncMethod_ListenCybosSubject<WithAsyncMethod_ListenCybosAlarm<WithAsyncMethod_ListenSimulationStatusChanged<WithAsyncMethod_SimulationData<WithAsyncMethod_ListenSimulationOperation<WithAsyncMethod_StartSimulation<WithAsyncMethod_StopSimulation<WithAsyncMethod_SetSimulationStatus<WithAsyncMethod_GetSimulationStatus<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > AsyncService;
   template <class BaseClass>
   class ExperimentalWithCallbackMethod_SayHello : public BaseClass {
    private:
@@ -3909,6 +3773,53 @@ class Stock final {
       { return nullptr; }
   };
   template <class BaseClass>
+  class ExperimentalWithCallbackMethod_GetYearHigh : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_GetYearHigh() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodCallback(10,
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::stock_api::YearHighInfo>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::stock_api::StockCodeQuery* request, ::stock_api::YearHighInfo* response) { return this->GetYearHigh(context, request, response); }));}
+    void SetMessageAllocatorFor_GetYearHigh(
+        ::grpc::experimental::MessageAllocator< ::stock_api::StockCodeQuery, ::stock_api::YearHighInfo>* allocator) {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(10);
+    #else
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(10);
+    #endif
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::stock_api::YearHighInfo>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_GetYearHigh() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetYearHigh(::grpc::ServerContext* /*context*/, const ::stock_api::StockCodeQuery* /*request*/, ::stock_api::YearHighInfo* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* GetYearHigh(
+      ::grpc::CallbackServerContext* /*context*/, const ::stock_api::StockCodeQuery* /*request*/, ::stock_api::YearHighInfo* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* GetYearHigh(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::stock_api::StockCodeQuery* /*request*/, ::stock_api::YearHighInfo* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
   class ExperimentalWithCallbackMethod_RequestCybosTickData : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
@@ -3919,7 +3830,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(10,
+        MarkMethodCallback(11,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -3931,9 +3842,9 @@ class Stock final {
     void SetMessageAllocatorFor_RequestCybosTickData(
         ::grpc::experimental::MessageAllocator< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(10);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(11);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(10);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(11);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -3966,7 +3877,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(11,
+        MarkMethodCallback(12,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -3978,9 +3889,9 @@ class Stock final {
     void SetMessageAllocatorFor_RequestCybosBidAsk(
         ::grpc::experimental::MessageAllocator< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(11);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(12);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(11);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(12);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4013,7 +3924,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(12,
+        MarkMethodCallback(13,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4025,9 +3936,9 @@ class Stock final {
     void SetMessageAllocatorFor_RequestCybosSubject(
         ::grpc::experimental::MessageAllocator< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(12);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(13);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(12);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(13);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4060,7 +3971,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(13,
+        MarkMethodCallback(14,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4072,9 +3983,9 @@ class Stock final {
     void SetMessageAllocatorFor_RequestCybosAlarm(
         ::grpc::experimental::MessageAllocator< ::google::protobuf::Empty, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(13);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(14);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(13);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(14);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4107,7 +4018,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(14,
+        MarkMethodCallback(15,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::TradeMsg, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4119,9 +4030,9 @@ class Stock final {
     void SetMessageAllocatorFor_RequestToTrader(
         ::grpc::experimental::MessageAllocator< ::stock_api::TradeMsg, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(14);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(15);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(14);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(15);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::TradeMsg, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4154,7 +4065,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(15,
+        MarkMethodCallback(16,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4166,9 +4077,9 @@ class Stock final {
     void SetMessageAllocatorFor_RequestCybosTradeResult(
         ::grpc::experimental::MessageAllocator< ::google::protobuf::Empty, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(15);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(16);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(15);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(16);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4201,7 +4112,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(16,
+        MarkMethodCallback(17,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::OrderResult, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4213,9 +4124,9 @@ class Stock final {
     void SetMessageAllocatorFor_ReportOrderResult(
         ::grpc::experimental::MessageAllocator< ::stock_api::OrderResult, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(16);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(17);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(16);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(17);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::OrderResult, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4248,7 +4159,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(17,
+        MarkMethodCallback(18,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::stock_api::Bool>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4260,9 +4171,9 @@ class Stock final {
     void SetMessageAllocatorFor_IsKospi(
         ::grpc::experimental::MessageAllocator< ::stock_api::StockCodeQuery, ::stock_api::Bool>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(17);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(18);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(17);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(18);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::stock_api::Bool>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4295,7 +4206,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(18,
+        MarkMethodCallback(19,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::stock_api::Prices>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4307,9 +4218,9 @@ class Stock final {
     void SetMessageAllocatorFor_GetViPrice(
         ::grpc::experimental::MessageAllocator< ::stock_api::StockCodeQuery, ::stock_api::Prices>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(18);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(19);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(18);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(19);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::stock_api::Prices>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4342,7 +4253,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(19,
+        MarkMethodCallback(20,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::TradeMsg>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4380,7 +4291,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(20,
+        MarkMethodCallback(21,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::CybosOrderResult>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4418,7 +4329,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(21,
+        MarkMethodCallback(22,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::OrderResult>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4456,7 +4367,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(22,
+        MarkMethodCallback(23,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4468,9 +4379,9 @@ class Stock final {
     void SetMessageAllocatorFor_SetCurrentStock(
         ::grpc::experimental::MessageAllocator< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(22);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(23);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(22);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(23);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4503,7 +4414,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(23,
+        MarkMethodCallback(24,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Timestamp, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4515,9 +4426,9 @@ class Stock final {
     void SetMessageAllocatorFor_SetCurrentDateTime(
         ::grpc::experimental::MessageAllocator< ::google::protobuf::Timestamp, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(23);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(24);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(23);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(24);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Timestamp, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4550,7 +4461,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(24,
+        MarkMethodCallback(25,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::stock_api::CompanyName>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4562,9 +4473,9 @@ class Stock final {
     void SetMessageAllocatorFor_GetCompanyName(
         ::grpc::experimental::MessageAllocator< ::stock_api::StockCodeQuery, ::stock_api::CompanyName>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(24);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(25);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(24);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(25);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::stock_api::CompanyName>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4597,7 +4508,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(25,
+        MarkMethodCallback(26,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4609,9 +4520,9 @@ class Stock final {
     void SetMessageAllocatorFor_GetFavoriteList(
         ::grpc::experimental::MessageAllocator< ::google::protobuf::Empty, ::stock_api::CodeList>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(25);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(26);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(25);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(26);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4644,7 +4555,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(26,
+        MarkMethodCallback(27,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4656,9 +4567,9 @@ class Stock final {
     void SetMessageAllocatorFor_AddFavorite(
         ::grpc::experimental::MessageAllocator< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(26);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(27);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(26);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(27);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4691,7 +4602,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(27,
+        MarkMethodCallback(28,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4703,9 +4614,9 @@ class Stock final {
     void SetMessageAllocatorFor_RemoveFavorite(
         ::grpc::experimental::MessageAllocator< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(27);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(28);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(27);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(28);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4738,7 +4649,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(28,
+        MarkMethodCallback(29,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4750,9 +4661,9 @@ class Stock final {
     void SetMessageAllocatorFor_ClearRecentList(
         ::grpc::experimental::MessageAllocator< ::google::protobuf::Empty, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(28);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(29);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(28);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(29);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4785,7 +4696,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(29,
+        MarkMethodCallback(30,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Timestamp, ::stock_api::TopList>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4797,9 +4708,9 @@ class Stock final {
     void SetMessageAllocatorFor_GetYesterdayTopAmountList(
         ::grpc::experimental::MessageAllocator< ::google::protobuf::Timestamp, ::stock_api::TopList>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(29);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(30);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(29);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(30);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Timestamp, ::stock_api::TopList>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4832,7 +4743,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(30,
+        MarkMethodCallback(31,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::CodeList, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4844,9 +4755,9 @@ class Stock final {
     void SetMessageAllocatorFor_SetTodayAmountRatioList(
         ::grpc::experimental::MessageAllocator< ::stock_api::CodeList, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(30);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(31);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(30);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(31);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::CodeList, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4879,7 +4790,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(31,
+        MarkMethodCallback(32,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::CodeList, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4891,9 +4802,9 @@ class Stock final {
     void SetMessageAllocatorFor_SetTodayAmountMomentumList(
         ::grpc::experimental::MessageAllocator< ::stock_api::CodeList, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(31);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(32);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(31);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(32);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::CodeList, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4926,7 +4837,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(32,
+        MarkMethodCallback(33,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::CodeList, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4938,9 +4849,9 @@ class Stock final {
     void SetMessageAllocatorFor_SetTodayAmountTopList(
         ::grpc::experimental::MessageAllocator< ::stock_api::CodeList, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(32);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(33);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(32);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(33);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::CodeList, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -4973,7 +4884,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(33,
+        MarkMethodCallback(34,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::TodayTopOption, ::stock_api::CodeList>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -4985,9 +4896,9 @@ class Stock final {
     void SetMessageAllocatorFor_GetTodayTopAmountList(
         ::grpc::experimental::MessageAllocator< ::stock_api::TodayTopOption, ::stock_api::CodeList>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(33);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(34);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(33);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(34);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::TodayTopOption, ::stock_api::CodeList>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -5020,7 +4931,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(34,
+        MarkMethodCallback(35,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5032,9 +4943,9 @@ class Stock final {
     void SetMessageAllocatorFor_GetTodayNineThirtyList(
         ::grpc::experimental::MessageAllocator< ::google::protobuf::Empty, ::stock_api::CodeList>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(34);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(35);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(34);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(35);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -5067,7 +4978,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(35,
+        MarkMethodCallback(36,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5079,9 +4990,9 @@ class Stock final {
     void SetMessageAllocatorFor_GetRecentSearch(
         ::grpc::experimental::MessageAllocator< ::google::protobuf::Empty, ::stock_api::CodeList>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(35);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(36);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(35);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(36);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -5114,7 +5025,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(36,
+        MarkMethodCallback(37,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5126,9 +5037,9 @@ class Stock final {
     void SetMessageAllocatorFor_GetViList(
         ::grpc::experimental::MessageAllocator< ::google::protobuf::Empty, ::stock_api::CodeList>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(36);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(37);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(36);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(37);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -5161,7 +5072,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(37,
+        MarkMethodCallback(38,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::StockCodeQuery>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5199,7 +5110,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(38,
+        MarkMethodCallback(39,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::ListType>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5237,7 +5148,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(39,
+        MarkMethodCallback(40,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::CybosTickData>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5275,7 +5186,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(40,
+        MarkMethodCallback(41,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::CybosBidAskTickData>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5313,7 +5224,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(41,
+        MarkMethodCallback(42,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::google::protobuf::Empty, ::google::protobuf::Timestamp>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5351,7 +5262,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(42,
+        MarkMethodCallback(43,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::CybosSubjectTickData>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5389,7 +5300,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(43,
+        MarkMethodCallback(44,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::CybosStockAlarm>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5427,7 +5338,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(44,
+        MarkMethodCallback(45,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::SimulationStatus>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5455,190 +5366,40 @@ class Stock final {
       { return nullptr; }
   };
   template <class BaseClass>
-  class ExperimentalWithCallbackMethod_SetSimulationStockTick : public BaseClass {
+  class ExperimentalWithCallbackMethod_SimulationData : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    ExperimentalWithCallbackMethod_SetSimulationStockTick() {
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::Service::
-    #else
-      ::grpc::Service::experimental().
-    #endif
-        MarkMethodCallback(45,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::CybosTickData, ::google::protobuf::Empty>(
-            [this](
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-                   ::grpc::CallbackServerContext*
-    #else
-                   ::grpc::experimental::CallbackServerContext*
-    #endif
-                     context, const ::stock_api::CybosTickData* request, ::google::protobuf::Empty* response) { return this->SetSimulationStockTick(context, request, response); }));}
-    void SetMessageAllocatorFor_SetSimulationStockTick(
-        ::grpc::experimental::MessageAllocator< ::stock_api::CybosTickData, ::google::protobuf::Empty>* allocator) {
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(45);
-    #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(45);
-    #endif
-      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::CybosTickData, ::google::protobuf::Empty>*>(handler)
-              ->SetMessageAllocator(allocator);
-    }
-    ~ExperimentalWithCallbackMethod_SetSimulationStockTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationStockTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerUnaryReactor* SetSimulationStockTick(
-      ::grpc::CallbackServerContext* /*context*/, const ::stock_api::CybosTickData* /*request*/, ::google::protobuf::Empty* /*response*/)
-    #else
-    virtual ::grpc::experimental::ServerUnaryReactor* SetSimulationStockTick(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::stock_api::CybosTickData* /*request*/, ::google::protobuf::Empty* /*response*/)
-    #endif
-      { return nullptr; }
-  };
-  template <class BaseClass>
-  class ExperimentalWithCallbackMethod_SetSimulationBidAskTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    ExperimentalWithCallbackMethod_SetSimulationBidAskTick() {
+    ExperimentalWithCallbackMethod_SimulationData() {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::Service::
     #else
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(46,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::CybosBidAskTickData, ::google::protobuf::Empty>(
+          new ::grpc_impl::internal::CallbackBidiHandler< ::stock_api::SimulationMsg, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::stock_api::CybosBidAskTickData* request, ::google::protobuf::Empty* response) { return this->SetSimulationBidAskTick(context, request, response); }));}
-    void SetMessageAllocatorFor_SetSimulationBidAskTick(
-        ::grpc::experimental::MessageAllocator< ::stock_api::CybosBidAskTickData, ::google::protobuf::Empty>* allocator) {
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(46);
-    #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(46);
-    #endif
-      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::CybosBidAskTickData, ::google::protobuf::Empty>*>(handler)
-              ->SetMessageAllocator(allocator);
+                     context) { return this->SimulationData(context); }));
     }
-    ~ExperimentalWithCallbackMethod_SetSimulationBidAskTick() override {
+    ~ExperimentalWithCallbackMethod_SimulationData() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status SetSimulationBidAskTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosBidAskTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+    ::grpc::Status SimulationData(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::google::protobuf::Empty, ::stock_api::SimulationMsg>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerUnaryReactor* SetSimulationBidAskTick(
-      ::grpc::CallbackServerContext* /*context*/, const ::stock_api::CybosBidAskTickData* /*request*/, ::google::protobuf::Empty* /*response*/)
+    virtual ::grpc::ServerBidiReactor< ::stock_api::SimulationMsg, ::google::protobuf::Empty>* SimulationData(
+      ::grpc::CallbackServerContext* /*context*/)
     #else
-    virtual ::grpc::experimental::ServerUnaryReactor* SetSimulationBidAskTick(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::stock_api::CybosBidAskTickData* /*request*/, ::google::protobuf::Empty* /*response*/)
-    #endif
-      { return nullptr; }
-  };
-  template <class BaseClass>
-  class ExperimentalWithCallbackMethod_SetSimulationSubjectTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    ExperimentalWithCallbackMethod_SetSimulationSubjectTick() {
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::Service::
-    #else
-      ::grpc::Service::experimental().
-    #endif
-        MarkMethodCallback(47,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::CybosSubjectTickData, ::google::protobuf::Empty>(
-            [this](
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-                   ::grpc::CallbackServerContext*
-    #else
-                   ::grpc::experimental::CallbackServerContext*
-    #endif
-                     context, const ::stock_api::CybosSubjectTickData* request, ::google::protobuf::Empty* response) { return this->SetSimulationSubjectTick(context, request, response); }));}
-    void SetMessageAllocatorFor_SetSimulationSubjectTick(
-        ::grpc::experimental::MessageAllocator< ::stock_api::CybosSubjectTickData, ::google::protobuf::Empty>* allocator) {
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(47);
-    #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(47);
-    #endif
-      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::CybosSubjectTickData, ::google::protobuf::Empty>*>(handler)
-              ->SetMessageAllocator(allocator);
-    }
-    ~ExperimentalWithCallbackMethod_SetSimulationSubjectTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationSubjectTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosSubjectTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerUnaryReactor* SetSimulationSubjectTick(
-      ::grpc::CallbackServerContext* /*context*/, const ::stock_api::CybosSubjectTickData* /*request*/, ::google::protobuf::Empty* /*response*/)
-    #else
-    virtual ::grpc::experimental::ServerUnaryReactor* SetSimulationSubjectTick(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::stock_api::CybosSubjectTickData* /*request*/, ::google::protobuf::Empty* /*response*/)
-    #endif
-      { return nullptr; }
-  };
-  template <class BaseClass>
-  class ExperimentalWithCallbackMethod_SetSimulationAlarmTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    ExperimentalWithCallbackMethod_SetSimulationAlarmTick() {
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::Service::
-    #else
-      ::grpc::Service::experimental().
-    #endif
-        MarkMethodCallback(48,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::CybosStockAlarm, ::google::protobuf::Empty>(
-            [this](
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-                   ::grpc::CallbackServerContext*
-    #else
-                   ::grpc::experimental::CallbackServerContext*
-    #endif
-                     context, const ::stock_api::CybosStockAlarm* request, ::google::protobuf::Empty* response) { return this->SetSimulationAlarmTick(context, request, response); }));}
-    void SetMessageAllocatorFor_SetSimulationAlarmTick(
-        ::grpc::experimental::MessageAllocator< ::stock_api::CybosStockAlarm, ::google::protobuf::Empty>* allocator) {
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(48);
-    #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(48);
-    #endif
-      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::CybosStockAlarm, ::google::protobuf::Empty>*>(handler)
-              ->SetMessageAllocator(allocator);
-    }
-    ~ExperimentalWithCallbackMethod_SetSimulationAlarmTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationAlarmTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosStockAlarm* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerUnaryReactor* SetSimulationAlarmTick(
-      ::grpc::CallbackServerContext* /*context*/, const ::stock_api::CybosStockAlarm* /*request*/, ::google::protobuf::Empty* /*response*/)
-    #else
-    virtual ::grpc::experimental::ServerUnaryReactor* SetSimulationAlarmTick(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::stock_api::CybosStockAlarm* /*request*/, ::google::protobuf::Empty* /*response*/)
+    virtual ::grpc::experimental::ServerBidiReactor< ::stock_api::SimulationMsg, ::google::protobuf::Empty>* SimulationData(
+      ::grpc::experimental::CallbackServerContext* /*context*/)
     #endif
       { return nullptr; }
   };
@@ -5653,7 +5414,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(49,
+        MarkMethodCallback(47,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::SimulationOperation>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5691,7 +5452,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(50,
+        MarkMethodCallback(48,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::SimulationOperation, ::stock_api::Bool>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5703,9 +5464,9 @@ class Stock final {
     void SetMessageAllocatorFor_StartSimulation(
         ::grpc::experimental::MessageAllocator< ::stock_api::SimulationOperation, ::stock_api::Bool>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(50);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(48);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(50);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(48);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::SimulationOperation, ::stock_api::Bool>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -5738,7 +5499,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(51,
+        MarkMethodCallback(49,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5750,9 +5511,9 @@ class Stock final {
     void SetMessageAllocatorFor_StopSimulation(
         ::grpc::experimental::MessageAllocator< ::google::protobuf::Empty, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(51);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(49);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(51);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(49);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -5785,7 +5546,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(52,
+        MarkMethodCallback(50,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::SimulationStatus, ::google::protobuf::Empty>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5797,9 +5558,9 @@ class Stock final {
     void SetMessageAllocatorFor_SetSimulationStatus(
         ::grpc::experimental::MessageAllocator< ::stock_api::SimulationStatus, ::google::protobuf::Empty>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(52);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(50);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(52);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(50);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::stock_api::SimulationStatus, ::google::protobuf::Empty>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -5832,7 +5593,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(53,
+        MarkMethodCallback(51,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::stock_api::SimulationStatus>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -5844,9 +5605,9 @@ class Stock final {
     void SetMessageAllocatorFor_GetSimulationStatus(
         ::grpc::experimental::MessageAllocator< ::google::protobuf::Empty, ::stock_api::SimulationStatus>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(53);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(51);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(53);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(51);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::stock_api::SimulationStatus>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -5869,10 +5630,10 @@ class Stock final {
       { return nullptr; }
   };
   #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-  typedef ExperimentalWithCallbackMethod_SayHello<ExperimentalWithCallbackMethod_GetDayData<ExperimentalWithCallbackMethod_GetMinuteData<ExperimentalWithCallbackMethod_GetTodayMinuteData<ExperimentalWithCallbackMethod_GetPastMinuteData<ExperimentalWithCallbackMethod_GetSubscribeCodes<ExperimentalWithCallbackMethod_GetBalance<ExperimentalWithCallbackMethod_OrderStock<ExperimentalWithCallbackMethod_ChangeOrder<ExperimentalWithCallbackMethod_CancelOrder<ExperimentalWithCallbackMethod_RequestCybosTickData<ExperimentalWithCallbackMethod_RequestCybosBidAsk<ExperimentalWithCallbackMethod_RequestCybosSubject<ExperimentalWithCallbackMethod_RequestCybosAlarm<ExperimentalWithCallbackMethod_RequestToTrader<ExperimentalWithCallbackMethod_RequestCybosTradeResult<ExperimentalWithCallbackMethod_ReportOrderResult<ExperimentalWithCallbackMethod_IsKospi<ExperimentalWithCallbackMethod_GetViPrice<ExperimentalWithCallbackMethod_ListenTraderMsg<ExperimentalWithCallbackMethod_ListenCybosOrderResult<ExperimentalWithCallbackMethod_ListenOrderResult<ExperimentalWithCallbackMethod_SetCurrentStock<ExperimentalWithCallbackMethod_SetCurrentDateTime<ExperimentalWithCallbackMethod_GetCompanyName<ExperimentalWithCallbackMethod_GetFavoriteList<ExperimentalWithCallbackMethod_AddFavorite<ExperimentalWithCallbackMethod_RemoveFavorite<ExperimentalWithCallbackMethod_ClearRecentList<ExperimentalWithCallbackMethod_GetYesterdayTopAmountList<ExperimentalWithCallbackMethod_SetTodayAmountRatioList<ExperimentalWithCallbackMethod_SetTodayAmountMomentumList<ExperimentalWithCallbackMethod_SetTodayAmountTopList<ExperimentalWithCallbackMethod_GetTodayTopAmountList<ExperimentalWithCallbackMethod_GetTodayNineThirtyList<ExperimentalWithCallbackMethod_GetRecentSearch<ExperimentalWithCallbackMethod_GetViList<ExperimentalWithCallbackMethod_ListenCurrentStock<ExperimentalWithCallbackMethod_ListenListChanged<ExperimentalWithCallbackMethod_ListenCybosTickData<ExperimentalWithCallbackMethod_ListenCybosBidAsk<ExperimentalWithCallbackMethod_ListenCurrentTime<ExperimentalWithCallbackMethod_ListenCybosSubject<ExperimentalWithCallbackMethod_ListenCybosAlarm<ExperimentalWithCallbackMethod_ListenSimulationStatusChanged<ExperimentalWithCallbackMethod_SetSimulationStockTick<ExperimentalWithCallbackMethod_SetSimulationBidAskTick<ExperimentalWithCallbackMethod_SetSimulationSubjectTick<ExperimentalWithCallbackMethod_SetSimulationAlarmTick<ExperimentalWithCallbackMethod_ListenSimulationOperation<ExperimentalWithCallbackMethod_StartSimulation<ExperimentalWithCallbackMethod_StopSimulation<ExperimentalWithCallbackMethod_SetSimulationStatus<ExperimentalWithCallbackMethod_GetSimulationStatus<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > CallbackService;
+  typedef ExperimentalWithCallbackMethod_SayHello<ExperimentalWithCallbackMethod_GetDayData<ExperimentalWithCallbackMethod_GetMinuteData<ExperimentalWithCallbackMethod_GetTodayMinuteData<ExperimentalWithCallbackMethod_GetPastMinuteData<ExperimentalWithCallbackMethod_GetSubscribeCodes<ExperimentalWithCallbackMethod_GetBalance<ExperimentalWithCallbackMethod_OrderStock<ExperimentalWithCallbackMethod_ChangeOrder<ExperimentalWithCallbackMethod_CancelOrder<ExperimentalWithCallbackMethod_GetYearHigh<ExperimentalWithCallbackMethod_RequestCybosTickData<ExperimentalWithCallbackMethod_RequestCybosBidAsk<ExperimentalWithCallbackMethod_RequestCybosSubject<ExperimentalWithCallbackMethod_RequestCybosAlarm<ExperimentalWithCallbackMethod_RequestToTrader<ExperimentalWithCallbackMethod_RequestCybosTradeResult<ExperimentalWithCallbackMethod_ReportOrderResult<ExperimentalWithCallbackMethod_IsKospi<ExperimentalWithCallbackMethod_GetViPrice<ExperimentalWithCallbackMethod_ListenTraderMsg<ExperimentalWithCallbackMethod_ListenCybosOrderResult<ExperimentalWithCallbackMethod_ListenOrderResult<ExperimentalWithCallbackMethod_SetCurrentStock<ExperimentalWithCallbackMethod_SetCurrentDateTime<ExperimentalWithCallbackMethod_GetCompanyName<ExperimentalWithCallbackMethod_GetFavoriteList<ExperimentalWithCallbackMethod_AddFavorite<ExperimentalWithCallbackMethod_RemoveFavorite<ExperimentalWithCallbackMethod_ClearRecentList<ExperimentalWithCallbackMethod_GetYesterdayTopAmountList<ExperimentalWithCallbackMethod_SetTodayAmountRatioList<ExperimentalWithCallbackMethod_SetTodayAmountMomentumList<ExperimentalWithCallbackMethod_SetTodayAmountTopList<ExperimentalWithCallbackMethod_GetTodayTopAmountList<ExperimentalWithCallbackMethod_GetTodayNineThirtyList<ExperimentalWithCallbackMethod_GetRecentSearch<ExperimentalWithCallbackMethod_GetViList<ExperimentalWithCallbackMethod_ListenCurrentStock<ExperimentalWithCallbackMethod_ListenListChanged<ExperimentalWithCallbackMethod_ListenCybosTickData<ExperimentalWithCallbackMethod_ListenCybosBidAsk<ExperimentalWithCallbackMethod_ListenCurrentTime<ExperimentalWithCallbackMethod_ListenCybosSubject<ExperimentalWithCallbackMethod_ListenCybosAlarm<ExperimentalWithCallbackMethod_ListenSimulationStatusChanged<ExperimentalWithCallbackMethod_SimulationData<ExperimentalWithCallbackMethod_ListenSimulationOperation<ExperimentalWithCallbackMethod_StartSimulation<ExperimentalWithCallbackMethod_StopSimulation<ExperimentalWithCallbackMethod_SetSimulationStatus<ExperimentalWithCallbackMethod_GetSimulationStatus<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > CallbackService;
   #endif
 
-  typedef ExperimentalWithCallbackMethod_SayHello<ExperimentalWithCallbackMethod_GetDayData<ExperimentalWithCallbackMethod_GetMinuteData<ExperimentalWithCallbackMethod_GetTodayMinuteData<ExperimentalWithCallbackMethod_GetPastMinuteData<ExperimentalWithCallbackMethod_GetSubscribeCodes<ExperimentalWithCallbackMethod_GetBalance<ExperimentalWithCallbackMethod_OrderStock<ExperimentalWithCallbackMethod_ChangeOrder<ExperimentalWithCallbackMethod_CancelOrder<ExperimentalWithCallbackMethod_RequestCybosTickData<ExperimentalWithCallbackMethod_RequestCybosBidAsk<ExperimentalWithCallbackMethod_RequestCybosSubject<ExperimentalWithCallbackMethod_RequestCybosAlarm<ExperimentalWithCallbackMethod_RequestToTrader<ExperimentalWithCallbackMethod_RequestCybosTradeResult<ExperimentalWithCallbackMethod_ReportOrderResult<ExperimentalWithCallbackMethod_IsKospi<ExperimentalWithCallbackMethod_GetViPrice<ExperimentalWithCallbackMethod_ListenTraderMsg<ExperimentalWithCallbackMethod_ListenCybosOrderResult<ExperimentalWithCallbackMethod_ListenOrderResult<ExperimentalWithCallbackMethod_SetCurrentStock<ExperimentalWithCallbackMethod_SetCurrentDateTime<ExperimentalWithCallbackMethod_GetCompanyName<ExperimentalWithCallbackMethod_GetFavoriteList<ExperimentalWithCallbackMethod_AddFavorite<ExperimentalWithCallbackMethod_RemoveFavorite<ExperimentalWithCallbackMethod_ClearRecentList<ExperimentalWithCallbackMethod_GetYesterdayTopAmountList<ExperimentalWithCallbackMethod_SetTodayAmountRatioList<ExperimentalWithCallbackMethod_SetTodayAmountMomentumList<ExperimentalWithCallbackMethod_SetTodayAmountTopList<ExperimentalWithCallbackMethod_GetTodayTopAmountList<ExperimentalWithCallbackMethod_GetTodayNineThirtyList<ExperimentalWithCallbackMethod_GetRecentSearch<ExperimentalWithCallbackMethod_GetViList<ExperimentalWithCallbackMethod_ListenCurrentStock<ExperimentalWithCallbackMethod_ListenListChanged<ExperimentalWithCallbackMethod_ListenCybosTickData<ExperimentalWithCallbackMethod_ListenCybosBidAsk<ExperimentalWithCallbackMethod_ListenCurrentTime<ExperimentalWithCallbackMethod_ListenCybosSubject<ExperimentalWithCallbackMethod_ListenCybosAlarm<ExperimentalWithCallbackMethod_ListenSimulationStatusChanged<ExperimentalWithCallbackMethod_SetSimulationStockTick<ExperimentalWithCallbackMethod_SetSimulationBidAskTick<ExperimentalWithCallbackMethod_SetSimulationSubjectTick<ExperimentalWithCallbackMethod_SetSimulationAlarmTick<ExperimentalWithCallbackMethod_ListenSimulationOperation<ExperimentalWithCallbackMethod_StartSimulation<ExperimentalWithCallbackMethod_StopSimulation<ExperimentalWithCallbackMethod_SetSimulationStatus<ExperimentalWithCallbackMethod_GetSimulationStatus<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > ExperimentalCallbackService;
+  typedef ExperimentalWithCallbackMethod_SayHello<ExperimentalWithCallbackMethod_GetDayData<ExperimentalWithCallbackMethod_GetMinuteData<ExperimentalWithCallbackMethod_GetTodayMinuteData<ExperimentalWithCallbackMethod_GetPastMinuteData<ExperimentalWithCallbackMethod_GetSubscribeCodes<ExperimentalWithCallbackMethod_GetBalance<ExperimentalWithCallbackMethod_OrderStock<ExperimentalWithCallbackMethod_ChangeOrder<ExperimentalWithCallbackMethod_CancelOrder<ExperimentalWithCallbackMethod_GetYearHigh<ExperimentalWithCallbackMethod_RequestCybosTickData<ExperimentalWithCallbackMethod_RequestCybosBidAsk<ExperimentalWithCallbackMethod_RequestCybosSubject<ExperimentalWithCallbackMethod_RequestCybosAlarm<ExperimentalWithCallbackMethod_RequestToTrader<ExperimentalWithCallbackMethod_RequestCybosTradeResult<ExperimentalWithCallbackMethod_ReportOrderResult<ExperimentalWithCallbackMethod_IsKospi<ExperimentalWithCallbackMethod_GetViPrice<ExperimentalWithCallbackMethod_ListenTraderMsg<ExperimentalWithCallbackMethod_ListenCybosOrderResult<ExperimentalWithCallbackMethod_ListenOrderResult<ExperimentalWithCallbackMethod_SetCurrentStock<ExperimentalWithCallbackMethod_SetCurrentDateTime<ExperimentalWithCallbackMethod_GetCompanyName<ExperimentalWithCallbackMethod_GetFavoriteList<ExperimentalWithCallbackMethod_AddFavorite<ExperimentalWithCallbackMethod_RemoveFavorite<ExperimentalWithCallbackMethod_ClearRecentList<ExperimentalWithCallbackMethod_GetYesterdayTopAmountList<ExperimentalWithCallbackMethod_SetTodayAmountRatioList<ExperimentalWithCallbackMethod_SetTodayAmountMomentumList<ExperimentalWithCallbackMethod_SetTodayAmountTopList<ExperimentalWithCallbackMethod_GetTodayTopAmountList<ExperimentalWithCallbackMethod_GetTodayNineThirtyList<ExperimentalWithCallbackMethod_GetRecentSearch<ExperimentalWithCallbackMethod_GetViList<ExperimentalWithCallbackMethod_ListenCurrentStock<ExperimentalWithCallbackMethod_ListenListChanged<ExperimentalWithCallbackMethod_ListenCybosTickData<ExperimentalWithCallbackMethod_ListenCybosBidAsk<ExperimentalWithCallbackMethod_ListenCurrentTime<ExperimentalWithCallbackMethod_ListenCybosSubject<ExperimentalWithCallbackMethod_ListenCybosAlarm<ExperimentalWithCallbackMethod_ListenSimulationStatusChanged<ExperimentalWithCallbackMethod_SimulationData<ExperimentalWithCallbackMethod_ListenSimulationOperation<ExperimentalWithCallbackMethod_StartSimulation<ExperimentalWithCallbackMethod_StopSimulation<ExperimentalWithCallbackMethod_SetSimulationStatus<ExperimentalWithCallbackMethod_GetSimulationStatus<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_SayHello : public BaseClass {
    private:
@@ -6044,12 +5805,29 @@ class Stock final {
     }
   };
   template <class BaseClass>
+  class WithGenericMethod_GetYearHigh : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_GetYearHigh() {
+      ::grpc::Service::MarkMethodGeneric(10);
+    }
+    ~WithGenericMethod_GetYearHigh() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetYearHigh(::grpc::ServerContext* /*context*/, const ::stock_api::StockCodeQuery* /*request*/, ::stock_api::YearHighInfo* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
   class WithGenericMethod_RequestCybosTickData : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_RequestCybosTickData() {
-      ::grpc::Service::MarkMethodGeneric(10);
+      ::grpc::Service::MarkMethodGeneric(11);
     }
     ~WithGenericMethod_RequestCybosTickData() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6066,7 +5844,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_RequestCybosBidAsk() {
-      ::grpc::Service::MarkMethodGeneric(11);
+      ::grpc::Service::MarkMethodGeneric(12);
     }
     ~WithGenericMethod_RequestCybosBidAsk() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6083,7 +5861,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_RequestCybosSubject() {
-      ::grpc::Service::MarkMethodGeneric(12);
+      ::grpc::Service::MarkMethodGeneric(13);
     }
     ~WithGenericMethod_RequestCybosSubject() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6100,7 +5878,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_RequestCybosAlarm() {
-      ::grpc::Service::MarkMethodGeneric(13);
+      ::grpc::Service::MarkMethodGeneric(14);
     }
     ~WithGenericMethod_RequestCybosAlarm() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6117,7 +5895,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_RequestToTrader() {
-      ::grpc::Service::MarkMethodGeneric(14);
+      ::grpc::Service::MarkMethodGeneric(15);
     }
     ~WithGenericMethod_RequestToTrader() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6134,7 +5912,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_RequestCybosTradeResult() {
-      ::grpc::Service::MarkMethodGeneric(15);
+      ::grpc::Service::MarkMethodGeneric(16);
     }
     ~WithGenericMethod_RequestCybosTradeResult() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6151,7 +5929,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ReportOrderResult() {
-      ::grpc::Service::MarkMethodGeneric(16);
+      ::grpc::Service::MarkMethodGeneric(17);
     }
     ~WithGenericMethod_ReportOrderResult() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6168,7 +5946,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_IsKospi() {
-      ::grpc::Service::MarkMethodGeneric(17);
+      ::grpc::Service::MarkMethodGeneric(18);
     }
     ~WithGenericMethod_IsKospi() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6185,7 +5963,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetViPrice() {
-      ::grpc::Service::MarkMethodGeneric(18);
+      ::grpc::Service::MarkMethodGeneric(19);
     }
     ~WithGenericMethod_GetViPrice() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6202,7 +5980,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListenTraderMsg() {
-      ::grpc::Service::MarkMethodGeneric(19);
+      ::grpc::Service::MarkMethodGeneric(20);
     }
     ~WithGenericMethod_ListenTraderMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6219,7 +5997,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListenCybosOrderResult() {
-      ::grpc::Service::MarkMethodGeneric(20);
+      ::grpc::Service::MarkMethodGeneric(21);
     }
     ~WithGenericMethod_ListenCybosOrderResult() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6236,7 +6014,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListenOrderResult() {
-      ::grpc::Service::MarkMethodGeneric(21);
+      ::grpc::Service::MarkMethodGeneric(22);
     }
     ~WithGenericMethod_ListenOrderResult() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6253,7 +6031,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetCurrentStock() {
-      ::grpc::Service::MarkMethodGeneric(22);
+      ::grpc::Service::MarkMethodGeneric(23);
     }
     ~WithGenericMethod_SetCurrentStock() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6270,7 +6048,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetCurrentDateTime() {
-      ::grpc::Service::MarkMethodGeneric(23);
+      ::grpc::Service::MarkMethodGeneric(24);
     }
     ~WithGenericMethod_SetCurrentDateTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6287,7 +6065,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetCompanyName() {
-      ::grpc::Service::MarkMethodGeneric(24);
+      ::grpc::Service::MarkMethodGeneric(25);
     }
     ~WithGenericMethod_GetCompanyName() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6304,7 +6082,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetFavoriteList() {
-      ::grpc::Service::MarkMethodGeneric(25);
+      ::grpc::Service::MarkMethodGeneric(26);
     }
     ~WithGenericMethod_GetFavoriteList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6321,7 +6099,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_AddFavorite() {
-      ::grpc::Service::MarkMethodGeneric(26);
+      ::grpc::Service::MarkMethodGeneric(27);
     }
     ~WithGenericMethod_AddFavorite() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6338,7 +6116,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_RemoveFavorite() {
-      ::grpc::Service::MarkMethodGeneric(27);
+      ::grpc::Service::MarkMethodGeneric(28);
     }
     ~WithGenericMethod_RemoveFavorite() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6355,7 +6133,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ClearRecentList() {
-      ::grpc::Service::MarkMethodGeneric(28);
+      ::grpc::Service::MarkMethodGeneric(29);
     }
     ~WithGenericMethod_ClearRecentList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6372,7 +6150,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetYesterdayTopAmountList() {
-      ::grpc::Service::MarkMethodGeneric(29);
+      ::grpc::Service::MarkMethodGeneric(30);
     }
     ~WithGenericMethod_GetYesterdayTopAmountList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6389,7 +6167,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetTodayAmountRatioList() {
-      ::grpc::Service::MarkMethodGeneric(30);
+      ::grpc::Service::MarkMethodGeneric(31);
     }
     ~WithGenericMethod_SetTodayAmountRatioList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6406,7 +6184,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetTodayAmountMomentumList() {
-      ::grpc::Service::MarkMethodGeneric(31);
+      ::grpc::Service::MarkMethodGeneric(32);
     }
     ~WithGenericMethod_SetTodayAmountMomentumList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6423,7 +6201,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetTodayAmountTopList() {
-      ::grpc::Service::MarkMethodGeneric(32);
+      ::grpc::Service::MarkMethodGeneric(33);
     }
     ~WithGenericMethod_SetTodayAmountTopList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6440,7 +6218,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetTodayTopAmountList() {
-      ::grpc::Service::MarkMethodGeneric(33);
+      ::grpc::Service::MarkMethodGeneric(34);
     }
     ~WithGenericMethod_GetTodayTopAmountList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6457,7 +6235,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetTodayNineThirtyList() {
-      ::grpc::Service::MarkMethodGeneric(34);
+      ::grpc::Service::MarkMethodGeneric(35);
     }
     ~WithGenericMethod_GetTodayNineThirtyList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6474,7 +6252,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetRecentSearch() {
-      ::grpc::Service::MarkMethodGeneric(35);
+      ::grpc::Service::MarkMethodGeneric(36);
     }
     ~WithGenericMethod_GetRecentSearch() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6491,7 +6269,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetViList() {
-      ::grpc::Service::MarkMethodGeneric(36);
+      ::grpc::Service::MarkMethodGeneric(37);
     }
     ~WithGenericMethod_GetViList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6508,7 +6286,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListenCurrentStock() {
-      ::grpc::Service::MarkMethodGeneric(37);
+      ::grpc::Service::MarkMethodGeneric(38);
     }
     ~WithGenericMethod_ListenCurrentStock() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6525,7 +6303,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListenListChanged() {
-      ::grpc::Service::MarkMethodGeneric(38);
+      ::grpc::Service::MarkMethodGeneric(39);
     }
     ~WithGenericMethod_ListenListChanged() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6542,7 +6320,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListenCybosTickData() {
-      ::grpc::Service::MarkMethodGeneric(39);
+      ::grpc::Service::MarkMethodGeneric(40);
     }
     ~WithGenericMethod_ListenCybosTickData() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6559,7 +6337,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListenCybosBidAsk() {
-      ::grpc::Service::MarkMethodGeneric(40);
+      ::grpc::Service::MarkMethodGeneric(41);
     }
     ~WithGenericMethod_ListenCybosBidAsk() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6576,7 +6354,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListenCurrentTime() {
-      ::grpc::Service::MarkMethodGeneric(41);
+      ::grpc::Service::MarkMethodGeneric(42);
     }
     ~WithGenericMethod_ListenCurrentTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6593,7 +6371,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListenCybosSubject() {
-      ::grpc::Service::MarkMethodGeneric(42);
+      ::grpc::Service::MarkMethodGeneric(43);
     }
     ~WithGenericMethod_ListenCybosSubject() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6610,7 +6388,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListenCybosAlarm() {
-      ::grpc::Service::MarkMethodGeneric(43);
+      ::grpc::Service::MarkMethodGeneric(44);
     }
     ~WithGenericMethod_ListenCybosAlarm() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6627,7 +6405,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListenSimulationStatusChanged() {
-      ::grpc::Service::MarkMethodGeneric(44);
+      ::grpc::Service::MarkMethodGeneric(45);
     }
     ~WithGenericMethod_ListenSimulationStatusChanged() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6639,69 +6417,18 @@ class Stock final {
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_SetSimulationStockTick : public BaseClass {
+  class WithGenericMethod_SimulationData : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithGenericMethod_SetSimulationStockTick() {
-      ::grpc::Service::MarkMethodGeneric(45);
-    }
-    ~WithGenericMethod_SetSimulationStockTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationStockTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
-  class WithGenericMethod_SetSimulationBidAskTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithGenericMethod_SetSimulationBidAskTick() {
+    WithGenericMethod_SimulationData() {
       ::grpc::Service::MarkMethodGeneric(46);
     }
-    ~WithGenericMethod_SetSimulationBidAskTick() override {
+    ~WithGenericMethod_SimulationData() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status SetSimulationBidAskTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosBidAskTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
-  class WithGenericMethod_SetSimulationSubjectTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithGenericMethod_SetSimulationSubjectTick() {
-      ::grpc::Service::MarkMethodGeneric(47);
-    }
-    ~WithGenericMethod_SetSimulationSubjectTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationSubjectTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosSubjectTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
-  class WithGenericMethod_SetSimulationAlarmTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithGenericMethod_SetSimulationAlarmTick() {
-      ::grpc::Service::MarkMethodGeneric(48);
-    }
-    ~WithGenericMethod_SetSimulationAlarmTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationAlarmTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosStockAlarm* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+    ::grpc::Status SimulationData(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::google::protobuf::Empty, ::stock_api::SimulationMsg>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -6712,7 +6439,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListenSimulationOperation() {
-      ::grpc::Service::MarkMethodGeneric(49);
+      ::grpc::Service::MarkMethodGeneric(47);
     }
     ~WithGenericMethod_ListenSimulationOperation() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6729,7 +6456,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_StartSimulation() {
-      ::grpc::Service::MarkMethodGeneric(50);
+      ::grpc::Service::MarkMethodGeneric(48);
     }
     ~WithGenericMethod_StartSimulation() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6746,7 +6473,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_StopSimulation() {
-      ::grpc::Service::MarkMethodGeneric(51);
+      ::grpc::Service::MarkMethodGeneric(49);
     }
     ~WithGenericMethod_StopSimulation() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6763,7 +6490,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetSimulationStatus() {
-      ::grpc::Service::MarkMethodGeneric(52);
+      ::grpc::Service::MarkMethodGeneric(50);
     }
     ~WithGenericMethod_SetSimulationStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6780,7 +6507,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetSimulationStatus() {
-      ::grpc::Service::MarkMethodGeneric(53);
+      ::grpc::Service::MarkMethodGeneric(51);
     }
     ~WithGenericMethod_GetSimulationStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -6992,12 +6719,32 @@ class Stock final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_GetYearHigh : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_GetYearHigh() {
+      ::grpc::Service::MarkMethodRaw(10);
+    }
+    ~WithRawMethod_GetYearHigh() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetYearHigh(::grpc::ServerContext* /*context*/, const ::stock_api::StockCodeQuery* /*request*/, ::stock_api::YearHighInfo* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetYearHigh(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_RequestCybosTickData : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_RequestCybosTickData() {
-      ::grpc::Service::MarkMethodRaw(10);
+      ::grpc::Service::MarkMethodRaw(11);
     }
     ~WithRawMethod_RequestCybosTickData() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7008,7 +6755,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRequestCybosTickData(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7017,7 +6764,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_RequestCybosBidAsk() {
-      ::grpc::Service::MarkMethodRaw(11);
+      ::grpc::Service::MarkMethodRaw(12);
     }
     ~WithRawMethod_RequestCybosBidAsk() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7028,7 +6775,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRequestCybosBidAsk(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7037,7 +6784,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_RequestCybosSubject() {
-      ::grpc::Service::MarkMethodRaw(12);
+      ::grpc::Service::MarkMethodRaw(13);
     }
     ~WithRawMethod_RequestCybosSubject() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7048,7 +6795,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRequestCybosSubject(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7057,7 +6804,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_RequestCybosAlarm() {
-      ::grpc::Service::MarkMethodRaw(13);
+      ::grpc::Service::MarkMethodRaw(14);
     }
     ~WithRawMethod_RequestCybosAlarm() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7068,7 +6815,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRequestCybosAlarm(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7077,7 +6824,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_RequestToTrader() {
-      ::grpc::Service::MarkMethodRaw(14);
+      ::grpc::Service::MarkMethodRaw(15);
     }
     ~WithRawMethod_RequestToTrader() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7088,7 +6835,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRequestToTrader(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7097,7 +6844,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_RequestCybosTradeResult() {
-      ::grpc::Service::MarkMethodRaw(15);
+      ::grpc::Service::MarkMethodRaw(16);
     }
     ~WithRawMethod_RequestCybosTradeResult() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7108,7 +6855,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRequestCybosTradeResult(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7117,7 +6864,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ReportOrderResult() {
-      ::grpc::Service::MarkMethodRaw(16);
+      ::grpc::Service::MarkMethodRaw(17);
     }
     ~WithRawMethod_ReportOrderResult() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7128,7 +6875,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestReportOrderResult(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7137,7 +6884,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_IsKospi() {
-      ::grpc::Service::MarkMethodRaw(17);
+      ::grpc::Service::MarkMethodRaw(18);
     }
     ~WithRawMethod_IsKospi() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7148,7 +6895,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestIsKospi(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(18, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7157,7 +6904,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetViPrice() {
-      ::grpc::Service::MarkMethodRaw(18);
+      ::grpc::Service::MarkMethodRaw(19);
     }
     ~WithRawMethod_GetViPrice() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7168,7 +6915,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetViPrice(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(18, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(19, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7177,7 +6924,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListenTraderMsg() {
-      ::grpc::Service::MarkMethodRaw(19);
+      ::grpc::Service::MarkMethodRaw(20);
     }
     ~WithRawMethod_ListenTraderMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7188,7 +6935,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenTraderMsg(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(19, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(20, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7197,7 +6944,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListenCybosOrderResult() {
-      ::grpc::Service::MarkMethodRaw(20);
+      ::grpc::Service::MarkMethodRaw(21);
     }
     ~WithRawMethod_ListenCybosOrderResult() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7208,7 +6955,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenCybosOrderResult(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(20, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(21, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7217,7 +6964,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListenOrderResult() {
-      ::grpc::Service::MarkMethodRaw(21);
+      ::grpc::Service::MarkMethodRaw(22);
     }
     ~WithRawMethod_ListenOrderResult() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7228,7 +6975,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenOrderResult(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(21, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(22, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7237,7 +6984,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetCurrentStock() {
-      ::grpc::Service::MarkMethodRaw(22);
+      ::grpc::Service::MarkMethodRaw(23);
     }
     ~WithRawMethod_SetCurrentStock() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7248,7 +6995,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetCurrentStock(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(22, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(23, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7257,7 +7004,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetCurrentDateTime() {
-      ::grpc::Service::MarkMethodRaw(23);
+      ::grpc::Service::MarkMethodRaw(24);
     }
     ~WithRawMethod_SetCurrentDateTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7268,7 +7015,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetCurrentDateTime(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(23, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(24, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7277,7 +7024,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetCompanyName() {
-      ::grpc::Service::MarkMethodRaw(24);
+      ::grpc::Service::MarkMethodRaw(25);
     }
     ~WithRawMethod_GetCompanyName() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7288,7 +7035,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetCompanyName(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(24, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(25, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7297,7 +7044,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetFavoriteList() {
-      ::grpc::Service::MarkMethodRaw(25);
+      ::grpc::Service::MarkMethodRaw(26);
     }
     ~WithRawMethod_GetFavoriteList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7308,7 +7055,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetFavoriteList(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(25, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(26, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7317,7 +7064,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_AddFavorite() {
-      ::grpc::Service::MarkMethodRaw(26);
+      ::grpc::Service::MarkMethodRaw(27);
     }
     ~WithRawMethod_AddFavorite() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7328,7 +7075,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestAddFavorite(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(26, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(27, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7337,7 +7084,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_RemoveFavorite() {
-      ::grpc::Service::MarkMethodRaw(27);
+      ::grpc::Service::MarkMethodRaw(28);
     }
     ~WithRawMethod_RemoveFavorite() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7348,7 +7095,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRemoveFavorite(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(27, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7357,7 +7104,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ClearRecentList() {
-      ::grpc::Service::MarkMethodRaw(28);
+      ::grpc::Service::MarkMethodRaw(29);
     }
     ~WithRawMethod_ClearRecentList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7368,7 +7115,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestClearRecentList(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7377,7 +7124,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetYesterdayTopAmountList() {
-      ::grpc::Service::MarkMethodRaw(29);
+      ::grpc::Service::MarkMethodRaw(30);
     }
     ~WithRawMethod_GetYesterdayTopAmountList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7388,7 +7135,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetYesterdayTopAmountList(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7397,7 +7144,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetTodayAmountRatioList() {
-      ::grpc::Service::MarkMethodRaw(30);
+      ::grpc::Service::MarkMethodRaw(31);
     }
     ~WithRawMethod_SetTodayAmountRatioList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7408,7 +7155,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetTodayAmountRatioList(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7417,7 +7164,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetTodayAmountMomentumList() {
-      ::grpc::Service::MarkMethodRaw(31);
+      ::grpc::Service::MarkMethodRaw(32);
     }
     ~WithRawMethod_SetTodayAmountMomentumList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7428,7 +7175,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetTodayAmountMomentumList(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7437,7 +7184,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetTodayAmountTopList() {
-      ::grpc::Service::MarkMethodRaw(32);
+      ::grpc::Service::MarkMethodRaw(33);
     }
     ~WithRawMethod_SetTodayAmountTopList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7448,7 +7195,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetTodayAmountTopList(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(33, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7457,7 +7204,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetTodayTopAmountList() {
-      ::grpc::Service::MarkMethodRaw(33);
+      ::grpc::Service::MarkMethodRaw(34);
     }
     ~WithRawMethod_GetTodayTopAmountList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7468,7 +7215,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetTodayTopAmountList(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(33, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(34, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7477,7 +7224,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetTodayNineThirtyList() {
-      ::grpc::Service::MarkMethodRaw(34);
+      ::grpc::Service::MarkMethodRaw(35);
     }
     ~WithRawMethod_GetTodayNineThirtyList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7488,7 +7235,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetTodayNineThirtyList(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(34, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(35, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7497,7 +7244,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetRecentSearch() {
-      ::grpc::Service::MarkMethodRaw(35);
+      ::grpc::Service::MarkMethodRaw(36);
     }
     ~WithRawMethod_GetRecentSearch() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7508,7 +7255,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetRecentSearch(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(35, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(36, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7517,7 +7264,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetViList() {
-      ::grpc::Service::MarkMethodRaw(36);
+      ::grpc::Service::MarkMethodRaw(37);
     }
     ~WithRawMethod_GetViList() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7528,7 +7275,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetViList(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(36, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(37, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7537,7 +7284,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListenCurrentStock() {
-      ::grpc::Service::MarkMethodRaw(37);
+      ::grpc::Service::MarkMethodRaw(38);
     }
     ~WithRawMethod_ListenCurrentStock() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7548,7 +7295,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenCurrentStock(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(37, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(38, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7557,7 +7304,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListenListChanged() {
-      ::grpc::Service::MarkMethodRaw(38);
+      ::grpc::Service::MarkMethodRaw(39);
     }
     ~WithRawMethod_ListenListChanged() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7568,7 +7315,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenListChanged(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(38, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(39, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7577,7 +7324,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListenCybosTickData() {
-      ::grpc::Service::MarkMethodRaw(39);
+      ::grpc::Service::MarkMethodRaw(40);
     }
     ~WithRawMethod_ListenCybosTickData() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7588,7 +7335,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenCybosTickData(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(39, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(40, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7597,7 +7344,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListenCybosBidAsk() {
-      ::grpc::Service::MarkMethodRaw(40);
+      ::grpc::Service::MarkMethodRaw(41);
     }
     ~WithRawMethod_ListenCybosBidAsk() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7608,7 +7355,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenCybosBidAsk(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(40, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(41, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7617,7 +7364,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListenCurrentTime() {
-      ::grpc::Service::MarkMethodRaw(41);
+      ::grpc::Service::MarkMethodRaw(42);
     }
     ~WithRawMethod_ListenCurrentTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7628,7 +7375,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenCurrentTime(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(41, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(42, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7637,7 +7384,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListenCybosSubject() {
-      ::grpc::Service::MarkMethodRaw(42);
+      ::grpc::Service::MarkMethodRaw(43);
     }
     ~WithRawMethod_ListenCybosSubject() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7648,7 +7395,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenCybosSubject(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(42, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(43, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7657,7 +7404,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListenCybosAlarm() {
-      ::grpc::Service::MarkMethodRaw(43);
+      ::grpc::Service::MarkMethodRaw(44);
     }
     ~WithRawMethod_ListenCybosAlarm() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7668,7 +7415,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenCybosAlarm(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(43, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(44, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7677,7 +7424,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListenSimulationStatusChanged() {
-      ::grpc::Service::MarkMethodRaw(44);
+      ::grpc::Service::MarkMethodRaw(45);
     }
     ~WithRawMethod_ListenSimulationStatusChanged() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7688,87 +7435,27 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenSimulationStatusChanged(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(44, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(45, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
-  class WithRawMethod_SetSimulationStockTick : public BaseClass {
+  class WithRawMethod_SimulationData : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawMethod_SetSimulationStockTick() {
-      ::grpc::Service::MarkMethodRaw(45);
-    }
-    ~WithRawMethod_SetSimulationStockTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationStockTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestSetSimulationStockTick(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(45, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_SetSimulationBidAskTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawMethod_SetSimulationBidAskTick() {
+    WithRawMethod_SimulationData() {
       ::grpc::Service::MarkMethodRaw(46);
     }
-    ~WithRawMethod_SetSimulationBidAskTick() override {
+    ~WithRawMethod_SimulationData() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status SetSimulationBidAskTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosBidAskTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+    ::grpc::Status SimulationData(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::google::protobuf::Empty, ::stock_api::SimulationMsg>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestSetSimulationBidAskTick(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(46, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_SetSimulationSubjectTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawMethod_SetSimulationSubjectTick() {
-      ::grpc::Service::MarkMethodRaw(47);
-    }
-    ~WithRawMethod_SetSimulationSubjectTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationSubjectTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosSubjectTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestSetSimulationSubjectTick(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(47, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_SetSimulationAlarmTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawMethod_SetSimulationAlarmTick() {
-      ::grpc::Service::MarkMethodRaw(48);
-    }
-    ~WithRawMethod_SetSimulationAlarmTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationAlarmTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosStockAlarm* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestSetSimulationAlarmTick(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(48, context, request, response, new_call_cq, notification_cq, tag);
+    void RequestSimulationData(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncBidiStreaming(46, context, stream, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7777,7 +7464,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListenSimulationOperation() {
-      ::grpc::Service::MarkMethodRaw(49);
+      ::grpc::Service::MarkMethodRaw(47);
     }
     ~WithRawMethod_ListenSimulationOperation() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7788,7 +7475,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListenSimulationOperation(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(49, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(47, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7797,7 +7484,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_StartSimulation() {
-      ::grpc::Service::MarkMethodRaw(50);
+      ::grpc::Service::MarkMethodRaw(48);
     }
     ~WithRawMethod_StartSimulation() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7808,7 +7495,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestStartSimulation(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(50, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(48, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7817,7 +7504,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_StopSimulation() {
-      ::grpc::Service::MarkMethodRaw(51);
+      ::grpc::Service::MarkMethodRaw(49);
     }
     ~WithRawMethod_StopSimulation() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7828,7 +7515,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestStopSimulation(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(51, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(49, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7837,7 +7524,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetSimulationStatus() {
-      ::grpc::Service::MarkMethodRaw(52);
+      ::grpc::Service::MarkMethodRaw(50);
     }
     ~WithRawMethod_SetSimulationStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7848,7 +7535,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetSimulationStatus(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(52, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(50, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -7857,7 +7544,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetSimulationStatus() {
-      ::grpc::Service::MarkMethodRaw(53);
+      ::grpc::Service::MarkMethodRaw(51);
     }
     ~WithRawMethod_GetSimulationStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -7868,7 +7555,7 @@ class Stock final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetSimulationStatus(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(53, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(51, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -8252,6 +7939,44 @@ class Stock final {
       { return nullptr; }
   };
   template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_GetYearHigh : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_GetYearHigh() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodRawCallback(10,
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetYearHigh(context, request, response); }));
+    }
+    ~ExperimentalWithRawCallbackMethod_GetYearHigh() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetYearHigh(::grpc::ServerContext* /*context*/, const ::stock_api::StockCodeQuery* /*request*/, ::stock_api::YearHighInfo* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* GetYearHigh(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* GetYearHigh(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
   class ExperimentalWithRawCallbackMethod_RequestCybosTickData : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
@@ -8262,7 +7987,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(10,
+        MarkMethodRawCallback(11,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8300,7 +8025,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(11,
+        MarkMethodRawCallback(12,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8338,7 +8063,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(12,
+        MarkMethodRawCallback(13,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8376,7 +8101,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(13,
+        MarkMethodRawCallback(14,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8414,7 +8139,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(14,
+        MarkMethodRawCallback(15,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8452,7 +8177,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(15,
+        MarkMethodRawCallback(16,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8490,7 +8215,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(16,
+        MarkMethodRawCallback(17,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8528,7 +8253,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(17,
+        MarkMethodRawCallback(18,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8566,7 +8291,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(18,
+        MarkMethodRawCallback(19,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8604,7 +8329,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(19,
+        MarkMethodRawCallback(20,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8642,7 +8367,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(20,
+        MarkMethodRawCallback(21,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8680,7 +8405,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(21,
+        MarkMethodRawCallback(22,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8718,7 +8443,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(22,
+        MarkMethodRawCallback(23,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8756,7 +8481,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(23,
+        MarkMethodRawCallback(24,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8794,7 +8519,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(24,
+        MarkMethodRawCallback(25,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8832,7 +8557,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(25,
+        MarkMethodRawCallback(26,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8870,7 +8595,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(26,
+        MarkMethodRawCallback(27,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8908,7 +8633,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(27,
+        MarkMethodRawCallback(28,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8946,7 +8671,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(28,
+        MarkMethodRawCallback(29,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -8984,7 +8709,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(29,
+        MarkMethodRawCallback(30,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9022,7 +8747,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(30,
+        MarkMethodRawCallback(31,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9060,7 +8785,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(31,
+        MarkMethodRawCallback(32,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9098,7 +8823,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(32,
+        MarkMethodRawCallback(33,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9136,7 +8861,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(33,
+        MarkMethodRawCallback(34,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9174,7 +8899,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(34,
+        MarkMethodRawCallback(35,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9212,7 +8937,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(35,
+        MarkMethodRawCallback(36,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9250,7 +8975,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(36,
+        MarkMethodRawCallback(37,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9288,7 +9013,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(37,
+        MarkMethodRawCallback(38,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9326,7 +9051,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(38,
+        MarkMethodRawCallback(39,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9364,7 +9089,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(39,
+        MarkMethodRawCallback(40,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9402,7 +9127,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(40,
+        MarkMethodRawCallback(41,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9440,7 +9165,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(41,
+        MarkMethodRawCallback(42,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9478,7 +9203,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(42,
+        MarkMethodRawCallback(43,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9516,7 +9241,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(43,
+        MarkMethodRawCallback(44,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9554,7 +9279,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(44,
+        MarkMethodRawCallback(45,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9582,154 +9307,40 @@ class Stock final {
       { return nullptr; }
   };
   template <class BaseClass>
-  class ExperimentalWithRawCallbackMethod_SetSimulationStockTick : public BaseClass {
+  class ExperimentalWithRawCallbackMethod_SimulationData : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    ExperimentalWithRawCallbackMethod_SetSimulationStockTick() {
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::Service::
-    #else
-      ::grpc::Service::experimental().
-    #endif
-        MarkMethodRawCallback(45,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-            [this](
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-                   ::grpc::CallbackServerContext*
-    #else
-                   ::grpc::experimental::CallbackServerContext*
-    #endif
-                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetSimulationStockTick(context, request, response); }));
-    }
-    ~ExperimentalWithRawCallbackMethod_SetSimulationStockTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationStockTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerUnaryReactor* SetSimulationStockTick(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
-    #else
-    virtual ::grpc::experimental::ServerUnaryReactor* SetSimulationStockTick(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
-    #endif
-      { return nullptr; }
-  };
-  template <class BaseClass>
-  class ExperimentalWithRawCallbackMethod_SetSimulationBidAskTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    ExperimentalWithRawCallbackMethod_SetSimulationBidAskTick() {
+    ExperimentalWithRawCallbackMethod_SimulationData() {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::Service::
     #else
       ::grpc::Service::experimental().
     #endif
         MarkMethodRawCallback(46,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          new ::grpc_impl::internal::CallbackBidiHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetSimulationBidAskTick(context, request, response); }));
+                     context) { return this->SimulationData(context); }));
     }
-    ~ExperimentalWithRawCallbackMethod_SetSimulationBidAskTick() override {
+    ~ExperimentalWithRawCallbackMethod_SimulationData() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status SetSimulationBidAskTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosBidAskTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+    ::grpc::Status SimulationData(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::google::protobuf::Empty, ::stock_api::SimulationMsg>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerUnaryReactor* SetSimulationBidAskTick(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    virtual ::grpc::ServerBidiReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* SimulationData(
+      ::grpc::CallbackServerContext* /*context*/)
     #else
-    virtual ::grpc::experimental::ServerUnaryReactor* SetSimulationBidAskTick(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
-    #endif
-      { return nullptr; }
-  };
-  template <class BaseClass>
-  class ExperimentalWithRawCallbackMethod_SetSimulationSubjectTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    ExperimentalWithRawCallbackMethod_SetSimulationSubjectTick() {
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::Service::
-    #else
-      ::grpc::Service::experimental().
-    #endif
-        MarkMethodRawCallback(47,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-            [this](
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-                   ::grpc::CallbackServerContext*
-    #else
-                   ::grpc::experimental::CallbackServerContext*
-    #endif
-                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetSimulationSubjectTick(context, request, response); }));
-    }
-    ~ExperimentalWithRawCallbackMethod_SetSimulationSubjectTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationSubjectTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosSubjectTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerUnaryReactor* SetSimulationSubjectTick(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
-    #else
-    virtual ::grpc::experimental::ServerUnaryReactor* SetSimulationSubjectTick(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
-    #endif
-      { return nullptr; }
-  };
-  template <class BaseClass>
-  class ExperimentalWithRawCallbackMethod_SetSimulationAlarmTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    ExperimentalWithRawCallbackMethod_SetSimulationAlarmTick() {
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::Service::
-    #else
-      ::grpc::Service::experimental().
-    #endif
-        MarkMethodRawCallback(48,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-            [this](
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-                   ::grpc::CallbackServerContext*
-    #else
-                   ::grpc::experimental::CallbackServerContext*
-    #endif
-                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetSimulationAlarmTick(context, request, response); }));
-    }
-    ~ExperimentalWithRawCallbackMethod_SetSimulationAlarmTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status SetSimulationAlarmTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosStockAlarm* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerUnaryReactor* SetSimulationAlarmTick(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
-    #else
-    virtual ::grpc::experimental::ServerUnaryReactor* SetSimulationAlarmTick(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    virtual ::grpc::experimental::ServerBidiReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* SimulationData(
+      ::grpc::experimental::CallbackServerContext* /*context*/)
     #endif
       { return nullptr; }
   };
@@ -9744,7 +9355,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(49,
+        MarkMethodRawCallback(47,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9782,7 +9393,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(50,
+        MarkMethodRawCallback(48,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9820,7 +9431,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(51,
+        MarkMethodRawCallback(49,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9858,7 +9469,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(52,
+        MarkMethodRawCallback(50,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -9896,7 +9507,7 @@ class Stock final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(53,
+        MarkMethodRawCallback(51,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -10124,12 +9735,32 @@ class Stock final {
     virtual ::grpc::Status StreamedCancelOrder(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::stock_api::OrderMsg,::stock_api::CybosOrderReturn>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
+  class WithStreamedUnaryMethod_GetYearHigh : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_GetYearHigh() {
+      ::grpc::Service::MarkMethodStreamed(10,
+        new ::grpc::internal::StreamedUnaryHandler< ::stock_api::StockCodeQuery, ::stock_api::YearHighInfo>(std::bind(&WithStreamedUnaryMethod_GetYearHigh<BaseClass>::StreamedGetYearHigh, this, std::placeholders::_1, std::placeholders::_2)));
+    }
+    ~WithStreamedUnaryMethod_GetYearHigh() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status GetYearHigh(::grpc::ServerContext* /*context*/, const ::stock_api::StockCodeQuery* /*request*/, ::stock_api::YearHighInfo* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedGetYearHigh(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::stock_api::StockCodeQuery,::stock_api::YearHighInfo>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_RequestCybosTickData : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_RequestCybosTickData() {
-      ::grpc::Service::MarkMethodStreamed(10,
+      ::grpc::Service::MarkMethodStreamed(11,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_RequestCybosTickData<BaseClass>::StreamedRequestCybosTickData, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_RequestCybosTickData() override {
@@ -10149,7 +9780,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_RequestCybosBidAsk() {
-      ::grpc::Service::MarkMethodStreamed(11,
+      ::grpc::Service::MarkMethodStreamed(12,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_RequestCybosBidAsk<BaseClass>::StreamedRequestCybosBidAsk, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_RequestCybosBidAsk() override {
@@ -10169,7 +9800,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_RequestCybosSubject() {
-      ::grpc::Service::MarkMethodStreamed(12,
+      ::grpc::Service::MarkMethodStreamed(13,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_RequestCybosSubject<BaseClass>::StreamedRequestCybosSubject, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_RequestCybosSubject() override {
@@ -10189,7 +9820,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_RequestCybosAlarm() {
-      ::grpc::Service::MarkMethodStreamed(13,
+      ::grpc::Service::MarkMethodStreamed(14,
         new ::grpc::internal::StreamedUnaryHandler< ::google::protobuf::Empty, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_RequestCybosAlarm<BaseClass>::StreamedRequestCybosAlarm, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_RequestCybosAlarm() override {
@@ -10209,7 +9840,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_RequestToTrader() {
-      ::grpc::Service::MarkMethodStreamed(14,
+      ::grpc::Service::MarkMethodStreamed(15,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::TradeMsg, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_RequestToTrader<BaseClass>::StreamedRequestToTrader, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_RequestToTrader() override {
@@ -10229,7 +9860,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_RequestCybosTradeResult() {
-      ::grpc::Service::MarkMethodStreamed(15,
+      ::grpc::Service::MarkMethodStreamed(16,
         new ::grpc::internal::StreamedUnaryHandler< ::google::protobuf::Empty, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_RequestCybosTradeResult<BaseClass>::StreamedRequestCybosTradeResult, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_RequestCybosTradeResult() override {
@@ -10249,7 +9880,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_ReportOrderResult() {
-      ::grpc::Service::MarkMethodStreamed(16,
+      ::grpc::Service::MarkMethodStreamed(17,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::OrderResult, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_ReportOrderResult<BaseClass>::StreamedReportOrderResult, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_ReportOrderResult() override {
@@ -10269,7 +9900,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_IsKospi() {
-      ::grpc::Service::MarkMethodStreamed(17,
+      ::grpc::Service::MarkMethodStreamed(18,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::StockCodeQuery, ::stock_api::Bool>(std::bind(&WithStreamedUnaryMethod_IsKospi<BaseClass>::StreamedIsKospi, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_IsKospi() override {
@@ -10289,7 +9920,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetViPrice() {
-      ::grpc::Service::MarkMethodStreamed(18,
+      ::grpc::Service::MarkMethodStreamed(19,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::StockCodeQuery, ::stock_api::Prices>(std::bind(&WithStreamedUnaryMethod_GetViPrice<BaseClass>::StreamedGetViPrice, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_GetViPrice() override {
@@ -10309,7 +9940,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetCurrentStock() {
-      ::grpc::Service::MarkMethodStreamed(22,
+      ::grpc::Service::MarkMethodStreamed(23,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_SetCurrentStock<BaseClass>::StreamedSetCurrentStock, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_SetCurrentStock() override {
@@ -10329,7 +9960,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetCurrentDateTime() {
-      ::grpc::Service::MarkMethodStreamed(23,
+      ::grpc::Service::MarkMethodStreamed(24,
         new ::grpc::internal::StreamedUnaryHandler< ::google::protobuf::Timestamp, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_SetCurrentDateTime<BaseClass>::StreamedSetCurrentDateTime, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_SetCurrentDateTime() override {
@@ -10349,7 +9980,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetCompanyName() {
-      ::grpc::Service::MarkMethodStreamed(24,
+      ::grpc::Service::MarkMethodStreamed(25,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::StockCodeQuery, ::stock_api::CompanyName>(std::bind(&WithStreamedUnaryMethod_GetCompanyName<BaseClass>::StreamedGetCompanyName, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_GetCompanyName() override {
@@ -10369,7 +10000,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetFavoriteList() {
-      ::grpc::Service::MarkMethodStreamed(25,
+      ::grpc::Service::MarkMethodStreamed(26,
         new ::grpc::internal::StreamedUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>(std::bind(&WithStreamedUnaryMethod_GetFavoriteList<BaseClass>::StreamedGetFavoriteList, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_GetFavoriteList() override {
@@ -10389,7 +10020,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_AddFavorite() {
-      ::grpc::Service::MarkMethodStreamed(26,
+      ::grpc::Service::MarkMethodStreamed(27,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_AddFavorite<BaseClass>::StreamedAddFavorite, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_AddFavorite() override {
@@ -10409,7 +10040,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_RemoveFavorite() {
-      ::grpc::Service::MarkMethodStreamed(27,
+      ::grpc::Service::MarkMethodStreamed(28,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::StockCodeQuery, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_RemoveFavorite<BaseClass>::StreamedRemoveFavorite, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_RemoveFavorite() override {
@@ -10429,7 +10060,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_ClearRecentList() {
-      ::grpc::Service::MarkMethodStreamed(28,
+      ::grpc::Service::MarkMethodStreamed(29,
         new ::grpc::internal::StreamedUnaryHandler< ::google::protobuf::Empty, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_ClearRecentList<BaseClass>::StreamedClearRecentList, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_ClearRecentList() override {
@@ -10449,7 +10080,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetYesterdayTopAmountList() {
-      ::grpc::Service::MarkMethodStreamed(29,
+      ::grpc::Service::MarkMethodStreamed(30,
         new ::grpc::internal::StreamedUnaryHandler< ::google::protobuf::Timestamp, ::stock_api::TopList>(std::bind(&WithStreamedUnaryMethod_GetYesterdayTopAmountList<BaseClass>::StreamedGetYesterdayTopAmountList, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_GetYesterdayTopAmountList() override {
@@ -10469,7 +10100,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetTodayAmountRatioList() {
-      ::grpc::Service::MarkMethodStreamed(30,
+      ::grpc::Service::MarkMethodStreamed(31,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::CodeList, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_SetTodayAmountRatioList<BaseClass>::StreamedSetTodayAmountRatioList, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_SetTodayAmountRatioList() override {
@@ -10489,7 +10120,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetTodayAmountMomentumList() {
-      ::grpc::Service::MarkMethodStreamed(31,
+      ::grpc::Service::MarkMethodStreamed(32,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::CodeList, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_SetTodayAmountMomentumList<BaseClass>::StreamedSetTodayAmountMomentumList, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_SetTodayAmountMomentumList() override {
@@ -10509,7 +10140,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetTodayAmountTopList() {
-      ::grpc::Service::MarkMethodStreamed(32,
+      ::grpc::Service::MarkMethodStreamed(33,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::CodeList, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_SetTodayAmountTopList<BaseClass>::StreamedSetTodayAmountTopList, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_SetTodayAmountTopList() override {
@@ -10529,7 +10160,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetTodayTopAmountList() {
-      ::grpc::Service::MarkMethodStreamed(33,
+      ::grpc::Service::MarkMethodStreamed(34,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::TodayTopOption, ::stock_api::CodeList>(std::bind(&WithStreamedUnaryMethod_GetTodayTopAmountList<BaseClass>::StreamedGetTodayTopAmountList, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_GetTodayTopAmountList() override {
@@ -10549,7 +10180,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetTodayNineThirtyList() {
-      ::grpc::Service::MarkMethodStreamed(34,
+      ::grpc::Service::MarkMethodStreamed(35,
         new ::grpc::internal::StreamedUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>(std::bind(&WithStreamedUnaryMethod_GetTodayNineThirtyList<BaseClass>::StreamedGetTodayNineThirtyList, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_GetTodayNineThirtyList() override {
@@ -10569,7 +10200,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetRecentSearch() {
-      ::grpc::Service::MarkMethodStreamed(35,
+      ::grpc::Service::MarkMethodStreamed(36,
         new ::grpc::internal::StreamedUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>(std::bind(&WithStreamedUnaryMethod_GetRecentSearch<BaseClass>::StreamedGetRecentSearch, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_GetRecentSearch() override {
@@ -10589,7 +10220,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetViList() {
-      ::grpc::Service::MarkMethodStreamed(36,
+      ::grpc::Service::MarkMethodStreamed(37,
         new ::grpc::internal::StreamedUnaryHandler< ::google::protobuf::Empty, ::stock_api::CodeList>(std::bind(&WithStreamedUnaryMethod_GetViList<BaseClass>::StreamedGetViList, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_GetViList() override {
@@ -10604,92 +10235,12 @@ class Stock final {
     virtual ::grpc::Status StreamedGetViList(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::google::protobuf::Empty,::stock_api::CodeList>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_SetSimulationStockTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithStreamedUnaryMethod_SetSimulationStockTick() {
-      ::grpc::Service::MarkMethodStreamed(45,
-        new ::grpc::internal::StreamedUnaryHandler< ::stock_api::CybosTickData, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_SetSimulationStockTick<BaseClass>::StreamedSetSimulationStockTick, this, std::placeholders::_1, std::placeholders::_2)));
-    }
-    ~WithStreamedUnaryMethod_SetSimulationStockTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status SetSimulationStockTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedSetSimulationStockTick(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::stock_api::CybosTickData,::google::protobuf::Empty>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
-  class WithStreamedUnaryMethod_SetSimulationBidAskTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithStreamedUnaryMethod_SetSimulationBidAskTick() {
-      ::grpc::Service::MarkMethodStreamed(46,
-        new ::grpc::internal::StreamedUnaryHandler< ::stock_api::CybosBidAskTickData, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_SetSimulationBidAskTick<BaseClass>::StreamedSetSimulationBidAskTick, this, std::placeholders::_1, std::placeholders::_2)));
-    }
-    ~WithStreamedUnaryMethod_SetSimulationBidAskTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status SetSimulationBidAskTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosBidAskTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedSetSimulationBidAskTick(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::stock_api::CybosBidAskTickData,::google::protobuf::Empty>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
-  class WithStreamedUnaryMethod_SetSimulationSubjectTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithStreamedUnaryMethod_SetSimulationSubjectTick() {
-      ::grpc::Service::MarkMethodStreamed(47,
-        new ::grpc::internal::StreamedUnaryHandler< ::stock_api::CybosSubjectTickData, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_SetSimulationSubjectTick<BaseClass>::StreamedSetSimulationSubjectTick, this, std::placeholders::_1, std::placeholders::_2)));
-    }
-    ~WithStreamedUnaryMethod_SetSimulationSubjectTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status SetSimulationSubjectTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosSubjectTickData* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedSetSimulationSubjectTick(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::stock_api::CybosSubjectTickData,::google::protobuf::Empty>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
-  class WithStreamedUnaryMethod_SetSimulationAlarmTick : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithStreamedUnaryMethod_SetSimulationAlarmTick() {
-      ::grpc::Service::MarkMethodStreamed(48,
-        new ::grpc::internal::StreamedUnaryHandler< ::stock_api::CybosStockAlarm, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_SetSimulationAlarmTick<BaseClass>::StreamedSetSimulationAlarmTick, this, std::placeholders::_1, std::placeholders::_2)));
-    }
-    ~WithStreamedUnaryMethod_SetSimulationAlarmTick() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status SetSimulationAlarmTick(::grpc::ServerContext* /*context*/, const ::stock_api::CybosStockAlarm* /*request*/, ::google::protobuf::Empty* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedSetSimulationAlarmTick(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::stock_api::CybosStockAlarm,::google::protobuf::Empty>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
   class WithStreamedUnaryMethod_StartSimulation : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_StartSimulation() {
-      ::grpc::Service::MarkMethodStreamed(50,
+      ::grpc::Service::MarkMethodStreamed(48,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::SimulationOperation, ::stock_api::Bool>(std::bind(&WithStreamedUnaryMethod_StartSimulation<BaseClass>::StreamedStartSimulation, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_StartSimulation() override {
@@ -10709,7 +10260,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_StopSimulation() {
-      ::grpc::Service::MarkMethodStreamed(51,
+      ::grpc::Service::MarkMethodStreamed(49,
         new ::grpc::internal::StreamedUnaryHandler< ::google::protobuf::Empty, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_StopSimulation<BaseClass>::StreamedStopSimulation, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_StopSimulation() override {
@@ -10729,7 +10280,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetSimulationStatus() {
-      ::grpc::Service::MarkMethodStreamed(52,
+      ::grpc::Service::MarkMethodStreamed(50,
         new ::grpc::internal::StreamedUnaryHandler< ::stock_api::SimulationStatus, ::google::protobuf::Empty>(std::bind(&WithStreamedUnaryMethod_SetSimulationStatus<BaseClass>::StreamedSetSimulationStatus, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_SetSimulationStatus() override {
@@ -10749,7 +10300,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetSimulationStatus() {
-      ::grpc::Service::MarkMethodStreamed(53,
+      ::grpc::Service::MarkMethodStreamed(51,
         new ::grpc::internal::StreamedUnaryHandler< ::google::protobuf::Empty, ::stock_api::SimulationStatus>(std::bind(&WithStreamedUnaryMethod_GetSimulationStatus<BaseClass>::StreamedGetSimulationStatus, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_GetSimulationStatus() override {
@@ -10763,14 +10314,14 @@ class Stock final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedGetSimulationStatus(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::google::protobuf::Empty,::stock_api::SimulationStatus>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_SayHello<WithStreamedUnaryMethod_GetDayData<WithStreamedUnaryMethod_GetMinuteData<WithStreamedUnaryMethod_GetTodayMinuteData<WithStreamedUnaryMethod_GetPastMinuteData<WithStreamedUnaryMethod_GetSubscribeCodes<WithStreamedUnaryMethod_GetBalance<WithStreamedUnaryMethod_OrderStock<WithStreamedUnaryMethod_ChangeOrder<WithStreamedUnaryMethod_CancelOrder<WithStreamedUnaryMethod_RequestCybosTickData<WithStreamedUnaryMethod_RequestCybosBidAsk<WithStreamedUnaryMethod_RequestCybosSubject<WithStreamedUnaryMethod_RequestCybosAlarm<WithStreamedUnaryMethod_RequestToTrader<WithStreamedUnaryMethod_RequestCybosTradeResult<WithStreamedUnaryMethod_ReportOrderResult<WithStreamedUnaryMethod_IsKospi<WithStreamedUnaryMethod_GetViPrice<WithStreamedUnaryMethod_SetCurrentStock<WithStreamedUnaryMethod_SetCurrentDateTime<WithStreamedUnaryMethod_GetCompanyName<WithStreamedUnaryMethod_GetFavoriteList<WithStreamedUnaryMethod_AddFavorite<WithStreamedUnaryMethod_RemoveFavorite<WithStreamedUnaryMethod_ClearRecentList<WithStreamedUnaryMethod_GetYesterdayTopAmountList<WithStreamedUnaryMethod_SetTodayAmountRatioList<WithStreamedUnaryMethod_SetTodayAmountMomentumList<WithStreamedUnaryMethod_SetTodayAmountTopList<WithStreamedUnaryMethod_GetTodayTopAmountList<WithStreamedUnaryMethod_GetTodayNineThirtyList<WithStreamedUnaryMethod_GetRecentSearch<WithStreamedUnaryMethod_GetViList<WithStreamedUnaryMethod_SetSimulationStockTick<WithStreamedUnaryMethod_SetSimulationBidAskTick<WithStreamedUnaryMethod_SetSimulationSubjectTick<WithStreamedUnaryMethod_SetSimulationAlarmTick<WithStreamedUnaryMethod_StartSimulation<WithStreamedUnaryMethod_StopSimulation<WithStreamedUnaryMethod_SetSimulationStatus<WithStreamedUnaryMethod_GetSimulationStatus<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_SayHello<WithStreamedUnaryMethod_GetDayData<WithStreamedUnaryMethod_GetMinuteData<WithStreamedUnaryMethod_GetTodayMinuteData<WithStreamedUnaryMethod_GetPastMinuteData<WithStreamedUnaryMethod_GetSubscribeCodes<WithStreamedUnaryMethod_GetBalance<WithStreamedUnaryMethod_OrderStock<WithStreamedUnaryMethod_ChangeOrder<WithStreamedUnaryMethod_CancelOrder<WithStreamedUnaryMethod_GetYearHigh<WithStreamedUnaryMethod_RequestCybosTickData<WithStreamedUnaryMethod_RequestCybosBidAsk<WithStreamedUnaryMethod_RequestCybosSubject<WithStreamedUnaryMethod_RequestCybosAlarm<WithStreamedUnaryMethod_RequestToTrader<WithStreamedUnaryMethod_RequestCybosTradeResult<WithStreamedUnaryMethod_ReportOrderResult<WithStreamedUnaryMethod_IsKospi<WithStreamedUnaryMethod_GetViPrice<WithStreamedUnaryMethod_SetCurrentStock<WithStreamedUnaryMethod_SetCurrentDateTime<WithStreamedUnaryMethod_GetCompanyName<WithStreamedUnaryMethod_GetFavoriteList<WithStreamedUnaryMethod_AddFavorite<WithStreamedUnaryMethod_RemoveFavorite<WithStreamedUnaryMethod_ClearRecentList<WithStreamedUnaryMethod_GetYesterdayTopAmountList<WithStreamedUnaryMethod_SetTodayAmountRatioList<WithStreamedUnaryMethod_SetTodayAmountMomentumList<WithStreamedUnaryMethod_SetTodayAmountTopList<WithStreamedUnaryMethod_GetTodayTopAmountList<WithStreamedUnaryMethod_GetTodayNineThirtyList<WithStreamedUnaryMethod_GetRecentSearch<WithStreamedUnaryMethod_GetViList<WithStreamedUnaryMethod_StartSimulation<WithStreamedUnaryMethod_StopSimulation<WithStreamedUnaryMethod_SetSimulationStatus<WithStreamedUnaryMethod_GetSimulationStatus<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedUnaryService;
   template <class BaseClass>
   class WithSplitStreamingMethod_ListenTraderMsg : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_ListenTraderMsg() {
-      ::grpc::Service::MarkMethodStreamed(19,
+      ::grpc::Service::MarkMethodStreamed(20,
         new ::grpc::internal::SplitServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::TradeMsg>(std::bind(&WithSplitStreamingMethod_ListenTraderMsg<BaseClass>::StreamedListenTraderMsg, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithSplitStreamingMethod_ListenTraderMsg() override {
@@ -10790,7 +10341,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_ListenCybosOrderResult() {
-      ::grpc::Service::MarkMethodStreamed(20,
+      ::grpc::Service::MarkMethodStreamed(21,
         new ::grpc::internal::SplitServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::CybosOrderResult>(std::bind(&WithSplitStreamingMethod_ListenCybosOrderResult<BaseClass>::StreamedListenCybosOrderResult, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithSplitStreamingMethod_ListenCybosOrderResult() override {
@@ -10810,7 +10361,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_ListenOrderResult() {
-      ::grpc::Service::MarkMethodStreamed(21,
+      ::grpc::Service::MarkMethodStreamed(22,
         new ::grpc::internal::SplitServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::OrderResult>(std::bind(&WithSplitStreamingMethod_ListenOrderResult<BaseClass>::StreamedListenOrderResult, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithSplitStreamingMethod_ListenOrderResult() override {
@@ -10830,7 +10381,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_ListenCurrentStock() {
-      ::grpc::Service::MarkMethodStreamed(37,
+      ::grpc::Service::MarkMethodStreamed(38,
         new ::grpc::internal::SplitServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::StockCodeQuery>(std::bind(&WithSplitStreamingMethod_ListenCurrentStock<BaseClass>::StreamedListenCurrentStock, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithSplitStreamingMethod_ListenCurrentStock() override {
@@ -10850,7 +10401,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_ListenListChanged() {
-      ::grpc::Service::MarkMethodStreamed(38,
+      ::grpc::Service::MarkMethodStreamed(39,
         new ::grpc::internal::SplitServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::ListType>(std::bind(&WithSplitStreamingMethod_ListenListChanged<BaseClass>::StreamedListenListChanged, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithSplitStreamingMethod_ListenListChanged() override {
@@ -10870,7 +10421,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_ListenCybosTickData() {
-      ::grpc::Service::MarkMethodStreamed(39,
+      ::grpc::Service::MarkMethodStreamed(40,
         new ::grpc::internal::SplitServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::CybosTickData>(std::bind(&WithSplitStreamingMethod_ListenCybosTickData<BaseClass>::StreamedListenCybosTickData, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithSplitStreamingMethod_ListenCybosTickData() override {
@@ -10890,7 +10441,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_ListenCybosBidAsk() {
-      ::grpc::Service::MarkMethodStreamed(40,
+      ::grpc::Service::MarkMethodStreamed(41,
         new ::grpc::internal::SplitServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::CybosBidAskTickData>(std::bind(&WithSplitStreamingMethod_ListenCybosBidAsk<BaseClass>::StreamedListenCybosBidAsk, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithSplitStreamingMethod_ListenCybosBidAsk() override {
@@ -10910,7 +10461,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_ListenCurrentTime() {
-      ::grpc::Service::MarkMethodStreamed(41,
+      ::grpc::Service::MarkMethodStreamed(42,
         new ::grpc::internal::SplitServerStreamingHandler< ::google::protobuf::Empty, ::google::protobuf::Timestamp>(std::bind(&WithSplitStreamingMethod_ListenCurrentTime<BaseClass>::StreamedListenCurrentTime, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithSplitStreamingMethod_ListenCurrentTime() override {
@@ -10930,7 +10481,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_ListenCybosSubject() {
-      ::grpc::Service::MarkMethodStreamed(42,
+      ::grpc::Service::MarkMethodStreamed(43,
         new ::grpc::internal::SplitServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::CybosSubjectTickData>(std::bind(&WithSplitStreamingMethod_ListenCybosSubject<BaseClass>::StreamedListenCybosSubject, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithSplitStreamingMethod_ListenCybosSubject() override {
@@ -10950,7 +10501,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_ListenCybosAlarm() {
-      ::grpc::Service::MarkMethodStreamed(43,
+      ::grpc::Service::MarkMethodStreamed(44,
         new ::grpc::internal::SplitServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::CybosStockAlarm>(std::bind(&WithSplitStreamingMethod_ListenCybosAlarm<BaseClass>::StreamedListenCybosAlarm, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithSplitStreamingMethod_ListenCybosAlarm() override {
@@ -10970,7 +10521,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_ListenSimulationStatusChanged() {
-      ::grpc::Service::MarkMethodStreamed(44,
+      ::grpc::Service::MarkMethodStreamed(45,
         new ::grpc::internal::SplitServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::SimulationStatus>(std::bind(&WithSplitStreamingMethod_ListenSimulationStatusChanged<BaseClass>::StreamedListenSimulationStatusChanged, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithSplitStreamingMethod_ListenSimulationStatusChanged() override {
@@ -10990,7 +10541,7 @@ class Stock final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_ListenSimulationOperation() {
-      ::grpc::Service::MarkMethodStreamed(49,
+      ::grpc::Service::MarkMethodStreamed(47,
         new ::grpc::internal::SplitServerStreamingHandler< ::google::protobuf::Empty, ::stock_api::SimulationOperation>(std::bind(&WithSplitStreamingMethod_ListenSimulationOperation<BaseClass>::StreamedListenSimulationOperation, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithSplitStreamingMethod_ListenSimulationOperation() override {
@@ -11005,7 +10556,7 @@ class Stock final {
     virtual ::grpc::Status StreamedListenSimulationOperation(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::google::protobuf::Empty,::stock_api::SimulationOperation>* server_split_streamer) = 0;
   };
   typedef WithSplitStreamingMethod_ListenTraderMsg<WithSplitStreamingMethod_ListenCybosOrderResult<WithSplitStreamingMethod_ListenOrderResult<WithSplitStreamingMethod_ListenCurrentStock<WithSplitStreamingMethod_ListenListChanged<WithSplitStreamingMethod_ListenCybosTickData<WithSplitStreamingMethod_ListenCybosBidAsk<WithSplitStreamingMethod_ListenCurrentTime<WithSplitStreamingMethod_ListenCybosSubject<WithSplitStreamingMethod_ListenCybosAlarm<WithSplitStreamingMethod_ListenSimulationStatusChanged<WithSplitStreamingMethod_ListenSimulationOperation<Service > > > > > > > > > > > > SplitStreamedService;
-  typedef WithStreamedUnaryMethod_SayHello<WithStreamedUnaryMethod_GetDayData<WithStreamedUnaryMethod_GetMinuteData<WithStreamedUnaryMethod_GetTodayMinuteData<WithStreamedUnaryMethod_GetPastMinuteData<WithStreamedUnaryMethod_GetSubscribeCodes<WithStreamedUnaryMethod_GetBalance<WithStreamedUnaryMethod_OrderStock<WithStreamedUnaryMethod_ChangeOrder<WithStreamedUnaryMethod_CancelOrder<WithStreamedUnaryMethod_RequestCybosTickData<WithStreamedUnaryMethod_RequestCybosBidAsk<WithStreamedUnaryMethod_RequestCybosSubject<WithStreamedUnaryMethod_RequestCybosAlarm<WithStreamedUnaryMethod_RequestToTrader<WithStreamedUnaryMethod_RequestCybosTradeResult<WithStreamedUnaryMethod_ReportOrderResult<WithStreamedUnaryMethod_IsKospi<WithStreamedUnaryMethod_GetViPrice<WithSplitStreamingMethod_ListenTraderMsg<WithSplitStreamingMethod_ListenCybosOrderResult<WithSplitStreamingMethod_ListenOrderResult<WithStreamedUnaryMethod_SetCurrentStock<WithStreamedUnaryMethod_SetCurrentDateTime<WithStreamedUnaryMethod_GetCompanyName<WithStreamedUnaryMethod_GetFavoriteList<WithStreamedUnaryMethod_AddFavorite<WithStreamedUnaryMethod_RemoveFavorite<WithStreamedUnaryMethod_ClearRecentList<WithStreamedUnaryMethod_GetYesterdayTopAmountList<WithStreamedUnaryMethod_SetTodayAmountRatioList<WithStreamedUnaryMethod_SetTodayAmountMomentumList<WithStreamedUnaryMethod_SetTodayAmountTopList<WithStreamedUnaryMethod_GetTodayTopAmountList<WithStreamedUnaryMethod_GetTodayNineThirtyList<WithStreamedUnaryMethod_GetRecentSearch<WithStreamedUnaryMethod_GetViList<WithSplitStreamingMethod_ListenCurrentStock<WithSplitStreamingMethod_ListenListChanged<WithSplitStreamingMethod_ListenCybosTickData<WithSplitStreamingMethod_ListenCybosBidAsk<WithSplitStreamingMethod_ListenCurrentTime<WithSplitStreamingMethod_ListenCybosSubject<WithSplitStreamingMethod_ListenCybosAlarm<WithSplitStreamingMethod_ListenSimulationStatusChanged<WithStreamedUnaryMethod_SetSimulationStockTick<WithStreamedUnaryMethod_SetSimulationBidAskTick<WithStreamedUnaryMethod_SetSimulationSubjectTick<WithStreamedUnaryMethod_SetSimulationAlarmTick<WithSplitStreamingMethod_ListenSimulationOperation<WithStreamedUnaryMethod_StartSimulation<WithStreamedUnaryMethod_StopSimulation<WithStreamedUnaryMethod_SetSimulationStatus<WithStreamedUnaryMethod_GetSimulationStatus<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_SayHello<WithStreamedUnaryMethod_GetDayData<WithStreamedUnaryMethod_GetMinuteData<WithStreamedUnaryMethod_GetTodayMinuteData<WithStreamedUnaryMethod_GetPastMinuteData<WithStreamedUnaryMethod_GetSubscribeCodes<WithStreamedUnaryMethod_GetBalance<WithStreamedUnaryMethod_OrderStock<WithStreamedUnaryMethod_ChangeOrder<WithStreamedUnaryMethod_CancelOrder<WithStreamedUnaryMethod_GetYearHigh<WithStreamedUnaryMethod_RequestCybosTickData<WithStreamedUnaryMethod_RequestCybosBidAsk<WithStreamedUnaryMethod_RequestCybosSubject<WithStreamedUnaryMethod_RequestCybosAlarm<WithStreamedUnaryMethod_RequestToTrader<WithStreamedUnaryMethod_RequestCybosTradeResult<WithStreamedUnaryMethod_ReportOrderResult<WithStreamedUnaryMethod_IsKospi<WithStreamedUnaryMethod_GetViPrice<WithSplitStreamingMethod_ListenTraderMsg<WithSplitStreamingMethod_ListenCybosOrderResult<WithSplitStreamingMethod_ListenOrderResult<WithStreamedUnaryMethod_SetCurrentStock<WithStreamedUnaryMethod_SetCurrentDateTime<WithStreamedUnaryMethod_GetCompanyName<WithStreamedUnaryMethod_GetFavoriteList<WithStreamedUnaryMethod_AddFavorite<WithStreamedUnaryMethod_RemoveFavorite<WithStreamedUnaryMethod_ClearRecentList<WithStreamedUnaryMethod_GetYesterdayTopAmountList<WithStreamedUnaryMethod_SetTodayAmountRatioList<WithStreamedUnaryMethod_SetTodayAmountMomentumList<WithStreamedUnaryMethod_SetTodayAmountTopList<WithStreamedUnaryMethod_GetTodayTopAmountList<WithStreamedUnaryMethod_GetTodayNineThirtyList<WithStreamedUnaryMethod_GetRecentSearch<WithStreamedUnaryMethod_GetViList<WithSplitStreamingMethod_ListenCurrentStock<WithSplitStreamingMethod_ListenListChanged<WithSplitStreamingMethod_ListenCybosTickData<WithSplitStreamingMethod_ListenCybosBidAsk<WithSplitStreamingMethod_ListenCurrentTime<WithSplitStreamingMethod_ListenCybosSubject<WithSplitStreamingMethod_ListenCybosAlarm<WithSplitStreamingMethod_ListenSimulationStatusChanged<WithSplitStreamingMethod_ListenSimulationOperation<WithStreamedUnaryMethod_StartSimulation<WithStreamedUnaryMethod_StopSimulation<WithStreamedUnaryMethod_SetSimulationStatus<WithStreamedUnaryMethod_GetSimulationStatus<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedService;
 };
 
 }  // namespace stock_api

@@ -19,6 +19,7 @@ service Stock {
   rpc OrderStock(OrderMsg) returns (CybosOrderReturn) {}
   rpc ChangeOrder(OrderMsg) returns (CybosOrderReturn) {}
   rpc CancelOrder(OrderMsg) returns (CybosOrderReturn) {}
+  rpc GetYearHigh(StockCodeQuery) returns (YearHighInfo) {}
 
   rpc RequestCybosTickData(StockCodeQuery) returns (google.protobuf.Empty) {}
   rpc RequestCybosBidAsk(StockCodeQuery) returns (google.protobuf.Empty) {}
@@ -30,6 +31,7 @@ service Stock {
   rpc ReportOrderResult(OrderResult) returns (google.protobuf.Empty) {}
 
   rpc IsKospi(StockCodeQuery) returns (Bool) {}
+  rpc SetViPriceInfo(ViPriceInfo) returns (google.protobuf.Empty) {}
   rpc GetViPrice(StockCodeQuery) returns (Prices) {}
 
   rpc ListenTraderMsg(google.protobuf.Empty) returns (stream TradeMsg) {}
@@ -68,10 +70,7 @@ service Stock {
   // Simulation RPCs
   rpc ListenSimulationStatusChanged(google.protobuf.Empty) returns (stream SimulationStatus) {}
 
-  rpc SetSimulationStockTick(CybosTickData) returns (google.protobuf.Empty) {}
-  rpc SetSimulationBidAskTick(CybosBidAskTickData) returns (google.protobuf.Empty) {}
-  rpc SetSimulationSubjectTick(CybosSubjectTickData) returns (google.protobuf.Empty) {}
-  rpc SetSimulationAlarmTick(CybosStockAlarm) returns (google.protobuf.Empty) {}
+  rpc SimulationData(stream SimulationMsg) returns (stream google.protobuf.Empty) {}
 
   rpc ListenSimulationOperation(google.protobuf.Empty) returns (stream SimulationOperation) {}
 
@@ -93,6 +92,12 @@ message CodeList {
 }
 
 
+message ViPriceInfo {
+    string code = 1;
+    repeated int32 price = 2;
+}
+
+
 message Prices {
     repeated int32 price = 1;
 }
@@ -102,6 +107,29 @@ message Bool {
     bool ret = 1;
 }
 
+
+message YearHighInfo {
+    int32 price = 1;
+    google.protobuf.Timestamp high_date = 2; 
+    int32 days_distance = 3;
+}
+
+
+enum SimulationMsgType {
+    MSG_TICK = 0;
+    MSG_BIDASK = 1;
+    MSG_SUBJECT = 2;
+    MSG_ALARM = 3;
+}
+
+
+message SimulationMsg {
+    SimulationMsgType msgtype = 1;
+    CybosTickData tick = 2;
+    CybosBidAskTickData bidask = 3;
+    CybosSubjectTickData subject = 4;
+    CybosStockAlarm alarm = 5;
+}
 
 
 enum TodayTopSelection{

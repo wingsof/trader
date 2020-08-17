@@ -10,6 +10,9 @@ import gevent
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 1))))
+from utils import trade_logger
+_LOGGER = trade_logger.get_logger()
+
 from concurrent import futures
 from datetime import datetime, timedelta
 from pymongo import MongoClient
@@ -21,23 +24,22 @@ from google.protobuf.empty_pb2 import Empty
 from stock_service import stock_provider_pb2_grpc
 from stock_service import stock_provider_pb2
 from stock_service import preload
-from stock_service import todaydata
 from clients.common import morning_client
 from morning.back_data import holidays
 from morning_server import stock_api
 from stock_service.candidate import favorite
 
-from utils import trade_logger
 
 
+SLEEP_DURATION = 0.0001
 recent_search_codes = []
 is_subscribe_alarm = False
 is_subscribe_trade = False
 is_subscribe_tick = {}
 is_subscribe_bidask = {}
 is_subscribe_subject = {}
+vi_price_info = {}
 
-_LOGGER = trade_logger.get_logger('GRPC_SERVICE')
 
 
 
@@ -176,6 +178,20 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
         return stock_provider_pb2.CybosDayDatas(day_data=protoc_converted)
       
+    def GetYearHigh(self, request, context):
+        price = preload.get_yesterday_year_high(request.code)
+        distance = 0
+        if price > 0:
+            hdate = preload.get_yesterday_year_high_datetime(request.code)
+            if self.current_datetime is not None:
+                distance = (self.current_datetime - hdate).days
+            else:
+                distance = (datetime.now() - hdate).days
+            high_date = Timestamp()
+            high_date.FromDatetime(hdate)
+        _LOGGER.info('GetYearHigh %s, %d %d', request.code, price, distance)
+        return stock_provider_pb2.YearHighInfo(price=price, high_date=high_date, days_distance=distance)
+
     def IsKospi(self, request, context):
         return stock_provider_pb2.Bool(ret=preload.is_kospi(request.code))
 
@@ -270,8 +286,15 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             o.put_nowait(request)
         return Empty()
 
+    def SetViPriceInfo(self, request, context):
+        _LOGGER.debug('SetViPriceInfo %s(%s)', request.code, request.price)
+        vi_price_info[request.code] = request.price
+        return Empty()
+
     def GetViPrice(self, request, context):
-        return stock_provider_pb2.Prices(price=todaydata.get_vi_prices(request.code))
+        if request.code in vi_price_info:
+            return stock_provider_pb2.Prices(price=vi_price_info[code])
+        return stock_provider_pb2.Prices(price=[])
 
     def SetCurrentStock(self, request, context):
         global recent_search_codes
@@ -295,6 +318,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
         if not self.simulation_on:
             preload.load(request.ToDatetime() + timedelta(hours=9), self.skip_ydata)
+            vi_price_info.clear()
         self.handle_time(request.ToDatetime())
         return Empty()
 
@@ -331,7 +355,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
     def GetTodayNineThirtyList(self, request, context):
         _LOGGER.info('GetTodayNineThirtyList')
-        return stock_provider_pb2.CodeList(codelist=todaydata.get_ninethirty_list())
+        return stock_provider_pb2.CodeList(codelist=[])
 
 
     def SetSimulationStatus(self, request, context):
@@ -444,7 +468,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
         for q in self.subject_subscribe_clients:
             q.put_nowait(tick_data)
-        gevent.sleep(0.000001)
+        gevent.sleep(SLEEP_DURATION)
 
     def handle_alarm_tick(self, _, data_arr):
         if len(data_arr) != 1:
@@ -454,8 +478,6 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         tick_date = Timestamp()
         tick_date.FromDatetime(data['date'] - timedelta(hours=9))
         code = data['code'] if 'code' in data else data['3']
-        if todaydata.handle_vi(code, data):
-            self.send_list_changed('vi')
 
         tick_data = stock_provider_pb2.CybosStockAlarm(tick_date=tick_date,
                                                 time=data['0'],
@@ -468,7 +490,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         for q in self.alarm_subscribe_clients:
             q.put_nowait(tick_data)
 
-        gevent.sleep(0.000001)
+        gevent.sleep(SLEEP_DURATION)
 
     def handle_trade_result(self, data):
         """
@@ -702,28 +724,27 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             q.put_nowait(msg)
         return Empty()
 
-    def SetSimulationStockTick(self, request, context):
-        request.is_kospi = preload.is_kospi(request.code)
-        for q in self.stock_subscribe_clients:
-            q.put_nowait(request)
-        return Empty()
+    def SimulationData(self, request_iterator, context):
+        _LOGGER.info('Simulation Data')
+        for smsg in request_iterator:
+            if smsg.msgtype == stock_provider_pb2.SimulationMsgType.MSG_TICK:
+                smsg.tick.is_kospi = preload.is_kospi(smsg.tick.code)
+                for q in self.stock_subscribe_clients:
+                    q.put_nowait(smsg.tick)
+            elif smsg.msgtype == stock_provider_pb2.SimulationMsgType.MSG_BIDASK:
+                for q in self.bidask_subscribe_cilents:
+                    q.put_nowait(smsg.bidask)
+            elif smsg.msgtype == stock_provider_pb2.SimulationMsgType.MSG_SUBJECT:
+                for q in self.subject_subscribe_clients:
+                    q.put_nowait(smsg.subject)
+                gevent.sleep(SLEEP_DURATION)
+            elif smsg.msgtype == stock_provider_pb2.SimulationMsgType.MSG_ALARM:
+                for q in self.alarm_subscribe_clients:
+                    q.put_nowait(smsg.alarm)
+                gevent.sleep(SLEEP_DURATION)
+        _LOGGER.info('Simulation Data done')
+        yield Empty()
 
-    def SetSimulationBidAskTick(self, request, context):
-        for q in self.bidask_subscribe_cilents:
-            q.put_nowait(request)
-        return Empty()
-
-    def SetSimulationSubjectTick(self, request, context):
-        for q in self.subject_subscribe_clients:
-            q.put_nowait(request)
-        gevent.sleep(0.000001)
-        return Empty()
-
-    def SetSimulationAlarmTick(self, request, context):
-        for q in self.alarm_subscribe_clients:
-            q.put_nowait(request)
-        gevent.sleep(0.000001)
-        return Empty()
 
 def serve(is_skip_ydata):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=60))

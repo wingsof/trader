@@ -6,6 +6,9 @@
 
 SearchBackend::SearchBackend(QObject *parent)
 : QObject(parent) {
+    mTimer = new QTimer(this);
+    mTimer->setInterval(1000);
+    connect(mTimer, &QTimer::timeout, this, &SearchBackend::setCurrentTime);
     m_currentCode = "";
     m_currentDateTime = QDateTime::currentDateTime();
     m_serverDateTime = QDateTime::currentDateTime();
@@ -18,6 +21,7 @@ SearchBackend::SearchBackend(QObject *parent)
     DataProvider::getInstance()->startStockCodeListening();
     m_simulationRunning = DataProvider::getInstance()->isSimulation();
     //qWarning() << "SearchBackend";
+    mTimer->start();
 }
 
 
@@ -27,13 +31,21 @@ void SearchBackend::timeInfoArrived(QDateTime dt) {
 }
 
 
+void SearchBackend::setCurrentTime() {
+    setCurrentDateTime(QDateTime::currentDateTime());
+}
+
+
 QString SearchBackend::currentCode() {
     return m_currentCode;
 }
 
 
 QDateTime SearchBackend::currentDateTime() {
-    return m_currentDateTime; 
+    if (!mIsManualTime)
+        return m_currentDateTime; 
+    
+    return m_serverDateTime;
 }
 
 
@@ -112,7 +124,7 @@ void SearchBackend::setCurrentCode(const QString &code) {
 
 void SearchBackend::setCurrentDateTime(const QDateTime &dt) {
     if (m_currentDateTime.toMSecsSinceEpoch() != dt.toMSecsSinceEpoch()) {
-        qWarning() << "setCurrentDateTime : " << dt;
+        //qWarning() << "setCurrentDateTime : " << dt;
         m_currentDateTime = dt;
         emit currentDateTimeChanged();
     }
@@ -125,6 +137,7 @@ void SearchBackend::sendCurrentStock(const QString &code) {
 
 
 void SearchBackend::sendCurrentDateTime(const QDateTime &dt) {
+    mIsManualTime = true;
     DataProvider::getInstance()->setCurrentDateTime(dt);
 }
 

@@ -8,6 +8,9 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 1))))
 
+from utils import trade_logger
+_LOGGER = trade_logger.get_logger()
+
 from multiprocessing import Process
 from google.protobuf.empty_pb2 import Empty
 
@@ -19,9 +22,6 @@ from stock_service import simulator
 from stock_service.trade import trader
 from stock_service.plugins import starter
 
-from utils import trade_logger
-
-_LOGGER = trade_logger.get_logger('STARTER')
 
 
 def start_service(skip_ydata, run_trader, run_plugin, run_simulator):
@@ -65,23 +65,12 @@ def start_service(skip_ydata, run_trader, run_plugin, run_simulator):
     service_process.join()
     for op in other_processes:
         op.join()
-    """
-    if run_trader:
-        threads.append(ClientRunner(trader.run))
 
-    
-    for t in threads:
-        t.start()    
-
-    service_thread.join()
-    for t in threads:
-        t.join()
-    """
 
 if __name__ == '__main__':
     multiprocessing.set_start_method('spawn')
 
-    is_skip_ydata = False
+    is_skip_ydata = True # currently not seemed to collect ydata in grpc_service
     run_trader = True
     run_plugin = True
     run_simulator = False

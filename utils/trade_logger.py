@@ -7,6 +7,7 @@ import os.path
 
 
 _logger = None
+log_count = 0
 
 def except_hook(exc_type, exc_value, traceback):
     if issubclass(exc_type, KeyboardInterrupt):
@@ -16,11 +17,11 @@ def except_hook(exc_type, exc_value, traceback):
     _logger.error('Logging an uncaught exception', exc_info=(exc_type, exc_value, traceback))
 
 
-def _setup_log(pname):
+def _setup_log():
     logg = logging.getLogger('TRADER')
     logg.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter(pname + '\t[%(process)d]%(levelname)s - %(message)s')
+    formatter = logging.Formatter('[%(module)s][%(process)d][%(funcName)s][%(lineno)d] %(levelname)s - %(message)s')
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
     logg.addHandler(stream_handler)
@@ -60,9 +61,10 @@ def log(msg, *args, **kwargs):
     _logger.log(str(datetime.now()) + '\t' + msg, *args, *kwargs)
 
 
-def get_logger(process_name):
-    global _logger
+def get_logger():
+    global _logger, log_count
     if _logger is None:
-        _logger = _setup_log(process_name)
+        log_count += 1
+        _logger = _setup_log()
         sys.excepthook = except_hook
     return _logger

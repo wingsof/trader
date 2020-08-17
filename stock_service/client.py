@@ -280,6 +280,8 @@ def run():
     with grpc.insecure_channel('localhost:50052') as channel:
         _STUB = stock_provider_pb2_grpc.StockStub(channel)
         handlers = []
+        query = sp.StockCodeQuery(code='A005930')
+        print(_STUB.GetYearHigh(query))
         handlers.append(gevent.spawn(key_input, _STUB))
         handlers.append(gevent.spawn(tick_subscriber, _STUB))
         handlers.append(gevent.spawn(bidask_subscriber, _STUB))

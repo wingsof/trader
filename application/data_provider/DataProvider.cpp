@@ -206,41 +206,17 @@ void DataProvider::startStockCodeListening() {
 
 
 void DataProvider::startSimulation(const QDateTime &dt, qreal speed) {
-    /*
+    qWarning() << "startSimulation : " << m_simulationStatus;
     if (m_simulationStatus == STOP) {
-        RunSimulation * rs = new RunSimulation(stub_);
-        connect(rs, &RunSimulation::finished, this, &DataProvider::simulationStopped);
-        connect(rs, &RunSimulation::finished, rs, &RunSimulation::deleteLater);
-        rs->start();
-        m_simulationStatus = STOP_TO_RUNNING;
-    }*/
-    ClientContext context;
-    SimulationOperation op;
-    Timestamp *t = new Timestamp(TimeUtil::TimeTToTimestamp(dt.toTime_t()));
-    op.set_is_on(true);
-    op.set_allocated_start_datetime(t);
-    op.set_speed(speed);
-    Bool ret;
-    stub_->StartSimulation(&context, op, &ret);
-}
-
-
-void DataProvider::simulationStopped() {
-    qWarning() << "simulationStopped";
-    ClientContext context;
-    Empty empty;
-    Empty retEmpty;
-    stub_->StopSimulation(&context, empty, &retEmpty);
-
-    /*
-    if (m_simulationStatus == STOP_TO_RUNNING) {
-        m_simulationStatus = STOP;
+        ClientContext context;
+        SimulationOperation op;
+        Timestamp *t = new Timestamp(TimeUtil::TimeTToTimestamp(dt.toTime_t()));
+        op.set_is_on(true);
+        op.set_allocated_start_datetime(t);
+        op.set_speed(speed);
+        Bool ret;
+        stub_->StartSimulation(&context, op, &ret);
     }
-    else if (m_simulationStatus == RUNNING) {
-        SimulationStatus status;
-        status.set_simulation_on(false);
-        setSimulationStatus(&status);
-    }*/
 }
 
 
@@ -289,6 +265,17 @@ QString DataProvider::getCompanyName(const QString &code) {
     QString name = QString::fromStdString(cn->company_name());
     delete cn;
     return name;
+}
+
+
+YearHighInfo * DataProvider::getYearHighInfo(const QString &code) {
+    ClientContext context;
+    YearHighInfo *yearHighInfo = new YearHighInfo;
+    StockCodeQuery scq;
+    scq.set_code(code.toStdString());
+    stub_->GetYearHigh(&context, scq, yearHighInfo);
+    qWarning() << "GetYearHigh called " << code;
+    return yearHighInfo;
 }
 
 

@@ -74,6 +74,8 @@ public:
 
     Q_INVOKABLE void sell_immediately(int percentage);
     Q_INVOKABLE void buy_immediately(int percentage);
+    Q_INVOKABLE void buy_on_price(int row, int percentage);
+    Q_INVOKABLE void sell_on_price(int row, int percentage);
 
 private:
     int highlight;
@@ -81,7 +83,7 @@ private:
     int mTodayOpen;
     int mTodayHigh;
     bool mIsKospi;
-    int mViType;
+    //int mViType;
     QList<int> mViPrices;
     uint totalBidRemain;
     uint totalAskRemain;

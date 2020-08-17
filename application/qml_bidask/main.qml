@@ -1,6 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.0
-import QtQuick.Controls 2.12
+import QtQuick.Controls 2.15
 import BidAskModel 1.0
 import Qt.labs.qmlmodels 1.0
 import "../data_provider"
@@ -17,6 +17,8 @@ ApplicationWindow {
         columnSpacing: 0
         rowSpacing: 0
         clip: true
+        property int activeBuyRow: -1
+        property int activeSellRow: -1
 
         model: BidAskModel{
             id: bidaskModel
@@ -39,11 +41,12 @@ ApplicationWindow {
                     border.width: bidaskModel.highlight == model.row ? 2:1
 
                     Text {
-                        text: display
-                        horizontalAlignment: Text.AlignHCenter
+                        text: qsTr("%L1").arg(display)
+                        horizontalAlignment: Text.AlignRight
                         verticalAlignment: Text.AlignVCenter
                         anchors.fill: parent
                         font.pointSize: 12
+                        rightPadding: 5
                         font.bold: {
                             if (typeof(display) == "number" && bidaskModel.todayHigh == display)
                                 return true;
@@ -71,9 +74,9 @@ ApplicationWindow {
                             }
                             return ""
                         }
-                        anchors.right: parent.right
+                        anchors.left: parent.left
                         anchors.bottom: parent.bottom
-                        font.pointSize: 8
+                        font.pointSize: 7
                         color: {
                             if (typeof(display) == "number") {
                                 if (profit > 0) 
@@ -252,6 +255,143 @@ ApplicationWindow {
             }
 
             DelegateChoice {
+                column: 1
+                Rectangle {
+                    implicitWidth: (root.width - 6) / 7
+                    implicitHeight: (root.height - 20) / 22
+                    color: "#ffffff"
+                    border.color: "#d7d7d7"
+                    border.width: 1
+                    Text {
+                        visible: model.row == 21
+                        anchors.fill: parent
+                        text: "1/2 SELL"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        color: 'blue'
+                        font.pointSize: 10
+                        z: parent.z + 1
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: bidaskModel.sell_immediately(50)
+                        }
+                    }
+                    Rectangle {
+                        id: orderBox
+                        anchors.fill: parent
+                        visible: bidAskTable.activeSellRow == model.row
+                        z: bidAskTable.activeSellRow == model.row ? parent.z + 1 : 0
+                        Row {
+                            spacing: 1
+                            anchors.fill: parent
+                            SpinBox {
+                                id: sellSpinBox
+                                implicitWidth: parent.width * 2 / 3
+                                implicitHeight: parent.height
+                                to: 100
+                                from: 25
+                                stepSize: 25
+                                value: 100
+                                up.indicator.width: 25
+                                down.indicator.width: 25 
+                                onVisibleChanged: {
+                                    value = 100
+                                }
+                            }
+                            Button {
+                                implicitWidth: parent.width / 3
+                                implicitHeight: parent.height
+                                text: '매도'
+                                onClicked: {
+                                    bidaskModel.sell_on_price(model.row, sellSpinBox.value)
+                                    bidAskTable.activeSellRow = -1
+                                }
+                            }
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            if (model.row >= 1 && model.row <= 20) {
+                                bidAskTable.activeSellRow = model.row
+                            }
+                        }
+                    }
+                }
+            }
+
+            DelegateChoice {
+                column: 5
+                Rectangle {
+                    implicitWidth: (root.width - 6) / 7
+                    implicitHeight: (root.height - 20) / 22
+                    color: "#ffffff"
+                    border.color: "#d7d7d7"
+                    border.width: 1
+                    Text {
+                        visible: model.row == 21
+                        anchors.fill: parent
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        color: 'red'
+                        font.pointSize: 10
+                        text: "1/2 BUY"
+                        z: parent.z + 1
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: bidaskModel.buy_immediately(50)
+                        }
+
+                    }
+                    Rectangle {
+                        id: orderBox
+                        anchors.fill: parent
+                        visible: bidAskTable.activeBuyRow == model.row
+                        z: bidAskTable.activeBuyRow == model.row ? parent.z + 1 : 0
+                        Row {
+                            spacing: 1
+                            anchors.fill: parent
+                            SpinBox {
+                                id: buySpinBox
+                                implicitWidth: parent.width * 2 / 3
+                                implicitHeight: parent.height
+                                to: 100
+                                from: 25
+                                stepSize: 25
+                                value: 100
+                                up.indicator.width: 25
+                                down.indicator.width: 25 
+                                onVisibleChanged: {
+                                    value = 100
+                                }
+                            }
+                            Button {
+                                implicitWidth: parent.width / 3
+                                implicitHeight: parent.height
+                                text: '매수'
+                                onClicked: {
+                                    bidAskTable.activeBuyRow = -1
+                                    bidaskModel.buy_on_price(model.row, buySpinBox.value)
+                                }
+                            }
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            if (model.row >= 1 && model.row <= 20) {
+                                console.log('Clicked')
+                                bidAskTable.activeBuyRow = model.row
+                                //orderBox.z = z + 1
+                            }
+                        }
+                    }
+                }
+            }
+
+            DelegateChoice {
                 Rectangle {
                     implicitWidth: (root.width - 6) / 7
                     implicitHeight: (root.height - 20) / 22
@@ -294,10 +434,10 @@ ApplicationWindow {
                                 bidaskModel.sell_immediately(100)
                             else if (model.row == 21 && model.column ==6)
                                 bidaskModel.buy_immediately(100)
-                            else if (model.row == 21 && model.column == 1)
-                                bidaskModel.sell_immediately(50)
-                            else if (model.row == 21 && model.column == 5)
-                                bidaskModel.buy_immediately(50)
+                            else if (model.column == 6) 
+                                bidAskTable.activeBuyRow = -1
+                            else if (model.column == 0)
+                                bidAskTable.activeSellRow = -1
                         }
                     }
                 }

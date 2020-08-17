@@ -66,6 +66,11 @@ class StockStub(object):
         request_serializer=stock__provider__pb2.OrderMsg.SerializeToString,
         response_deserializer=stock__provider__pb2.CybosOrderReturn.FromString,
         )
+    self.GetYearHigh = channel.unary_unary(
+        '/stock_api.Stock/GetYearHigh',
+        request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
+        response_deserializer=stock__provider__pb2.YearHighInfo.FromString,
+        )
     self.RequestCybosTickData = channel.unary_unary(
         '/stock_api.Stock/RequestCybosTickData',
         request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
@@ -105,6 +110,11 @@ class StockStub(object):
         '/stock_api.Stock/IsKospi',
         request_serializer=stock__provider__pb2.StockCodeQuery.SerializeToString,
         response_deserializer=stock__provider__pb2.Bool.FromString,
+        )
+    self.SetViPriceInfo = channel.unary_unary(
+        '/stock_api.Stock/SetViPriceInfo',
+        request_serializer=stock__provider__pb2.ViPriceInfo.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
     self.GetViPrice = channel.unary_unary(
         '/stock_api.Stock/GetViPrice',
@@ -241,24 +251,9 @@ class StockStub(object):
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=stock__provider__pb2.SimulationStatus.FromString,
         )
-    self.SetSimulationStockTick = channel.unary_unary(
-        '/stock_api.Stock/SetSimulationStockTick',
-        request_serializer=stock__provider__pb2.CybosTickData.SerializeToString,
-        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-        )
-    self.SetSimulationBidAskTick = channel.unary_unary(
-        '/stock_api.Stock/SetSimulationBidAskTick',
-        request_serializer=stock__provider__pb2.CybosBidAskTickData.SerializeToString,
-        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-        )
-    self.SetSimulationSubjectTick = channel.unary_unary(
-        '/stock_api.Stock/SetSimulationSubjectTick',
-        request_serializer=stock__provider__pb2.CybosSubjectTickData.SerializeToString,
-        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-        )
-    self.SetSimulationAlarmTick = channel.unary_unary(
-        '/stock_api.Stock/SetSimulationAlarmTick',
-        request_serializer=stock__provider__pb2.CybosStockAlarm.SerializeToString,
+    self.SimulationData = channel.stream_stream(
+        '/stock_api.Stock/SimulationData',
+        request_serializer=stock__provider__pb2.SimulationMsg.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
     self.ListenSimulationOperation = channel.unary_stream(
@@ -362,6 +357,13 @@ class StockServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetYearHigh(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def RequestCybosTickData(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -412,6 +414,13 @@ class StockServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def IsKospi(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetViPriceInfo(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -607,28 +616,7 @@ class StockServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def SetSimulationStockTick(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def SetSimulationBidAskTick(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def SetSimulationSubjectTick(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def SetSimulationAlarmTick(self, request, context):
+  def SimulationData(self, request_iterator, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -723,6 +711,11 @@ def add_StockServicer_to_server(servicer, server):
           request_deserializer=stock__provider__pb2.OrderMsg.FromString,
           response_serializer=stock__provider__pb2.CybosOrderReturn.SerializeToString,
       ),
+      'GetYearHigh': grpc.unary_unary_rpc_method_handler(
+          servicer.GetYearHigh,
+          request_deserializer=stock__provider__pb2.StockCodeQuery.FromString,
+          response_serializer=stock__provider__pb2.YearHighInfo.SerializeToString,
+      ),
       'RequestCybosTickData': grpc.unary_unary_rpc_method_handler(
           servicer.RequestCybosTickData,
           request_deserializer=stock__provider__pb2.StockCodeQuery.FromString,
@@ -762,6 +755,11 @@ def add_StockServicer_to_server(servicer, server):
           servicer.IsKospi,
           request_deserializer=stock__provider__pb2.StockCodeQuery.FromString,
           response_serializer=stock__provider__pb2.Bool.SerializeToString,
+      ),
+      'SetViPriceInfo': grpc.unary_unary_rpc_method_handler(
+          servicer.SetViPriceInfo,
+          request_deserializer=stock__provider__pb2.ViPriceInfo.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
       'GetViPrice': grpc.unary_unary_rpc_method_handler(
           servicer.GetViPrice,
@@ -898,24 +896,9 @@ def add_StockServicer_to_server(servicer, server):
           request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
           response_serializer=stock__provider__pb2.SimulationStatus.SerializeToString,
       ),
-      'SetSimulationStockTick': grpc.unary_unary_rpc_method_handler(
-          servicer.SetSimulationStockTick,
-          request_deserializer=stock__provider__pb2.CybosTickData.FromString,
-          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-      ),
-      'SetSimulationBidAskTick': grpc.unary_unary_rpc_method_handler(
-          servicer.SetSimulationBidAskTick,
-          request_deserializer=stock__provider__pb2.CybosBidAskTickData.FromString,
-          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-      ),
-      'SetSimulationSubjectTick': grpc.unary_unary_rpc_method_handler(
-          servicer.SetSimulationSubjectTick,
-          request_deserializer=stock__provider__pb2.CybosSubjectTickData.FromString,
-          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-      ),
-      'SetSimulationAlarmTick': grpc.unary_unary_rpc_method_handler(
-          servicer.SetSimulationAlarmTick,
-          request_deserializer=stock__provider__pb2.CybosStockAlarm.FromString,
+      'SimulationData': grpc.stream_stream_rpc_method_handler(
+          servicer.SimulationData,
+          request_deserializer=stock__provider__pb2.SimulationMsg.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
       'ListenSimulationOperation': grpc.unary_stream_rpc_method_handler(

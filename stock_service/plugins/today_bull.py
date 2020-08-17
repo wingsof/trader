@@ -10,6 +10,7 @@ grpc_gevent.init_gevent()
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 2))))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), *(['..' + os.sep] * 1))))
 
 from datetime import timedelta
 from google.protobuf.empty_pb2 import Empty
@@ -22,10 +23,10 @@ from stock_service import stock_provider_pb2_grpc
 from utils import trade_logger
 
 
-_LOGGER = trade_logger.get_logger('PLUGIN_TODAYBULL')
+_LOGGER = trade_logger.get_logger()
 
 stub = None
-REFRESH_SEC = 180
+REFRESH_SEC = 120
 LIST_COUNT = 20
 
 _amount_ratio_list = {}
@@ -75,7 +76,7 @@ def tick_subscriber():
         yesterday_amount = preload.get_yesterday_amount(code)
         yesterday_close = preload.get_yesterday_close(code)
 
-        if yesterday_amount >= 3000000000 or yesterday_close * 1.15 > msg.current_price:
+        if yesterday_amount >= 3000000000 or yesterday_close * 1.15 > msg.current_price and yesterday_amount > 0:
             _amount_ratio_list[code] = [amount / yesterday_amount, msg.current_price, msg.current_price - msg.yesterday_diff]
 
         if msg.current_price > yesterday_close:

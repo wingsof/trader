@@ -71,14 +71,16 @@ class Spread:
                 if order.price == 0:
                     print('Price is zero')
                     return
-
-                if order.is_buy and order.percentage > 0:
-                    #print('percentage', order.percentage, 'order price', order.price, 'cash', cash)
-                    order.quantity = int(cash * order.percentage / 100.0 / order.price)
-                elif not order.is_buy and order.percentage > 0:
-                    order.quantity = int(math.ceil(self.get_sell_available() * order.percentage / 100))
-                    if order.quantity < 1:
-                        order.quantity = self.get_sell_available()
+            
+            if order.method == stock_provider.OrderMethod.TRADE_ON_PRICE or order.method == stock_provider.OrderMethod.TRADE_IMMEDIATELY:
+                if order.percentage > 0:
+                    if order.is_buy:
+                        #print('percentage', order.percentage, 'order price', order.price, 'cash', cash)
+                        order.quantity = int(cash * order.percentage / 100.0 / order.price)
+                    else:
+                        order.quantity = int(math.ceil(self.get_sell_available() * order.percentage / 100))
+                        if order.quantity < 1:
+                            order.quantity = self.get_sell_available()
 
                 # Later consider this case, when no available sell but want 50% sell in specific price
 
@@ -89,9 +91,14 @@ class Spread:
             self.ordersheet.add_new_order(order)
         elif order.order_type == stock_provider.OrderType.MODIFY: 
             if order.method == stock_provider.OrderMethod.TRADE_IMMEDIATELY:
-                order.price = self.get_immediate_price(order.is_buy)
-                if order.price == 0:
-                    print('Price is zero')
+                matched_order = self.ordersheet.find_match_order(order)
+                if matched_order is not None:
+                    order.price = self.get_immediate_price(matched_order.is_buy)
+                    if order.price == 0:
+                        print('Price is zero')
+                        return
+                else:
+                    print('cannot find order for change order')
                     return
             
             self.ordersheet.change_order(order)

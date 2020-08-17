@@ -30,6 +30,7 @@ using stock_api::TopList;
 using stock_api::OrderMethod;
 using stock_api::OrderResult;
 using stock_api::TodayTopSelection;
+using stock_api::YearHighInfo;
 using google::protobuf::Timestamp;
 
 
@@ -70,6 +71,7 @@ public:
     void setCurrentDateTime(const QDateTime &dt);
     void startSimulation(const QDateTime &dt, qreal speed);
     void stopSimulation();
+    YearHighInfo * getYearHighInfo(const QString &code);
 
     QStringList getSubscribeCodes();
     QStringList getRecentSearch();
@@ -132,7 +134,6 @@ private slots:
     void convertTimeInfo(Timestamp *);
     void setSimulationStatus(SimulationStatus *status);
     void stockCodeReceived(QString code);
-    void simulationStopped();
 
 signals:
     void stockCodeChanged(QString code);

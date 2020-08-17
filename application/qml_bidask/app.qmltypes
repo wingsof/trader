@@ -41,6 +41,16 @@ Module {
             name: "buy_immediately"
             Parameter { name: "percentage"; type: "int" }
         }
+        Method {
+            name: "buy_on_price"
+            Parameter { name: "row"; type: "int" }
+            Parameter { name: "percentage"; type: "int" }
+        }
+        Method {
+            name: "sell_on_price"
+            Parameter { name: "row"; type: "int" }
+            Parameter { name: "percentage"; type: "int" }
+        }
     }
     Component {
         name: "QAbstractItemModel"

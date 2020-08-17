@@ -31,6 +31,36 @@
                         ],
                         "name": "buy_immediately",
                         "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "row",
+                                "type": "int"
+                            },
+                            {
+                                "name": "percentage",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "buy_on_price",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "row",
+                                "type": "int"
+                            },
+                            {
+                                "name": "percentage",
+                                "type": "int"
+                            }
+                        ],
+                        "name": "sell_on_price",
+                        "returnType": "void"
                     }
                 ],
                 "object": true,

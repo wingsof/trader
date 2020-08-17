@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 
 from clients.common import morning_client
 from morning.back_data import holidays
-from preloadtype import uni_current
-from preloadtype import code_info
+from stock_service.preloadtype import uni_current
+from stock_service.preloadtype import code_info
 from utils import time_converter
 from utils import trade_logger
 
@@ -23,7 +23,7 @@ _skip_ydata = False
 _yesterday = 0
 
 
-_LOGGER = trade_logger.get_logger('PRELOAD')
+_LOGGER = trade_logger.get_logger()
 
 
 def is_skip_ydata():
@@ -91,7 +91,8 @@ def start_preload(dt, skip_ydata, skip_uni):
 
 
 def load(dt, skip_ydata, skip_uni=False):
-    global loading, _market_codes, _last_date, _request_stop, _current_spawn, _skip_ydata
+    global loading, _market_codes, _last_date, _request_stop, _current_spawn, _skip_ydata, _LOGGER
+    _LOGGER = trade_logger.get_logger()
     _LOGGER.info('Load Data')
     _skip_ydata = skip_ydata
 
@@ -147,6 +148,12 @@ def get_yesterday_close(code):
     if code in _yesterday_day_data:
         return _yesterday_day_data[code]['close_price']
     return 0
+
+
+def get_yesterday_year_high_datetime(code):
+    if _yesterday == 0:
+        return datetime.now()
+    return uni_current.get_year_high_date(code, _yesterday)
 
 
 if __name__ == '__main__':

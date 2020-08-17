@@ -1,7 +1,12 @@
 * TODO
-    * Day 에서 Year High 표시
-    * ON_MEET 및 특정 가격 주문
-    * stock_service 에서 연산하는 부분 별도 Process 로 분리
+    * Day 에서 Year High 표시 #
+    * ON_MEET 및 특정 가격 주문 # 특정 가격 OK
+    * stock_service 에서 연산하는 부분 별도 Process 로 분리 #
+    * 역사적 신고가에서 오늘 현재 가격이 0 ~ -5% 항목
+    * 눌림, 기존 Tnine - 조회로 Refresh 하는 방식
+    * VI Price 표시
+    * Today 에서 Subject 어떻게 표시할 건지
+    * qml_search 에서 simulation 이 아닌 경우는 current datetime refresh 하도록 변경 #
 
 
 * 데이터 Validation 프로그램 Subject 주기보다 길게 하여 데이터 검사
