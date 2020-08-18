@@ -95,11 +95,11 @@ def send_test_bidask_subscribe_response(code):
 
         def GetHeaderValue(self, i):
             return self.data[str(i)]
-
+r
     target_date = datetime(2020, 8, 14, 9, 5, 0)
     until_date = target_date + timedelta(seconds=3)
-    data = list(db[code + '_BA'].find({'date': {'$gte': target_date, '$lte': until_date}}))
-    print('send_test_bidask_subscribe_response', code, len(data))
+    data = list(db[rcode + '_BA'].find({'date': {'$gte': target_date, '$lte': until_date}}))
+    print('send_test_bidask_subscribe_response', rcode, len(data))
     testObj = TestObj(data[0])
     cpEvent = bidask_subscribe._CpEvent()
     cpEvent.set_params(testObj, code, callback_bidask_subscribe)
