@@ -95,7 +95,7 @@ def send_test_bidask_subscribe_response(code):
 
         def GetHeaderValue(self, i):
             return self.data[str(i)]
-r
+
     target_date = datetime(2020, 8, 14, 9, 5, 0)
     until_date = target_date + timedelta(seconds=3)
     data = list(db[rcode + '_BA'].find({'date': {'$gte': target_date, '$lte': until_date}}))
