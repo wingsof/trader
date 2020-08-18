@@ -89,7 +89,7 @@ def send_test_bidask_subscribe_response(code):
     from pymongo import MongoClient
     rcode = 'A' + code[1:]    
     db = MongoClient('mongodb://' + client_info.get_mongo_id() + ':' + client_info.get_mongo_password() + '@' + client_info.get_server_ip() + ':27017')['trade_alarm']
-     class TestObj:
+    class TestObj:
         def __init__(self, data):
             self.data = data
 
