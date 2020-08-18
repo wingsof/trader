@@ -160,9 +160,7 @@ QVariant BidAskModel::data(const QModelIndex &index, int role) const
                     if (mViPrices.count() > 0) {
                         if (mViPrices.contains(price))
                             return QVariant(true);
-                        return QVariant(false);
                     }
-                    return QVariant(mData.speculateIsViPrice(price, mIsKospi));
                 }
                 return QVariant(false);
             }

@@ -383,29 +383,16 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         tick_date.FromDatetime(data['date'])
         bidask = stock_provider_pb2.CybosBidAskTickData(tick_date=tick_date,
                                                     code=code,
-                                                    time=data['1'],
-                                                    volume=data['2'],
-                                                    total_ask_remain=data['23'],
-                                                    total_bid_remain=data['24'],
-                                                    out_time_total_ask_remain=data['25'],
-                                                    out_time_total_bid_remain=data['26'])
-        for i in range(3, 19+1, 4):
-            if data[str(i+1)] > 0:
-                bidask.bid_prices.append(data[str(i+1)])
-                bidask.bid_remains.append(data[str(i+3)])
-
-            if data[str(i)] > 0:
-                bidask.ask_prices.append(data[str(i)])
-                bidask.ask_remains.append(data[str(i+2)])
-
-        for i in range(27, 43+1, 4):
-            if data[str(i+1)] > 0:
-                bidask.bid_prices.append(data[str(i+1)])
-                bidask.bid_remains.append(data[str(i+3)])
-
-            if data[str(i)] > 0:
-                bidask.ask_prices.append(data[str(i)])
-                bidask.ask_remains.append(data[str(i+2)])
+                                                    time=data['time'],
+                                                    volume=data['volume'],
+                                                    bid_prices=data['bid_prices'],
+                                                    ask_prices=data['ask_prices'],
+                                                    bid_remains=data['bid_remains'],
+                                                    ask_remains=data['ask_remains'],
+                                                    total_ask_remain=data['total_ask_remain'],
+                                                    total_bid_remain=data['total_bid_remain'],
+                                                    out_time_total_ask_remain=data['uni_ask_remain'],
+                                                    out_time_total_bid_remain=data['uni_bid_remain'])
 
         for q in self.bidask_subscribe_cilents:
             q.put_nowait(bidask)

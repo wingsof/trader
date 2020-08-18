@@ -128,8 +128,8 @@ void BidAskData::setTick(CybosTickData *d) {
 #endif
     mTradeUnit.setData(d->current_price(), d->volume(), d->buy_or_sell());
 
-    if (d->start_price() > 0 && mLowerViPrices.count() == 0)
-        setViPrices(d->start_price());
+    //if (d->start_price() > 0 && mLowerViPrices.count() == 0)
+    //    setViPrices(d->start_price());
 
     if (!mBidAskTickReceived) {
         if (mBidSpread.count() == 0) 

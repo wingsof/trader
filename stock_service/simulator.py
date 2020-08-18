@@ -133,6 +133,20 @@ def bidask_to_grpc(tick):
     tick_date = Timestamp()
     tick_date.FromDatetime(tick['date'])
     code = tick['code']
+    if 'time' in tick:
+        return stock_provider_pb2.CybosBidAskTickData(tick_date=tick_date,
+                                                    code=code,
+                                                    time=data['time'],
+                                                    volume=data['volume'],
+                                                    bid_prices=data['bid_prices'],
+                                                    ask_prices=data['ask_prices'],
+                                                    bid_remains=data['bid_remains'],
+                                                    ask_remains=data['ask_remains'],
+                                                    total_ask_remain=data['total_ask_remain'],
+                                                    total_bid_remain=data['total_bid_remain'],
+                                                    out_time_total_ask_remain=data['uni_ask_remain'],
+                                                    out_time_total_bid_remain=data['uni_bid_remain'])
+
     bidask = stock_provider_pb2.CybosBidAskTickData(tick_date=tick_date,
                                                 code=code,
                                                 time=tick['1'],

@@ -85,6 +85,27 @@ def send_test_subscribe_response(code):
         callback_stock_subscribe(code, [d])
 
 
+def send_test_bidask_subscribe_response(code):
+    from pymongo import MongoClient
+    rcode = 'A' + code[1:]    
+    db = MongoClient('mongodb://' + client_info.get_mongo_id() + ':' + client_info.get_mongo_password() + '@' + client_info.get_server_ip() + ':27017')['trade_alarm']
+     class TestObj:
+        def __init__(self, data):
+            self.data = data
+
+        def GetHeaderValue(self, i):
+            return self.data[str(i)]
+
+    target_date = datetime(2020, 8, 14, 9, 5, 0)
+    until_date = target_date + timedelta(seconds=3)
+    data = list(db[code + '_BA'].find({'date': {'$gte': target_date, '$lte': until_date}}))
+    print('send_test_bidask_subscribe_response', len(data))
+    testObj = TestObj(data[0])
+    cpEvent = bidask_subscribe._CpEvent()
+    cpEvent.set_params(testObj, code, callback_bidask_subscribe)
+    cpEvent.OnReceived()
+
+
 def callback_bidask_subscribe(code, datas):
     header = stream_readwriter.create_header(message.SUBSCRIBE_RESPONSE, message.MARKET_STOCK, message.BIDASK_DATA)
     header['code'] = code + message.BIDASK_SUFFIX
@@ -216,6 +237,10 @@ def handle_subscribe(sock, header, body):
         if code in subscribe_stock:
             subscribe_stock[code].stop_subscribe()
     elif header['method'] == message.BIDASK_DATA:
+        if code.startswith('T'):
+            send_test_bidask_subscribe_response(code)
+            return
+
         if code not in subscribe_bidask:
             subscribe_bidask[code] = bidask_subscribe.BidAskSubscribe(code, callback_bidask_subscribe)
         subscribe_bidask[code].start_subscribe()
