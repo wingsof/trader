@@ -49,7 +49,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         self.skip_ydata = is_skip_ydata
 
         self.stock_subscribe_clients = []
-        self.bidask_subscribe_cilents = []
+        self.bidask_subscribe_clients = []
         self.subject_subscribe_clients = []
         self.current_time_subscribe_clients = []
         self.alarm_subscribe_clients = []
@@ -287,7 +287,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         return Empty()
 
     def SetViPriceInfo(self, request, context):
-        _LOGGER.debug('SetViPriceInfo %s(%s)', request.code, request.price)
+        #_LOGGER.debug('SetViPriceInfo %s(%s)', request.code, request.price)
         vi_price_info[request.code] = request.price
         return Empty()
 
@@ -394,7 +394,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                                                     out_time_total_ask_remain=data['uni_ask_remain'],
                                                     out_time_total_bid_remain=data['uni_bid_remain'])
 
-        for q in self.bidask_subscribe_cilents:
+        for q in self.bidask_subscribe_clients:
             q.put_nowait(bidask)
 
     def handle_stock_tick(self, code, data_arr):
@@ -527,12 +527,14 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
 
         yield current
 
-        while context.is_active():
+        while True:
             try:
                 data = q.get(True, 1)
                 yield data
             except gevent.queue.Empty as ge:
-                pass
+                if not context.is_active():
+                    break
+
         client_list.remove(q)
         _LOGGER.info('Done %s %d', title, len(client_list))
 
@@ -540,12 +542,15 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
         q = Queue()
         client_list.append(q)
         _LOGGER.info('%s %d', title, len(client_list))
-        while context.is_active():
+
+        while True:
             try:
                 data = q.get(True, 1)
                 yield data
             except gevent.queue.Empty as ge:
-                pass
+                if not context.is_active():
+                    break
+     
         client_list.remove(q)
         _LOGGER.info('Done %s %d', title, len(client_list))
 
@@ -567,19 +572,28 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
             yield d
 
     def ListenCybosTickData(self, request, context):
-        data = self.handle_queue_based_listener('ListenCybosTickData',
-                                                self.stock_subscribe_clients,
-                                                context)
-        for d in data:
-            yield d
+        q = Queue()
+        self.stock_subscribe_clients.append(q)
+        _LOGGER.info('%s %d', 'ListenCybosTickData', len(self.stock_subscribe_clients))
+
+        while True:
+            data = q.get(True)
+            yield data
+     
+        self.stock_subscribe_clients.remove(q)
+        _LOGGER.info('Done %s %d', 'ListenCybosTickData', len(self.stock_subscribe_clients))
 
     def ListenCybosBidAsk(self, request, context):
-        data = self.handle_queue_based_listener('ListenCybosBidAsk',
-                                                self.bidask_subscribe_cilents,
-                                                context)
-        for d in data:
-            yield d
+        q = Queue()
+        self.bidask_subscribe_clients.append(q)
+        _LOGGER.info('%s %d', 'ListenCybosBidAsk', len(self.bidask_subscribe_clients))
 
+        while True:
+            data = q.get(True)
+            yield data
+     
+        self.bidask_subscribe_clients.remove(q)
+        _LOGGER.info('Done %s %d', 'ListenCybosBidAsk', len(self.bidask_subscribe_clients))
 
     def ListenCybosSubject(self, request, context):
         data = self.handle_queue_based_listener('ListenCybosSubject',
@@ -719,7 +733,7 @@ class StockServicer(stock_provider_pb2_grpc.StockServicer):
                 for q in self.stock_subscribe_clients:
                     q.put_nowait(smsg.tick)
             elif smsg.msgtype == stock_provider_pb2.SimulationMsgType.MSG_BIDASK:
-                for q in self.bidask_subscribe_cilents:
+                for q in self.bidask_subscribe_clients:
                     q.put_nowait(smsg.bidask)
             elif smsg.msgtype == stock_provider_pb2.SimulationMsgType.MSG_SUBJECT:
                 for q in self.subject_subscribe_clients:

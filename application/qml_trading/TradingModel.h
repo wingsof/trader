@@ -62,6 +62,7 @@ public:
 private:
     QList<TradeData> mTradeData;
     int mCurrentBalance;
+    bool mStockTickStarted = false;
 
 private slots:
     void orderResultArrived(OrderResult *);

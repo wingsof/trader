@@ -1,18 +1,18 @@
 * TODO
-    * VI calculate 에서 log 남기는 부분 제거
-    * client 에서 BA 데이터 packing *
-    * vi follower 는 그대로 *
-    * grpc service 에서는 packing 변경된 부분 반영 *
-    * simulator 에서 BA 버전 구분 *
-     
-    * Day 에서 Year High 표시 #
+    * Performance Test 프로그램
+        - 9시부터 9시 5분 Tick 수집 및 Encoding 후 gevent queue 에 보내는 테스트 
+
+        - Test Step
+            1. Subscribe 후 Z000001 로 Load 까지 확인
+                * qml_xxx 실행
+            2. T000001로 Test 후 CPU 100% 확인
+            3. Server 에서 동일 테스트 진행 후 CPU Load 확인
+            4. 양쪽 모두 동일할 경우, cProfile 로 profile 데이터 추출
     * ON_MEET 및 특정 가격 주문 # 특정 가격 OK
-    * stock_service 에서 연산하는 부분 별도 Process 로 분리 #
     * 역사적 신고가에서 오늘 현재 가격이 0 ~ -5% 항목
     * 눌림, 기존 Tnine - 조회로 Refresh 하는 방식
-    * VI Price 표시 *
     * Today 에서 Subject 어떻게 표시할 건지
-    * qml_search 에서 simulation 이 아닌 경우는 current datetime refresh 하도록 변경 #
+    * trader client 없을 때 server 처리 필요?
 
 
 * 데이터 Validation 프로그램 Subject 주기보다 길게 하여 데이터 검사

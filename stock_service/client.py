@@ -19,7 +19,7 @@ import gevent
 from concurrent import futures
 import stock_provider_pb2_grpc
 import stock_provider_pb2 as sp
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from google.protobuf import timestamp_pb2
 from google.protobuf.empty_pb2 import Empty
@@ -75,10 +75,8 @@ def start_simulation(stub):
     from_datetime = timestamp_pb2.Timestamp()
     from_datetime.FromDatetime(datetime(2020, 6, 16, 1, 1, 0))
     stub.SetCurrentDateTime(from_datetime)
-    response = stub.StartSimulation(Empty()) 
+    stub.StartSimulation(Empty()) 
     print('start simulation')
-    for msg in response:
-        pass
 
 def get_current_price(code):
     if code in stock_dict:
@@ -93,8 +91,11 @@ def print_price(code, arr):
 def tick_subscriber(stub):
     query = Empty()
     i = 0
+    print('Start Listen')
     response = stub.ListenCybosTickData(query)
     for msg in response:
+        print(msg)
+        """
         if msg.code not in stock_dict:
             stock_dict[msg.code] = [msg.current_price, msg.bid_price, msg.ask_price]
         else:
@@ -103,6 +104,7 @@ def tick_subscriber(stub):
             stock_dict[msg.code][2] = msg.ask_price
 
         #print('tick', i, msg.tick_date.ToDatetime())
+        """
 
 
 def bidask_subscriber(stub):
@@ -110,6 +112,8 @@ def bidask_subscriber(stub):
     i = 0
     response = stub.ListenCybosBidAsk(query)
     for msg in response:
+        pass
+        """
         if msg.code not in bidask_dict:
             bidask_dict[msg.code] = [msg.ask_prices, msg.bid_prices]
         else:
@@ -127,6 +131,7 @@ def bidask_subscriber(stub):
             if ba_array[msg.code] != arr:
                 ba_array[msg.code] = arr
                 print_price(msg.code, ba_array[msg.code])
+        """
 
 def subject_subscriber(stub):
     query = Empty()
@@ -166,12 +171,27 @@ def time_listener(stub):
 def key_input(stub):
     while True:
         result = sys.stdin.readline()
-        result = result.decode('utf-8').strip()
+        result = result.strip()
+        #result = result.decode('utf-8').strip()
 
         if result == 'start':
             gevent.spawn(start_simulation, stub)
         elif result == 'stop':
             stub.StopSimulation(Empty())
+        elif result.startswith('subscribe_all'):
+            print('SUBSCRIBE ALL')
+            from_datetime = timestamp_pb2.Timestamp()
+            from_datetime.FromDatetime(datetime(2020, 8, 19, 8, 59) - timedelta(hours=9))
+            resp = stub.GetYesterdayTopAmountList(from_datetime)
+            for code in resp.codelist:
+                stub.RequestCybosTickData(sp.StockCodeQuery(code=code))
+                stub.RequestCybosBidAsk(sp.StockCodeQuery(code=code))
+                stub.RequestCybosSubject(sp.StockCodeQuery(code=code))
+            stub.RequestCybosAlarm(Empty())
+        elif result.startswith('subscribe_load'):
+            stub.RequestCybosTickData(sp.StockCodeQuery(code='Z000001'))
+        elif result.startswith('broadcast_start'):
+            stub.RequestCybosTickData(sp.StockCodeQuery(code='T000001'))
         elif result == 'buy':
             code = 'A005930'
             if code in stock_dict:
@@ -280,14 +300,14 @@ def run():
     with grpc.insecure_channel('localhost:50052') as channel:
         _STUB = stock_provider_pb2_grpc.StockStub(channel)
         handlers = []
-        query = sp.StockCodeQuery(code='A005930')
-        print(_STUB.GetYearHigh(query))
+        #query = sp.StockCodeQuery(code='A005930')
+        #print(_STUB.GetYearHigh(query))
         handlers.append(gevent.spawn(key_input, _STUB))
         handlers.append(gevent.spawn(tick_subscriber, _STUB))
         handlers.append(gevent.spawn(bidask_subscriber, _STUB))
         handlers.append(gevent.spawn(order_subscriber, _STUB))
 
-        _STUB.RequestCybosTradeResult(Empty())
+        #_STUB.RequestCybosTradeResult(Empty())
         gevent.joinall(handlers)
         #result = _STUB.GetYesterdayTopAmountCodes(Empty())
         #print('codes', result.codelist)

@@ -18,7 +18,12 @@ TradingModel::TradingModel(QObject *parent)
     connect(DataProvider::getInstance(), &DataProvider::orderResultArrived,
             this, &TradingModel::orderResultArrived);
     connect(DataProvider::getInstance(), &DataProvider::simulationStatusChanged, this, &TradingModel::simulationStatusChanged);
-    DataProvider::getInstance()->startStockTick();
+
+    if (DataProvider::getInstance()->isSimulation()) {
+        mStockTickStarted = true;
+        DataProvider::getInstance()->startStockTick();
+    }
+
     DataProvider::getInstance()->startOrderListening();
     qWarning() << "before send balance";
     DataProvider::getInstance()->sendBalanceRequest();
@@ -32,6 +37,10 @@ void TradingModel::simulationStatusChanged(bool isOn) {
     mTradeData.clear();
     endResetModel();
     DataProvider::getInstance()->sendBalanceRequest();
+    if (!mStockTickStarted && isOn) {
+        mStockTickStarted = true;
+        DataProvider::getInstance()->startStockTick();
+    }
 }
 
 

@@ -69,7 +69,7 @@ def calculate_vi_prices():
                     vi_prices.append(price)
                     break
         if len(vi_prices) > 0:
-            _LOGGER.info('Send ViPriceInfo %s %s', code, vi_prices)
+            #_LOGGER.info('Send ViPriceInfo %s %s', code, vi_prices)
             stub.SetViPriceInfo(stock_provider_pb2.ViPriceInfo(code=code, price=vi_prices))
 
 

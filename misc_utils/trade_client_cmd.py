@@ -288,17 +288,18 @@ def consumer():
 
 
 def main():
-    gevent.signal(signal.SIGQUIT, gevent.kill)
-
     greenlets = [
         gevent.spawn(consumer),
         gevent.spawn(producer),
     ]
 
+    #gevent.signal(signal.SIGQUIT, gevent.kill)
+
     try:
         gevent.joinall(greenlets)
     except KeyboardInterrupt:
         print("Exiting...")
+        gevent.killall(greenlets)
 
 
 if __name__ == '__main__':
