@@ -230,6 +230,12 @@ class ClientManager:
         return None
 
     def connect_to_subscribe(self, code, sock, header, body):
+        """
+        if code == 'Z000001' or code == 'T000001':
+            for c in self.get_vendor_collector(message.CYBOS):
+                stream_write(c.sock, header, body, None)
+            return
+        """
         if code in self.code_subscribe_info:
             found = False
             for s in self.code_subscribe_info[code][1]:

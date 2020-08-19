@@ -107,7 +107,7 @@ def handle_request_kiwoom(sock, header, body):
 
 
 def handle_request(sock, header, body):
-    #logger.info('HANDLE REQUEST %s', header)
+    logger.info('HANDLE REQUEST %s', header)
     if header['method'] == message.SUBSCRIBE_STATS:
         header['type'] = message.RESPONSE
         stream_write(sock, header, morning_stat.get_subscribe_response_info())
